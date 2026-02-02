@@ -1,0 +1,213 @@
+{
+  "name": "Daily AI News Digest",
+  "nodes": [
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "triggerAtHour": 8
+            }
+          ]
+        }
+      },
+      "id": "schedule",
+      "name": "Daily Schedule",
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.3,
+      "position": [-400, 0]
+    },
+    {
+      "parameters": {
+        "url": "https://techcrunch.com/category/artificial-intelligence/feed/",
+        "options": {}
+      },
+      "id": "rss1",
+      "name": "AI News RSS 1",
+      "type": "n8n-nodes-base.rssFeedRead",
+      "typeVersion": 1.2,
+      "position": [-160, -96]
+    },
+    {
+      "parameters": {
+        "url": "https://www.artificialintelligence-news.com/feed/",
+        "options": {}
+      },
+      "id": "rss2",
+      "name": "AI News RSS 2",
+      "type": "n8n-nodes-base.rssFeedRead",
+      "typeVersion": 1.2,
+      "position": [-160, 112]
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "mode": "list",
+          "value": "gpt-4o-mini",
+          "cachedResultName": "gpt-4o-mini"
+        },
+        "builtInTools": {},
+        "options": {}
+      },
+      "id": "openai",
+      "name": "OpenAI Chat Model",
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.3,
+      "position": [672, 320],
+      "credentials": {
+        "openAiApi": {
+          "id": "YOUR_OPENAI_CREDENTIAL_ID",
+          "name": "OpenAi account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=Create an email digest from these {{ $json.totalFound }} AI news articles (showing top 5):\n\n{{ $json.articles.map((a, i) => `${i+1}. **${a.title}**\n   Link: ${a.link}\n   Age: ${a.ageInDays} days | Relevance: ${a.score}\n   Preview: ${a.description.substring(0, 150)}...\n`).join('\\n') }}",
+        "options": {
+          "systemMessage": "You are an AI news curator creating a PREMIUM daily email digest.\n\nCRITICAL OUTPUT RULES:\n1. Output ONLY raw HTML - NO markdown code fences\n2. Start directly with <div> tag\n3. Use inline CSS styles only\n\nCOLORS:\n- Background: White (#ffffff)\n- Heading: Black (#1a1a1a)\n- Body: Dark gray (#333)\n- Accent: Neon cyan (#00e5ff)\n\nStructure: Header with logo, 5 news cards with cyan accents, pro tip box, branded footer."
+        }
+      },
+      "id": "agent",
+      "name": "AI News Curator",
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 3.1,
+      "position": [672, 128]
+    },
+    {
+      "parameters": {
+        "sendTo": "YOUR_EMAIL@gmail.com",
+        "subject": "=🤖 Daily AI News Digest - {{ $now.format('MMM d, yyyy') }}",
+        "message": "={{ $json.output }}",
+        "options": {
+          "appendAttribution": false
+        }
+      },
+      "id": "gmail",
+      "name": "Send Email",
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.2,
+      "position": [944, 128],
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "YOUR_GMAIL_CREDENTIAL_ID",
+          "name": "Gmail Account"
+        }
+      }
+    },
+    {
+      "parameters": {},
+      "id": "manual-trigger",
+      "name": "Manual Test Trigger",
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [-400, -144]
+    },
+    {
+      "parameters": {
+        "url": "https://venturebeat.com/category/ai/feed/",
+        "options": {}
+      },
+      "id": "rss3",
+      "name": "AI Business RSS",
+      "type": "n8n-nodes-base.rssFeedRead",
+      "typeVersion": 1.2,
+      "position": [-160, 256]
+    },
+    {
+      "parameters": {
+        "url": "https://www.marktechpost.com/feed/",
+        "options": {}
+      },
+      "id": "rss4",
+      "name": "AI Automation RSS",
+      "type": "n8n-nodes-base.rssFeedRead",
+      "typeVersion": 1.2,
+      "position": [-160, 400]
+    },
+    {
+      "parameters": {
+        "jsCode": "// Keywords for AI automation, business, money-making\nconst keywords = [\n  'automation', 'automate', 'workflow', 'business', 'enterprise',\n  'startup', 'company', 'money', 'revenue', 'profit', 'income',\n  'monetize', 'ai agent', 'chatgpt', 'openai', 'claude', 'gemini',\n  'llm', 'gpt', 'machine learning', 'saas', 'tool', 'platform'\n];\n\nconst now = new Date();\nconst maxAgeDays = 5;\nconst results = [];\nconst seenTitles = new Set();\n\nfor (const item of $input.all()) {\n  const title = (item.json.title || '').trim();\n  const titleLower = title.toLowerCase();\n  \n  if (seenTitles.has(titleLower)) continue;\n  seenTitles.add(titleLower);\n  \n  const desc = (item.json.description || item.json.contentSnippet || '').toLowerCase();\n  const content = titleLower + ' ' + desc;\n  \n  const pubDate = new Date(item.json.pubDate || item.json.isoDate || now);\n  const ageInDays = (now - pubDate) / (1000 * 60 * 60 * 24);\n  if (ageInDays > maxAgeDays) continue;\n  \n  let score = 0;\n  for (const kw of keywords) {\n    if (content.includes(kw)) score++;\n  }\n  if (score === 0) continue;\n  \n  results.push({\n    title: title,\n    link: item.json.link,\n    description: (item.json.contentSnippet || item.json.description || '').substring(0, 300),\n    pubDate: item.json.pubDate,\n    score: score,\n    ageInDays: Math.round(ageInDays * 10) / 10\n  });\n}\n\nresults.sort((a, b) => b.score - a.score || a.ageInDays - b.ageInDays);\nconst top5 = results.slice(0, 5);\n\nreturn [{\n  json: {\n    totalFound: results.length,\n    articles: top5\n  }\n}];"
+      },
+      "id": "filter-code",
+      "name": "Filter & Limit News",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [464, 128]
+    },
+    {
+      "parameters": {},
+      "id": "merge1",
+      "name": "Merge 1-2",
+      "type": "n8n-nodes-base.merge",
+      "typeVersion": 3,
+      "position": [112, -48]
+    },
+    {
+      "parameters": {},
+      "id": "merge2",
+      "name": "Merge 3-4",
+      "type": "n8n-nodes-base.merge",
+      "typeVersion": 3,
+      "position": [112, 304]
+    },
+    {
+      "parameters": {},
+      "id": "merge-final",
+      "name": "Merge All",
+      "type": "n8n-nodes-base.merge",
+      "typeVersion": 3,
+      "position": [288, 128]
+    }
+  ],
+  "connections": {
+    "Daily Schedule": {
+      "main": [[
+        {"node": "AI News RSS 1", "type": "main", "index": 0},
+        {"node": "AI News RSS 2", "type": "main", "index": 0},
+        {"node": "AI Business RSS", "type": "main", "index": 0},
+        {"node": "AI Automation RSS", "type": "main", "index": 0}
+      ]]
+    },
+    "Manual Test Trigger": {
+      "main": [[
+        {"node": "AI News RSS 1", "type": "main", "index": 0},
+        {"node": "AI News RSS 2", "type": "main", "index": 0},
+        {"node": "AI Business RSS", "type": "main", "index": 0},
+        {"node": "AI Automation RSS", "type": "main", "index": 0}
+      ]]
+    },
+    "AI News RSS 1": {
+      "main": [[{"node": "Merge 1-2", "type": "main", "index": 0}]]
+    },
+    "AI News RSS 2": {
+      "main": [[{"node": "Merge 1-2", "type": "main", "index": 1}]]
+    },
+    "AI Business RSS": {
+      "main": [[{"node": "Merge 3-4", "type": "main", "index": 0}]]
+    },
+    "AI Automation RSS": {
+      "main": [[{"node": "Merge 3-4", "type": "main", "index": 1}]]
+    },
+    "Merge 1-2": {
+      "main": [[{"node": "Merge All", "type": "main", "index": 0}]]
+    },
+    "Merge 3-4": {
+      "main": [[{"node": "Merge All", "type": "main", "index": 1}]]
+    },
+    "Merge All": {
+      "main": [[{"node": "Filter & Limit News", "type": "main", "index": 0}]]
+    },
+    "Filter & Limit News": {
+      "main": [[{"node": "AI News Curator", "type": "main", "index": 0}]]
+    },
+    "OpenAI Chat Model": {
+      "ai_languageModel": [[{"node": "AI News Curator", "type": "ai_languageModel", "index": 0}]]
+    },
+    "AI News Curator": {
+      "main": [[{"node": "Send Email", "type": "main", "index": 0}]]
+    }
+  }
+}
