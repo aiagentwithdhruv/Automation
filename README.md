@@ -20,10 +20,12 @@
 
 ## 📁 Workflows
 
-| Workflow | Description |
-|----------|-------------|
-| [Lead Generation & Email Outreach](n8n/Feb_2026/Lead-Generation-Email-Outreach/) | Google Sheets → LinkedIn search → Apollo.io → Gmail outreach + follow-ups |
-| [Daily AI News Digest](n8n/Feb_2026/Daily-AI-News-Digest/) | RSS feeds → AI curation → Daily email digest |
+| Workflow | Description | Files |
+|----------|-------------|-------|
+| **Lead Generation & Email Outreach** | Google Sheets → LinkedIn search → Apollo.io → Gmail outreach + follow-ups | [README](n8n/Feb_2026/Lead-Generation-Email-Outreach/README.md) · [workflow.json](n8n/Feb_2026/Lead-Generation-Email-Outreach/workflow.json) |
+| **Daily AI News Digest** | RSS feeds → AI curation → Daily email digest | [README](n8n/Feb_2026/Daily-AI-News-Digest/README.md) · [workflow.json](n8n/Feb_2026/Daily-AI-News-Digest/workflow.json) |
+
+**Folder path:** `n8n/Feb_2026/` → click each workflow folder to see files
 
 ---
 
