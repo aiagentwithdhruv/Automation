@@ -1,0 +1,14 @@
+# Credentials & secrets
+.env
+*.env
+.env.*
+
+# OS
+.DS_Store
+Thumbs.db
+
+# IDE
+.idea/
+.vscode/
+*.swp
+*.swo
