@@ -1,0 +1,16 @@
+version: "3.8"
+
+services:
+  n8n:
+    image: n8nio/n8n:latest
+    ports:
+      - "5678:5678"          # Map local port 5678 to n8n
+    environment:
+      - GENERIC_TIMEZONE=Asia/Kolkata   # change if needed
+      - N8N_ENCRYPTION_KEY=mysupersecretkey
+      - N8N_HOST=localhost
+      - WEBHOOK_URL=http://localhost:5678/
+    volumes:
+      - ./n8n_data:/home/node/.n8n   # Persist workflows/data
+    restart: unless-stopped
+    

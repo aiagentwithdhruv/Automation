@@ -20,12 +20,19 @@
 
 ## 📁 Workflows
 
+### Featured (Feb 2026)
 | Workflow | Description | Files |
 |----------|-------------|-------|
 | **Lead Generation & Email Outreach** | Google Sheets → LinkedIn search → Apollo.io → Gmail outreach + follow-ups | [README](n8n/Feb_2026/Lead-Generation-Email-Outreach/README.md) · [workflow.json](n8n/Feb_2026/Lead-Generation-Email-Outreach/workflow.json) |
 | **Daily AI News Digest** | RSS feeds → AI curation → Daily email digest | [README](n8n/Feb_2026/Daily-AI-News-Digest/README.md) · [workflow.json](n8n/Feb_2026/Daily-AI-News-Digest/workflow.json) |
 
-**Folder path:** `n8n/Feb_2026/` → click each workflow folder to see files
+### N8N_Workflows (93+ workflows)
+| Folder | Description |
+|--------|-------------|
+| [workflows/](n8n/N8N_Workflows/workflows/) | 93+ n8n workflow JSON files – AI agents, lead management, social media, RAG, email, and more |
+| [n8n-installation/](n8n/n8n-installation/) | Docker setup for n8n |
+
+**Import:** Open n8n → Workflows → Import from File → Select any `.json`
 
 ---
 
