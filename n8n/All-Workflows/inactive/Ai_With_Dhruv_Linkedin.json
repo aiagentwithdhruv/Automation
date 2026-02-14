@@ -1,0 +1,594 @@
+{
+  "updatedAt": "2025-09-30T15:20:20.000Z",
+  "createdAt": "2025-09-30T15:20:20.832Z",
+  "id": "aVOnMzGRVDkGr5fo",
+  "name": "Ai With Dhruv Linkedin",
+  "active": false,
+  "isArchived": false,
+  "nodes": [
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "23c0d1fa-897f-4a1a-b201-8103e473adea",
+              "name": "data",
+              "value": "={{ $json.choices[0].message.images[0].image_url.url }}",
+              "type": "string"
+            },
+            {
+              "id": "bcf338f7-575f-492b-ab68-535263d65a17",
+              "name": "base",
+              "value": "={{ $json.choices[0].message.images[0].image_url.url.split(\",\")[1] }}",
+              "type": "string"
+            },
+            {
+              "id": "6fff18a2-acc9-42b9-bf7c-6662ddb18ab3",
+              "name": "mime",
+              "value": "image/png",
+              "type": "string"
+            },
+            {
+              "id": "cb656296-3407-40cd-9271-88ee33710e12",
+              "name": "fileName",
+              "value": ".png",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        1376,
+        0
+      ],
+      "id": "0bd7b553-f48a-4739-81f7-712d057dc04f",
+      "name": "Edit Fields",
+      "onError": "continueRegularOutput"
+    },
+    {
+      "parameters": {
+        "modelId": {
+          "__rl": true,
+          "value": "gpt-5-mini",
+          "mode": "list",
+          "cachedResultName": "GPT-5-MINI"
+        },
+        "messages": {
+          "values": [
+            {
+              "content": "=\u201cWhen you get topic {{ $json.output }}, your task is to create an image prompt for an AI image generator. The image prompt must always follow these rules:\n\t\u2022\tStyle: Minimalist poster on a pure black background\n\t\u2022\tSymbols: Represent the given topic using 2\u20135 emoji-style icons that best match the topic\n\t\u2022\tEmoji Rules: All emojis must be black-and-white, drawn in clean white outlines with a subtle glowing effect (no colors)\n\t\u2022\tArrangement: Icons should be evenly spaced, centered, and modern in style\n\t\u2022\tOptional Text: If text is used, it must be under 5 words, bold, white, and glowing (e.g., \u2018Resilience = Recovery\u2019)\n\t\u2022\tOutput Format: High-definition PNG with transparent background\n\nHere is the emoji reference list you can draw from depending on the topic:\n\nAI / Technology: \ud83e\udd16 \ud83d\udcbb \ud83d\udd0d \ud83e\udde0 \u2699\ufe0f \ud83d\udd10 \ud83d\udce1\nSales / Growth / Money: \ud83d\udcc8 \ud83d\udcb0 \ud83d\udcbc \ud83e\udd1d \ud83c\udfc6 \ud83d\udd11 \ud83d\uded2\nMindset / Productivity / Self-Help: \ud83c\udf31 \ud83e\uddd8 \ud83d\ude42 \u23f0 \ud83d\udd04 \ud83d\udd4a\ufe0f \ud83d\udcd6\nAmbition / Energy / Future: \ud83d\ude80 \ud83e\uddd7 \ud83d\udd25 \ud83c\udf0d \u2728\n\nYour output should always be only the final image prompt, automatically customized to the topic I provide.\u201d"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.openAi",
+      "typeVersion": 1.8,
+      "position": [
+        816,
+        0
+      ],
+      "id": "1485c035-1e1b-4ded-ac21-6d58995f3d77",
+      "name": "IMAGE PROMPT"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://openrouter.ai/api/v1/chat/completions",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"model\": \"google/gemini-2.5-flash-image-preview\",\n  \"messages\": [\n    {\n      \"role\": \"user\",\n      \"content\": [\n        {\n          \"type\": \"text\",\n          \"text\": \"{{ $json.message.content }}\"\n        }\n      ]\n    }\n  ]\n}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        1184,
+        0
+      ],
+      "id": "05123cd2-ac4d-4238-bd9c-6aab9c553e1e",
+      "name": "NANO BANANA"
+    },
+    {
+      "parameters": {
+        "operation": "toBinary",
+        "sourceProperty": "base",
+        "options": {
+          "fileName": "={{ $json.fileName }}",
+          "mimeType": "={{ $json.mime }}"
+        }
+      },
+      "type": "n8n-nodes-base.convertToFile",
+      "typeVersion": 1.1,
+      "position": [
+        1552,
+        0
+      ],
+      "id": "15928439-022a-4250-9a34-f3cf886b01ed",
+      "name": "Image",
+      "onError": "continueRegularOutput"
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "documentId": {
+          "__rl": true,
+          "value": "1YZk12lNR7ZpjtJ6pOB2ugIgVIyF15-oAGPhuzCg2KE4",
+          "mode": "list",
+          "cachedResultName": "LInkedin Ai Autmation",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1YZk12lNR7ZpjtJ6pOB2ugIgVIyF15-oAGPhuzCg2KE4/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 2139137929,
+          "mode": "list",
+          "cachedResultName": "Ai With Dhruv Linkedin Post 2 PM",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1YZk12lNR7ZpjtJ6pOB2ugIgVIyF15-oAGPhuzCg2KE4/edit#gid=2139137929"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Status": "Posted",
+            "Content": "={{ $('Linkedin Post Agent').item.json.output }}",
+            "Topic": "={{ $('Get row(s) in sheet1').item.json.Topic }}",
+            "Drive Image Link": "={{ $json.webViewLink }}"
+          },
+          "matchingColumns": [
+            "Topic"
+          ],
+          "schema": [
+            {
+              "id": "Topic",
+              "displayName": "Topic",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Status",
+              "displayName": "Status",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Content",
+              "displayName": "Content",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Drive Image Link",
+              "displayName": "Drive Image Link",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "output",
+              "displayName": "output",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "row_number",
+              "displayName": "row_number",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "number",
+              "canBeUsedToMatch": true,
+              "readOnly": true,
+              "removed": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        1936,
+        0
+      ],
+      "id": "d04f503b-8159-4000-89e9-f41caa656800",
+      "name": "Update row in sheet1",
+      "onError": "continueRegularOutput"
+    },
+    {
+      "parameters": {
+        "name": "={{ $('Get row(s) in sheet1').item.json.Topic }}",
+        "driveId": {
+          "__rl": true,
+          "value": "My Drive",
+          "mode": "list",
+          "cachedResultName": "My Drive",
+          "cachedResultUrl": "https://drive.google.com/drive/my-drive"
+        },
+        "folderId": {
+          "__rl": true,
+          "value": "1UTNNA-hxtIGMEbYgwPRNdAbW6BiidKAW",
+          "mode": "list",
+          "cachedResultName": "Ai with Dhruv LInkedin",
+          "cachedResultUrl": "https://drive.google.com/drive/folders/1UTNNA-hxtIGMEbYgwPRNdAbW6BiidKAW"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleDrive",
+      "typeVersion": 3,
+      "position": [
+        1744,
+        0
+      ],
+      "id": "e97b8072-3f6f-4980-bda0-06a9be3e63a0",
+      "name": "Upload file1",
+      "onError": "continueRegularOutput"
+    },
+    {
+      "parameters": {
+        "postAs": "organization",
+        "organization": "108109958",
+        "text": "={{ $('Linkedin Post Agent').item.json.output }}",
+        "shareMediaCategory": "IMAGE",
+        "additionalFields": {}
+      },
+      "type": "n8n-nodes-base.linkedIn",
+      "typeVersion": 1,
+      "position": [
+        704,
+        352
+      ],
+      "id": "101632ee-ccbc-4f9e-9f27-e24956531174",
+      "name": "Create a post2",
+      "onError": "continueRegularOutput"
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "value": "gpt-5",
+          "mode": "list",
+          "cachedResultName": "gpt-5"
+        },
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.2,
+      "position": [
+        -80,
+        256
+      ],
+      "id": "905e4edf-1a16-4609-a6dc-b350dcc21784",
+      "name": "GPT_5"
+    },
+    {
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "value": "1YZk12lNR7ZpjtJ6pOB2ugIgVIyF15-oAGPhuzCg2KE4",
+          "mode": "list",
+          "cachedResultName": "LInkedin Ai Autmation",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1YZk12lNR7ZpjtJ6pOB2ugIgVIyF15-oAGPhuzCg2KE4/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 2139137929,
+          "mode": "list",
+          "cachedResultName": "Ai With Dhruv Linkedin Post 2 PM",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1YZk12lNR7ZpjtJ6pOB2ugIgVIyF15-oAGPhuzCg2KE4/edit#gid=2139137929"
+        },
+        "filtersUI": {
+          "values": [
+            {
+              "lookupColumn": "Status",
+              "lookupValue": "To Do"
+            }
+          ]
+        },
+        "options": {
+          "returnFirstMatch": true
+        }
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        256,
+        0
+      ],
+      "id": "1adf1f3d-fbc5-4979-8237-be71014e643a",
+      "name": "Get row(s) in sheet1"
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.noOp",
+      "typeVersion": 1,
+      "position": [
+        1216,
+        352
+      ],
+      "id": "68b1a9e7-d6e8-42b5-9cc6-a5e6a35e062c",
+      "name": "No Operation, do nothing1"
+    },
+    {
+      "parameters": {
+        "sendTo": "aiwithdhruv@gmail.com",
+        "subject": "=Linkedin Post Title - {{ $('Get row(s) in sheet1').item.json.Topic }}",
+        "emailType": "text",
+        "message": "={{ $('Linkedin Post Agent').item.json.output }}\n\nDrive Link - {{ $json.webContentLink }}",
+        "options": {
+          "appendAttribution": false
+        }
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.1,
+      "position": [
+        976,
+        352
+      ],
+      "id": "53899789-05a6-41da-ac3e-e16ebf5463f0",
+      "name": "Send a message",
+      "webhookId": "5ff2fafe-8b0c-4226-97e0-f8f8708d8042"
+    },
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "triggerAtHour": 14
+            },
+            {
+              "triggerAtHour": 22
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.2,
+      "position": [
+        0,
+        0
+      ],
+      "id": "da0ddf76-a5b3-45fc-a809-8f19c152e6d5",
+      "name": "Schedule Trigger"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=Topic - {{ $json.Topic }}\nTarget Audience - Contractors, Construction Interior Companies Foundres and Mds, Pject Mangaeres, everyone who is into construction",
+        "options": {
+          "systemMessage": "=ROLE: You are a senior content strategist for the LinkedIn page \"AIwithDhruv\". Your expertise is in creating high-value, engaging, and actionable content about AI, automation, and sales growth for an audience of marketers, founders, B2B professionals, and tech enthusiasts.\n\nCORE OBJECTIVE: For any given topic, generate a best-in-class LinkedIn post that is educational, hook-driven, and packed with actionable value to maximize comments, shares, and profile visits.\n\nMANDATORY INSTRUCTIONS:\n\nResearch First: For any input topic, use the Web Search tool to gather the most recent, accurate data, case studies, and news. Prioritize data from credible sources (e.g., Forbes, Harvard Business Review, Gartner, official blogs).\n\nAudience Focus: Tailor the language and examples to appeal to professionals interested in practical AI applications.\n\nOutput Format: Your output must be ONLY the final post text, nothing else. No explanations, no markdown. The post must be under 2,800 characters.\n\nPOST STRUCTURE & CONTENT REQUIREMENTS:\n\nThe Hook (First Line): Start with a powerful, bolded headline. It must be a surprising statistic, a controversial statement, or a compelling question (e.g., \"The 5% Cold Email Reply Rate is a Lie. Here's The New Standard.\").\n\nThe Problem (1-2 lines): Immediately state the pain point or the old way of doing things that is failing.\n\nThe Shift/Insight: Introduce the new solution or paradigm shift (e.g., \"But AI is changing that...\").\n\nThe Value Block (Use Bullet Points):\n\nProvide 3-4 concise, actionable insights or steps. Each should start with a strong verb.\n\nInclude specific, named tools (e.g., \"Use Clay.com to...\").\n\nIncorporate a mini-case study with tangible results (e.g., \"One e-commerce client used this to increase qualified leads by 217% in 6 weeks.\").\n\nThe Actionable Takeaway: Give a simple, immediate action readers can take (e.g., \"Try this prompt in ChatGPT:\").\n\nCall to Action (CTA): End with a engaging question to spark comments AND a resource hook to drive DMs (e.g., \"What's your biggest outreach challenge? Comment below. \ud83d\udc47 P.S. DM me 'PROMPTS' for the swipe file.\").\n\nHashtags: Add 4-5 highly relevant hashtags. Mix 1-2 broad (#AI) with 2-3 niche (#SalesAutomation, #B2BGrowth) tags.\n\nTONE & STYLE GUIDELINES:\n\nTone: Professional, insightful, and slightly provocative. Write like a confident expert sharing valuable secrets.\n\nEmojis: Use sparingly (max 3-4). Only use to highlight key points (e.g., bullets, CTA) and never in the headline.\n\nAttribution: Always cite your sources. Use phrases like \"According to a recent Gartner report...\" or \"A case study from [Company X] shows...\".\n\nClarity: Use short sentences and paragraphs. Make it extremely easy to read and scan.\n\nEXAMPLE OUTPUT:\nCold outreach is broken. 92% of emails get ignored.\nThat's a massive waste of time and budget. But AI isn't just fixing it; it's setting a new standard.\nTop performers are now using AI to:\n\u2022 Personalize 1,000s of emails using tools like Warmer.ai and ChatGPT.\n\u2022 Generate hyper-relevant video scripts with Tavus in minutes.\n\u2022 Book 50+ demos a week at a cost of under $0.20 each.\nA recent case study from HubSpot showed teams using this approach saw a 3x higher reply rate and 217% more pipeline in one quarter.\nYour Action Step: Paste this into your AI tool: \"Analyze [Prospect's LinkedIn Profile URL] and extract 3 unique pain points to create a 2-sentence icebreaker.\"\nWhat's the #1 thing holding back your outreach? Share your thoughts below. \ud83d\udc47\nDM \"OUTREACH\" to get my full swipe file of 10 proven prompts.\n#AISales #GrowthMarketing #B2B #SalesAutomation #ColdOutreach"
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 2,
+      "position": [
+        448,
+        0
+      ],
+      "id": "0f0a980b-8e10-4f2b-b1e3-80a498c73853",
+      "name": "Linkedin Post Agent"
+    },
+    {
+      "parameters": {
+        "toolDescription": "Use Web Search for topics when getting instruction from Ai node and return output ",
+        "method": "POST",
+        "url": "https://api.perplexity.ai/chat/completions",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"model\": \"sonar\",\n  \"messages\": [\n    {\n      \"role\": \"system\",\n      \"content\": \"Be precise and concise.\"\n    },\n    {\n      \"role\": \"user\",\n      \"content\": \"{{ $('Get row(s) in sheet1').item.json.Topic }}\"\n    }\n  ]\n}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequestTool",
+      "typeVersion": 4.2,
+      "position": [
+        480,
+        272
+      ],
+      "id": "0b76710a-c504-4f84-a423-d6db0488e5f6",
+      "name": "Web Search"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatGoogleGemini",
+      "typeVersion": 1,
+      "position": [
+        320,
+        272
+      ],
+      "id": "ece68607-7ad0-44d4-b249-734ce6232ef1",
+      "name": "2.5 Flash"
+    }
+  ],
+  "connections": {
+    "Edit Fields": {
+      "main": [
+        [
+          {
+            "node": "Image",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "IMAGE PROMPT": {
+      "main": [
+        [
+          {
+            "node": "NANO BANANA",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "NANO BANANA": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Image": {
+      "main": [
+        [
+          {
+            "node": "Upload file1",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Create a post2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Upload file1": {
+      "main": [
+        [
+          {
+            "node": "Update row in sheet1",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Send a message",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Create a post2": {
+      "main": [
+        [
+          {
+            "node": "Send a message",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get row(s) in sheet1": {
+      "main": [
+        [
+          {
+            "node": "Linkedin Post Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Send a message": {
+      "main": [
+        [
+          {
+            "node": "No Operation, do nothing1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Schedule Trigger": {
+      "main": [
+        [
+          {
+            "node": "Get row(s) in sheet1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Linkedin Post Agent": {
+      "main": [
+        [
+          {
+            "node": "IMAGE PROMPT",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Web Search": {
+      "ai_tool": [
+        [
+          {
+            "node": "Linkedin Post Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "2.5 Flash": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Linkedin Post Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "staticData": null,
+  "meta": null,
+  "pinData": {},
+  "versionId": "1a897080-eb45-4e3f-b9a7-b12bed229c75",
+  "activeVersionId": null,
+  "triggerCount": 0,
+  "shared": [
+    {
+      "updatedAt": "2025-09-30T15:20:20.837Z",
+      "createdAt": "2025-09-30T15:20:20.837Z",
+      "role": "workflow:owner",
+      "workflowId": "aVOnMzGRVDkGr5fo",
+      "projectId": "DT8YjHwLZsQjJqVc"
+    }
+  ],
+  "activeVersion": null,
+  "tags": []
+}

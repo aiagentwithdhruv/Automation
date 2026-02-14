@@ -1,0 +1,286 @@
+{
+  "updatedAt": "2025-09-30T15:24:12.000Z",
+  "createdAt": "2025-09-30T15:24:12.027Z",
+  "id": "m0fCjSJHh0yCrhJK",
+  "name": "Normal Email Outreach TEst",
+  "active": false,
+  "isArchived": false,
+  "nodes": [
+    {
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "mode": "list",
+          "value": "{YOUR_GOOGLE_DOCUMENT_ID}",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/{YOUR_GOOGLE_DOCUMENT_ID}/edit?usp=drivesdk",
+          "cachedResultName": "n8nEmail"
+        },
+        "sheetName": {
+          "__rl": true,
+          "mode": "list",
+          "value": "{YOUR_SHEET_ID}",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/{YOUR_GOOGLE_SHEET_ID}/edit#gid=0",
+          "cachedResultName": "{YOUR_SHEET_NAME}"
+        },
+        "options": {}
+      },
+      "id": "a5ecd6b6-f6ff-4d1b-96e8-683d56e7801c",
+      "name": "Get row(s) in sheet",
+      "type": "n8n-nodes-base.googleSheets",
+      "position": [
+        768,
+        928
+      ],
+      "typeVersion": 4.6
+    },
+    {
+      "parameters": {},
+      "id": "1815329c-110c-4dfc-a2c0-5f98c87a9519",
+      "name": "When clicking \u2018Execute workflow\u2019",
+      "type": "n8n-nodes-base.manualTrigger",
+      "position": [
+        224,
+        928
+      ],
+      "typeVersion": 1
+    },
+    {
+      "parameters": {
+        "sendTo": "={{ $('Get row(s) in sheet').item.json['Email ID'] }}",
+        "subject": "=Re:{{ $('Get row(s) in sheet').item.json.Intent }}",
+        "message": "={{ $json.message.content }}",
+        "options": {
+          "appendAttribution": false
+        }
+      },
+      "id": "7d9eaf30-f6b8-4552-bfa9-c477217e9d3c",
+      "name": "Send Personalized emails",
+      "type": "n8n-nodes-base.gmail",
+      "position": [
+        2688,
+        928
+      ],
+      "webhookId": "{YOUR_WEBHOOK_ID}",
+      "typeVersion": 2.1
+    },
+    {
+      "parameters": {
+        "content": "### Step 1: Kickoff the Conversation! \ud83d\udfe2\ud83d\udcec\n\nClick **\u201cExecute Workflow\u201d** to start the automation.\n\nWhat happens next?\n\n- \ud83d\udcc4 It reads data from the sheet (Name, Email, Intent, and Message).\n- \ud83d\ude80 Triggers the workflow to process each row individually.\n\nThis starts the process of sending personalized email to the end users\n",
+        "height": 280,
+        "width": 440,
+        "color": 5
+      },
+      "id": "6b60a643-0388-4328-957a-77d5a567c919",
+      "name": "Sticky Note",
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        32,
+        624
+      ],
+      "typeVersion": 1
+    },
+    {
+      "parameters": {
+        "content": "### Step 2: Sheet Scanner Activated! \ud83d\udcc4\ud83d\udd0d\n\nThis node connects to your **Google Sheet** and reads all the rows in it.\n\nConfigure your **document** and specific **sheet** here\n\nWhat it fetches:\n\n- \ud83e\uddd1\u200d\ud83d\udcbc First Name  \n- \ud83d\udce7 Email ID  \n- \ud83e\udde0 Intent  \n- \ud83d\udcac Why They Sent the Email\n\nThis node is crucial to fetch the details for the ***automated*** e-mail process \n\nEach row represents a unique lead or contact, ready to be processed and responded to. It\u2019s your automation\u2019s inbox\u2014neatly structured and scalable.\n",
+        "height": 480,
+        "width": 380,
+        "color": 3
+      },
+      "id": "37db4e08-d5c6-4694-b7b0-e93e9982169a",
+      "name": "Sticky Note1",
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        608,
+        1088
+      ],
+      "typeVersion": 1
+    },
+    {
+      "parameters": {
+        "content": "### Step 4: Smart Email Writer \u270d\ufe0f\ud83e\udd16\n\nThis node uses **OpenAI** to craft a personalized email reply for each contact.\n\nUsing:\n\n- \ud83e\udde0 **Intent** (e.g., Demo Request, Partnership Inquiry)\n- \ud83d\udcac **Why They Sent the Email**\n\nIt generates a thoughtful, relevant, and human-like response tailored to each person\u2019s message.\n\nNo templates. Just context-aware communication\u2014written like a professional.\n",
+        "height": 360,
+        "width": 420,
+        "color": 4
+      },
+      "id": "d13e40d7-a286-46cb-908a-f4056fb7fab0",
+      "name": "Sticky Note2",
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        1888,
+        1120
+      ],
+      "typeVersion": 1
+    },
+    {
+      "parameters": {
+        "content": "### Step 5: Hitting Send \u2709\ufe0f\ud83d\udce8\n\nThis node uses the **Gmail integration** to send the personalized email generated in the previous step.\n\nWhat it does:\n\n- \u2705 Sends the message to the contact\u2019s **Email ID**.\n- \ud83d\udcac Includes the personalized content created by OpenAI.\n- \ud83d\udcc5 Ensures timely, automated follow-up\u2014without manual effort.\n\nThis node completes the automation process by sending the personalized emails to the end users.\n",
+        "height": 400,
+        "width": 380,
+        "color": 6
+      },
+      "id": "37fa08ed-cf42-4d1d-9362-ff89d6a96697",
+      "name": "Sticky Note3",
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        2512,
+        512
+      ],
+      "typeVersion": 1
+    },
+    {
+      "parameters": {
+        "modelId": {
+          "__rl": true,
+          "mode": "list",
+          "value": "{YOUR_OPENAI_MODEL}",
+          "cachedResultName": "{YOUR_OPENAI_MODEL_NAME}"
+        },
+        "messages": {
+          "values": [
+            {
+              "content": "=Write a professional and friendly email reply to {{ $('Get row(s) in sheet').item.json['First Name'] }} . Their intent is \"{{ $('Get row(s) in sheet').item.json.Intent }}\". They wrote: \"{{ $('Get row(s) in sheet').item.json['Why They Sent Email'] }}\". Make the response specific to their message and helpful.No need to add the subject line. Generate in HTML formatting.\nThe footer signature should be of the following format\nThanks,\n{{ $json.sendAs[0].displayName }}\n"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "8b2c6957-a144-408c-8b27-5e72741c6f32",
+      "name": "Message a model",
+      "type": "@n8n/n8n-nodes-langchain.openAi",
+      "position": [
+        1904,
+        928
+      ],
+      "typeVersion": 1.8
+    },
+    {
+      "parameters": {
+        "url": "https://gmail.googleapis.com/gmail/v1/users/me/settings/sendAs",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "gmailOAuth2",
+        "options": {}
+      },
+      "id": "327b1304-bc98-4d58-a09c-fcb20f656a5c",
+      "name": "HTTP Request",
+      "type": "n8n-nodes-base.httpRequest",
+      "position": [
+        1312,
+        928
+      ],
+      "typeVersion": 4.2,
+      "alwaysOutputData": true
+    },
+    {
+      "parameters": {
+        "content": "### Step 3: Signature Sync \ud83d\udd8b\ufe0f\ud83d\udcdb\n\nThis node connects to your **Gmail account** to fetch your display name.\n\nWhy this matters:\n\n- \u2705 Ensures your name appears correctly in the email signature.\n- \ud83d\udcec Maintains professionalism and brand consistency.\n- \ud83e\udd1d Adds a personal touch to every automated reply.\n\nThis node ensures the email signature has your name on it instead of vague details\n",
+        "height": 340,
+        "width": 420
+      },
+      "id": "1082b06f-9c05-434a-a6d2-003c678134c3",
+      "name": "Sticky Note4",
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        1088,
+        560
+      ],
+      "typeVersion": 1
+    },
+    {
+      "parameters": {
+        "content": "## \ud83d\udee0\ufe0f Prerequisites\n\nBefore running this workflow, make sure the following integrations are set up:\n\n1. **Google Account Setup**  \n   - Connect your Google account using **Client Credentials**.  \n   - Enable the following services:  \n     - \ud83d\udcc4 Google Sheets \n     - \ud83d\udcc2 Google Drive   \n     - \ud83d\udce7 Gmail \n\n2. **OpenAI Integration**  \n   - Add and configure your **OpenAI API Key**.  \n   - Required for generating context-aware, personalized email replies.\n\n\nThis will ensure the smooth execution of your personalised email sending workflow\n",
+        "height": 520,
+        "width": 480,
+        "color": 4
+      },
+      "id": "03aa4d15-5b6a-4f6c-892a-b291a23cc832",
+      "name": "Sticky Note5",
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        0,
+        0
+      ],
+      "typeVersion": 1
+    },
+    {
+      "parameters": {
+        "content": "### Support\n\nFor further support, or to develop and custom workflow, reach out to:\n\n getstarted@intuz.com",
+        "width": 420,
+        "color": 6
+      },
+      "id": "ab99b265-9da8-4518-8916-01c8efde455a",
+      "name": "Sticky Note6",
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        2720,
+        1120
+      ],
+      "typeVersion": 1
+    }
+  ],
+  "connections": {
+    "HTTP Request": {
+      "main": [
+        [
+          {
+            "node": "Message a model",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Message a model": {
+      "main": [
+        [
+          {
+            "node": "Send Personalized emails",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get row(s) in sheet": {
+      "main": [
+        [
+          {
+            "node": "HTTP Request",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "When clicking \u2018Execute workflow\u2019": {
+      "main": [
+        [
+          {
+            "node": "Get row(s) in sheet",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "staticData": null,
+  "meta": null,
+  "pinData": {},
+  "versionId": "62c38e0e-a538-4df9-9fdf-62805d5be6b2",
+  "activeVersionId": null,
+  "triggerCount": 0,
+  "shared": [
+    {
+      "updatedAt": "2025-09-30T15:24:12.030Z",
+      "createdAt": "2025-09-30T15:24:12.030Z",
+      "role": "workflow:owner",
+      "workflowId": "m0fCjSJHh0yCrhJK",
+      "projectId": "DT8YjHwLZsQjJqVc"
+    }
+  ],
+  "activeVersion": null,
+  "tags": []
+}

@@ -1,0 +1,793 @@
+{
+  "updatedAt": "2025-11-20T11:09:03.000Z",
+  "createdAt": "2025-09-30T15:14:36.535Z",
+  "id": "wzPTd0RazDRwr5av",
+  "name": "Ai News Agent",
+  "active": true,
+  "isArchived": false,
+  "nodes": [
+    {
+      "parameters": {
+        "url": "=https://openai.com/news/rss.xml",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.rssFeedRead",
+      "typeVersion": 1.2,
+      "position": [
+        -272,
+        400
+      ],
+      "id": "68b4c3a2-39e8-40e0-b65f-6a96f8b75802",
+      "name": "RSS Read"
+    },
+    {
+      "parameters": {
+        "jsCode": "return [\n  { json: { feed: \"https://openai.com/news/rss.xml\" } },\n  { json: { feed: \"https://www.aiwire.net/rss-feeds/\" } },\n  { json: { feed: \"https://topbots.com/feed\" } },\n  { json: { feed: \"https://gritdaily.com/feed\" } },\n  { json: { feed: \"https://www.aitrends.com/feed\" } },\n  { json: { feed: \"https://feeds.transistor.fm/startup-therapy\" } },\n  { json: { feed: \"https://feeds.buzzsprout.com/1195988.rss\" } },\n  { json: { feed: \"https://feeds.buzzsprout.com/1889238.rss\" } },\n  { json: { feed: \"https://app.fusebox.fm/data/show/jkDQkMox95/feed\" } },\n  { json: { feed: \"http://steveblank.com/feed/\" } },\n  { json: { feed: \"https://andrewchen.co/feed/\" } },\n  { json: { feed: \"https://techcrunch.com/startups/feed/\" } }\n];"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -672,
+        256
+      ],
+      "id": "130cc215-4ceb-41e5-8e00-8c709bafce04",
+      "name": "RSS Feed"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "n8n-nodes-base.splitInBatches",
+      "typeVersion": 3,
+      "position": [
+        -464,
+        256
+      ],
+      "id": "ac84d3d4-a228-4511-a0cc-d862358ed856",
+      "name": "Loop Over Items"
+    },
+    {
+      "parameters": {
+        "maxItems": 10
+      },
+      "type": "n8n-nodes-base.limit",
+      "typeVersion": 1,
+      "position": [
+        0,
+        -64
+      ],
+      "id": "aeccef1e-eefa-450e-baf7-29105ce9ddcc",
+      "name": "Limit"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "7cbd4383-766d-4f92-b39c-f70a86d9e20d",
+              "leftValue": "={{ $json.pubDate && new Date($json.pubDate).toISOString() }}",
+              "rightValue": "={{ $now.minus({ days:2 }) }}",
+              "operator": {
+                "type": "dateTime",
+                "operation": "afterOrEquals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        -288,
+        32
+      ],
+      "id": "76e7c0b0-37f1-4500-9733-2e34288aef03",
+      "name": "If"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "={{ $json.content }}",
+        "options": {
+          "systemMessage": "=You are an expert AI Business News Summarizer. Your job is to read the given AI-related content and produce concise, *unique* business-impact summaries.  \n\n\ud83c\udfaf Objective:\nSummarize insights related to AI for business growth, SaaS scaling, automation, and productivity improvement.\n\n\ud83e\udde0 Instructions:\n1. Combine all insights into **one clear, structured response** with a summaries.  \n2. Each summary must be **different** \u2014 do not repeat or rephrase the same point.  \n3. Each summary should be **1\u20132 sentences**, actionable and professional.  \n4. Format strictly like this:\n\nSummary:\n\n- Executive summary style (for business leaders)\n- Crisp, insightful, and non-repetitive\n- Focused on AI\u2019s measurable business value (efficiency, revenue, decision-making, scalability)\n\n\ud83d\udeab Do NOT:\n- Repeat or paraphrase similar summaries.\n- Use generic phrases like \u201cAI improves efficiency\u201d more than once.\n- Create more than 5 summaries.\n\n\u2705 Output Example: (Do not add Summary wrod in output just keep one by one top 5 topics output)\nAI automates report generation, saving 70% analyst time.  \nPredictive AI boosts revenue by identifying churn risk early.  \nGenerative AI helps SaaS teams personalize customer outreach.  \nWorkflow AI reduces project turnaround by 40%.   Decision AI tools help founders prioritize high-ROI tasks."
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 2.2,
+      "position": [
+        320,
+        -64
+      ],
+      "id": "62697282-7ace-4560-ad06-35cd2dd86deb",
+      "name": "AI Agent"
+    },
+    {
+      "parameters": {},
+      "type": "@n8n/n8n-nodes-langchain.toolThink",
+      "typeVersion": 1.1,
+      "position": [
+        304,
+        240
+      ],
+      "id": "b06b2d05-8007-42b5-822f-7e068289951a",
+      "name": "Think"
+    },
+    {
+      "parameters": {
+        "sendTo": "aiwithdhruv@gmail.com",
+        "subject": "Ai Summarization",
+        "message": "=<!DOCTYPE html>\n<html>\n<head>\n  <meta charset=\"UTF-8\" />\n  <title>AI News Digest \u2014 Top 5</title>\n</head>\n<body style=\"margin:0;padding:20px;background-color:#000000;font-family:Arial, sans-serif;\">\n  <table width=\"100%\" cellspacing=\"0\" cellpadding=\"0\" border=\"0\" align=\"center\">\n    <tr>\n      <td align=\"center\">\n        <h1 style=\"color:#C0C0C0;font-size:22px;font-weight:bold;margin:0 0 20px 0;\">\n          \ud83d\ude80 <span style=\"color:#E5E4E2;\">AI News Digest</span> \u2014 Top 5\n        </h1>\n      </td>\n    </tr>\n\n    <!-- 1st output -->\n    <tr>\n      <td>\n        <table width=\"100%\" cellspacing=\"0\" cellpadding=\"15\" border=\"0\"\n               style=\"background-color:#353E43;border-radius:12px;margin-bottom:20px;\">\n          <tr>\n            <td align=\"center\" style=\"color:#E5E4E2;font-size:16px;font-weight:bold;\">1. Summary</td>\n          </tr>\n          <tr>\n            <td style=\"color:#C0C0C0;font-size:14px;line-height:1.6;\">\n              {{ $json.output[0] }}\n            </td>\n          </tr>\n        </table>\n      </td>\n    </tr>\n\n    <!-- 2nd output -->\n    <tr>\n      <td>\n        <table width=\"100%\" cellspacing=\"0\" cellpadding=\"15\" border=\"0\"\n               style=\"background-color:#353E43;border-radius:12px;margin-bottom:20px;\">\n          <tr>\n            <td align=\"center\" style=\"color:#E5E4E2;font-size:16px;font-weight:bold;\">2. Summary</td>\n          </tr>\n          <tr>\n            <td style=\"color:#C0C0C0;font-size:14px;line-height:1.6;\">\n              {{ $json.output[1] }}\n            </td>\n          </tr>\n        </table>\n      </td>\n    </tr>\n\n    <!-- 3rd output -->\n    <tr>\n      <td>\n        <table width=\"100%\" cellspacing=\"0\" cellpadding=\"15\" border=\"0\"\n               style=\"background-color:#353E43;border-radius:12px;margin-bottom:20px;\">\n          <tr>\n            <td align=\"center\" style=\"color:#E5E4E2;font-size:16px;font-weight:bold;\">3. Summary</td>\n          </tr>\n          <tr>\n            <td style=\"color:#C0C0C0;font-size:14px;line-height:1.6;\">\n              {{ $json.output[2] }}\n            </td>\n          </tr>\n        </table>\n      </td>\n    </tr>\n\n    <!-- 4th output -->\n    <tr>\n      <td>\n        <table width=\"100%\" cellspacing=\"0\" cellpadding=\"15\" border=\"0\"\n               style=\"background-color:#353E43;border-radius:12px;margin-bottom:20px;\">\n          <tr>\n            <td align=\"center\" style=\"color:#E5E4E2;font-size:16px;font-weight:bold;\">4. Summary</td>\n          </tr>\n          <tr>\n            <td style=\"color:#C0C0C0;font-size:14px;line-height:1.6;\">\n              {{ $json.output[3] }}\n            </td>\n          </tr>\n        </table>\n      </td>\n    </tr>\n\n    <!-- 5th output -->\n    <tr>\n      <td>\n        <table width=\"100%\" cellspacing=\"0\" cellpadding=\"15\" border=\"0\"\n               style=\"background-color:#353E43;border-radius:12px;margin-bottom:20px;\">\n          <tr>\n            <td align=\"center\" style=\"color:#E5E4E2;font-size:16px;font-weight:bold;\">5. Summary</td>\n          </tr>\n          <tr>\n            <td style=\"color:#C0C0C0;font-size:14px;line-height:1.6;\">\n              {{ $json.output[4] }}\n            </td>\n          </tr>\n        </table>\n      </td>\n    </tr>\n\n    <!-- Footer -->\n    <tr>\n      <td align=\"center\" style=\"padding-top:18px;\">\n        <div style=\"display:inline-block;text-align:center;padding:12px 18px;background:#12151a;border-radius:12px;border:1px solid #2b333a;\">\n          <div style=\"color:#e6eef6;font-weight:600;margin-bottom:6px;\">Thanks for reading the AI Brief</div>\n          <div style=\"color:#9ca3af;font-size:13px;margin-bottom:8px;\">\u2014 Dhruv</div>\n          <a href=\"https://www.linkedin.com/in/aiwithdhruv/\" style=\"text-decoration:none;color:#0ea5a4;font-weight:700;font-size:13px;\">Say hi on LinkedIn</a>\n        </div>\n      </td>\n    </tr>\n  </table>\n</body>\n</html>",
+        "options": {
+          "appendAttribution": false
+        }
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.1,
+      "position": [
+        928,
+        -64
+      ],
+      "id": "27cb57de-9eea-467f-8e23-beece411e595",
+      "name": "Send a message",
+      "webhookId": "c491c233-8c5c-4c28-bf3d-43724ea4c343",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "gPGYzjuIbblOf3E1",
+          "name": "Ai with Dhruv"
+        }
+      }
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.noOp",
+      "typeVersion": 1,
+      "position": [
+        672,
+        208
+      ],
+      "id": "e9a0b4f1-6609-4dac-bc91-181ac9a349fd",
+      "name": "No Operation, do nothing"
+    },
+    {
+      "parameters": {
+        "fieldsToAggregate": {
+          "fieldToAggregate": [
+            {
+              "fieldToAggregate": "output"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.aggregate",
+      "typeVersion": 1,
+      "position": [
+        720,
+        -64
+      ],
+      "id": "b625420d-b001-4c5c-97d8-bd5d5f584b82",
+      "name": "Aggregate"
+    },
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "triggerAtHour": 18
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.2,
+      "position": [
+        -864,
+        256
+      ],
+      "id": "96bd2437-be06-4a13-873d-dbb22950762b",
+      "name": "Schedule Trigger"
+    },
+    {
+      "parameters": {
+        "operation": "addLabels",
+        "messageId": "={{ $json.id }}",
+        "labelIds": [
+          "Label_2627534665079526872"
+        ]
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.1,
+      "position": [
+        1184,
+        -64
+      ],
+      "id": "00b61a7b-2e69-4aaf-96c0-15d446422fd9",
+      "name": "Add label to message",
+      "webhookId": "31ad295d-68a3-4985-8d21-543dd9564c78",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "gPGYzjuIbblOf3E1",
+          "name": "Ai with Dhruv"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatGoogleGemini",
+      "typeVersion": 1,
+      "position": [
+        96,
+        176
+      ],
+      "id": "8c689ead-81ae-4e66-8df2-395f3c5e6770",
+      "name": "2.5 Flash1",
+      "credentials": {
+        "googlePalmApi": {
+          "id": "1YAglGZ0F8CcWPRL",
+          "name": "Gemini"
+        }
+      }
+    }
+  ],
+  "connections": {
+    "RSS Feed": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Loop Over Items": {
+      "main": [
+        [
+          {
+            "node": "If",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "RSS Read",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "RSS Read": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Limit": {
+      "main": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If": {
+      "main": [
+        [
+          {
+            "node": "Limit",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Think": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "AI Agent": {
+      "main": [
+        [
+          {
+            "node": "Aggregate",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Send a message": {
+      "main": [
+        [
+          {
+            "node": "Add label to message",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Aggregate": {
+      "main": [
+        [
+          {
+            "node": "Send a message",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Schedule Trigger": {
+      "main": [
+        [
+          {
+            "node": "RSS Feed",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Add label to message": {
+      "main": [
+        [
+          {
+            "node": "No Operation, do nothing",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "2.5 Flash1": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "staticData": {
+    "node:Schedule Trigger": {
+      "recurrenceRules": []
+    }
+  },
+  "meta": {
+    "templateCredsSetupCompleted": true
+  },
+  "pinData": {},
+  "versionId": "256d2522-3abc-4d4b-9201-53cf03f1e078",
+  "activeVersionId": "256d2522-3abc-4d4b-9201-53cf03f1e078",
+  "triggerCount": 1,
+  "shared": [
+    {
+      "updatedAt": "2025-09-30T15:14:36.543Z",
+      "createdAt": "2025-09-30T15:14:36.543Z",
+      "role": "workflow:owner",
+      "workflowId": "wzPTd0RazDRwr5av",
+      "projectId": "DT8YjHwLZsQjJqVc"
+    }
+  ],
+  "activeVersion": {
+    "updatedAt": "2025-11-26T13:26:54.442Z",
+    "createdAt": "2025-11-26T13:26:54.442Z",
+    "versionId": "256d2522-3abc-4d4b-9201-53cf03f1e078",
+    "workflowId": "wzPTd0RazDRwr5av",
+    "nodes": [
+      {
+        "parameters": {
+          "url": "=https://openai.com/news/rss.xml",
+          "options": {}
+        },
+        "type": "n8n-nodes-base.rssFeedRead",
+        "typeVersion": 1.2,
+        "position": [
+          -272,
+          400
+        ],
+        "id": "68b4c3a2-39e8-40e0-b65f-6a96f8b75802",
+        "name": "RSS Read"
+      },
+      {
+        "parameters": {
+          "jsCode": "return [\n  { json: { feed: \"https://openai.com/news/rss.xml\" } },\n  { json: { feed: \"https://www.aiwire.net/rss-feeds/\" } },\n  { json: { feed: \"https://topbots.com/feed\" } },\n  { json: { feed: \"https://gritdaily.com/feed\" } },\n  { json: { feed: \"https://www.aitrends.com/feed\" } },\n  { json: { feed: \"https://feeds.transistor.fm/startup-therapy\" } },\n  { json: { feed: \"https://feeds.buzzsprout.com/1195988.rss\" } },\n  { json: { feed: \"https://feeds.buzzsprout.com/1889238.rss\" } },\n  { json: { feed: \"https://app.fusebox.fm/data/show/jkDQkMox95/feed\" } },\n  { json: { feed: \"http://steveblank.com/feed/\" } },\n  { json: { feed: \"https://andrewchen.co/feed/\" } },\n  { json: { feed: \"https://techcrunch.com/startups/feed/\" } }\n];"
+        },
+        "type": "n8n-nodes-base.code",
+        "typeVersion": 2,
+        "position": [
+          -672,
+          256
+        ],
+        "id": "130cc215-4ceb-41e5-8e00-8c709bafce04",
+        "name": "RSS Feed"
+      },
+      {
+        "parameters": {
+          "options": {}
+        },
+        "type": "n8n-nodes-base.splitInBatches",
+        "typeVersion": 3,
+        "position": [
+          -464,
+          256
+        ],
+        "id": "ac84d3d4-a228-4511-a0cc-d862358ed856",
+        "name": "Loop Over Items"
+      },
+      {
+        "parameters": {
+          "maxItems": 10
+        },
+        "type": "n8n-nodes-base.limit",
+        "typeVersion": 1,
+        "position": [
+          0,
+          -64
+        ],
+        "id": "aeccef1e-eefa-450e-baf7-29105ce9ddcc",
+        "name": "Limit"
+      },
+      {
+        "parameters": {
+          "conditions": {
+            "options": {
+              "caseSensitive": true,
+              "leftValue": "",
+              "typeValidation": "strict",
+              "version": 2
+            },
+            "conditions": [
+              {
+                "id": "7cbd4383-766d-4f92-b39c-f70a86d9e20d",
+                "leftValue": "={{ $json.pubDate && new Date($json.pubDate).toISOString() }}",
+                "rightValue": "={{ $now.minus({ days:2 }) }}",
+                "operator": {
+                  "type": "dateTime",
+                  "operation": "afterOrEquals"
+                }
+              }
+            ],
+            "combinator": "and"
+          },
+          "options": {}
+        },
+        "type": "n8n-nodes-base.if",
+        "typeVersion": 2.2,
+        "position": [
+          -288,
+          32
+        ],
+        "id": "76e7c0b0-37f1-4500-9733-2e34288aef03",
+        "name": "If"
+      },
+      {
+        "parameters": {
+          "promptType": "define",
+          "text": "={{ $json.content }}",
+          "options": {
+            "systemMessage": "=You are an expert AI Business News Summarizer. Your job is to read the given AI-related content and produce concise, *unique* business-impact summaries.  \n\n\ud83c\udfaf Objective:\nSummarize insights related to AI for business growth, SaaS scaling, automation, and productivity improvement.\n\n\ud83e\udde0 Instructions:\n1. Combine all insights into **one clear, structured response** with a summaries.  \n2. Each summary must be **different** \u2014 do not repeat or rephrase the same point.  \n3. Each summary should be **1\u20132 sentences**, actionable and professional.  \n4. Format strictly like this:\n\nSummary:\n\n- Executive summary style (for business leaders)\n- Crisp, insightful, and non-repetitive\n- Focused on AI\u2019s measurable business value (efficiency, revenue, decision-making, scalability)\n\n\ud83d\udeab Do NOT:\n- Repeat or paraphrase similar summaries.\n- Use generic phrases like \u201cAI improves efficiency\u201d more than once.\n- Create more than 5 summaries.\n\n\u2705 Output Example: (Do not add Summary wrod in output just keep one by one top 5 topics output)\nAI automates report generation, saving 70% analyst time.  \nPredictive AI boosts revenue by identifying churn risk early.  \nGenerative AI helps SaaS teams personalize customer outreach.  \nWorkflow AI reduces project turnaround by 40%.   Decision AI tools help founders prioritize high-ROI tasks."
+          }
+        },
+        "type": "@n8n/n8n-nodes-langchain.agent",
+        "typeVersion": 2.2,
+        "position": [
+          320,
+          -64
+        ],
+        "id": "62697282-7ace-4560-ad06-35cd2dd86deb",
+        "name": "AI Agent"
+      },
+      {
+        "parameters": {},
+        "type": "@n8n/n8n-nodes-langchain.toolThink",
+        "typeVersion": 1.1,
+        "position": [
+          304,
+          240
+        ],
+        "id": "b06b2d05-8007-42b5-822f-7e068289951a",
+        "name": "Think"
+      },
+      {
+        "parameters": {
+          "sendTo": "aiwithdhruv@gmail.com",
+          "subject": "Ai Summarization",
+          "message": "=<!DOCTYPE html>\n<html>\n<head>\n  <meta charset=\"UTF-8\" />\n  <title>AI News Digest \u2014 Top 5</title>\n</head>\n<body style=\"margin:0;padding:20px;background-color:#000000;font-family:Arial, sans-serif;\">\n  <table width=\"100%\" cellspacing=\"0\" cellpadding=\"0\" border=\"0\" align=\"center\">\n    <tr>\n      <td align=\"center\">\n        <h1 style=\"color:#C0C0C0;font-size:22px;font-weight:bold;margin:0 0 20px 0;\">\n          \ud83d\ude80 <span style=\"color:#E5E4E2;\">AI News Digest</span> \u2014 Top 5\n        </h1>\n      </td>\n    </tr>\n\n    <!-- 1st output -->\n    <tr>\n      <td>\n        <table width=\"100%\" cellspacing=\"0\" cellpadding=\"15\" border=\"0\"\n               style=\"background-color:#353E43;border-radius:12px;margin-bottom:20px;\">\n          <tr>\n            <td align=\"center\" style=\"color:#E5E4E2;font-size:16px;font-weight:bold;\">1. Summary</td>\n          </tr>\n          <tr>\n            <td style=\"color:#C0C0C0;font-size:14px;line-height:1.6;\">\n              {{ $json.output[0] }}\n            </td>\n          </tr>\n        </table>\n      </td>\n    </tr>\n\n    <!-- 2nd output -->\n    <tr>\n      <td>\n        <table width=\"100%\" cellspacing=\"0\" cellpadding=\"15\" border=\"0\"\n               style=\"background-color:#353E43;border-radius:12px;margin-bottom:20px;\">\n          <tr>\n            <td align=\"center\" style=\"color:#E5E4E2;font-size:16px;font-weight:bold;\">2. Summary</td>\n          </tr>\n          <tr>\n            <td style=\"color:#C0C0C0;font-size:14px;line-height:1.6;\">\n              {{ $json.output[1] }}\n            </td>\n          </tr>\n        </table>\n      </td>\n    </tr>\n\n    <!-- 3rd output -->\n    <tr>\n      <td>\n        <table width=\"100%\" cellspacing=\"0\" cellpadding=\"15\" border=\"0\"\n               style=\"background-color:#353E43;border-radius:12px;margin-bottom:20px;\">\n          <tr>\n            <td align=\"center\" style=\"color:#E5E4E2;font-size:16px;font-weight:bold;\">3. Summary</td>\n          </tr>\n          <tr>\n            <td style=\"color:#C0C0C0;font-size:14px;line-height:1.6;\">\n              {{ $json.output[2] }}\n            </td>\n          </tr>\n        </table>\n      </td>\n    </tr>\n\n    <!-- 4th output -->\n    <tr>\n      <td>\n        <table width=\"100%\" cellspacing=\"0\" cellpadding=\"15\" border=\"0\"\n               style=\"background-color:#353E43;border-radius:12px;margin-bottom:20px;\">\n          <tr>\n            <td align=\"center\" style=\"color:#E5E4E2;font-size:16px;font-weight:bold;\">4. Summary</td>\n          </tr>\n          <tr>\n            <td style=\"color:#C0C0C0;font-size:14px;line-height:1.6;\">\n              {{ $json.output[3] }}\n            </td>\n          </tr>\n        </table>\n      </td>\n    </tr>\n\n    <!-- 5th output -->\n    <tr>\n      <td>\n        <table width=\"100%\" cellspacing=\"0\" cellpadding=\"15\" border=\"0\"\n               style=\"background-color:#353E43;border-radius:12px;margin-bottom:20px;\">\n          <tr>\n            <td align=\"center\" style=\"color:#E5E4E2;font-size:16px;font-weight:bold;\">5. Summary</td>\n          </tr>\n          <tr>\n            <td style=\"color:#C0C0C0;font-size:14px;line-height:1.6;\">\n              {{ $json.output[4] }}\n            </td>\n          </tr>\n        </table>\n      </td>\n    </tr>\n\n    <!-- Footer -->\n    <tr>\n      <td align=\"center\" style=\"padding-top:18px;\">\n        <div style=\"display:inline-block;text-align:center;padding:12px 18px;background:#12151a;border-radius:12px;border:1px solid #2b333a;\">\n          <div style=\"color:#e6eef6;font-weight:600;margin-bottom:6px;\">Thanks for reading the AI Brief</div>\n          <div style=\"color:#9ca3af;font-size:13px;margin-bottom:8px;\">\u2014 Dhruv</div>\n          <a href=\"https://www.linkedin.com/in/aiwithdhruv/\" style=\"text-decoration:none;color:#0ea5a4;font-weight:700;font-size:13px;\">Say hi on LinkedIn</a>\n        </div>\n      </td>\n    </tr>\n  </table>\n</body>\n</html>",
+          "options": {
+            "appendAttribution": false
+          }
+        },
+        "type": "n8n-nodes-base.gmail",
+        "typeVersion": 2.1,
+        "position": [
+          928,
+          -64
+        ],
+        "id": "27cb57de-9eea-467f-8e23-beece411e595",
+        "name": "Send a message",
+        "webhookId": "c491c233-8c5c-4c28-bf3d-43724ea4c343",
+        "credentials": {
+          "gmailOAuth2": {
+            "id": "gPGYzjuIbblOf3E1",
+            "name": "Ai with Dhruv"
+          }
+        }
+      },
+      {
+        "parameters": {},
+        "type": "n8n-nodes-base.noOp",
+        "typeVersion": 1,
+        "position": [
+          672,
+          208
+        ],
+        "id": "e9a0b4f1-6609-4dac-bc91-181ac9a349fd",
+        "name": "No Operation, do nothing"
+      },
+      {
+        "parameters": {
+          "fieldsToAggregate": {
+            "fieldToAggregate": [
+              {
+                "fieldToAggregate": "output"
+              }
+            ]
+          },
+          "options": {}
+        },
+        "type": "n8n-nodes-base.aggregate",
+        "typeVersion": 1,
+        "position": [
+          720,
+          -64
+        ],
+        "id": "b625420d-b001-4c5c-97d8-bd5d5f584b82",
+        "name": "Aggregate"
+      },
+      {
+        "parameters": {
+          "rule": {
+            "interval": [
+              {
+                "triggerAtHour": 18
+              }
+            ]
+          }
+        },
+        "type": "n8n-nodes-base.scheduleTrigger",
+        "typeVersion": 1.2,
+        "position": [
+          -864,
+          256
+        ],
+        "id": "96bd2437-be06-4a13-873d-dbb22950762b",
+        "name": "Schedule Trigger"
+      },
+      {
+        "parameters": {
+          "operation": "addLabels",
+          "messageId": "={{ $json.id }}",
+          "labelIds": [
+            "Label_2627534665079526872"
+          ]
+        },
+        "type": "n8n-nodes-base.gmail",
+        "typeVersion": 2.1,
+        "position": [
+          1184,
+          -64
+        ],
+        "id": "00b61a7b-2e69-4aaf-96c0-15d446422fd9",
+        "name": "Add label to message",
+        "webhookId": "31ad295d-68a3-4985-8d21-543dd9564c78",
+        "credentials": {
+          "gmailOAuth2": {
+            "id": "gPGYzjuIbblOf3E1",
+            "name": "Ai with Dhruv"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "options": {}
+        },
+        "type": "@n8n/n8n-nodes-langchain.lmChatGoogleGemini",
+        "typeVersion": 1,
+        "position": [
+          96,
+          176
+        ],
+        "id": "8c689ead-81ae-4e66-8df2-395f3c5e6770",
+        "name": "2.5 Flash1",
+        "credentials": {
+          "googlePalmApi": {
+            "id": "1YAglGZ0F8CcWPRL",
+            "name": "Gemini"
+          }
+        }
+      }
+    ],
+    "connections": {
+      "RSS Feed": {
+        "main": [
+          [
+            {
+              "node": "Loop Over Items",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Loop Over Items": {
+        "main": [
+          [
+            {
+              "node": "If",
+              "type": "main",
+              "index": 0
+            }
+          ],
+          [
+            {
+              "node": "RSS Read",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "RSS Read": {
+        "main": [
+          [
+            {
+              "node": "Loop Over Items",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Limit": {
+        "main": [
+          [
+            {
+              "node": "AI Agent",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "If": {
+        "main": [
+          [
+            {
+              "node": "Limit",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Think": {
+        "ai_tool": [
+          [
+            {
+              "node": "AI Agent",
+              "type": "ai_tool",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "AI Agent": {
+        "main": [
+          [
+            {
+              "node": "Aggregate",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Send a message": {
+        "main": [
+          [
+            {
+              "node": "Add label to message",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Aggregate": {
+        "main": [
+          [
+            {
+              "node": "Send a message",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Schedule Trigger": {
+        "main": [
+          [
+            {
+              "node": "RSS Feed",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Add label to message": {
+        "main": [
+          [
+            {
+              "node": "No Operation, do nothing",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "2.5 Flash1": {
+        "ai_languageModel": [
+          [
+            {
+              "node": "AI Agent",
+              "type": "ai_languageModel",
+              "index": 0
+            }
+          ]
+        ]
+      }
+    },
+    "authors": "system migration",
+    "name": null,
+    "description": null,
+    "autosaved": false
+  },
+  "tags": []
+}

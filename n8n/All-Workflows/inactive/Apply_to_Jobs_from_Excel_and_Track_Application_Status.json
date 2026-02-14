@@ -1,0 +1,712 @@
+{
+  "updatedAt": "2025-10-08T19:46:48.000Z",
+  "createdAt": "2025-10-08T19:46:48.508Z",
+  "id": "jcciou858Ihl5hgm",
+  "name": "Apply to Jobs from Excel and Track Application Status",
+  "active": false,
+  "isArchived": false,
+  "nodes": [
+    {
+      "parameters": {
+        "content": "## \ud83c\udfaf Job Application Automation System\n\n**What it does:**\n- Reads job listings from Google Sheets\n- Automatically applies to jobs with personalized cover letters\n- Tracks application status every 2 days\n- Sends email notifications for updates\n- Maintains complete application history\n\n**Who's it for:**\n- Job seekers wanting to automate repetitive applications\n- Recruiters managing bulk applications\n- Career coaches tracking client progress\n\n**Requirements:**\n- Google Sheets with job data\n- Gmail account for notifications\n- Resume stored online (Google Drive recommended)\n- Job platform API access (LinkedIn, Indeed)\n\n**Setup Instructions:**\n1. Create Google Sheet with required columns\n2. Configure your spreadsheet ID in 'Configuration' node\n3. Set up Google Sheets and Gmail credentials\n4. Update email addresses in notification nodes\n5. Test with 1-2 jobs before full automation\n\n**\u26a0\ufe0f Important:** Replace mock HTTP requests with actual job platform APIs. Current implementation is for demonstration purposes.",
+        "height": 464,
+        "width": 389,
+        "color": 4
+      },
+      "id": "cb6c5ed2-7040-449e-9877-7ff353aad55e",
+      "name": "\ud83d\udccb Template Overview",
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        -240,
+        112
+      ],
+      "typeVersion": 1
+    },
+    {
+      "parameters": {
+        "content": "## \ud83d\udcca Excel Sheet Structure\n\nRequired columns:\n- Job_ID: Unique identifier\n- Company: Company name\n- Position: Job title\n- Status: Not Applied, Applied, etc.\n- Applied_Date: Application date\n- Last_Checked: Last status check\n- Application_ID: Platform reference\n- Notes: Additional info\n- Job_URL: Direct job link\n- Priority: High, Medium, Low",
+        "height": 284,
+        "width": 295,
+        "color": 7
+      },
+      "id": "dfbcd65a-4fd1-4539-8a28-4b3ac8d8dc9b",
+      "name": "\ud83d\udcca Sheet Structure",
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        208,
+        112
+      ],
+      "typeVersion": 1
+    },
+    {
+      "parameters": {
+        "content": "## \ud83d\udd27 Configuration Setup\n\n1. Replace 'YOUR_GOOGLE_SHEET_ID' with actual ID\n2. Add your resume URL (Google Drive link)\n3. Customize cover letter template\n4. Update email addresses\n\n**Security Note:** Never hardcode API keys!\nUse n8n's credential store for all auth.",
+        "height": 224,
+        "width": 295,
+        "color": 6
+      },
+      "id": "9074ca84-d86d-44c1-9d15-02f3a6ba3d2e",
+      "name": "\u2699\ufe0f Setup Notes",
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        560,
+        112
+      ],
+      "typeVersion": 1
+    },
+    {
+      "parameters": {},
+      "id": "6d07d25d-740c-4bfd-9434-d26f7bf95526",
+      "name": "\ud83d\udd58 Daily Application Trigger",
+      "type": "n8n-nodes-base.cron",
+      "position": [
+        -384,
+        432
+      ],
+      "typeVersion": 1
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "id": "8d1322e4-4c92-4f64-bb25-c8eb47850fcf",
+      "name": "\u2699\ufe0f Configuration",
+      "type": "n8n-nodes-base.set",
+      "position": [
+        -160,
+        432
+      ],
+      "typeVersion": 3
+    },
+    {
+      "parameters": {
+        "documentId": "={{ $json.spreadsheetId }}",
+        "sheetName": "Jobs",
+        "options": {}
+      },
+      "id": "f82071fe-6e7e-418a-a622-df410806d1e6",
+      "name": "\ud83d\udcd6 Read Jobs Sheet",
+      "type": "n8n-nodes-base.googleSheets",
+      "position": [
+        64,
+        432
+      ],
+      "typeVersion": 4
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "leftValue": "",
+            "caseSensitive": true,
+            "typeValidation": "strict"
+          },
+          "combinator": "and",
+          "conditions": [
+            {
+              "id": "not-applied",
+              "operator": {
+                "type": "string",
+                "operation": "equals"
+              },
+              "leftValue": "={{ $json.Status }}",
+              "rightValue": "Not Applied"
+            },
+            {
+              "id": "has-url",
+              "operator": {
+                "type": "string",
+                "operation": "isNotEmpty"
+              },
+              "leftValue": "={{ $json.Job_URL }}",
+              "rightValue": ""
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "0669168b-f2fe-448a-95f2-f97109d105af",
+      "name": "\ud83c\udfaf Filter Pending Applications",
+      "type": "n8n-nodes-base.filter",
+      "position": [
+        288,
+        432
+      ],
+      "typeVersion": 2
+    },
+    {
+      "parameters": {
+        "options": {
+          "reset": false
+        }
+      },
+      "id": "4df806cd-fa3a-4bbd-9da7-12a071d10fa6",
+      "name": "\ud83d\udd04 Process Jobs One by One",
+      "type": "n8n-nodes-base.splitInBatches",
+      "position": [
+        512,
+        432
+      ],
+      "typeVersion": 3
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "id": "e869f63f-613b-4b40-a3a0-26d06c960173",
+      "name": "\ud83d\udcdd Prepare Application Data",
+      "type": "n8n-nodes-base.set",
+      "position": [
+        720,
+        432
+      ],
+      "typeVersion": 3
+    },
+    {
+      "parameters": {
+        "rules": {
+          "values": [
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict"
+                },
+                "conditions": [
+                  {
+                    "leftValue": "",
+                    "rightValue": "",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              }
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "b322e78c-ddeb-4f93-b29a-61809fca8cca",
+      "name": "\ud83d\udd00 Route by Platform",
+      "type": "n8n-nodes-base.switch",
+      "position": [
+        944,
+        432
+      ],
+      "typeVersion": 3
+    },
+    {
+      "parameters": {
+        "url": "https://api.linkedin.com/v2/jobs/applications",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "linkedInOAuth2Api",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            }
+          ]
+        },
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "jobId",
+              "value": "={{ $json.Job_ID }}"
+            },
+            {
+              "name": "coverLetter",
+              "value": "={{ $json.personalizedCoverLetter }}"
+            },
+            {
+              "name": "resumeUrl",
+              "value": "={{ $json.resumeUrl }}"
+            }
+          ]
+        },
+        "options": {
+          "timeout": 30000
+        }
+      },
+      "id": "76407471-b3dc-4735-9f8b-0ba87d8c9a42",
+      "name": "\ud83d\udcbc Apply via LinkedIn",
+      "type": "n8n-nodes-base.httpRequest",
+      "position": [
+        1168,
+        336
+      ],
+      "typeVersion": 4
+    },
+    {
+      "parameters": {
+        "url": "https://api.indeed.com/ads/applications",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "indeedApi",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            }
+          ]
+        },
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "jobkey",
+              "value": "={{ $json.Job_ID }}"
+            },
+            {
+              "name": "message",
+              "value": "={{ $json.personalizedCoverLetter }}"
+            }
+          ]
+        },
+        "options": {
+          "timeout": 30000
+        }
+      },
+      "id": "4948e67e-345e-4175-89f0-c1db2a7be910",
+      "name": "\ud83d\udd0d Apply via Indeed",
+      "type": "n8n-nodes-base.httpRequest",
+      "position": [
+        1168,
+        544
+      ],
+      "typeVersion": 4
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "id": "be245771-0b11-4d24-b317-8c4bd6bb57e7",
+      "name": "\ud83d\udcca Process Application Result",
+      "type": "n8n-nodes-base.set",
+      "position": [
+        1392,
+        432
+      ],
+      "typeVersion": 3
+    },
+    {
+      "parameters": {
+        "documentId": "={{ $('Configuration').first().json.spreadsheetId }}",
+        "sheetName": "Jobs",
+        "options": {}
+      },
+      "id": "2f099e1c-5ac2-42d5-b2ee-c09b43cded52",
+      "name": "\ud83d\udcdd Update Job Status",
+      "type": "n8n-nodes-base.googleSheets",
+      "position": [
+        1600,
+        432
+      ],
+      "typeVersion": 4
+    },
+    {
+      "parameters": {
+        "operation": "sendEmail"
+      },
+      "id": "9f2c8123-0329-4c52-8971-49a7b13db76f",
+      "name": "\ud83d\udce7 Send Application Notification",
+      "type": "n8n-nodes-base.gmail",
+      "position": [
+        1824,
+        432
+      ],
+      "typeVersion": 2,
+      "webhookId": "758a5f72-d425-47cf-8d67-4291ea944194"
+    },
+    {
+      "parameters": {
+        "content": "## \ud83d\udcc8 Status Tracking Workflow\n\nThis section runs every 2 days to:\n- Check status of applied jobs\n- Update the spreadsheet\n- Send notifications for changes\n\n**Note:** Replace mock status checks with actual API calls to job platforms for real status updates.",
+        "height": 204,
+        "width": 329,
+        "color": 7
+      },
+      "id": "96a393bf-01c2-401e-9fd5-f2c80e83dcf1",
+      "name": "\ud83d\udcca Status Tracking Info",
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        -240,
+        704
+      ],
+      "typeVersion": 1
+    },
+    {
+      "parameters": {},
+      "id": "8066c883-64a7-46e4-b0a5-ff4a01a7187d",
+      "name": "\ud83d\udd50 Status Check Trigger",
+      "type": "n8n-nodes-base.cron",
+      "position": [
+        -384,
+        944
+      ],
+      "typeVersion": 1
+    },
+    {
+      "parameters": {
+        "documentId": "={{ $('Configuration').first().json.spreadsheetId }}",
+        "sheetName": "Jobs",
+        "options": {}
+      },
+      "id": "8a2964b9-3d09-4641-9969-c564b16d83f1",
+      "name": "\ud83d\udcd6 Read Applied Jobs",
+      "type": "n8n-nodes-base.googleSheets",
+      "position": [
+        -160,
+        944
+      ],
+      "typeVersion": 4
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "leftValue": "",
+            "caseSensitive": true,
+            "typeValidation": "strict"
+          },
+          "combinator": "and",
+          "conditions": [
+            {
+              "id": "applied-filter",
+              "operator": {
+                "type": "string",
+                "operation": "equals"
+              },
+              "leftValue": "={{ $json.Status }}",
+              "rightValue": "Applied"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "cbf0412d-529c-4ed5-b580-042202e21204",
+      "name": "\ud83c\udfaf Filter Applied Jobs",
+      "type": "n8n-nodes-base.filter",
+      "position": [
+        64,
+        944
+      ],
+      "typeVersion": 2
+    },
+    {
+      "parameters": {
+        "options": {
+          "reset": false
+        }
+      },
+      "id": "c8fce397-a7fe-4770-910e-494a1b0956be",
+      "name": "\ud83d\udd04 Check Status One by One",
+      "type": "n8n-nodes-base.splitInBatches",
+      "position": [
+        288,
+        944
+      ],
+      "typeVersion": 3
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "id": "19715b75-792a-4fd3-8bf2-f697db17c1bc",
+      "name": "\ud83d\udd0d Mock Status Check",
+      "type": "n8n-nodes-base.set",
+      "position": [
+        512,
+        944
+      ],
+      "typeVersion": 3
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "leftValue": "",
+            "caseSensitive": true,
+            "typeValidation": "strict"
+          },
+          "combinator": "and",
+          "conditions": [
+            {
+              "id": "status-changed",
+              "operator": {
+                "type": "string",
+                "operation": "notEquals"
+              },
+              "leftValue": "={{ $json.Status }}",
+              "rightValue": "={{ $json.newStatus }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "ac5e2dd6-b1cd-4441-8ec0-a7c7be421e43",
+      "name": "\ud83d\udd04 Check if Status Changed",
+      "type": "n8n-nodes-base.if",
+      "position": [
+        720,
+        944
+      ],
+      "typeVersion": 2
+    },
+    {
+      "parameters": {
+        "documentId": "={{ $('Configuration').first().json.spreadsheetId }}",
+        "sheetName": "Jobs",
+        "options": {}
+      },
+      "id": "b0c01e8e-f461-4612-ba1f-4874d9922821",
+      "name": "\ud83d\udcdd Update Changed Status",
+      "type": "n8n-nodes-base.googleSheets",
+      "position": [
+        944,
+        944
+      ],
+      "typeVersion": 4
+    },
+    {
+      "parameters": {
+        "operation": "sendEmail"
+      },
+      "id": "cf50d15b-95ae-4fd9-a60c-0fcd47e5920c",
+      "name": "\ud83d\udce7 Send Status Update",
+      "type": "n8n-nodes-base.gmail",
+      "position": [
+        1168,
+        944
+      ],
+      "typeVersion": 2,
+      "webhookId": "86391e03-7b67-4a13-ab15-baf6d3a3997c"
+    }
+  ],
+  "connections": {
+    "\u2699\ufe0f Configuration": {
+      "main": [
+        [
+          {
+            "node": "\ud83d\udcd6 Read Jobs Sheet",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "\ud83d\udcd6 Read Jobs Sheet": {
+      "main": [
+        [
+          {
+            "node": "\ud83c\udfaf Filter Pending Applications",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "\ud83d\udd0d Apply via Indeed": {
+      "main": [
+        [
+          {
+            "node": "\ud83d\udcca Process Application Result",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "\ud83d\udcd6 Read Applied Jobs": {
+      "main": [
+        [
+          {
+            "node": "\ud83c\udfaf Filter Applied Jobs",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "\ud83d\udcdd Update Job Status": {
+      "main": [
+        [
+          {
+            "node": "\ud83d\udce7 Send Application Notification",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "\ud83d\udd00 Route by Platform": {
+      "main": [
+        [
+          {
+            "node": "\ud83d\udcbc Apply via LinkedIn",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "\ud83d\udd0d Mock Status Check": {
+      "main": [
+        [
+          {
+            "node": "\ud83d\udd04 Check if Status Changed",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "\ud83d\udcbc Apply via LinkedIn": {
+      "main": [
+        [
+          {
+            "node": "\ud83d\udcca Process Application Result",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "\ud83c\udfaf Filter Applied Jobs": {
+      "main": [
+        [
+          {
+            "node": "\ud83d\udd04 Check Status One by One",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "\ud83d\udd50 Status Check Trigger": {
+      "main": [
+        [
+          {
+            "node": "\ud83d\udcd6 Read Applied Jobs",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "\ud83d\udcdd Update Changed Status": {
+      "main": [
+        [
+          {
+            "node": "\ud83d\udce7 Send Status Update",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "\ud83d\udd04 Check Status One by One": {
+      "main": [
+        [
+          {
+            "node": "\ud83d\udd0d Mock Status Check",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "\ud83d\udd04 Check if Status Changed": {
+      "main": [
+        [
+          {
+            "node": "\ud83d\udcdd Update Changed Status",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "\ud83d\udd04 Process Jobs One by One": {
+      "main": [
+        [
+          {
+            "node": "\ud83d\udcdd Prepare Application Data",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "\ud83d\udcdd Prepare Application Data": {
+      "main": [
+        [
+          {
+            "node": "\ud83d\udd00 Route by Platform",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "\ud83d\udd58 Daily Application Trigger": {
+      "main": [
+        [
+          {
+            "node": "\u2699\ufe0f Configuration",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "\ud83d\udcca Process Application Result": {
+      "main": [
+        [
+          {
+            "node": "\ud83d\udcdd Update Job Status",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "\ud83c\udfaf Filter Pending Applications": {
+      "main": [
+        [
+          {
+            "node": "\ud83d\udd04 Process Jobs One by One",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "staticData": null,
+  "meta": null,
+  "pinData": {},
+  "versionId": "3d624ec1-c6b8-4032-bfab-48e5a13b3072",
+  "activeVersionId": null,
+  "triggerCount": 0,
+  "shared": [
+    {
+      "updatedAt": "2025-10-08T19:46:48.512Z",
+      "createdAt": "2025-10-08T19:46:48.512Z",
+      "role": "workflow:owner",
+      "workflowId": "jcciou858Ihl5hgm",
+      "projectId": "DT8YjHwLZsQjJqVc"
+    }
+  ],
+  "activeVersion": null,
+  "tags": []
+}

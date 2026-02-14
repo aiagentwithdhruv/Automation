@@ -1,0 +1,31 @@
+{
+  "updatedAt": "2026-02-02T23:04:43.151Z",
+  "createdAt": "2026-02-02T23:04:41.282Z",
+  "id": "2c2p_nlhAYcLl-OmqTxw4",
+  "name": "Daily AI News Digest",
+  "active": false,
+  "isArchived": false,
+  "nodes": [],
+  "connections": {},
+  "settings": {
+    "executionOrder": "v1",
+    "availableInMCP": false
+  },
+  "staticData": null,
+  "meta": null,
+  "pinData": {},
+  "versionId": "f70e2b4c-78cb-4e67-b7c2-5689f0c29e59",
+  "activeVersionId": null,
+  "triggerCount": 0,
+  "shared": [
+    {
+      "updatedAt": "2026-02-02T23:04:41.285Z",
+      "createdAt": "2026-02-02T23:04:41.285Z",
+      "role": "workflow:owner",
+      "workflowId": "2c2p_nlhAYcLl-OmqTxw4",
+      "projectId": "DT8YjHwLZsQjJqVc"
+    }
+  ],
+  "activeVersion": null,
+  "tags": []
+}

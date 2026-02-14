@@ -1,0 +1,1612 @@
+{
+  "updatedAt": "2026-02-04T19:23:20.983Z",
+  "createdAt": "2026-02-04T15:11:34.316Z",
+  "id": "8NUrulEZz6sWOt4N",
+  "name": "Social Media Automation 2.0",
+  "active": false,
+  "isArchived": false,
+  "nodes": [
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "triggerAtHour": 8
+            }
+          ]
+        }
+      },
+      "id": "903a8461-cce1-4343-be2e-909bc0c17730",
+      "name": "Daily RSS Research (8 AM)",
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.3,
+      "position": [
+        -16,
+        528
+      ]
+    },
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "social-media-topic",
+        "responseMode": "lastNode",
+        "options": {}
+      },
+      "id": "c42a7f09-1f63-4c96-a499-897ffb500067",
+      "name": "Manual Topic Input (Webhook)",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2.1,
+      "position": [
+        -16,
+        928
+      ],
+      "webhookId": "e9c4eb0b-aa67-4e3a-8428-1a1295d94d96"
+    },
+    {
+      "parameters": {},
+      "id": "484a5119-161d-4b75-9139-a95bba6edce2",
+      "name": "Manual Test Trigger",
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [
+        -16,
+        1328
+      ]
+    },
+    {
+      "parameters": {
+        "url": "https://techcrunch.com/category/artificial-intelligence/feed/",
+        "options": {}
+      },
+      "id": "5a322782-85a1-4bce-b505-839b1dc0c2b3",
+      "name": "RSS - TechCrunch AI",
+      "type": "n8n-nodes-base.rssFeedRead",
+      "typeVersion": 1.2,
+      "position": [
+        384,
+        320
+      ]
+    },
+    {
+      "parameters": {
+        "url": "https://www.artificialintelligence-news.com/feed/",
+        "options": {}
+      },
+      "id": "106dbf94-7ca0-44f8-84c5-36d7e52ae9a2",
+      "name": "RSS - AI News",
+      "type": "n8n-nodes-base.rssFeedRead",
+      "typeVersion": 1.2,
+      "position": [
+        384,
+        528
+      ]
+    },
+    {
+      "parameters": {
+        "url": "https://venturebeat.com/category/ai/feed/",
+        "options": {}
+      },
+      "id": "ad82520e-6c2d-4489-91fd-9485ca21c824",
+      "name": "RSS - VentureBeat AI",
+      "type": "n8n-nodes-base.rssFeedRead",
+      "typeVersion": 1.2,
+      "position": [
+        384,
+        720
+      ]
+    },
+    {
+      "parameters": {
+        "url": "https://news.google.com/rss/search?q=AI+automation+workflow",
+        "options": {}
+      },
+      "id": "617cf35f-7cc5-48ea-8268-9a0734f3f6ff",
+      "name": "RSS - Google AI",
+      "type": "n8n-nodes-base.rssFeedRead",
+      "typeVersion": 1.2,
+      "position": [
+        384,
+        928
+      ]
+    },
+    {
+      "parameters": {
+        "mode": "combine",
+        "combineBy": "combineAll",
+        "options": {}
+      },
+      "id": "e4125a6c-60ec-493e-b300-9616cf8e6205",
+      "name": "Merge All RSS",
+      "type": "n8n-nodes-base.merge",
+      "typeVersion": 3,
+      "position": [
+        624,
+        624
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "// Filter and extract topics from RSS feeds\nconst DAYS = 3;\nconst now = new Date();\nconst cutoff = new Date(now.getTime() - DAYS * 24 * 60 * 60 * 1000);\n\nconst keywords = [\n  'automation', 'automate', 'workflow', 'business', 'enterprise',\n  'startup', 'company', 'ai agent', 'chatgpt', 'openai', 'claude',\n  'llm', 'gpt', 'machine learning', 'saas', 'tool', 'platform',\n  'n8n', 'no-code', 'productivity'\n];\n\nconst filtered = items.filter(item => {\n  const rawDate = item.json.pubDate || item.json.isoDate || item.json.published;\n  if (!rawDate) return false;\n  \n  const articleDate = new Date(rawDate);\n  if (isNaN(articleDate.getTime())) return false;\n  if (articleDate < cutoff) return false;\n  \n  const title = (item.json.title || '').toLowerCase();\n  const desc = (item.json.description || item.json.contentSnippet || '').toLowerCase();\n  const content = title + ' ' + desc;\n  \n  return keywords.some(kw => content.includes(kw));\n});\n\n// Extract top 3 topics\nconst topics = filtered.slice(0, 3).map(item => ({\n  topic: item.json.title || 'Untitled',\n  summary: (item.json.description || item.json.contentSnippet || '').substring(0, 300),\n  source_link: item.json.link || '',\n  pub_date: item.json.pubDate || item.json.isoDate\n}));\n\nreturn topics.length > 0 ? topics : [{ topic: 'AI automation trends', summary: 'Latest trends in AI automation', source_link: '', pub_date: new Date().toISOString() }];"
+      },
+      "id": "105f2147-ac2f-4029-aa34-9b763527df56",
+      "name": "Extract & Filter Topics",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        864,
+        624
+      ]
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "topic",
+              "name": "topic",
+              "value": "={{ $json.body?.topic || $json.topic || 'AI automation for business' }}",
+              "type": "string"
+            },
+            {
+              "id": "source",
+              "name": "source",
+              "value": "={{ $json.body?.source_link || $json.source_link || '' }}",
+              "type": "string"
+            },
+            {
+              "id": "summary",
+              "name": "summary",
+              "value": "={{ $json.body?.summary || $json.summary || '' }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "421152ee-3a54-42ed-a6a6-5b3673b53937",
+      "name": "Normalize Topic Input",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        1104,
+        720
+      ]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.groq.com/openai/v1/chat/completions",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Authorization",
+              "value": "Bearer YOUR_GROQ_API_KEY"
+            },
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"model\": \"llama-3.1-70b-versatile\",\n  \"messages\": [\n    {\n      \"role\": \"system\",\n      \"content\": \"You are AIwithDhruv - a professional AI content creator for founders, engineers, and automation builders. Create engaging social media content. Return ONLY valid JSON.\"\n    },\n    {\n      \"role\": \"user\",\n      \"content\": \"Create social media content for this topic: {{ $json.topic }}\\n\\nSummary: {{ $json.summary }}\\n\\nGenerate:\\n1. LinkedIn post (150-250 words, professional, with hook and hashtags)\\n2. Twitter post (max 280 chars, punchy, with hashtags)\\n3. Instagram video script (30 seconds, casual, with [PAUSE] markers)\\n4. YouTube Shorts script (60 seconds, fast-paced, with [CUT] markers)\\n5. Image prompts for LinkedIn and Twitter (professional, modern, no text)\\n\\nReturn JSON: {\\\"linkedin\\\": {\\\"text\\\": \\\"...\\\", \\\"hashtags\\\": [...]}, \\\"twitter\\\": {\\\"text\\\": \\\"...\\\", \\\"hashtags\\\": [...]}, \\\"instagram_script\\\": \\\"...\\\", \\\"youtube_script\\\": \\\"...\\\", \\\"image_prompt_linkedin\\\": \\\"...\\\", \\\"image_prompt_twitter\\\": \\\"...\\\"}\"\n    }\n  ],\n  \"temperature\": 0.7,\n  \"max_tokens\": 2000\n}",
+        "options": {}
+      },
+      "id": "1b124d3b-489b-4a52-9bc7-ae209d3aabf7",
+      "name": "Groq - Generate Content",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.3,
+      "position": [
+        1344,
+        720
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "// Parse Groq response and format content\nconst groqResponse = $input.first().json;\nconst topicData = $('Normalize Topic Input').first().json;\n\nlet content = {};\ntry {\n  const messageContent = groqResponse.choices?.[0]?.message?.content || '';\n  const jsonMatch = messageContent.match(/\\{[\\s\\S]*\\}/);\n  if (jsonMatch) {\n    content = JSON.parse(jsonMatch[0]);\n  } else {\n    content = JSON.parse(messageContent);\n  }\n} catch (e) {\n  // Fallback if parsing fails\n  content = {\n    linkedin: { text: `AI automation insights: ${topicData.topic}`, hashtags: ['#AI', '#Automation'] },\n    twitter: { text: `AI automation update: ${topicData.topic}`, hashtags: ['#AI'] },\n    instagram_script: `Hey! Quick tip about ${topicData.topic}. [PAUSE] This is game-changing. [PAUSE] Try it out!`,\n    youtube_script: `AI automation is changing everything. [CUT] Here's how: [CUT] ${topicData.topic}`,\n    image_prompt_linkedin: `Professional business image about ${topicData.topic}, clean modern design, blue gradient, white background`,\n    image_prompt_twitter: `Eye-catching image about ${topicData.topic}, bold vibrant colors, minimal design`\n  };\n}\n\n// Format posts with hashtags\nconst linkedinText = `${content.linkedin?.text || ''}\\n\\n${(content.linkedin?.hashtags || ['#AI', '#Automation']).join(' ')}`;\nconst twitterText = `${content.twitter?.text || ''} ${(content.twitter?.hashtags || ['#AI']).join(' ')}`;\n\nreturn [{\n  json: {\n    topic: topicData.topic,\n    source: topicData.source,\n    linkedin_text: linkedinText.trim(),\n    twitter_text: twitterText.substring(0, 280).trim(),\n    instagram_script: content.instagram_script || '',\n    youtube_script: content.youtube_script || '',\n    image_prompt_linkedin: content.image_prompt_linkedin || `Professional business image about ${topicData.topic}, clean modern design`,\n    image_prompt_twitter: content.image_prompt_twitter || `Eye-catching image about ${topicData.topic}, bold colors`\n  }\n}];"
+      },
+      "id": "1a5af85d-1bd2-4042-a66b-67df1c39ca9b",
+      "name": "Format Content",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1584,
+        720
+      ]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://queue.fal.run/fal-ai/flux/schnell",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Authorization",
+              "value": "Key YOUR_FAL_AI_KEY"
+            },
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"prompt\": \"{{ $json.image_prompt_linkedin }}\",\n  \"image_size\": \"landscape_16_9\",\n  \"num_images\": 1\n}",
+        "options": {}
+      },
+      "id": "5d37e11f-bc57-4132-a58d-267284d0e958",
+      "name": "fal.ai - Generate LinkedIn Image",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.3,
+      "position": [
+        1824,
+        528
+      ]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://queue.fal.run/fal-ai/flux/schnell",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Authorization",
+              "value": "Key YOUR_FAL_AI_KEY"
+            },
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"prompt\": \"{{ $json.image_prompt_twitter }}\",\n  \"image_size\": \"square_hd\",\n  \"num_images\": 1\n}",
+        "options": {}
+      },
+      "id": "d48e7191-496a-4037-8c8a-f31dad03b427",
+      "name": "fal.ai - Generate Twitter Image",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.3,
+      "position": [
+        1824,
+        928
+      ]
+    },
+    {
+      "parameters": {
+        "amount": 30
+      },
+      "id": "45c4ac69-9a3d-4578-8d7f-7dbed3ef0b09",
+      "name": "Wait for LinkedIn Image",
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1.1,
+      "position": [
+        2064,
+        528
+      ],
+      "webhookId": "wait-linkedin-img"
+    },
+    {
+      "parameters": {
+        "amount": 30
+      },
+      "id": "5e00dc83-c0bf-425d-82ef-78436e6e358a",
+      "name": "Wait for Twitter Image",
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1.1,
+      "position": [
+        2064,
+        928
+      ],
+      "webhookId": "wait-twitter-img"
+    },
+    {
+      "parameters": {
+        "url": "={{ $json.response_url }}",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Authorization",
+              "value": "Key YOUR_FAL_AI_KEY"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "e79cfd88-0a25-4b44-b0b2-502c695b9aa7",
+      "name": "Retrieve LinkedIn Image",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.3,
+      "position": [
+        2304,
+        528
+      ]
+    },
+    {
+      "parameters": {
+        "url": "={{ $json.response_url }}",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Authorization",
+              "value": "Key YOUR_FAL_AI_KEY"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "c2ec5f2e-ec9a-41df-88f1-b0f99856a44e",
+      "name": "Retrieve Twitter Image",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.3,
+      "position": [
+        2304,
+        928
+      ]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.klingai.com/v1/videos/generate",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Authorization",
+              "value": "Bearer YOUR_KLING_AI_KEY"
+            },
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"script\": \"{{ $json.instagram_script }}\",\n  \"avatar_id\": \"YOUR_AVATAR_ID\",\n  \"duration\": 30,\n  \"aspect_ratio\": \"9:16\"\n}",
+        "options": {}
+      },
+      "id": "a5b1d4f2-165b-49d6-9113-f711fbc179a3",
+      "name": "Kling AI - Generate Instagram Video",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.3,
+      "position": [
+        1824,
+        1328
+      ]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.klingai.com/v1/videos/generate",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Authorization",
+              "value": "Bearer YOUR_KLING_AI_KEY"
+            },
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"script\": \"{{ $json.youtube_script }}\",\n  \"avatar_id\": \"YOUR_AVATAR_ID\",\n  \"duration\": 60,\n  \"aspect_ratio\": \"16:9\"\n}",
+        "options": {}
+      },
+      "id": "f87a0ca4-3bc3-4a2b-96d3-4dbbc939406b",
+      "name": "Kling AI - Generate YouTube Video",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.3,
+      "position": [
+        1824,
+        1728
+      ]
+    },
+    {
+      "parameters": {
+        "amount": 60
+      },
+      "id": "ffffa41f-e1d1-48e5-929a-8b9f7dbbdeda",
+      "name": "Wait for Instagram Video",
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1.1,
+      "position": [
+        2064,
+        1328
+      ],
+      "webhookId": "wait-instagram-vid"
+    },
+    {
+      "parameters": {
+        "amount": 90
+      },
+      "id": "1be98c39-dea7-4de6-beda-1e66aad91b47",
+      "name": "Wait for YouTube Video",
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1.1,
+      "position": [
+        2064,
+        1728
+      ],
+      "webhookId": "wait-youtube-vid"
+    },
+    {
+      "parameters": {
+        "url": "={{ $json.video_url || $json.result_url }}",
+        "options": {
+          "response": {
+            "response": {
+              "responseFormat": "file"
+            }
+          }
+        }
+      },
+      "id": "53e52206-64f4-42d4-b83b-18ad0e94df6d",
+      "name": "Retrieve Instagram Video",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.3,
+      "position": [
+        2304,
+        1328
+      ]
+    },
+    {
+      "parameters": {
+        "url": "={{ $json.video_url || $json.result_url }}",
+        "options": {
+          "response": {
+            "response": {
+              "responseFormat": "file"
+            }
+          }
+        }
+      },
+      "id": "884e58cc-ac83-44c4-ae5b-4ac38003e99c",
+      "name": "Retrieve YouTube Video",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.3,
+      "position": [
+        2304,
+        1728
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "// Combine all content and media URLs\nconst content = $('Format Content').first().json;\nconst linkedinImg = $('Retrieve LinkedIn Image').first().json;\nconst twitterImg = $('Retrieve Twitter Image').first().json;\nconst instagramVid = $('Retrieve Instagram Video').first().json;\nconst youtubeVid = $('Retrieve YouTube Video').first().json;\n\nconst linkedinImageUrl = linkedinImg.images?.[0]?.url || linkedinImg.url || '';\nconst twitterImageUrl = twitterImg.images?.[0]?.url || twitterImg.url || '';\nconst instagramVideoUrl = instagramVid.video_url || instagramVid.url || '';\nconst youtubeVideoUrl = youtubeVid.video_url || youtubeVid.url || '';\n\nreturn [{\n  json: {\n    ...content,\n    linkedin_image_url: linkedinImageUrl,\n    twitter_image_url: twitterImageUrl,\n    instagram_video_url: instagramVideoUrl,\n    youtube_video_url: youtubeVideoUrl,\n    status: 'ready_for_approval',\n    created_at: new Date().toISOString()\n  }\n}];"
+      },
+      "id": "ddf06032-cac5-48c9-83cd-d658d3a2efaa",
+      "name": "Combine All Content & Media",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        2624,
+        928
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "append",
+        "documentId": {
+          "__rl": true,
+          "value": "YOUR_GOOGLE_SHEET_ID",
+          "mode": "id"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "Social Media Queue",
+          "mode": "name"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "topic": "={{ $json.topic }}",
+            "linkedin_text": "={{ $json.linkedin_text }}",
+            "twitter_text": "={{ $json.twitter_text }}",
+            "linkedin_image_url": "={{ $json.linkedin_image_url }}",
+            "twitter_image_url": "={{ $json.twitter_image_url }}",
+            "instagram_video_url": "={{ $json.instagram_video_url }}",
+            "youtube_video_url": "={{ $json.youtube_video_url }}",
+            "status": "={{ $json.status }}",
+            "created_at": "={{ $json.created_at }}"
+          }
+        },
+        "options": {}
+      },
+      "id": "e8ba7da9-ac4a-4d4c-8f84-a9ddbe056d73",
+      "name": "Save to Content Queue",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        2864,
+        928
+      ]
+    },
+    {
+      "parameters": {
+        "chatId": "YOUR_TELEGRAM_CHAT_ID",
+        "text": "=\ud83c\udfaf *CONTENT READY FOR APPROVAL*\n\n\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\n\ud83d\udcf0 *{{ $json.topic }}*\n\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\n\n\ud83d\udc26 *TWITTER POST:*\n{{ $json.twitter_text }}\n\n\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\n\n\ud83d\udcbc *LINKEDIN POST:*\n{{ $json.linkedin_text }}\n\n\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\n\n\ud83d\udcf8 *IMAGES:*\nLinkedIn: {{ $json.linkedin_image_url ? '\u2705' : '\u274c' }}\nTwitter: {{ $json.twitter_image_url ? '\u2705' : '\u274c' }}\n\n\ud83c\udfa5 *VIDEOS:*\nInstagram: {{ $json.instagram_video_url ? '\u2705' : '\u274c' }}\nYouTube: {{ $json.youtube_video_url ? '\u2705' : '\u274c' }}\n\n\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\n\n*Reply with:*\n\u2705 `APPROVE`\n\u274c `REJECT`",
+        "additionalFields": {
+          "parse_mode": "Markdown"
+        }
+      },
+      "id": "3d44430c-1054-4326-b5e3-0f686253cf4e",
+      "name": "Send Approval Request",
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        3104,
+        928
+      ],
+      "webhookId": "approval-request"
+    },
+    {
+      "parameters": {
+        "updates": [
+          "message"
+        ],
+        "additionalFields": {}
+      },
+      "id": "e69727cd-5731-4cd5-8710-6f9f4e4feb5c",
+      "name": "Telegram Approval Response",
+      "type": "n8n-nodes-base.telegramTrigger",
+      "typeVersion": 1.2,
+      "position": [
+        4784,
+        928
+      ],
+      "webhookId": "approval-response"
+    },
+    {
+      "parameters": {
+        "jsCode": "// Parse approval response\nconst msg = $input.first().json.message;\nconst text = (msg.text || '').trim().toUpperCase();\n\nlet action = 'unknown';\nif (text.includes('APPROVE') || text.includes('YES') || text === '\u2705') {\n  action = 'approve';\n} else if (text.includes('REJECT') || text.includes('NO') || text === '\u274c') {\n  action = 'reject';\n}\n\nreturn [{\n  json: {\n    action: action,\n    chat_id: msg.chat.id\n  }\n}];"
+      },
+      "id": "8c6c1990-206c-4488-9657-287ec5d6b78d",
+      "name": "Parse Approval",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        5024,
+        928
+      ]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "version": 2,
+            "leftValue": "",
+            "caseSensitive": true,
+            "typeValidation": "strict"
+          },
+          "conditions": [
+            {
+              "id": "is-approve",
+              "leftValue": "={{ $json.action }}",
+              "rightValue": "approve",
+              "operator": {
+                "type": "string",
+                "operation": "equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "ee599e20-8284-4a45-b813-d2cdb4f53385",
+      "name": "Approved?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        5264,
+        928
+      ]
+    },
+    {
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "value": "YOUR_GOOGLE_SHEET_ID",
+          "mode": "id"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "Social Media Queue",
+          "mode": "name"
+        },
+        "filtersUI": {
+          "values": [
+            {
+              "lookupColumn": "status",
+              "lookupValue": "ready_for_approval"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "b686b15a-1794-45ca-84fa-5fcfb5f7411e",
+      "name": "Fetch Latest Approved Content",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        5504,
+        720
+      ]
+    },
+    {
+      "parameters": {},
+      "id": "92ba2adc-4296-4b5c-aa83-9624d3ff4490",
+      "name": "Take Latest",
+      "type": "n8n-nodes-base.limit",
+      "typeVersion": 1,
+      "position": [
+        5744,
+        720
+      ]
+    },
+    {
+      "parameters": {
+        "url": "={{ $json.linkedin_image_url }}",
+        "options": {
+          "response": {
+            "response": {
+              "responseFormat": "file"
+            }
+          }
+        }
+      },
+      "id": "15e5b17c-6084-41d8-ad41-1a101d77f150",
+      "name": "Download LinkedIn Image",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        5984,
+        528
+      ]
+    },
+    {
+      "parameters": {
+        "url": "={{ $json.twitter_image_url }}",
+        "options": {
+          "response": {
+            "response": {
+              "responseFormat": "file"
+            }
+          }
+        }
+      },
+      "id": "453037ae-db1d-498f-b05c-1083b2565e95",
+      "name": "Download Twitter Image",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        5984,
+        928
+      ]
+    },
+    {
+      "parameters": {
+        "url": "={{ $json.instagram_video_url }}",
+        "options": {
+          "response": {
+            "response": {
+              "responseFormat": "file"
+            }
+          }
+        }
+      },
+      "id": "7af4eef9-d4d0-4a26-ab49-694ad66c9505",
+      "name": "Download Instagram Video",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        5984,
+        1328
+      ]
+    },
+    {
+      "parameters": {
+        "url": "={{ $json.youtube_video_url }}",
+        "options": {
+          "response": {
+            "response": {
+              "responseFormat": "file"
+            }
+          }
+        }
+      },
+      "id": "e3b2d3ea-8a38-4cc0-92ac-5c3a1187852b",
+      "name": "Download YouTube Video",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        5984,
+        1728
+      ]
+    },
+    {
+      "parameters": {
+        "person": "YOUR_LINKEDIN_PERSON_ID",
+        "text": "={{ $('Take Latest').item.json.linkedin_text }}",
+        "shareMediaCategory": "IMAGE",
+        "additionalFields": {
+          "visibility": "PUBLIC"
+        }
+      },
+      "id": "96b2cbb6-aa79-44cf-8d90-a36d945fd515",
+      "name": "Post to LinkedIn",
+      "type": "n8n-nodes-base.linkedIn",
+      "typeVersion": 1,
+      "position": [
+        6224,
+        528
+      ]
+    },
+    {
+      "parameters": {
+        "text": "={{ $('Take Latest').item.json.twitter_text }}",
+        "additionalFields": {
+          "attachments": "={{ $json.data }}"
+        }
+      },
+      "id": "94db7600-e872-4504-b4b5-17543c3f0846",
+      "name": "Post to Twitter",
+      "type": "n8n-nodes-base.twitter",
+      "typeVersion": 2,
+      "position": [
+        6224,
+        928
+      ]
+    },
+    {
+      "parameters": {
+        "httpRequestMethod": "POST",
+        "graphApiVersion": "v18.0",
+        "node": "YOUR_INSTAGRAM_BUSINESS_ACCOUNT_ID",
+        "edge": "media",
+        "options": {
+          "queryParameters": {
+            "parameter": [
+              {
+                "name": "media_type",
+                "value": "REELS"
+              },
+              {
+                "name": "video_url",
+                "value": "={{ $json.instagram_video_url }}"
+              },
+              {
+                "name": "caption",
+                "value": "={{ $('Take Latest').item.json.topic }} #AIReels #TechTok #Automation"
+              }
+            ]
+          }
+        }
+      },
+      "id": "d318a442-5513-42e2-be56-578b537fcbd5",
+      "name": "Post to Instagram",
+      "type": "n8n-nodes-base.facebookGraphApi",
+      "typeVersion": 1,
+      "position": [
+        6224,
+        1328
+      ]
+    },
+    {
+      "parameters": {
+        "resource": "video",
+        "operation": "upload",
+        "title": "={{ $('Take Latest').item.json.topic }}",
+        "categoryId": "22",
+        "options": {
+          "description": "={{ $('Take Latest').item.json.youtube_script }}",
+          "tags": "#AIAutomation #n8nTutorial #TechTutorial"
+        }
+      },
+      "id": "0a9f77b8-1994-4ba5-af4e-2ce34b040a56",
+      "name": "Post to YouTube",
+      "type": "n8n-nodes-base.youTube",
+      "typeVersion": 1,
+      "position": [
+        6224,
+        1728
+      ]
+    },
+    {
+      "parameters": {
+        "mode": "combine",
+        "combineBy": "combineAll",
+        "options": {}
+      },
+      "id": "20a7430a-804d-4574-ab96-615d9e2fe396",
+      "name": "Merge Post Results",
+      "type": "n8n-nodes-base.merge",
+      "typeVersion": 3,
+      "position": [
+        6464,
+        928
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "documentId": {
+          "__rl": true,
+          "value": "YOUR_GOOGLE_SHEET_ID",
+          "mode": "id"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "Social Media Queue",
+          "mode": "name"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "status": "Posted",
+            "posted_at": "={{ $now.toISO() }}"
+          },
+          "matchingColumns": [
+            "topic"
+          ]
+        },
+        "options": {}
+      },
+      "id": "a38c38a6-ff45-4080-aba1-50cf0b3af12f",
+      "name": "Update Status - Posted",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        6704,
+        928
+      ]
+    },
+    {
+      "parameters": {
+        "chatId": "={{ $('Parse Approval').item.json.chat_id }}",
+        "text": "=\u2705 *SUCCESS!*\n\n\ud83d\udc26 Posted to Twitter\n\ud83d\udcbc Posted to LinkedIn\n\ud83d\udcf8 Posted to Instagram\n\ud83d\udcfa Posted to YouTube\n\n\ud83d\udcf0 *{{ $('Take Latest').item.json.topic }}*\n\n_All platforms updated!_",
+        "additionalFields": {
+          "parse_mode": "Markdown"
+        }
+      },
+      "id": "3f335d06-3c20-421a-b9ae-f084aa3fd892",
+      "name": "Notify Success",
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        6944,
+        928
+      ],
+      "webhookId": "notify-success"
+    },
+    {
+      "parameters": {
+        "content": "# \ud83d\ude80 SOCIAL MEDIA AUTOMATION 2.0\n\n**Complete multi-platform automation:**\n- Research from RSS or manual topic\n- AI content generation (Groq)\n- Image generation (fal.ai)\n- Video generation (Kling AI)\n- Telegram approval\n- Post to LinkedIn, Twitter, Instagram, YouTube\n\n**Tech Stack:**\n- Groq (free LLM)\n- fal.ai (free images)\n- Kling AI (free videos)\n- n8n (orchestration)",
+        "height": 400,
+        "width": 400,
+        "color": 2
+      },
+      "id": "77c8c79d-2532-4f51-935c-cce68a493f51",
+      "name": "Workflow Overview",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -416,
+        320
+      ]
+    },
+    {
+      "parameters": {
+        "content": "# \ud83d\udce5 TRIGGERS\n\n**1. Daily RSS Research**\n- Schedule: 8 AM daily\n- Fetches 4 RSS feeds\n- Filters by keywords\n- Extracts top 3 topics\n\n**2. Manual Topic Input**\n- Webhook: POST /social-media-topic\n- Body: { topic, summary, source_link }\n\n**3. Manual Test**\n- Click to test anytime",
+        "height": 300,
+        "width": 300,
+        "color": 4
+      },
+      "id": "33fa4419-0cc4-40fd-b5f2-ff5e39267e7e",
+      "name": "Triggers",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -416,
+        720
+      ]
+    },
+    {
+      "parameters": {
+        "content": "# \ud83e\udd16 CONTENT GENERATION\n\n**Groq API (Free):**\n- Model: llama-3.1-70b-versatile\n- Generates:\n  \u2022 LinkedIn post (150-250 words)\n  \u2022 Twitter post (280 chars)\n  \u2022 Instagram script (30s)\n  \u2022 YouTube script (60s)\n  \u2022 Image prompts\n\n**Setup:**\nReplace `YOUR_GROQ_API_KEY` in node",
+        "height": 350,
+        "width": 300,
+        "color": 6
+      },
+      "id": "51d4bd48-0866-45bc-a222-f39507de8a05",
+      "name": "Groq Content",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        992,
+        0
+      ]
+    },
+    {
+      "parameters": {
+        "content": "# \ud83c\udfa8 IMAGE GENERATION\n\n**fal.ai (Free):**\n- Model: flux/schnell\n- LinkedIn: 16:9 landscape\n- Twitter: Square HD\n- Fast generation (< 30s)\n\n**Setup:**\n1. Get API key from fal.ai\n2. Replace `YOUR_FAL_AI_KEY`\n3. Uses queue.fal.run endpoint",
+        "height": 300,
+        "width": 300,
+        "color": 5
+      },
+      "id": "418eb34c-6235-4b3a-9090-f04fc85fb14f",
+      "name": "fal.ai Images",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        1568,
+        0
+      ]
+    },
+    {
+      "parameters": {
+        "content": "# \ud83c\udfa5 VIDEO GENERATION\n\n**Kling AI (Free Tier):**\n- Avatar videos\n- Instagram: 30s, 9:16\n- YouTube: 60s, 16:9\n- Uses AI avatar\n\n**Setup:**\n1. Get API key from Kling AI\n2. Create avatar\n3. Replace `YOUR_KLING_AI_KEY`\n4. Replace `YOUR_AVATAR_ID`",
+        "height": 300,
+        "width": 300,
+        "color": 7
+      },
+      "id": "c7db6f00-f2ee-4209-a00a-00531d844dcd",
+      "name": "Kling AI Videos",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        1584,
+        1520
+      ]
+    },
+    {
+      "parameters": {
+        "content": "# \u2705 APPROVAL WORKFLOW\n\n**Telegram:**\n1. Sends content preview\n2. Waits for approval\n3. On APPROVE \u2192 Posts to all platforms\n4. On REJECT \u2192 Marks as rejected\n\n**Commands:**\n- `APPROVE` or `YES` or `\u2705`\n- `REJECT` or `NO` or `\u274c`",
+        "height": 300,
+        "width": 300,
+        "color": 3
+      },
+      "id": "c3ac7dd2-007a-496e-9945-a1ec39f426db",
+      "name": "Approval",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        3584,
+        720
+      ]
+    },
+    {
+      "parameters": {
+        "content": "# \ud83d\udcf1 POSTING PLATFORMS\n\n**LinkedIn:**\n- Text + Image\n- Public visibility\n\n**Twitter:**\n- Text + Image\n- Auto-attach media\n\n**Instagram:**\n- Video (Reels)\n- Via Graph API\n\n**YouTube:**\n- Video (Shorts)\n- Category: 22 (People & Blogs)",
+        "height": 350,
+        "width": 300,
+        "color": 2
+      },
+      "id": "517c7c12-f468-433a-9ed2-2828d1f69378",
+      "name": "Posting",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        5984,
+        320
+      ]
+    },
+    {
+      "parameters": {
+        "mode": "combine",
+        "combineBy": "combineAll",
+        "options": {}
+      },
+      "id": "merge-rss-3-4",
+      "name": "Merge RSS 3-4",
+      "type": "n8n-nodes-base.merge",
+      "typeVersion": 3,
+      "position": [
+        688,
+        880
+      ]
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 3.1,
+      "position": [
+        3664,
+        -704
+      ],
+      "id": "4d2e5db2-a346-4be7-a761-4d49770528fc",
+      "name": "AI Agent"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOllama",
+      "typeVersion": 1,
+      "position": [
+        3536,
+        -496
+      ],
+      "id": "c1e69758-5958-4a81-800c-44dfe6b7d3ec",
+      "name": "Ollama Chat Model",
+      "credentials": {
+        "ollamaApi": {
+          "id": "AFPXQIPIyJ5Hh7nX",
+          "name": "Ollama account"
+        }
+      }
+    }
+  ],
+  "connections": {
+    "Daily RSS Research (8 AM)": {
+      "main": [
+        [
+          {
+            "node": "RSS - TechCrunch AI",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "RSS - AI News",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "RSS - VentureBeat AI",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "RSS - Google AI",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Manual Topic Input (Webhook)": {
+      "main": [
+        [
+          {
+            "node": "Normalize Topic Input",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Manual Test Trigger": {
+      "main": [
+        [
+          {
+            "node": "Normalize Topic Input",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "RSS - TechCrunch AI": {
+      "main": [
+        [
+          {
+            "node": "Merge All RSS",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "RSS - AI News": {
+      "main": [
+        [
+          {
+            "node": "Merge All RSS",
+            "type": "main",
+            "index": 1
+          }
+        ]
+      ]
+    },
+    "Merge All RSS": {
+      "main": [
+        [
+          {
+            "node": "Extract & Filter Topics",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Extract & Filter Topics": {
+      "main": [
+        [
+          {
+            "node": "Normalize Topic Input",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Normalize Topic Input": {
+      "main": [
+        [
+          {
+            "node": "Groq - Generate Content",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Groq - Generate Content": {
+      "main": [
+        [
+          {
+            "node": "Format Content",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Format Content": {
+      "main": [
+        [
+          {
+            "node": "fal.ai - Generate LinkedIn Image",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "fal.ai - Generate Twitter Image",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Kling AI - Generate Instagram Video",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Kling AI - Generate YouTube Video",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "fal.ai - Generate LinkedIn Image": {
+      "main": [
+        [
+          {
+            "node": "Wait for LinkedIn Image",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "fal.ai - Generate Twitter Image": {
+      "main": [
+        [
+          {
+            "node": "Wait for Twitter Image",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Wait for LinkedIn Image": {
+      "main": [
+        [
+          {
+            "node": "Retrieve LinkedIn Image",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Wait for Twitter Image": {
+      "main": [
+        [
+          {
+            "node": "Retrieve Twitter Image",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Retrieve LinkedIn Image": {
+      "main": [
+        [
+          {
+            "node": "Combine All Content & Media",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Kling AI - Generate Instagram Video": {
+      "main": [
+        [
+          {
+            "node": "Wait for Instagram Video",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Kling AI - Generate YouTube Video": {
+      "main": [
+        [
+          {
+            "node": "Wait for YouTube Video",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Wait for Instagram Video": {
+      "main": [
+        [
+          {
+            "node": "Retrieve Instagram Video",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Wait for YouTube Video": {
+      "main": [
+        [
+          {
+            "node": "Retrieve YouTube Video",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Combine All Content & Media": {
+      "main": [
+        [
+          {
+            "node": "Save to Content Queue",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Save to Content Queue": {
+      "main": [
+        [
+          {
+            "node": "Send Approval Request",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Telegram Approval Response": {
+      "main": [
+        [
+          {
+            "node": "Parse Approval",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Parse Approval": {
+      "main": [
+        [
+          {
+            "node": "Approved?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Approved?": {
+      "main": [
+        [
+          {
+            "node": "Fetch Latest Approved Content",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Update Status - Posted",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Fetch Latest Approved Content": {
+      "main": [
+        [
+          {
+            "node": "Take Latest",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Take Latest": {
+      "main": [
+        [
+          {
+            "node": "Download LinkedIn Image",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Download Twitter Image",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Download Instagram Video",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Download YouTube Video",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Download LinkedIn Image": {
+      "main": [
+        [
+          {
+            "node": "Post to LinkedIn",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Download Twitter Image": {
+      "main": [
+        [
+          {
+            "node": "Post to Twitter",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Download Instagram Video": {
+      "main": [
+        [
+          {
+            "node": "Post to Instagram",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Download YouTube Video": {
+      "main": [
+        [
+          {
+            "node": "Post to YouTube",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Post to LinkedIn": {
+      "main": [
+        [
+          {
+            "node": "Merge Post Results",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Post to Twitter": {
+      "main": [
+        [
+          {
+            "node": "Merge Post Results",
+            "type": "main",
+            "index": 1
+          }
+        ]
+      ]
+    },
+    "Merge Post Results": {
+      "main": [
+        [
+          {
+            "node": "Update Status - Posted",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Update Status - Posted": {
+      "main": [
+        [
+          {
+            "node": "Notify Success",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "RSS - VentureBeat AI": {
+      "main": [
+        [
+          {
+            "node": "Merge RSS 3-4",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "RSS - Google AI": {
+      "main": [
+        [
+          {
+            "node": "Merge RSS 3-4",
+            "type": "main",
+            "index": 1
+          }
+        ]
+      ]
+    },
+    "Merge RSS 3-4": {
+      "main": [
+        [
+          {
+            "node": "Merge All RSS",
+            "type": "main",
+            "index": 2
+          }
+        ]
+      ]
+    },
+    "Retrieve Twitter Image": {
+      "main": [
+        [
+          {
+            "node": "Combine All Content & Media",
+            "type": "main",
+            "index": 1
+          }
+        ]
+      ]
+    },
+    "Retrieve Instagram Video": {
+      "main": [
+        [
+          {
+            "node": "Combine All Content & Media",
+            "type": "main",
+            "index": 2
+          }
+        ]
+      ]
+    },
+    "Retrieve YouTube Video": {
+      "main": [
+        [
+          {
+            "node": "Combine All Content & Media",
+            "type": "main",
+            "index": 3
+          }
+        ]
+      ]
+    },
+    "Post to Instagram": {
+      "main": [
+        [
+          {
+            "node": "Merge Post Results",
+            "type": "main",
+            "index": 2
+          }
+        ]
+      ]
+    },
+    "Post to YouTube": {
+      "main": [
+        [
+          {
+            "node": "Merge Post Results",
+            "type": "main",
+            "index": 3
+          }
+        ]
+      ]
+    },
+    "Ollama Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1",
+    "timezone": "Asia/Kolkata",
+    "callerPolicy": "workflowsFromSameOwner",
+    "availableInMCP": false
+  },
+  "staticData": null,
+  "meta": {
+    "templateCredsSetupCompleted": true
+  },
+  "pinData": {},
+  "versionId": "907c2048-8a5d-4519-95cb-d514a6a56c91",
+  "activeVersionId": null,
+  "triggerCount": 0,
+  "shared": [
+    {
+      "updatedAt": "2026-02-04T15:11:34.320Z",
+      "createdAt": "2026-02-04T15:11:34.320Z",
+      "role": "workflow:owner",
+      "workflowId": "8NUrulEZz6sWOt4N",
+      "projectId": "DT8YjHwLZsQjJqVc"
+    }
+  ],
+  "activeVersion": null,
+  "tags": []
+}

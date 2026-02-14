@@ -1,0 +1,109 @@
+{
+  "updatedAt": "2025-12-03T18:20:21.000Z",
+  "createdAt": "2025-12-02T16:21:55.749Z",
+  "id": "ro8IriEJYpvscnEj",
+  "name": "Youtube Video Test",
+  "active": false,
+  "isArchived": true,
+  "nodes": [
+    {
+      "parameters": {
+        "public": true,
+        "initialMessages": "Hi there! \ud83d\udc4b\nMy name is Dhruv. How can I assist you today?",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.chatTrigger",
+      "typeVersion": 1.4,
+      "position": [
+        -320,
+        -48
+      ],
+      "id": "e2f87d18-1a47-43f8-ba61-79c10e9da850",
+      "name": "When chat message received",
+      "webhookId": "27e644dc-b190-4276-bb0d-7524e7600016"
+    },
+    {
+      "parameters": {
+        "options": {
+          "systemMessage": "You are a helpful assistant Name Dhruv\nWho tells Ai Usecase everywhere"
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 3,
+      "position": [
+        -112,
+        -48
+      ],
+      "id": "aa264f62-e09d-4125-aad0-384c6ad1b602",
+      "name": "AI Agent"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatGoogleGemini",
+      "typeVersion": 1,
+      "position": [
+        -256,
+        160
+      ],
+      "id": "c0b895bb-bac7-4917-9409-91cbb4019ed3",
+      "name": "Google Gemini Chat Model",
+      "credentials": {
+        "googlePalmApi": {
+          "id": "1YAglGZ0F8CcWPRL",
+          "name": "Gemini"
+        }
+      }
+    }
+  ],
+  "connections": {
+    "When chat message received": {
+      "main": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Gemini Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1",
+    "timezone": "Asia/Kolkata",
+    "callerPolicy": "workflowsFromSameOwner",
+    "availableInMCP": false
+  },
+  "staticData": null,
+  "meta": {
+    "templateCredsSetupCompleted": true
+  },
+  "pinData": {},
+  "versionId": "386d003f-768a-4e54-8315-05f8defafb11",
+  "activeVersionId": null,
+  "triggerCount": 1,
+  "shared": [
+    {
+      "updatedAt": "2025-12-02T16:21:55.755Z",
+      "createdAt": "2025-12-02T16:21:55.755Z",
+      "role": "workflow:owner",
+      "workflowId": "ro8IriEJYpvscnEj",
+      "projectId": "DT8YjHwLZsQjJqVc"
+    }
+  ],
+  "activeVersion": null,
+  "tags": []
+}

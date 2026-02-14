@@ -1,0 +1,1494 @@
+{
+  "updatedAt": "2026-02-03T01:37:06.184Z",
+  "createdAt": "2026-02-03T00:30:33.653Z",
+  "id": "ly66gcn20cavNLZT",
+  "name": "Lead Generation & Email Outreach (Full Assignment)",
+  "active": false,
+  "isArchived": false,
+  "nodes": [
+    {
+      "parameters": {},
+      "id": "manual-trigger",
+      "name": "Start Workflow",
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [
+        -800,
+        0
+      ]
+    },
+    {
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "mode": "id",
+          "value": "YOUR_INPUT_SHEET_ID"
+        },
+        "sheetName": {
+          "__rl": true,
+          "mode": "name",
+          "value": "Input List"
+        },
+        "options": {}
+      },
+      "id": "read-input-sheet",
+      "name": "1. Read Input List",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        -560,
+        0
+      ]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": false,
+            "leftValue": "",
+            "typeValidation": "loose",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "cond1",
+              "leftValue": "={{ $json.Status }}",
+              "rightValue": "Completed",
+              "operator": {
+                "type": "string",
+                "operation": "notEquals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "filter-pending",
+      "name": "Filter Pending Rows",
+      "type": "n8n-nodes-base.filter",
+      "typeVersion": 2.2,
+      "position": [
+        -320,
+        0
+      ]
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "id": "split-batches",
+      "name": "2. Process One by One",
+      "type": "n8n-nodes-base.splitInBatches",
+      "typeVersion": 3,
+      "position": [
+        -80,
+        0
+      ]
+    },
+    {
+      "parameters": {
+        "mode": "runOnceForEachItem",
+        "jsCode": "// Extract keyword from input row\nconst keyword = $json.keyword || $json.role || $json.title || $json.Keyword || $json.Role || 'Marketing Manager';\nconst company = $json.company || $json.Company || '';\nconst location = $json.location || $json.Location || '';\n\n// Build LinkedIn People Search URL\nlet searchQuery = keyword;\nif (company) searchQuery += ' ' + company;\nif (location) searchQuery += ' ' + location;\n\nconst encodedQuery = encodeURIComponent(searchQuery);\n\nreturn {\n  json: {\n    ...$json,\n    searchKeyword: keyword,\n    searchCompany: company,\n    searchLocation: location,\n    linkedinSearchUrl: `https://www.linkedin.com/search/results/people/?keywords=${encodedQuery}`,\n    inputRowNumber: $itemIndex + 2 // Row number in sheet (1-indexed + header)\n  }\n};"
+      },
+      "id": "build-linkedin-search",
+      "name": "3. Build LinkedIn Search URL",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        160,
+        0
+      ]
+    },
+    {
+      "parameters": {
+        "url": "https://linkedin-profiles-and-company-data.p.rapidapi.com/people-search",
+        "method": "POST",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "keywords",
+              "value": "={{ $json.searchKeyword }}"
+            },
+            {
+              "name": "limit",
+              "value": "10"
+            }
+          ]
+        },
+        "options": {
+          "response": {
+            "response": {
+              "neverError": true
+            }
+          }
+        }
+      },
+      "id": "linkedin-search-api",
+      "name": "4. LinkedIn People Search (API)",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.4,
+      "position": [
+        400,
+        0
+      ]
+    },
+    {
+      "parameters": {
+        "mode": "runOnceForEachItem",
+        "jsCode": "// Parse LinkedIn search results and extract first profile\nconst searchResults = $json.data || $json.results || $json.profiles || [];\n\nif (!searchResults.length) {\n  return {\n    json: {\n      ...$input.first().json,\n      profileFound: false,\n      error: 'No profiles found for this search'\n    }\n  };\n}\n\nconst firstProfile = searchResults[0];\n\nreturn {\n  json: {\n    // Original input data\n    inputRowNumber: $input.first().json.inputRowNumber,\n    searchKeyword: $input.first().json.searchKeyword,\n    \n    // Profile data\n    profileFound: true,\n    profileUrl: firstProfile.profile_url || firstProfile.linkedin_url || firstProfile.url || '',\n    fullName: firstProfile.full_name || firstProfile.name || '',\n    firstName: firstProfile.first_name || (firstProfile.full_name || '').split(' ')[0] || '',\n    lastName: firstProfile.last_name || (firstProfile.full_name || '').split(' ').slice(1).join(' ') || '',\n    title: firstProfile.title || firstProfile.headline || '',\n    company: firstProfile.company || firstProfile.current_company || '',\n    location: firstProfile.location || ''\n  }\n};"
+      },
+      "id": "parse-profiles",
+      "name": "5. Parse First Profile",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        640,
+        0
+      ]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "version": 2,
+            "leftValue": "",
+            "caseSensitive": true,
+            "typeValidation": "strict"
+          },
+          "conditions": [
+            {
+              "id": "cond1",
+              "leftValue": "={{ $json.profileFound }}",
+              "rightValue": true,
+              "operator": {
+                "type": "boolean",
+                "operation": "equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "check-profile-found",
+      "name": "Profile Found?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        880,
+        0
+      ]
+    },
+    {
+      "parameters": {
+        "url": "https://api.apollo.io/v1/people/match",
+        "method": "POST",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"first_name\": \"{{ $json.firstName }}\",\n  \"last_name\": \"{{ $json.lastName }}\",\n  \"organization_name\": \"{{ $json.company }}\",\n  \"linkedin_url\": \"{{ $json.profileUrl }}\"\n}",
+        "options": {
+          "response": {
+            "response": {
+              "neverError": true
+            }
+          }
+        }
+      },
+      "id": "apollo-contact-lookup",
+      "name": "6. Apollo.io Contact Enrichment",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.4,
+      "position": [
+        1120,
+        -96
+      ]
+    },
+    {
+      "parameters": {
+        "mode": "runOnceForEachItem",
+        "jsCode": "// Extract contact info from Apollo response\nconst person = $json.person || $json || {};\nconst prevData = $input.first().json;\n\nreturn {\n  json: {\n    // Pass through original data\n    inputRowNumber: prevData.inputRowNumber,\n    searchKeyword: prevData.searchKeyword,\n    profileUrl: prevData.profileUrl,\n    \n    // Lead data for Excel sheet\n    Name: prevData.fullName || `${person.first_name || ''} ${person.last_name || ''}`.trim(),\n    Company: person.organization?.name || prevData.company || '',\n    Designation: person.title || prevData.title || '',\n    EmailId: person.email || '',\n    PhoneNumber: person.phone_numbers?.[0]?.sanitized_number || person.mobile_phone || '',\n    LinkedInUrl: person.linkedin_url || prevData.profileUrl || '',\n    EmailSent: 'No',\n    Response: ''\n  }\n};"
+      },
+      "id": "extract-contact-info",
+      "name": "7. Extract Contact Details",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1360,
+        -96
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "append",
+        "documentId": {
+          "__rl": true,
+          "mode": "id",
+          "value": "YOUR_LEAD_SHEET_ID"
+        },
+        "sheetName": {
+          "__rl": true,
+          "mode": "name",
+          "value": "Lead Contact Form"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Name": "={{ $json.Name }}",
+            "Company": "={{ $json.Company }}",
+            "Designation": "={{ $json.Designation }}",
+            "Email Id": "={{ $json.EmailId }}",
+            "Phone Number": "={{ $json.PhoneNumber }}",
+            "LinkedIn": "={{ $json.LinkedInUrl }}",
+            "Email Sent": "={{ $json.EmailSent }}",
+            "Response": "={{ $json.Response }}"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "Name",
+              "displayName": "Name",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Company",
+              "displayName": "Company",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Designation",
+              "displayName": "Designation",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Email Id",
+              "displayName": "Email Id",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Phone Number",
+              "displayName": "Phone Number",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "LinkedIn",
+              "displayName": "LinkedIn",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Email Sent",
+              "displayName": "Email Sent",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Response",
+              "displayName": "Response",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "append-lead-sheet",
+      "name": "8. Add to Lead Contact Sheet",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        1600,
+        -96
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "documentId": {
+          "__rl": true,
+          "mode": "id",
+          "value": "YOUR_INPUT_SHEET_ID"
+        },
+        "sheetName": {
+          "__rl": true,
+          "mode": "name",
+          "value": "Input List"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Status": "Completed"
+          },
+          "matchingColumns": [
+            "row_number"
+          ],
+          "schema": [
+            {
+              "id": "row_number",
+              "displayName": "row_number",
+              "required": false,
+              "defaultMatch": true,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Status",
+              "displayName": "Status",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": false
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "mark-input-completed",
+      "name": "9. Mark Input Row Completed",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        1840,
+        -96
+      ]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "version": 2,
+            "leftValue": "",
+            "caseSensitive": false,
+            "typeValidation": "loose"
+          },
+          "conditions": [
+            {
+              "id": "cond1",
+              "leftValue": "={{ $json.EmailId }}",
+              "rightValue": "",
+              "operator": {
+                "type": "string",
+                "operation": "notEquals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "check-has-email",
+      "name": "Has Email?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        2080,
+        -96
+      ]
+    },
+    {
+      "parameters": {
+        "resource": "message",
+        "operation": "send",
+        "sendTo": "={{ $json.EmailId }}",
+        "subject": "Quick question about {{ $json.Company }}",
+        "emailType": "html",
+        "message": "=<p>Hi {{ $json.Name.split(' ')[0] }},</p>\n\n<p>I came across your profile and noticed your work at <strong>{{ $json.Company }}</strong> as {{ $json.Designation }}.</p>\n\n<p>I help companies like yours automate their workflows and save hours every week. Would you be open to a quick 15-minute chat to see if this could benefit your team?</p>\n\n<p><strong>Book a free call:</strong> <a href=\"https://calendly.com/aiwithdhruv/makeaiworkforyou\">calendly.com/aiwithdhruv/makeaiworkforyou</a></p>\n\n<p>Best regards,<br>\nDhruv<br>\nAI with Dhruv</p>"
+      },
+      "id": "send-email-1",
+      "name": "10. Send First Email",
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.2,
+      "position": [
+        2320,
+        -208
+      ],
+      "webhookId": "f2193675-6898-4a01-ace9-cd28422a1905",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "jTmenYUXq2LXzf6e",
+          "name": "Dhruv Onsite"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "documentId": {
+          "__rl": true,
+          "mode": "id",
+          "value": "YOUR_LEAD_SHEET_ID"
+        },
+        "sheetName": {
+          "__rl": true,
+          "mode": "name",
+          "value": "Lead Contact Form"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Email Sent": "Completed"
+          },
+          "matchingColumns": [
+            "Email Id"
+          ],
+          "schema": [
+            {
+              "id": "Email Id",
+              "displayName": "Email Id",
+              "required": false,
+              "defaultMatch": true,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Email Sent",
+              "displayName": "Email Sent",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": false
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "mark-email-sent",
+      "name": "11. Mark Email Sent",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        2560,
+        -208
+      ]
+    },
+    {
+      "parameters": {},
+      "id": "loop-back",
+      "name": "Continue to Next Row",
+      "type": "n8n-nodes-base.noOp",
+      "typeVersion": 1,
+      "position": [
+        2800,
+        0
+      ]
+    },
+    {
+      "parameters": {
+        "content": "# Lead Generation & Email Outreach (Full Assignment)\n\n## PDF Steps Covered: 1\u20139\n\n**Step 1:** Read row data from Google Sheet (Input List)\n**Step 2:** Search people on LinkedIn by keyword (e.g. Marketing Manager)\n**Step 3:** From search results, take first profile (e.g. Daniel Mason, Marketing Manager)\n**Step 4:** Open profile \u2192 enrich via Apollo.io\n**Step 5:** Copy contact details (email, phone) via Apollo.io API\n**Step 6:** Paste into Lead Contact Form sheet (table format)\n**Step 7:** Mark input row Status = Completed\n**Step 8:** Repeat for all rows in Input List\n**Step 9:** Send first outreach email via Gmail, mark Email Sent = Completed\n\n---\n\n## Setup Checklist\n\n### 1. Google Sheets\n- **Input List** sheet: Columns `Keyword` (or Role/Title), `Company`, `Location`, `Status`\n- **Lead Contact Form** sheet: `Name`, `Company`, `Designation`, `Email Id`, `Phone Number`, `LinkedIn`, `Email Sent`, `Response`\n\n### 2. Credentials\n- **Google Sheets OAuth2** \u2013 Read/write both sheets\n- **Gmail OAuth2** \u2013 Send emails\n- **RapidAPI Header Auth** \u2013 Header `X-RapidAPI-Key`, value = your RapidAPI key (LinkedIn People Search API)\n- **Apollo.io Header Auth** \u2013 Header `Authorization`, value = `Bearer YOUR_APOLLO_API_KEY`\n\n### 3. Replace Placeholders\n- `YOUR_INPUT_SHEET_ID` \u2013 From Input List sheet URL\n- `YOUR_LEAD_SHEET_ID` \u2013 From Lead Contact Form sheet URL\n\n---\n\n**Built by Dhruv & Angelina**\nhttps://youtube.com/@aiwithdhruv\nhttps://linkedin.com/in/aiwithdhruv",
+        "height": 1504,
+        "width": 784
+      },
+      "id": "sticky-overview",
+      "name": "Workflow Overview",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -624,
+        -1216
+      ]
+    },
+    {
+      "parameters": {
+        "content": "# Step 1 & 2 \u2013 Read Input & Filter\n\n## What Happens\n1. **Read Input List** \u2013 Fetches all rows from the Input List sheet (range A:Z)\n2. **Filter Pending Rows** \u2013 Keeps only rows where `Status` \u2260 `Completed`\n\n## Input List Sheet Structure\n| Keyword | Company | Location | Status |\n|---------|---------|----------|--------|\n| Marketing Manager | Acme Inc | New York | |\n| Sales Director | | | |\n\n- **Keyword** \u2013 Used for LinkedIn search (e.g. Marketing Manager, Sales Director)\n- **Status** \u2013 Leave empty for new rows; set to `Completed` when processed\n\n## Column Name Flexibility\nCode also checks: `role`, `title`, `Role`, `Title` if `Keyword` is missing."
+      },
+      "id": "sticky-step1",
+      "name": "Step 1-2",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -592,
+        -144
+      ]
+    },
+    {
+      "parameters": {
+        "content": "# Step 3 & 4 \u2013 LinkedIn Search\n\n## What Happens\n1. **Process One by One** \u2013 Split In Batches processes each row separately (batch size = 1)\n2. **Build LinkedIn Search URL** \u2013 Builds search query from Keyword + Company + Location\n3. **LinkedIn People Search (API)** \u2013 Calls RapidAPI LinkedIn endpoint\n\n## RapidAPI Setup\n1. Go to rapidapi.com\n2. Subscribe to **LinkedIn Profiles and Company Data** (or similar people-search API)\n3. Copy your API key\n4. In n8n: Credentials \u2192 Header Auth \u2192 Name: `X-RapidAPI-Key`, Value: your key\n\n## API Response\nReturns `data`, `results`, or `profiles` array. We take the **first profile** as per assignment.",
+        "height": 1040,
+        "width": 464
+      },
+      "id": "sticky-step3-4",
+      "name": "Step 3-4",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        368,
+        -928
+      ]
+    },
+    {
+      "parameters": {
+        "content": "# Step 5 & 6 \u2013 Apollo.io Contact Enrichment\n\n## What Happens\n1. **Profile Found?** \u2013 If no profile, skip to next row\n2. **Apollo.io Contact Enrichment** \u2013 POST to `api.apollo.io/v1/people/match` with first name, last name, company, LinkedIn URL\n3. **Extract Contact Details** \u2013 Parses email, phone from Apollo response\n\n## Apollo.io Setup\n1. Sign up at apollo.io\n2. Settings \u2192 API \u2192 Copy API key\n3. In n8n: Credentials \u2192 Header Auth \u2192 Name: `Authorization`, Value: `Bearer YOUR_APOLLO_KEY`\n\n## Fallback\nIf Apollo returns no email, lead is still added to sheet with empty Email Id. The **Has Email?** node later skips sending email when no email exists.",
+        "height": 1152,
+        "width": 256
+      },
+      "id": "sticky-step5-6",
+      "name": "Step 5-6",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        1072,
+        -1040
+      ]
+    },
+    {
+      "parameters": {
+        "content": "# Step 7\u20139 \u2013 Output Sheet, Mark Completed, Send Email\n\n## What Happens\n1. **Add to Lead Contact Sheet** \u2013 Appends row: Name, Company, Designation, Email Id, Phone Number, LinkedIn, Email Sent (No), Response (empty)\n2. **Mark Input Row Completed** \u2013 Updates Status = Completed in Input List (matches by row)\n3. **Has Email?** \u2013 If Email Id is empty \u2192 skip to next row; if present \u2192 send email\n4. **Send First Email** \u2013 Gmail send with personalized subject/body\n5. **Mark Email Sent** \u2013 Updates Email Sent = Completed in Lead Contact Form\n\n## Loop Back\n**Continue to Next Row** connects back to **Process One by One** to handle the next input row until all are done.",
+        "height": 976
+      },
+      "id": "sticky-step7-9",
+      "name": "Step 7-9",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        1824,
+        -1120
+      ]
+    },
+    {
+      "parameters": {
+        "content": "# Quick Setup Reference\n\n## Replace These in Nodes:\n- **1. Read Input List** \u2192 documentId: `YOUR_INPUT_SHEET_ID`\n- **8. Add to Lead Contact Sheet** \u2192 documentId: `YOUR_LEAD_SHEET_ID`\n- **9. Mark Input Row Completed** \u2192 documentId: `YOUR_INPUT_SHEET_ID`\n- **11. Mark Email Sent** \u2192 documentId: `YOUR_LEAD_SHEET_ID`\n\n## Get Sheet ID:\nFrom URL: `https://docs.google.com/spreadsheets/d/SHEET_ID_HERE/edit`\n\n## Credentials to Create:\n1. **Google Sheets OAuth2** \u2013 n8n will open browser for auth\n2. **Gmail OAuth2** \u2013 For sending emails\n3. **RapidAPI** \u2013 Header Auth, name: `X-RapidAPI-Key`\n4. **Apollo.io** \u2013 Header Auth, name: `Authorization`, value: `Bearer YOUR_KEY`",
+        "height": 944
+      },
+      "id": "sticky-setup",
+      "name": "Credentials & Sheet IDs",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -1104,
+        -704
+      ]
+    },
+    {
+      "parameters": {
+        "content": "# Troubleshooting\n\n**LinkedIn API fails?**\n- Check RapidAPI subscription is active\n- Verify API returns `data` or `results` array\n- Some APIs use different response structure \u2013 adjust Parse node\n\n**Apollo returns no email?**\n- Lead still added with empty Email Id\n- Has Email? node skips sending \u2013 correct behavior\n\n**Google Sheets update fails?**\n- Ensure Status column exists in Input List\n- Ensure Email Id, Email Sent, Response columns exist in Lead Contact Form\n- Update node needs matching column \u2013 check row_number vs row index",
+        "height": 704
+      },
+      "id": "sticky-troubleshoot",
+      "name": "Troubleshooting",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        2608,
+        -960
+      ]
+    },
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "field": "cronExpression",
+              "expression": "0 9 * * *"
+            }
+          ]
+        }
+      },
+      "id": "797c57d2-5143-42e1-930b-5b1ead44e745",
+      "name": "Daily Check (9 AM)",
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.2,
+      "position": [
+        -992,
+        1312
+      ]
+    },
+    {
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "mode": "id",
+          "value": "YOUR_LEAD_SHEET_ID"
+        },
+        "sheetName": {
+          "__rl": true,
+          "mode": "name",
+          "value": "Lead Contact Form"
+        },
+        "options": {}
+      },
+      "id": "90a6c1ac-8a2d-41bc-aeaa-baa2ca1cbd8b",
+      "name": "Read Lead Sheet",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        -752,
+        1312
+      ]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": false,
+            "leftValue": "",
+            "typeValidation": "loose",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "cond1",
+              "leftValue": "={{ $json.Response }}",
+              "rightValue": "Yes",
+              "operator": {
+                "type": "string",
+                "operation": "notEquals"
+              }
+            },
+            {
+              "id": "cond2",
+              "leftValue": "={{ $json['Email Sent'] || $json.EmailSent }}",
+              "rightValue": "",
+              "operator": {
+                "type": "string",
+                "operation": "notEquals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "8807ba74-e796-4d1d-984e-33232f09fe77",
+      "name": "Filter: No Response & Email Sent",
+      "type": "n8n-nodes-base.filter",
+      "typeVersion": 2.2,
+      "position": [
+        -512,
+        1312
+      ]
+    },
+    {
+      "parameters": {
+        "mode": "runOnceForEachItem",
+        "jsCode": "// Determine which follow-up email to send\nconst emailSent = $json['Email Sent'] || $json.EmailSent || '';\nconst response = $json.Response || '';\n\n// Skip if already responded\nif (response === 'Yes') {\n  return { json: { ...json, action: 'skip', reason: 'Already responded' } };\n}\n\nlet action = 'skip';\nlet emailNumber = 0;\n\nif (emailSent === 'Completed' || emailSent === 'Email 1 Sent') {\n  action = 'send_email_2';\n  emailNumber = 2;\n} else if (emailSent === 'Email 2 Sent') {\n  action = 'send_email_3';\n  emailNumber = 3;\n} else if (emailSent === 'Email 3 Sent') {\n  action = 'skip';\n  reason = 'All 3 emails sent, no response';\n}\n\nreturn {\n  json: {\n    ...$json,\n    action: action,\n    emailNumber: emailNumber,\n    EmailId: $json['Email Id'] || $json.EmailId,\n    Name: $json.Name,\n    Company: $json.Company,\n    Designation: $json.Designation\n  }\n};"
+      },
+      "id": "1432fd9d-decb-4d40-846c-96b4da58dcb7",
+      "name": "Check Follow-up Status",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -256,
+        1312
+      ]
+    },
+    {
+      "parameters": {
+        "rules": {
+          "values": [
+            {},
+            {}
+          ]
+        },
+        "options": {}
+      },
+      "id": "4fa73cf3-50d8-47cc-b7f9-22b9a4ae94a8",
+      "name": "Route by Action",
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3.2,
+      "position": [
+        -16,
+        1312
+      ]
+    },
+    {
+      "parameters": {
+        "resource": "message",
+        "operation": "send",
+        "sendTo": "={{ $json.EmailId }}",
+        "subject": "Following up - {{ $json.Company }}",
+        "emailType": "html",
+        "message": "=<p>Hi {{ $json.Name.split(' ')[0] }},</p>\n\n<p>Just wanted to follow up on my previous email. I understand you're busy, but I believe there's a real opportunity to save your team significant time through automation.</p>\n\n<p>Would you have 10 minutes this week for a quick call?</p>\n\n<p><strong>Book here:</strong> <a href=\"https://calendly.com/aiwithdhruv/makeaiworkforyou\">calendly.com/aiwithdhruv/makeaiworkforyou</a></p>\n\n<p>Best regards,<br>\nDhruv<br>\nAI with Dhruv</p>"
+      },
+      "id": "002c3757-6a0d-44a5-99ea-9161d4a1b7c4",
+      "name": "Send Follow-up Email 2",
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.2,
+      "position": [
+        224,
+        1216
+      ],
+      "webhookId": "2e6e9218-7172-403d-ab24-dc120f2dc8a7"
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "documentId": {
+          "__rl": true,
+          "mode": "id",
+          "value": "YOUR_LEAD_SHEET_ID"
+        },
+        "sheetName": {
+          "__rl": true,
+          "mode": "name",
+          "value": "Lead Contact Form"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Email Sent": "Email 2 Sent"
+          },
+          "matchingColumns": [
+            "Email Id"
+          ],
+          "schema": [
+            {
+              "id": "Email Id",
+              "displayName": "Email Id",
+              "required": false,
+              "defaultMatch": true,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Email Sent",
+              "displayName": "Email Sent",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": false
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "21c605d1-3aad-4041-b01c-526aebd08097",
+      "name": "Mark Email 2 Sent",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        464,
+        1216
+      ]
+    },
+    {
+      "parameters": {
+        "resource": "message",
+        "operation": "send",
+        "sendTo": "={{ $json.EmailId }}",
+        "subject": "Last follow-up - {{ $json.Company }}",
+        "emailType": "html",
+        "message": "=<p>Hi {{ $json.Name.split(' ')[0] }},</p>\n\n<p>This will be my last follow-up. If you're not interested in exploring automation solutions right now, I completely understand.</p>\n\n<p>If things change in the future, feel free to reach out. Or book a call anytime: <a href=\"https://calendly.com/aiwithdhruv/makeaiworkforyou\">calendly.com/aiwithdhruv/makeaiworkforyou</a></p>\n\n<p>Best wishes,<br>\nDhruv<br>\nAI with Dhruv</p>"
+      },
+      "id": "02d958f4-dbe9-4f39-976e-08d69c5b46dd",
+      "name": "Send Follow-up Email 3",
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.2,
+      "position": [
+        224,
+        1424
+      ],
+      "webhookId": "70a65102-ebc8-4ab4-af34-8ab7babdb99c"
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "documentId": {
+          "__rl": true,
+          "mode": "id",
+          "value": "YOUR_LEAD_SHEET_ID"
+        },
+        "sheetName": {
+          "__rl": true,
+          "mode": "name",
+          "value": "Lead Contact Form"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Email Sent": "Email 3 Sent"
+          },
+          "matchingColumns": [
+            "Email Id"
+          ],
+          "schema": [
+            {
+              "id": "Email Id",
+              "displayName": "Email Id",
+              "required": false,
+              "defaultMatch": true,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Email Sent",
+              "displayName": "Email Sent",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": false
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "4725e6a2-20ab-4d3a-a8a4-c842a64966e5",
+      "name": "Mark Email 3 Sent",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        464,
+        1424
+      ]
+    },
+    {
+      "parameters": {
+        "content": "# Follow-up Email Sender (Steps 10\u201311)\n\n## Assignment Logic\n- **If response to email** \u2192 Mark Response = Yes (handled by Email Follow-up Handler workflow)\n- **If no response** \u2192 Send follow-up Email 2, then Email 3\n\n## This Workflow's Logic\n1. **Daily at 9 AM** \u2013 Schedule Trigger runs (cron: `0 9 * * *`)\n2. **Read Lead Sheet** \u2013 Gets all leads from Lead Contact Form\n3. **Filter** \u2013 Keeps rows where Response \u2260 Yes AND Email Sent is not empty\n4. **Check Follow-up Status** \u2013 Decides which email to send:\n   - Email Sent = `Completed` or `Email 1 Sent` \u2192 Send Email 2\n   - Email Sent = `Email 2 Sent` \u2192 Send Email 3\n   - Email Sent = `Email 3 Sent` \u2192 Skip (all 3 sent)\n5. **Route by Action** \u2013 Sends Email 2 or 3, then marks Email Sent accordingly\n\n## Email Sent Values\n- After first email: `Completed` (main workflow)\n- After Email 2: `Email 2 Sent`\n- After Email 3: `Email 3 Sent`\n\n## Setup\n- Replace `YOUR_LEAD_SHEET_ID` with your Lead Contact Form sheet ID\n- Connect Gmail OAuth2 credentials\n- Adjust schedule if needed (e.g. every 3 days instead of daily)\n\n---\n\n**Built by Dhruv**\nhttps://youtube.com/@aiwithdhruv\nhttps://linkedin.com/in/aiwithdhruv",
+        "height": 816,
+        "width": 656
+      },
+      "id": "9748959b-9829-4e98-b484-237d5f205413",
+      "name": "Follow-up Logic",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -528,
+        496
+      ]
+    },
+    {
+      "parameters": {
+        "content": "# Schedule & Filter Logic\n\n## Schedule Trigger\n- **Cron:** `0 9 * * *` = Every day at 9:00 AM\n- Change to `0 9 */3 * *` for every 3 days\n- Or `0 9 * * 1` for Mondays only\n\n## Filter: No Response & Email Sent\nKeeps only leads where:\n1. Response \u2260 Yes (no reply yet)\n2. Email Sent is not empty (at least Email 1 was sent)\n\nSo we only follow up with leads who received the first email but did not respond.",
+        "height": 416,
+        "width": 416
+      },
+      "id": "3968f7d9-b9cd-4bdb-b8a0-586605185b64",
+      "name": "Schedule & Filter",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -1024,
+        848
+      ]
+    },
+    {
+      "parameters": {
+        "content": "# Follow-up Email Content\n\n## Email 2 (First Follow-up)\nSubject: Following up - {Company}\n- Gentle reminder\n- Asks for 10-minute call\n\n## Email 3 (Last Follow-up)\nSubject: Last follow-up - {Company}\n- Final attempt\n- Polite close, leaves door open\n\n**Edit** the Gmail nodes to customize subject/body for your use case.",
+        "height": 416,
+        "width": 496
+      },
+      "id": "d431765d-bcc8-41fd-ab7f-f93cb9474fbb",
+      "name": "Email 2 & 3 Content",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        192,
+        608
+      ]
+    },
+    {
+      "parameters": {
+        "pollTimes": {
+          "item": [
+            {
+              "mode": "everyMinute"
+            }
+          ]
+        },
+        "filters": {
+          "readStatus": "unread"
+        }
+      },
+      "id": "4eea3660-e8b0-4af8-a488-09773681adf6",
+      "name": "Gmail: New Email Received",
+      "type": "n8n-nodes-base.gmailTrigger",
+      "typeVersion": 1.3,
+      "position": [
+        1664,
+        976
+      ]
+    },
+    {
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "mode": "id",
+          "value": "YOUR_LEAD_SHEET_ID"
+        },
+        "sheetName": {
+          "__rl": true,
+          "mode": "name",
+          "value": "Lead Contact Form"
+        },
+        "options": {}
+      },
+      "id": "3219e256-e4cb-449c-bc0e-822518750f36",
+      "name": "Read Lead Contact Sheet",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        1904,
+        976
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "// Get the incoming email sender\nconst incomingEmail = $('Gmail: New Email Received').first().json;\nconst senderEmail = incomingEmail.from?.value?.[0]?.address || incomingEmail.from || '';\n\n// Get all leads from the sheet\nconst leads = $input.all().map(item => item.json);\n\n// Find matching lead\nconst matchedLead = leads.find(lead => {\n  const leadEmail = (lead['Email Id'] || lead.EmailId || '').toLowerCase();\n  return leadEmail === senderEmail.toLowerCase();\n});\n\nif (matchedLead) {\n  return [{\n    json: {\n      responseReceived: true,\n      senderEmail: senderEmail,\n      subject: incomingEmail.subject || '',\n      leadName: matchedLead.Name,\n      leadCompany: matchedLead.Company,\n      emailSentStatus: matchedLead['Email Sent'] || matchedLead.EmailSent,\n      currentResponse: matchedLead.Response || ''\n    }\n  }];\n} else {\n  return [{\n    json: {\n      responseReceived: false,\n      senderEmail: senderEmail,\n      subject: incomingEmail.subject || '',\n      message: 'No matching lead found in sheet'\n    }\n  }];\n}"
+      },
+      "id": "d5f1e16a-2cc0-4611-8c67-c20e9521ff3e",
+      "name": "Find Lead by Email",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        2144,
+        976
+      ]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "version": 2,
+            "leftValue": "",
+            "caseSensitive": false,
+            "typeValidation": "loose"
+          },
+          "conditions": [
+            {
+              "id": "cond1",
+              "leftValue": "={{ $json.responseReceived }}",
+              "rightValue": true,
+              "operator": {
+                "type": "boolean",
+                "operation": "equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "707054dd-dd09-42ee-807a-3dd2eb26cf3a",
+      "name": "Is Lead Response?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        2384,
+        976
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "documentId": {
+          "__rl": true,
+          "mode": "id",
+          "value": "YOUR_LEAD_SHEET_ID"
+        },
+        "sheetName": {
+          "__rl": true,
+          "mode": "name",
+          "value": "Lead Contact Form"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Response": "Yes"
+          },
+          "matchingColumns": [
+            "Email Id"
+          ],
+          "schema": [
+            {
+              "id": "Email Id",
+              "displayName": "Email Id",
+              "required": false,
+              "defaultMatch": true,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Response",
+              "displayName": "Response",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": false
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "3e62fda2-b348-4faf-88ba-cb4902c3e340",
+      "name": "Mark Response = Yes",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        2624,
+        880
+      ]
+    },
+    {
+      "parameters": {
+        "content": "# Gmail Trigger \u2013 Response Detection (Step 10)\n\n## What This Workflow Does\nWhen a **new unread email** arrives in Gmail, this workflow:\n1. Reads the Lead Contact Form sheet\n2. Checks if the sender email matches any lead's Email Id\n3. If match found \u2192 marks Response = Yes in that row\n\n## Gmail Trigger Setup\n- **Event:** Message Received\n- **Filters:** readStatus = unread (only unread emails)\n- **Credentials:** Gmail OAuth2 (same as main workflow)\n\n## Polling\nGmail Trigger polls your inbox on an interval (e.g. every 5\u201315 min). Adjust in the trigger node.\n\n## Activate This Workflow\nPublish and activate so it runs when new emails arrive. Works alongside the main Lead Generation workflow.",
+        "height": 688,
+        "width": 448
+      },
+      "id": "2592d132-0ce4-4460-bae6-b4e9482fa54c",
+      "name": "Trigger Info",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        1248,
+        928
+      ]
+    },
+    {
+      "parameters": {
+        "content": "# Response Handling \u2013 Mark Response = Yes (Step 10)\n\n## Flow\n1. **Read Lead Contact Sheet** \u2013 Loads all leads\n2. **Find Lead by Email** \u2013 Compares incoming sender with `Email Id` column (case-insensitive)\n3. **Is Lead Response?** \u2013 If match \u2192 TRUE branch\n4. **Mark Response = Yes** \u2013 Updates the matching row's Response column to `Yes`\n\n## Google Sheets Update\n- **Operation:** Update Row\n- **Match by:** Email Id = sender's email\n- **Update:** Response = Yes\n\n## No Match\nIf sender is not in the sheet, the FALSE branch does nothing (no update).\n\n## Follow-up Emails\nFollow-up emails (2 & 3) are sent by the **Follow-up Email Sender** workflow, which runs on a schedule.",
+        "height": 640,
+        "width": 672
+      },
+      "id": "b0fc0f0c-8967-4a52-ac0a-bb2d2cc6a90f",
+      "name": "Response Handling",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        2864,
+        736
+      ]
+    },
+    {
+      "parameters": {
+        "content": "# Setup \u2013 Email Follow-up Handler\n\n## 1. Replace Sheet ID\nIn **Read Lead Contact Sheet** and **Mark Response = Yes** nodes:\n- documentId: `YOUR_LEAD_SHEET_ID` (same as main workflow)\n\n## 2. Credentials\n- **Google Sheets OAuth2** \u2013 Read Lead sheet, update Response column\n- **Gmail OAuth2** \u2013 For the trigger (must have read access to inbox)\n\n## 3. Activate\nPublish and activate this workflow so it runs when new emails arrive.\n\n## 4. Same Sheet as Main Workflow\nThis workflow reads/writes the **Lead Contact Form** sheet. Must use the same sheet ID as the main Lead Generation workflow.",
+        "height": 576,
+        "width": 576
+      },
+      "id": "198f63e5-2c70-4ac3-b851-f6487c9ce073",
+      "name": "Setup for This Workflow",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        1744,
+        432
+      ]
+    },
+    {
+      "parameters": {
+        "content": "# Flow: New Email \u2192 Mark Response\n\nGmail (new email) \u2192 Read Lead Sheet \u2192 Find Lead by Email \u2192 Is sender in sheet?\n\nYES \u2192 Mark Response = Yes in matching row\nNO \u2192 Do nothing (email not from a lead)\n\nFind Lead by Email compares incoming sender with each row's Email Id (case-insensitive).",
+        "height": 256,
+        "width": 608
+      },
+      "id": "93745c1c-7369-41b7-8944-b2395a5b4fc0",
+      "name": "Flow Diagram",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        2416,
+        432
+      ]
+    },
+    {
+      "id": "sticky-calendly",
+      "name": "Calendly Link (Update Here)",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        2340,
+        -420
+      ],
+      "parameters": {
+        "content": "# Calendly Link\n\n**Current:** https://calendly.com/aiwithdhruv/makeaiworkforyou\n\n**Used in:**\n- 10. Send First Email\n- Send Follow-up Email 2\n- Send Follow-up Email 3\n\nTo change: Edit the Gmail nodes above and update the link in the message body."
+      }
+    }
+  ],
+  "connections": {
+    "Start Workflow": {
+      "main": [
+        [
+          {
+            "node": "1. Read Input List",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "1. Read Input List": {
+      "main": [
+        [
+          {
+            "node": "Filter Pending Rows",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Filter Pending Rows": {
+      "main": [
+        [
+          {
+            "node": "2. Process One by One",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "2. Process One by One": {
+      "main": [
+        [
+          {
+            "node": "3. Build LinkedIn Search URL",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        []
+      ]
+    },
+    "3. Build LinkedIn Search URL": {
+      "main": [
+        [
+          {
+            "node": "4. LinkedIn People Search (API)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "4. LinkedIn People Search (API)": {
+      "main": [
+        [
+          {
+            "node": "5. Parse First Profile",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "5. Parse First Profile": {
+      "main": [
+        [
+          {
+            "node": "Profile Found?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Profile Found?": {
+      "main": [
+        [
+          {
+            "node": "6. Apollo.io Contact Enrichment",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Continue to Next Row",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "6. Apollo.io Contact Enrichment": {
+      "main": [
+        [
+          {
+            "node": "7. Extract Contact Details",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "7. Extract Contact Details": {
+      "main": [
+        [
+          {
+            "node": "8. Add to Lead Contact Sheet",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "8. Add to Lead Contact Sheet": {
+      "main": [
+        [
+          {
+            "node": "9. Mark Input Row Completed",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "9. Mark Input Row Completed": {
+      "main": [
+        [
+          {
+            "node": "Has Email?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Has Email?": {
+      "main": [
+        [
+          {
+            "node": "10. Send First Email",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Continue to Next Row",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "10. Send First Email": {
+      "main": [
+        [
+          {
+            "node": "11. Mark Email Sent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "11. Mark Email Sent": {
+      "main": [
+        [
+          {
+            "node": "Continue to Next Row",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Continue to Next Row": {
+      "main": [
+        [
+          {
+            "node": "2. Process One by One",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Daily Check (9 AM)": {
+      "main": [
+        [
+          {
+            "node": "Read Lead Sheet",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Read Lead Sheet": {
+      "main": [
+        [
+          {
+            "node": "Filter: No Response & Email Sent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Filter: No Response & Email Sent": {
+      "main": [
+        [
+          {
+            "node": "Check Follow-up Status",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Check Follow-up Status": {
+      "main": [
+        [
+          {
+            "node": "Route by Action",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Route by Action": {
+      "main": [
+        [
+          {
+            "node": "Send Follow-up Email 2",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Send Follow-up Email 3",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Send Follow-up Email 2": {
+      "main": [
+        [
+          {
+            "node": "Mark Email 2 Sent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Send Follow-up Email 3": {
+      "main": [
+        [
+          {
+            "node": "Mark Email 3 Sent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Gmail: New Email Received": {
+      "main": [
+        [
+          {
+            "node": "Read Lead Contact Sheet",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Read Lead Contact Sheet": {
+      "main": [
+        [
+          {
+            "node": "Find Lead by Email",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Find Lead by Email": {
+      "main": [
+        [
+          {
+            "node": "Is Lead Response?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Is Lead Response?": {
+      "main": [
+        [
+          {
+            "node": "Mark Response = Yes",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1",
+    "saveDataErrorExecution": "all",
+    "saveDataSuccessExecution": "all",
+    "saveManualExecutions": true,
+    "saveExecutionProgress": true,
+    "callerPolicy": "workflowsFromSameOwner",
+    "availableInMCP": false
+  },
+  "staticData": null,
+  "meta": null,
+  "pinData": {},
+  "versionId": "00094ee2-7bef-42b8-a094-c07c6cdbb774",
+  "activeVersionId": null,
+  "triggerCount": 0,
+  "shared": [
+    {
+      "updatedAt": "2026-02-03T00:30:33.659Z",
+      "createdAt": "2026-02-03T00:30:33.659Z",
+      "role": "workflow:owner",
+      "workflowId": "ly66gcn20cavNLZT",
+      "projectId": "DT8YjHwLZsQjJqVc"
+    }
+  ],
+  "activeVersion": null,
+  "tags": []
+}

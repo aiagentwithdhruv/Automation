@@ -1,0 +1,231 @@
+{
+  "updatedAt": "2025-10-01T16:44:36.000Z",
+  "createdAt": "2025-10-01T16:44:36.066Z",
+  "id": "7FEfPl41uWoCYPik",
+  "name": "AI-Powered Property Recommendations",
+  "active": false,
+  "isArchived": false,
+  "nodes": [
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatAnthropic",
+      "typeVersion": 1.2,
+      "position": [
+        208,
+        208
+      ],
+      "id": "27a2aafa-95d4-4e91-bb18-2f3b6e14b75b",
+      "name": "Anthropic Chat Model"
+    },
+    {
+      "parameters": {
+        "agent": "sqlAgent",
+        "promptType": "define",
+        "text": "=You are an SQL expert responsible for querying a real estate database...",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 1.7,
+      "position": [
+        208,
+        0
+      ],
+      "id": "7eb2ef8b-ef20-4969-aa31-e53a777f2cdc",
+      "name": "MLS Property Finder"
+    },
+    {
+      "parameters": {
+        "pollTimes": {
+          "item": [
+            {
+              "mode": "everyMinute"
+            }
+          ]
+        },
+        "documentId": {
+          "__rl": true,
+          "value": "",
+          "mode": "list",
+          "cachedResultName": "",
+          "cachedResultUrl": ""
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "",
+          "mode": "list",
+          "cachedResultName": "",
+          "cachedResultUrl": ""
+        },
+        "event": "rowAdded",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheetsTrigger",
+      "typeVersion": 1,
+      "position": [
+        0,
+        0
+      ],
+      "id": "f5e26093-0d67-4c24-b260-8a4166d7c5d8",
+      "name": "New Lead Captured"
+    },
+    {
+      "parameters": {
+        "resource": "draft",
+        "subject": "=Great Property Found for You in {{ $('New Lead Captured').item.json.City }}!",
+        "message": "=Hi {{ $('New Lead Captured').item.json.Name }},\n\nI found a property that closely matches what you're looking for!...",
+        "options": {
+          "sendTo": "={{ $('New Lead Captured').item.json.Email }}"
+        }
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.1,
+      "position": [
+        880,
+        0
+      ],
+      "id": "45924b0c-d3bf-4fa9-9f1f-6236deac2ed1",
+      "name": "Craft Property Email",
+      "webhookId": "1d6a4dfa-ea1b-434a-88c7-3efd7e076439"
+    },
+    {
+      "parameters": {
+        "text": "={{ $json.output }}",
+        "attributes": {
+          "attributes": [
+            {
+              "name": "Property Address",
+              "description": "The full address of the property",
+              "required": true
+            },
+            {
+              "name": "Price",
+              "type": "number",
+              "description": "The price of the property",
+              "required": true
+            },
+            {
+              "name": "Bedrooms",
+              "type": "number",
+              "description": "The number of bedroom this property has",
+              "required": true
+            },
+            {
+              "name": "Bathrooms",
+              "type": "number",
+              "description": "The number of bathrooms this property has",
+              "required": true
+            },
+            {
+              "name": "Year Built",
+              "type": "number",
+              "description": "The Year when this property was built",
+              "required": true
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.informationExtractor",
+      "typeVersion": 1,
+      "position": [
+        544,
+        0
+      ],
+      "id": "39ebbb5b-85f6-421c-9522-bd5801a81a31",
+      "name": "Property Info Extractor"
+    },
+    {
+      "parameters": {
+        "model": "2023-07-01-preview",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatAzureOpenAi",
+      "typeVersion": 1,
+      "position": [
+        528,
+        224
+      ],
+      "id": "c16c27a3-0cd8-4401-a6c4-4d1d2945e0d5",
+      "name": "OpenAI Extractor"
+    }
+  ],
+  "connections": {
+    "Anthropic Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "MLS Property Finder",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "MLS Property Finder": {
+      "main": [
+        [
+          {
+            "node": "Property Info Extractor",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "New Lead Captured": {
+      "main": [
+        [
+          {
+            "node": "MLS Property Finder",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Property Info Extractor": {
+      "main": [
+        [
+          {
+            "node": "Craft Property Email",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI Extractor": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Property Info Extractor",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "staticData": null,
+  "meta": null,
+  "pinData": {},
+  "versionId": "dc6d34ad-f567-4786-b209-a3e54bee7902",
+  "activeVersionId": null,
+  "triggerCount": 0,
+  "shared": [
+    {
+      "updatedAt": "2025-10-01T16:44:36.069Z",
+      "createdAt": "2025-10-01T16:44:36.069Z",
+      "role": "workflow:owner",
+      "workflowId": "7FEfPl41uWoCYPik",
+      "projectId": "DT8YjHwLZsQjJqVc"
+    }
+  ],
+  "activeVersion": null,
+  "tags": []
+}

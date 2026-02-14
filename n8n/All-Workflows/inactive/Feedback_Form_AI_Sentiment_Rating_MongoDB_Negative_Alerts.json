@@ -1,0 +1,540 @@
+{
+  "updatedAt": "2026-01-03T16:08:26.786Z",
+  "createdAt": "2026-01-03T16:08:26.786Z",
+  "id": "mmxImWwP2CLF5i1b",
+  "name": "Feedback Form \u2192 AI Sentiment + Rating \u2192 MongoDB + Negative Alerts",
+  "active": false,
+  "isArchived": false,
+  "nodes": [
+    {
+      "parameters": {
+        "path": "feedback/sentiment",
+        "httpMethod": "POST",
+        "responseMode": "responseNode",
+        "options": {
+          "rawBody": false
+        }
+      },
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [
+        -980,
+        -40
+      ],
+      "id": "5b0d2d68-1153-4f25-8d6e-7c5ce61068c0",
+      "name": "Webhook Trigger (Form Submission)",
+      "webhookId": "4b73f7b1-22bd-4c8a-9b4c-c3a3b3a710d4"
+    },
+    {
+      "parameters": {
+        "content": "## Trigger\n- **POST** `/webhook/feedback/sentiment`\n- Body fields expected:\n  - `feedback_text` (required)\n  - `user_email` (optional)\n\nWebhook is set to **Respond via Respond to Webhook node** so the workflow can return sentiment + rating after processing.\n\nIf your form sends `application/x-www-form-urlencoded`, ensure n8n parses it or adjust extraction logic accordingly.",
+        "height": 220,
+        "width": 520,
+        "color": 5
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -1040,
+        -340
+      ],
+      "id": "0a4511c0-99f0-4e79-acfe-8f85cf0e10d3",
+      "name": "Sticky Note - Trigger & Input"
+    },
+    {
+      "parameters": {
+        "keepOnlySet": true,
+        "values": {
+          "string": [
+            {
+              "name": "feedback_text",
+              "value": "={{$json.body?.feedback_text ?? $json.feedback_text ?? ''}}"
+            },
+            {
+              "name": "user_email",
+              "value": "={{$json.body?.user_email ?? $json.user_email ?? ''}}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 2,
+      "position": [
+        -740,
+        -40
+      ],
+      "id": "8a1d1c66-4713-4037-87a8-10c09b7d7a5d",
+      "name": "Extract Fields"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "string": [
+            {
+              "value1": "={{$json.feedback_text}}",
+              "operation": "notEmpty"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2,
+      "position": [
+        -520,
+        -40
+      ],
+      "id": "3aaed47a-0a07-4a58-bbd9-8c5cb41d2f84",
+      "name": "Validate feedback_text"
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseCode": 400,
+        "options": {},
+        "responseBody": "={{({ error: 'Missing required field: feedback_text' })}}"
+      },
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1,
+      "position": [
+        -240,
+        180
+      ],
+      "id": "04a21d33-5c6f-4878-a2b4-3b532121a7e9",
+      "name": "Respond 400 (Invalid Input)"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "={{$json.feedback_text}}",
+        "hasOutputParser": true,
+        "options": {
+          "systemMessage": "You are a sentiment analysis service for user feedback.\n\nGiven a single piece of feedback text, output ONLY a JSON object that matches the provided schema.\n\nRules:\n- sentiment MUST be exactly one of: Positive, Neutral, Negative\n- rating MUST be an integer from 1 to 5\n- Map sentiment to rating approximately:\n  - Negative: 1-2\n  - Neutral: 3\n  - Positive: 4-5\n- If the feedback is mixed, choose Neutral unless clearly negative.\n- Do not include extra keys beyond the schema.\n"
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 2,
+      "position": [
+        -120,
+        -40
+      ],
+      "id": "f0d1d84c-6b7e-4fef-84b0-42f9372c5e45",
+      "name": "AI Sentiment + Rating (Structured)"
+    },
+    {
+      "parameters": {
+        "model": "openai/gpt-4o-mini",
+        "options": {
+          "temperature": 0.2
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenRouter",
+      "typeVersion": 1,
+      "position": [
+        -320,
+        220
+      ],
+      "id": "5d2d65a0-d5ea-4d52-9b82-e8b15a9d4b8c",
+      "name": "OpenRouter Chat Model",
+      "credentials": {
+        "openRouterApi": {
+          "id": "REPLACE_WITH_YOUR_CREDENTIAL_ID",
+          "name": "OpenRouter API"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "schemaType": "manual",
+        "inputSchema": "{\n  \"type\": \"object\",\n  \"additionalProperties\": false,\n  \"properties\": {\n    \"sentiment\": {\n      \"type\": \"string\",\n      \"description\": \"Sentiment class\",\n      \"enum\": [\"Positive\", \"Neutral\", \"Negative\"]\n    },\n    \"rating\": {\n      \"type\": \"integer\",\n      \"description\": \"Simple rating from 1 to 5\",\n      \"minimum\": 1,\n      \"maximum\": 5\n    }\n  },\n  \"required\": [\"sentiment\", \"rating\"]\n}\n"
+      },
+      "type": "@n8n/n8n-nodes-langchain.outputParserStructured",
+      "typeVersion": 1.2,
+      "position": [
+        -120,
+        220
+      ],
+      "id": "6f190001-2df1-4d0d-bab0-d7456f5c9c01",
+      "name": "Structured Output Parser"
+    },
+    {
+      "parameters": {
+        "content": "## AI Sentiment Analysis\nUses OpenRouter Chat model + Structured Output Parser to produce:\n- `sentiment`: Positive | Neutral | Negative\n- `rating`: integer 1\u20135\n\nConfigure **OpenRouter API credentials** (or swap to another chat model node).",
+        "height": 200,
+        "width": 520,
+        "color": 3
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -420,
+        420
+      ],
+      "id": "c9b7b263-493d-4e33-9fca-d3a0bfdb34d1",
+      "name": "Sticky Note - AI"
+    },
+    {
+      "parameters": {
+        "keepOnlySet": true,
+        "values": {
+          "string": [
+            {
+              "name": "feedback_text",
+              "value": "={{$node[\"Extract Fields\"].json.feedback_text}}"
+            },
+            {
+              "name": "user_email",
+              "value": "={{$node[\"Extract Fields\"].json.user_email}}"
+            },
+            {
+              "name": "sentiment",
+              "value": "={{$json.sentiment}}"
+            }
+          ],
+          "number": [
+            {
+              "name": "rating",
+              "value": "={{$json.rating}}"
+            }
+          ],
+          "dateTime": [
+            {
+              "name": "timestamp",
+              "value": "={{new Date().toISOString()}}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 2,
+      "position": [
+        120,
+        -40
+      ],
+      "id": "9f0fb6d7-0d1e-4b46-9b5c-52f3b121e15b",
+      "name": "Build Feedback Record"
+    },
+    {
+      "parameters": {
+        "operation": "insert",
+        "collection": "feedback",
+        "database": "feedback_app",
+        "fields": "={{$json}}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.mongoDb",
+      "typeVersion": 1,
+      "position": [
+        360,
+        -160
+      ],
+      "id": "3dd83aa5-61e0-4ff6-bdc1-86b5361ba0b1",
+      "name": "MongoDB Insert Feedback",
+      "credentials": {
+        "mongoDb": {
+          "id": "REPLACE_WITH_YOUR_CREDENTIAL_ID",
+          "name": "MongoDB"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "mode": "mergeByIndex",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.merge",
+      "typeVersion": 2,
+      "position": [
+        600,
+        -40
+      ],
+      "id": "e5c8f11c-6f1c-4c7b-92b6-f7af2d6055cb",
+      "name": "Merge (Preserve Fields + Insert Result)"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "string": [
+            {
+              "value1": "={{$json.sentiment}}",
+              "operation": "equals",
+              "value2": "Negative"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2,
+      "position": [
+        820,
+        -40
+      ],
+      "id": "ed0b99fd-3c77-4b5a-ae12-2fbb8b17c802",
+      "name": "If Negative Sentiment"
+    },
+    {
+      "parameters": {
+        "resource": "message",
+        "operation": "post",
+        "channel": "#alerts",
+        "text": "={{`\ud83d\udea8 Negative feedback received\\nSentiment: ${$json.sentiment} | Rating: ${$json.rating}\\nUser: ${$json.user_email || '(not provided)'}\\nFeedback: ${$json.feedback_text}\\nTime: ${$json.timestamp}`}}",
+        "otherOptions": {}
+      },
+      "type": "n8n-nodes-base.slack",
+      "typeVersion": 2,
+      "position": [
+        1060,
+        -160
+      ],
+      "id": "ccde3b85-0b41-4a57-8c3b-7f2a33e6db10",
+      "name": "Slack Alert (Negative)",
+      "continueOnFail": true,
+      "credentials": {
+        "slackApi": {
+          "id": "REPLACE_WITH_YOUR_CREDENTIAL_ID",
+          "name": "Slack API"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "fromEmail": "={{$env.ALERT_FROM_EMAIL || 'alerts@example.com'}}",
+        "toEmail": "={{$env.ALERT_TO_EMAIL || 'admin@example.com'}}",
+        "subject": "={{`Negative feedback alert (rating ${$json.rating}/5)`}}",
+        "text": "={{`Negative feedback received\\n\\nSentiment: ${$json.sentiment}\\nRating: ${$json.rating}/5\\nUser Email: ${$json.user_email || '(not provided)'}\\nTimestamp: ${$json.timestamp}\\n\\nFeedback:\\n${$json.feedback_text}`}}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.emailSend",
+      "typeVersion": 2,
+      "position": [
+        1280,
+        -160
+      ],
+      "id": "9702e586-f398-4502-b4d0-43ce2f491c05",
+      "name": "Email Alert (Negative)",
+      "continueOnFail": true,
+      "credentials": {
+        "smtp": {
+          "id": "REPLACE_WITH_YOUR_CREDENTIAL_ID",
+          "name": "SMTP"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseCode": 200,
+        "options": {},
+        "responseBody": "={{({ sentiment: $json.sentiment, rating: $json.rating })}}"
+      },
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1,
+      "position": [
+        1280,
+        60
+      ],
+      "id": "dcc0c75a-f0ae-4426-b7d2-c2e67f486196",
+      "name": "Respond 200 (Sentiment + Rating)"
+    },
+    {
+      "parameters": {
+        "content": "## Storage + Alerts\n- Inserts a flexible feedback document into **MongoDB** (`feedback_app.feedback`).\n- Uses **Merge** to preserve the original fields even if the Mongo node returns only an insert result.\n- If sentiment is **Negative**, sends Slack + Email alerts (both set to **Continue On Fail**).\n\nConfigure:\n- **MongoDB credentials**\n- **Slack credentials** + channel\n- **SMTP credentials** (or swap to Gmail/SendGrid)\n- Optional env vars: `ALERT_FROM_EMAIL`, `ALERT_TO_EMAIL`",
+        "height": 260,
+        "width": 620,
+        "color": 2
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        520,
+        220
+      ],
+      "id": "2fbce079-9f79-4a2f-bf06-6a93cb1ce65d",
+      "name": "Sticky Note - Storage & Alerts"
+    }
+  ],
+  "connections": {
+    "Webhook Trigger (Form Submission)": {
+      "main": [
+        [
+          {
+            "node": "Extract Fields",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Extract Fields": {
+      "main": [
+        [
+          {
+            "node": "Validate feedback_text",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Validate feedback_text": {
+      "main": [
+        [
+          {
+            "node": "AI Sentiment + Rating (Structured)",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Respond 400 (Invalid Input)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenRouter Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Sentiment + Rating (Structured)",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Structured Output Parser": {
+      "ai_outputParser": [
+        [
+          {
+            "node": "AI Sentiment + Rating (Structured)",
+            "type": "ai_outputParser",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "AI Sentiment + Rating (Structured)": {
+      "main": [
+        [
+          {
+            "node": "Build Feedback Record",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Build Feedback Record": {
+      "main": [
+        [
+          {
+            "node": "MongoDB Insert Feedback",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Merge (Preserve Fields + Insert Result)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "MongoDB Insert Feedback": {
+      "main": [
+        [
+          {
+            "node": "Merge (Preserve Fields + Insert Result)",
+            "type": "main",
+            "index": 1
+          }
+        ]
+      ]
+    },
+    "Merge (Preserve Fields + Insert Result)": {
+      "main": [
+        [
+          {
+            "node": "If Negative Sentiment",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If Negative Sentiment": {
+      "main": [
+        [
+          {
+            "node": "Slack Alert (Negative)",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Respond 200 (Sentiment + Rating)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Slack Alert (Negative)": {
+      "main": [
+        [
+          {
+            "node": "Email Alert (Negative)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Email Alert (Negative)": {
+      "main": [
+        [
+          {
+            "node": "Respond 200 (Sentiment + Rating)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1",
+    "saveManualExecutions": true,
+    "saveDataSuccessExecution": "all",
+    "saveExecutionProgress": true,
+    "saveDataErrorExecution": "all",
+    "errorWorkflow": "",
+    "timezone": "America/New_York",
+    "callerPolicy": "workflowsFromSameOwner",
+    "availableInMCP": false
+  },
+  "staticData": null,
+  "meta": null,
+  "pinData": null,
+  "versionId": "2e613af0-2aeb-473d-8b31-aa3c1dc26fa8",
+  "activeVersionId": null,
+  "triggerCount": 0,
+  "shared": [
+    {
+      "updatedAt": "2026-01-03T16:08:26.793Z",
+      "createdAt": "2026-01-03T16:08:26.793Z",
+      "role": "workflow:owner",
+      "workflowId": "mmxImWwP2CLF5i1b",
+      "projectId": "DT8YjHwLZsQjJqVc"
+    }
+  ],
+  "activeVersion": null,
+  "tags": []
+}

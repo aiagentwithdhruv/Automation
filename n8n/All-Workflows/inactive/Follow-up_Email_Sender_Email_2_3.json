@@ -1,0 +1,426 @@
+{
+  "updatedAt": "2026-02-03T00:56:00.690Z",
+  "createdAt": "2026-02-03T00:31:34.765Z",
+  "id": "SuoPZ73e5lstdImo",
+  "name": "Follow-up Email Sender (Email 2 & 3)",
+  "active": false,
+  "isArchived": false,
+  "nodes": [
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "field": "cronExpression",
+              "expression": "0 9 * * *"
+            }
+          ]
+        }
+      },
+      "id": "schedule-trigger",
+      "name": "Daily Check (9 AM)",
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.2,
+      "position": [
+        -608,
+        0
+      ]
+    },
+    {
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "mode": "id",
+          "value": "YOUR_LEAD_SHEET_ID"
+        },
+        "sheetName": {
+          "__rl": true,
+          "mode": "name",
+          "value": "Lead Contact Form"
+        },
+        "options": {}
+      },
+      "id": "read-leads",
+      "name": "Read Lead Sheet",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        -368,
+        0
+      ]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": false,
+            "leftValue": "",
+            "typeValidation": "loose",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "cond1",
+              "leftValue": "={{ $json.Response }}",
+              "rightValue": "Yes",
+              "operator": {
+                "type": "string",
+                "operation": "notEquals"
+              }
+            },
+            {
+              "id": "cond2",
+              "leftValue": "={{ $json['Email Sent'] || $json.EmailSent }}",
+              "rightValue": "",
+              "operator": {
+                "type": "string",
+                "operation": "notEquals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "filter-no-response",
+      "name": "Filter: No Response & Email Sent",
+      "type": "n8n-nodes-base.filter",
+      "typeVersion": 2.2,
+      "position": [
+        -128,
+        0
+      ]
+    },
+    {
+      "parameters": {
+        "mode": "runOnceForEachItem",
+        "jsCode": "// Determine which follow-up email to send\nconst emailSent = $json['Email Sent'] || $json.EmailSent || '';\nconst response = $json.Response || '';\n\n// Skip if already responded\nif (response === 'Yes') {\n  return { json: { ...json, action: 'skip', reason: 'Already responded' } };\n}\n\nlet action = 'skip';\nlet emailNumber = 0;\n\nif (emailSent === 'Completed' || emailSent === 'Email 1 Sent') {\n  action = 'send_email_2';\n  emailNumber = 2;\n} else if (emailSent === 'Email 2 Sent') {\n  action = 'send_email_3';\n  emailNumber = 3;\n} else if (emailSent === 'Email 3 Sent') {\n  action = 'skip';\n  reason = 'All 3 emails sent, no response';\n}\n\nreturn {\n  json: {\n    ...$json,\n    action: action,\n    emailNumber: emailNumber,\n    EmailId: $json['Email Id'] || $json.EmailId,\n    Name: $json.Name,\n    Company: $json.Company,\n    Designation: $json.Designation\n  }\n};"
+      },
+      "id": "check-followup-status",
+      "name": "Check Follow-up Status",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        128,
+        0
+      ]
+    },
+    {
+      "parameters": {
+        "rules": {
+          "values": [
+            {},
+            {}
+          ]
+        },
+        "options": {}
+      },
+      "id": "route-by-action",
+      "name": "Route by Action",
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3.2,
+      "position": [
+        368,
+        0
+      ]
+    },
+    {
+      "parameters": {
+        "sendTo": "={{ $json.EmailId }}",
+        "subject": "Following up - {{ $json.Company }}",
+        "message": "=<p>Hi {{ $json.Name.split(' ')[0] }},</p>\n\n<p>Just wanted to follow up on my previous email. I understand you're busy, but I believe there's a real opportunity to save your team significant time through automation.</p>\n\n<p>Would you have 10 minutes this week for a quick call?</p>\n\n<p>Best regards,<br>\nDhruv<br>\nAI with Dhruv</p>",
+        "options": {}
+      },
+      "id": "send-email-2",
+      "name": "Send Follow-up Email 2",
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.2,
+      "position": [
+        608,
+        -96
+      ],
+      "webhookId": "2e6e9218-7172-403d-ab24-dc120f2dc8a7"
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "documentId": {
+          "__rl": true,
+          "mode": "id",
+          "value": "YOUR_LEAD_SHEET_ID"
+        },
+        "sheetName": {
+          "__rl": true,
+          "mode": "name",
+          "value": "Lead Contact Form"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Email Sent": "Email 2 Sent"
+          },
+          "matchingColumns": [
+            "Email Id"
+          ],
+          "schema": [
+            {
+              "id": "Email Id",
+              "displayName": "Email Id",
+              "required": false,
+              "defaultMatch": true,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Email Sent",
+              "displayName": "Email Sent",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": false
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "mark-email-2-sent",
+      "name": "Mark Email 2 Sent",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        848,
+        -96
+      ]
+    },
+    {
+      "parameters": {
+        "sendTo": "={{ $json.EmailId }}",
+        "subject": "Last follow-up - {{ $json.Company }}",
+        "message": "=<p>Hi {{ $json.Name.split(' ')[0] }},</p>\n\n<p>This will be my last follow-up. If you're not interested in exploring automation solutions right now, I completely understand.</p>\n\n<p>If things change in the future, feel free to reach out. I'm always happy to help.</p>\n\n<p>Best wishes,<br>\nDhruv<br>\nAI with Dhruv</p>",
+        "options": {}
+      },
+      "id": "send-email-3",
+      "name": "Send Follow-up Email 3",
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.2,
+      "position": [
+        608,
+        112
+      ],
+      "webhookId": "70a65102-ebc8-4ab4-af34-8ab7babdb99c"
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "documentId": {
+          "__rl": true,
+          "mode": "id",
+          "value": "YOUR_LEAD_SHEET_ID"
+        },
+        "sheetName": {
+          "__rl": true,
+          "mode": "name",
+          "value": "Lead Contact Form"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Email Sent": "Email 3 Sent"
+          },
+          "matchingColumns": [
+            "Email Id"
+          ],
+          "schema": [
+            {
+              "id": "Email Id",
+              "displayName": "Email Id",
+              "required": false,
+              "defaultMatch": true,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Email Sent",
+              "displayName": "Email Sent",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": false
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "mark-email-3-sent",
+      "name": "Mark Email 3 Sent",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        848,
+        112
+      ]
+    },
+    {
+      "parameters": {
+        "content": "# Follow-up Email Sender (Steps 10\u201311)\n\n## Assignment Logic\n- **If response to email** \u2192 Mark Response = Yes (handled by Email Follow-up Handler workflow)\n- **If no response** \u2192 Send follow-up Email 2, then Email 3\n\n## This Workflow's Logic\n1. **Daily at 9 AM** \u2013 Schedule Trigger runs (cron: `0 9 * * *`)\n2. **Read Lead Sheet** \u2013 Gets all leads from Lead Contact Form\n3. **Filter** \u2013 Keeps rows where Response \u2260 Yes AND Email Sent is not empty\n4. **Check Follow-up Status** \u2013 Decides which email to send:\n   - Email Sent = `Completed` or `Email 1 Sent` \u2192 Send Email 2\n   - Email Sent = `Email 2 Sent` \u2192 Send Email 3\n   - Email Sent = `Email 3 Sent` \u2192 Skip (all 3 sent)\n5. **Route by Action** \u2013 Sends Email 2 or 3, then marks Email Sent accordingly\n\n## Email Sent Values\n- After first email: `Completed` (main workflow)\n- After Email 2: `Email 2 Sent`\n- After Email 3: `Email 3 Sent`\n\n## Setup\n- Replace `YOUR_LEAD_SHEET_ID` with your Lead Contact Form sheet ID\n- Connect Gmail OAuth2 credentials\n- Adjust schedule if needed (e.g. every 3 days instead of daily)\n\n---\n\n**Built by Dhruv**\nhttps://youtube.com/@aiwithdhruv\nhttps://linkedin.com/in/aiwithdhruv",
+        "height": 816,
+        "width": 656
+      },
+      "id": "sticky-overview",
+      "name": "Follow-up Logic",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -144,
+        -816
+      ]
+    },
+    {
+      "parameters": {
+        "content": "# Schedule & Filter Logic\n\n## Schedule Trigger\n- **Cron:** `0 9 * * *` = Every day at 9:00 AM\n- Change to `0 9 */3 * *` for every 3 days\n- Or `0 9 * * 1` for Mondays only\n\n## Filter: No Response & Email Sent\nKeeps only leads where:\n1. Response \u2260 Yes (no reply yet)\n2. Email Sent is not empty (at least Email 1 was sent)\n\nSo we only follow up with leads who received the first email but did not respond.",
+        "height": 416,
+        "width": 416
+      },
+      "id": "sticky-schedule",
+      "name": "Schedule & Filter",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -640,
+        -464
+      ]
+    },
+    {
+      "parameters": {
+        "content": "# Follow-up Email Content\n\n## Email 2 (First Follow-up)\nSubject: Following up - {Company}\n- Gentle reminder\n- Asks for 10-minute call\n\n## Email 3 (Last Follow-up)\nSubject: Last follow-up - {Company}\n- Final attempt\n- Polite close, leaves door open\n\n**Edit** the Gmail nodes to customize subject/body for your use case.",
+        "height": 416,
+        "width": 496
+      },
+      "id": "sticky-emails",
+      "name": "Email 2 & 3 Content",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        576,
+        -704
+      ]
+    }
+  ],
+  "connections": {
+    "Daily Check (9 AM)": {
+      "main": [
+        [
+          {
+            "node": "Read Lead Sheet",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Read Lead Sheet": {
+      "main": [
+        [
+          {
+            "node": "Filter: No Response & Email Sent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Filter: No Response & Email Sent": {
+      "main": [
+        [
+          {
+            "node": "Check Follow-up Status",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Check Follow-up Status": {
+      "main": [
+        [
+          {
+            "node": "Route by Action",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Route by Action": {
+      "main": [
+        [
+          {
+            "node": "Send Follow-up Email 2",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Send Follow-up Email 3",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        []
+      ]
+    },
+    "Send Follow-up Email 2": {
+      "main": [
+        [
+          {
+            "node": "Mark Email 2 Sent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Send Follow-up Email 3": {
+      "main": [
+        [
+          {
+            "node": "Mark Email 3 Sent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1",
+    "saveDataErrorExecution": "all",
+    "saveDataSuccessExecution": "all",
+    "saveManualExecutions": true,
+    "saveExecutionProgress": true,
+    "callerPolicy": "workflowsFromSameOwner",
+    "availableInMCP": false
+  },
+  "staticData": null,
+  "meta": null,
+  "pinData": {},
+  "versionId": "95283b85-d4e0-4139-ac69-60ccd77df131",
+  "activeVersionId": null,
+  "triggerCount": 0,
+  "shared": [
+    {
+      "updatedAt": "2026-02-03T00:31:34.768Z",
+      "createdAt": "2026-02-03T00:31:34.768Z",
+      "role": "workflow:owner",
+      "workflowId": "SuoPZ73e5lstdImo",
+      "projectId": "DT8YjHwLZsQjJqVc"
+    }
+  ],
+  "activeVersion": null,
+  "tags": []
+}

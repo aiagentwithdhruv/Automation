@@ -1,0 +1,1183 @@
+{
+  "updatedAt": "2025-12-07T17:18:36.000Z",
+  "createdAt": "2025-12-07T14:40:35.900Z",
+  "id": "jias8BJDRjZ6hZCp",
+  "name": "7th_Dec_Http_Webhook_if_switch_Telegram",
+  "active": true,
+  "isArchived": false,
+  "nodes": [
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.chatTrigger",
+      "typeVersion": 1.4,
+      "position": [
+        -416,
+        -176
+      ],
+      "id": "318acb44-786a-4e03-830b-804a2afe9d7e",
+      "name": "When chat message received",
+      "webhookId": "e0357465-1798-48c7-8efd-69e6df2d69c6"
+    },
+    {
+      "parameters": {
+        "formTitle": "Generate Image",
+        "formDescription": "Just write promt",
+        "formFields": {
+          "values": [
+            {
+              "fieldLabel": "Promt"
+            },
+            {
+              "fieldLabel": "Upload File",
+              "fieldType": "file"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.formTrigger",
+      "typeVersion": 2.3,
+      "position": [
+        -1136,
+        -448
+      ],
+      "id": "66a49f19-fb29-486a-8428-1c21cc340416",
+      "name": "Image Promt",
+      "webhookId": "80b61f1b-593e-4d22-a7f0-86a11f8f6629",
+      "disabled": true
+    },
+    {
+      "parameters": {
+        "chatId": "637313836",
+        "text": "={{ $json.data[0].url }}",
+        "additionalFields": {
+          "appendAttribution": false
+        }
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        160,
+        112
+      ],
+      "id": "b467035e-a7d0-47eb-839e-82e2ec6da589",
+      "name": "Send a Image URL",
+      "webhookId": "494a6d15-8163-447b-9f7a-e4a3359de4f6",
+      "credentials": {
+        "telegramApi": {
+          "id": "vB4WMues0wSlwcnL",
+          "name": "decautaomtion_test"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "formTitle": "Audio Transcrip",
+        "formDescription": "Just write promt",
+        "formFields": {
+          "values": [
+            {
+              "fieldLabel": "Input Text To Convert Audio"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.formTrigger",
+      "typeVersion": 2.3,
+      "position": [
+        -640,
+        400
+      ],
+      "id": "3df1d2bf-d3d6-47d5-bfa9-6806926c60f6",
+      "name": "Text To Audio",
+      "webhookId": "89d00740-8976-4465-aa39-254295bff5da"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.euron.one/api/v1/euri/images/generations",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpBearerAuth",
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "prompt",
+              "value": "={{ $json.message }}"
+            },
+            {
+              "name": "model",
+              "value": "black-forest-labs/FLUX.1-schnell"
+            },
+            {
+              "name": "size",
+              "value": "1024x1024"
+            },
+            {
+              "name": "quality",
+              "value": "standard"
+            },
+            {
+              "name": "response_format",
+              "value": "url"
+            },
+            {
+              "name": "style",
+              "value": "vivid"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.3,
+      "position": [
+        -48,
+        112
+      ],
+      "id": "023da2d7-00a1-44cd-96a9-0923dda9cc49",
+      "name": "Euri Image",
+      "credentials": {
+        "httpBearerAuth": {
+          "id": "8ZkhkWsck6v2KCTU",
+          "name": "Euri"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.euron.one/api/v1/euri/chat/completions",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpBearerAuth",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"messages\": [\n    {\n      \"role\": \"user\",\n      \"content\": \"{{ $json.chatInput }}\"\n    }\n  ],\n  \"model\": \"gemini-2.5-pro\"\n}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.3,
+      "position": [
+        -208,
+        -176
+      ],
+      "id": "93288f32-d72c-4597-ba14-9fc5fd56373b",
+      "name": "Euri Text",
+      "credentials": {
+        "httpBearerAuth": {
+          "id": "8ZkhkWsck6v2KCTU",
+          "name": "Euri"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.euron.one/api/v1/euri/audio/speech",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpBearerAuth",
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "input",
+              "value": "={{ $json['Input Text To Convert Audio'] }}"
+            },
+            {
+              "name": "model",
+              "value": "playai-tts"
+            },
+            {
+              "name": "voice",
+              "value": "Jennifer-PlayAI"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.3,
+      "position": [
+        -416,
+        400
+      ],
+      "id": "9a738169-3d31-48ac-a5cf-d4fc7cf93b72",
+      "name": "Euri Text to Speech",
+      "credentials": {
+        "httpBearerAuth": {
+          "id": "8ZkhkWsck6v2KCTU",
+          "name": "Euri"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "sendAudio",
+        "chatId": "637313836",
+        "binaryData": true,
+        "additionalFields": {}
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        -192,
+        400
+      ],
+      "id": "8964dd55-2ddd-4390-96b8-bbbd4e2e7130",
+      "name": "Send an audio file",
+      "webhookId": "494a6d15-8163-447b-9f7a-e4a3359de4f6",
+      "credentials": {
+        "telegramApi": {
+          "id": "W6XV6RQORTB3eBDg",
+          "name": "Agent Dhruv"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "return [\n  {\n    json: {\n      message: $json.choices[0].message.content\n    }\n  }\n];"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        16,
+        -176
+      ],
+      "id": "ecf6e61a-09a1-4b17-84d6-b1a4ea3f29a3",
+      "name": "Structure Output"
+    },
+    {
+      "parameters": {
+        "updates": [
+          "message"
+        ],
+        "additionalFields": {}
+      },
+      "type": "n8n-nodes-base.telegramTrigger",
+      "typeVersion": 1.2,
+      "position": [
+        -624,
+        112
+      ],
+      "id": "6e9c3d74-9e6b-477c-a890-4f1873f97fe7",
+      "name": "Image generator",
+      "webhookId": "c2baf400-02aa-44a1-932f-dc0efb54669e",
+      "credentials": {
+        "telegramApi": {
+          "id": "vB4WMues0wSlwcnL",
+          "name": "decautaomtion_test"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.euron.one/api/v1/euri/chat/completions",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpBearerAuth",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"messages\": [\n    {\n      \"role\": \"user\",\n      \"content\": \"{{ $json.message.text }}\"\n    }\n  ],\n  \"model\": \"gemini-2.5-pro\"\n}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.3,
+      "position": [
+        -416,
+        112
+      ],
+      "id": "f0382b17-2c3b-40ef-b3cc-85715ae15d7a",
+      "name": "Euri Text1",
+      "credentials": {
+        "httpBearerAuth": {
+          "id": "8ZkhkWsck6v2KCTU",
+          "name": "Euri"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "return [\n  {\n    json: {\n      message: $json.choices[0].message.content\n    }\n  }\n];"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -240,
+        112
+      ],
+      "id": "420d8856-a6af-478e-807b-c32e54d9cbc3",
+      "name": "Structure Output1"
+    },
+    {
+      "parameters": {
+        "content": "## Image Generator  -----",
+        "height": 176,
+        "width": 1504,
+        "color": 3
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        -1152,
+        96
+      ],
+      "typeVersion": 1,
+      "id": "b74c7873-fcc4-4116-8c13-0d1a4b355f1d",
+      "name": "Sticky Note"
+    },
+    {
+      "parameters": {
+        "content": "## Euri Chat ",
+        "width": 1536,
+        "color": 4
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        -1168,
+        -192
+      ],
+      "typeVersion": 1,
+      "id": "c3b9b251-6682-43cd-b8a9-23fbf7ac4284",
+      "name": "Sticky Note2"
+    },
+    {
+      "parameters": {
+        "content": "## Text to image",
+        "height": 192,
+        "width": 1600,
+        "color": 6
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        -1152,
+        368
+      ],
+      "typeVersion": 1,
+      "id": "7ea7196b-e42d-42cc-bc01-9ae741b43498",
+      "name": "Sticky Note3"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.4,
+      "position": [
+        -80,
+        736
+      ],
+      "id": "bb56a5a3-d834-4b9f-9caa-a8ec78f90d91",
+      "name": "Respond to Webhook"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.euron.one/api/v1/euri/chat/completions",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpBearerAuth",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"messages\": [\n    {\n      \"role\": \"user\",\n      \"content\": \"{{ $json.body.message }}\"\n    }\n  ],\n  \"model\": \"gemini-2.5-pro\"\n}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.3,
+      "position": [
+        -464,
+        736
+      ],
+      "id": "6a425646-f737-4397-9631-216d552858dc",
+      "name": "Euri Text2",
+      "credentials": {
+        "httpBearerAuth": {
+          "id": "8ZkhkWsck6v2KCTU",
+          "name": "Euri"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "// extract correct content from LLM response\nlet text = $json.choices[0].message.content || \"\";\n\n// clean formatting\ntext = text.replace(/\\n+/g, \" \");       // remove extra new lines\ntext = text.replace(/\\*\\*/g, \"\");       // remove **bold**\ntext = text.replace(/[\"{}]/g, \"\");       // remove brackets/quotes\ntext = text.replace(/\\s+/g, \" \");        // normalize spaces\n\nreturn {\n  json: {\n    response: text.trim()\n  }\n}"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -288,
+        736
+      ],
+      "id": "511bf0d5-3d18-4ae9-bf49-eb4b8b400891",
+      "name": "Structure Output2"
+    },
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "39fdb799-c788-4977-b116-18fb20476bec",
+        "responseMode": "responseNode",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2.1,
+      "position": [
+        -688,
+        736
+      ],
+      "id": "4bcb1e98-6ad5-4678-8ead-3f3c5d6edf14",
+      "name": "Webhook",
+      "webhookId": "39fdb799-c788-4977-b116-18fb20476bec"
+    },
+    {
+      "parameters": {
+        "content": "## Webhook Test Using POSTMAN",
+        "height": 224,
+        "width": 1600,
+        "color": 7
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        -1120,
+        704
+      ],
+      "typeVersion": 1,
+      "id": "f98a7a37-0128-4560-a64e-d57f9e08067f",
+      "name": "Sticky Note4"
+    }
+  ],
+  "connections": {
+    "When chat message received": {
+      "main": [
+        [
+          {
+            "node": "Euri Text",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Image Promt": {
+      "main": [
+        []
+      ]
+    },
+    "Text To Audio": {
+      "main": [
+        [
+          {
+            "node": "Euri Text to Speech",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Euri Image": {
+      "main": [
+        [
+          {
+            "node": "Send a Image URL",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Euri Text": {
+      "main": [
+        [
+          {
+            "node": "Structure Output",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Euri Text to Speech": {
+      "main": [
+        [
+          {
+            "node": "Send an audio file",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Send a Image URL": {
+      "main": [
+        []
+      ]
+    },
+    "Image generator": {
+      "main": [
+        [
+          {
+            "node": "Euri Text1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Euri Text1": {
+      "main": [
+        [
+          {
+            "node": "Structure Output1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Structure Output1": {
+      "main": [
+        [
+          {
+            "node": "Euri Image",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Euri Text2": {
+      "main": [
+        [
+          {
+            "node": "Structure Output2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Structure Output2": {
+      "main": [
+        [
+          {
+            "node": "Respond to Webhook",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Webhook": {
+      "main": [
+        [
+          {
+            "node": "Euri Text2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "staticData": null,
+  "meta": {
+    "templateCredsSetupCompleted": true
+  },
+  "pinData": {},
+  "versionId": "ba88a35d-adf7-4fb8-9a31-03168d32bbb1",
+  "activeVersionId": "ba88a35d-adf7-4fb8-9a31-03168d32bbb1",
+  "triggerCount": 4,
+  "shared": [
+    {
+      "updatedAt": "2025-12-07T14:40:35.907Z",
+      "createdAt": "2025-12-07T14:40:35.907Z",
+      "role": "workflow:owner",
+      "workflowId": "jias8BJDRjZ6hZCp",
+      "projectId": "DT8YjHwLZsQjJqVc"
+    }
+  ],
+  "activeVersion": {
+    "updatedAt": "2025-12-07T17:18:36.703Z",
+    "createdAt": "2025-12-07T17:18:36.703Z",
+    "versionId": "ba88a35d-adf7-4fb8-9a31-03168d32bbb1",
+    "workflowId": "jias8BJDRjZ6hZCp",
+    "nodes": [
+      {
+        "parameters": {
+          "options": {}
+        },
+        "type": "@n8n/n8n-nodes-langchain.chatTrigger",
+        "typeVersion": 1.4,
+        "position": [
+          -416,
+          -176
+        ],
+        "id": "318acb44-786a-4e03-830b-804a2afe9d7e",
+        "name": "When chat message received",
+        "webhookId": "e0357465-1798-48c7-8efd-69e6df2d69c6"
+      },
+      {
+        "parameters": {
+          "formTitle": "Generate Image",
+          "formDescription": "Just write promt",
+          "formFields": {
+            "values": [
+              {
+                "fieldLabel": "Promt"
+              },
+              {
+                "fieldLabel": "Upload File",
+                "fieldType": "file"
+              }
+            ]
+          },
+          "options": {}
+        },
+        "type": "n8n-nodes-base.formTrigger",
+        "typeVersion": 2.3,
+        "position": [
+          -1136,
+          -448
+        ],
+        "id": "66a49f19-fb29-486a-8428-1c21cc340416",
+        "name": "Image Promt",
+        "webhookId": "80b61f1b-593e-4d22-a7f0-86a11f8f6629",
+        "disabled": true
+      },
+      {
+        "parameters": {
+          "chatId": "637313836",
+          "text": "={{ $json.data[0].url }}",
+          "additionalFields": {
+            "appendAttribution": false
+          }
+        },
+        "type": "n8n-nodes-base.telegram",
+        "typeVersion": 1.2,
+        "position": [
+          160,
+          112
+        ],
+        "id": "b467035e-a7d0-47eb-839e-82e2ec6da589",
+        "name": "Send a Image URL",
+        "webhookId": "494a6d15-8163-447b-9f7a-e4a3359de4f6",
+        "credentials": {
+          "telegramApi": {
+            "id": "vB4WMues0wSlwcnL",
+            "name": "decautaomtion_test"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "formTitle": "Audio Transcrip",
+          "formDescription": "Just write promt",
+          "formFields": {
+            "values": [
+              {
+                "fieldLabel": "Input Text To Convert Audio"
+              }
+            ]
+          },
+          "options": {}
+        },
+        "type": "n8n-nodes-base.formTrigger",
+        "typeVersion": 2.3,
+        "position": [
+          -640,
+          400
+        ],
+        "id": "3df1d2bf-d3d6-47d5-bfa9-6806926c60f6",
+        "name": "Text To Audio",
+        "webhookId": "89d00740-8976-4465-aa39-254295bff5da"
+      },
+      {
+        "parameters": {
+          "method": "POST",
+          "url": "https://api.euron.one/api/v1/euri/images/generations",
+          "authentication": "genericCredentialType",
+          "genericAuthType": "httpBearerAuth",
+          "sendBody": true,
+          "bodyParameters": {
+            "parameters": [
+              {
+                "name": "prompt",
+                "value": "={{ $json.message }}"
+              },
+              {
+                "name": "model",
+                "value": "black-forest-labs/FLUX.1-schnell"
+              },
+              {
+                "name": "size",
+                "value": "1024x1024"
+              },
+              {
+                "name": "quality",
+                "value": "standard"
+              },
+              {
+                "name": "response_format",
+                "value": "url"
+              },
+              {
+                "name": "style",
+                "value": "vivid"
+              }
+            ]
+          },
+          "options": {}
+        },
+        "type": "n8n-nodes-base.httpRequest",
+        "typeVersion": 4.3,
+        "position": [
+          -48,
+          112
+        ],
+        "id": "023da2d7-00a1-44cd-96a9-0923dda9cc49",
+        "name": "Euri Image",
+        "credentials": {
+          "httpBearerAuth": {
+            "id": "8ZkhkWsck6v2KCTU",
+            "name": "Euri"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "method": "POST",
+          "url": "https://api.euron.one/api/v1/euri/chat/completions",
+          "authentication": "genericCredentialType",
+          "genericAuthType": "httpBearerAuth",
+          "sendBody": true,
+          "specifyBody": "json",
+          "jsonBody": "={\n  \"messages\": [\n    {\n      \"role\": \"user\",\n      \"content\": \"{{ $json.chatInput }}\"\n    }\n  ],\n  \"model\": \"gemini-2.5-pro\"\n}",
+          "options": {}
+        },
+        "type": "n8n-nodes-base.httpRequest",
+        "typeVersion": 4.3,
+        "position": [
+          -208,
+          -176
+        ],
+        "id": "93288f32-d72c-4597-ba14-9fc5fd56373b",
+        "name": "Euri Text",
+        "credentials": {
+          "httpBearerAuth": {
+            "id": "8ZkhkWsck6v2KCTU",
+            "name": "Euri"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "method": "POST",
+          "url": "https://api.euron.one/api/v1/euri/audio/speech",
+          "authentication": "genericCredentialType",
+          "genericAuthType": "httpBearerAuth",
+          "sendBody": true,
+          "bodyParameters": {
+            "parameters": [
+              {
+                "name": "input",
+                "value": "={{ $json['Input Text To Convert Audio'] }}"
+              },
+              {
+                "name": "model",
+                "value": "playai-tts"
+              },
+              {
+                "name": "voice",
+                "value": "Jennifer-PlayAI"
+              }
+            ]
+          },
+          "options": {}
+        },
+        "type": "n8n-nodes-base.httpRequest",
+        "typeVersion": 4.3,
+        "position": [
+          -416,
+          400
+        ],
+        "id": "9a738169-3d31-48ac-a5cf-d4fc7cf93b72",
+        "name": "Euri Text to Speech",
+        "credentials": {
+          "httpBearerAuth": {
+            "id": "8ZkhkWsck6v2KCTU",
+            "name": "Euri"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "operation": "sendAudio",
+          "chatId": "637313836",
+          "binaryData": true,
+          "additionalFields": {}
+        },
+        "type": "n8n-nodes-base.telegram",
+        "typeVersion": 1.2,
+        "position": [
+          -192,
+          400
+        ],
+        "id": "8964dd55-2ddd-4390-96b8-bbbd4e2e7130",
+        "name": "Send an audio file",
+        "webhookId": "494a6d15-8163-447b-9f7a-e4a3359de4f6",
+        "credentials": {
+          "telegramApi": {
+            "id": "W6XV6RQORTB3eBDg",
+            "name": "Agent Dhruv"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "jsCode": "return [\n  {\n    json: {\n      message: $json.choices[0].message.content\n    }\n  }\n];"
+        },
+        "type": "n8n-nodes-base.code",
+        "typeVersion": 2,
+        "position": [
+          16,
+          -176
+        ],
+        "id": "ecf6e61a-09a1-4b17-84d6-b1a4ea3f29a3",
+        "name": "Structure Output"
+      },
+      {
+        "parameters": {
+          "updates": [
+            "message"
+          ],
+          "additionalFields": {}
+        },
+        "type": "n8n-nodes-base.telegramTrigger",
+        "typeVersion": 1.2,
+        "position": [
+          -624,
+          112
+        ],
+        "id": "6e9c3d74-9e6b-477c-a890-4f1873f97fe7",
+        "name": "Image generator",
+        "webhookId": "c2baf400-02aa-44a1-932f-dc0efb54669e",
+        "credentials": {
+          "telegramApi": {
+            "id": "vB4WMues0wSlwcnL",
+            "name": "decautaomtion_test"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "method": "POST",
+          "url": "https://api.euron.one/api/v1/euri/chat/completions",
+          "authentication": "genericCredentialType",
+          "genericAuthType": "httpBearerAuth",
+          "sendBody": true,
+          "specifyBody": "json",
+          "jsonBody": "={\n  \"messages\": [\n    {\n      \"role\": \"user\",\n      \"content\": \"{{ $json.message.text }}\"\n    }\n  ],\n  \"model\": \"gemini-2.5-pro\"\n}",
+          "options": {}
+        },
+        "type": "n8n-nodes-base.httpRequest",
+        "typeVersion": 4.3,
+        "position": [
+          -416,
+          112
+        ],
+        "id": "f0382b17-2c3b-40ef-b3cc-85715ae15d7a",
+        "name": "Euri Text1",
+        "credentials": {
+          "httpBearerAuth": {
+            "id": "8ZkhkWsck6v2KCTU",
+            "name": "Euri"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "jsCode": "return [\n  {\n    json: {\n      message: $json.choices[0].message.content\n    }\n  }\n];"
+        },
+        "type": "n8n-nodes-base.code",
+        "typeVersion": 2,
+        "position": [
+          -240,
+          112
+        ],
+        "id": "420d8856-a6af-478e-807b-c32e54d9cbc3",
+        "name": "Structure Output1"
+      },
+      {
+        "parameters": {
+          "content": "## Image Generator  -----",
+          "height": 176,
+          "width": 1504,
+          "color": 3
+        },
+        "type": "n8n-nodes-base.stickyNote",
+        "position": [
+          -1152,
+          96
+        ],
+        "typeVersion": 1,
+        "id": "b74c7873-fcc4-4116-8c13-0d1a4b355f1d",
+        "name": "Sticky Note"
+      },
+      {
+        "parameters": {
+          "content": "## Euri Chat ",
+          "width": 1536,
+          "color": 4
+        },
+        "type": "n8n-nodes-base.stickyNote",
+        "position": [
+          -1168,
+          -192
+        ],
+        "typeVersion": 1,
+        "id": "c3b9b251-6682-43cd-b8a9-23fbf7ac4284",
+        "name": "Sticky Note2"
+      },
+      {
+        "parameters": {
+          "content": "## Text to image",
+          "height": 192,
+          "width": 1600,
+          "color": 6
+        },
+        "type": "n8n-nodes-base.stickyNote",
+        "position": [
+          -1152,
+          368
+        ],
+        "typeVersion": 1,
+        "id": "7ea7196b-e42d-42cc-bc01-9ae741b43498",
+        "name": "Sticky Note3"
+      },
+      {
+        "parameters": {
+          "options": {}
+        },
+        "type": "n8n-nodes-base.respondToWebhook",
+        "typeVersion": 1.4,
+        "position": [
+          -80,
+          736
+        ],
+        "id": "bb56a5a3-d834-4b9f-9caa-a8ec78f90d91",
+        "name": "Respond to Webhook"
+      },
+      {
+        "parameters": {
+          "method": "POST",
+          "url": "https://api.euron.one/api/v1/euri/chat/completions",
+          "authentication": "genericCredentialType",
+          "genericAuthType": "httpBearerAuth",
+          "sendBody": true,
+          "specifyBody": "json",
+          "jsonBody": "={\n  \"messages\": [\n    {\n      \"role\": \"user\",\n      \"content\": \"{{ $json.body.message }}\"\n    }\n  ],\n  \"model\": \"gemini-2.5-pro\"\n}",
+          "options": {}
+        },
+        "type": "n8n-nodes-base.httpRequest",
+        "typeVersion": 4.3,
+        "position": [
+          -464,
+          736
+        ],
+        "id": "6a425646-f737-4397-9631-216d552858dc",
+        "name": "Euri Text2",
+        "credentials": {
+          "httpBearerAuth": {
+            "id": "8ZkhkWsck6v2KCTU",
+            "name": "Euri"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "jsCode": "// extract correct content from LLM response\nlet text = $json.choices[0].message.content || \"\";\n\n// clean formatting\ntext = text.replace(/\\n+/g, \" \");       // remove extra new lines\ntext = text.replace(/\\*\\*/g, \"\");       // remove **bold**\ntext = text.replace(/[\"{}]/g, \"\");       // remove brackets/quotes\ntext = text.replace(/\\s+/g, \" \");        // normalize spaces\n\nreturn {\n  json: {\n    response: text.trim()\n  }\n}"
+        },
+        "type": "n8n-nodes-base.code",
+        "typeVersion": 2,
+        "position": [
+          -288,
+          736
+        ],
+        "id": "511bf0d5-3d18-4ae9-bf49-eb4b8b400891",
+        "name": "Structure Output2"
+      },
+      {
+        "parameters": {
+          "httpMethod": "POST",
+          "path": "39fdb799-c788-4977-b116-18fb20476bec",
+          "responseMode": "responseNode",
+          "options": {}
+        },
+        "type": "n8n-nodes-base.webhook",
+        "typeVersion": 2.1,
+        "position": [
+          -688,
+          736
+        ],
+        "id": "4bcb1e98-6ad5-4678-8ead-3f3c5d6edf14",
+        "name": "Webhook",
+        "webhookId": "39fdb799-c788-4977-b116-18fb20476bec"
+      },
+      {
+        "parameters": {
+          "content": "## Webhook Test Using POSTMAN",
+          "height": 224,
+          "width": 1600,
+          "color": 7
+        },
+        "type": "n8n-nodes-base.stickyNote",
+        "position": [
+          -1120,
+          704
+        ],
+        "typeVersion": 1,
+        "id": "f98a7a37-0128-4560-a64e-d57f9e08067f",
+        "name": "Sticky Note4"
+      }
+    ],
+    "connections": {
+      "When chat message received": {
+        "main": [
+          [
+            {
+              "node": "Euri Text",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Image Promt": {
+        "main": [
+          []
+        ]
+      },
+      "Text To Audio": {
+        "main": [
+          [
+            {
+              "node": "Euri Text to Speech",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Euri Image": {
+        "main": [
+          [
+            {
+              "node": "Send a Image URL",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Euri Text": {
+        "main": [
+          [
+            {
+              "node": "Structure Output",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Euri Text to Speech": {
+        "main": [
+          [
+            {
+              "node": "Send an audio file",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Send a Image URL": {
+        "main": [
+          []
+        ]
+      },
+      "Image generator": {
+        "main": [
+          [
+            {
+              "node": "Euri Text1",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Euri Text1": {
+        "main": [
+          [
+            {
+              "node": "Structure Output1",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Structure Output1": {
+        "main": [
+          [
+            {
+              "node": "Euri Image",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Euri Text2": {
+        "main": [
+          [
+            {
+              "node": "Structure Output2",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Structure Output2": {
+        "main": [
+          [
+            {
+              "node": "Respond to Webhook",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Webhook": {
+        "main": [
+          [
+            {
+              "node": "Euri Text2",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      }
+    },
+    "authors": "Dhruv Tomar",
+    "name": null,
+    "description": null,
+    "autosaved": false
+  },
+  "tags": []
+}

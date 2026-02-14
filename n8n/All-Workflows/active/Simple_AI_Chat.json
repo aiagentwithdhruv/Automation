@@ -1,0 +1,343 @@
+{
+  "updatedAt": "2026-02-01T14:31:21.343Z",
+  "createdAt": "2026-02-01T14:21:35.936Z",
+  "id": "yQ7ZyjcVjIMnsQ9A",
+  "name": "Simple AI Chat",
+  "active": true,
+  "isArchived": false,
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "simple-chat",
+        "responseMode": "responseNode",
+        "options": {}
+      },
+      "id": "webhook",
+      "name": "Chat Webhook",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [
+        192,
+        352
+      ],
+      "webhookId": "simple-chat"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "={{ $json.body.message || $json.query.message || $json.body.chatInput }}",
+        "options": {
+          "systemMessage": "You are a helpful AI assistant for Dhruv. Be concise, friendly, and actionable. Keep responses under 3 sentences unless more detail is needed."
+        }
+      },
+      "id": "ai-agent",
+      "name": "AI Agent",
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 2,
+      "position": [
+        432,
+        320
+      ]
+    },
+    {
+      "parameters": {
+        "sessionIdType": "customKey",
+        "sessionKey": "={{ $json.body.sessionId || 'default' }}"
+      },
+      "id": "memory",
+      "name": "Chat Memory",
+      "type": "@n8n/n8n-nodes-langchain.memoryBufferWindow",
+      "typeVersion": 1.2,
+      "position": [
+        560,
+        512
+      ]
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={{ JSON.stringify({ response: $json.output, sessionId: $('Chat Webhook').item.json.body.sessionId || 'default' }) }}",
+        "options": {}
+      },
+      "id": "respond",
+      "name": "Send Response",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.1,
+      "position": [
+        768,
+        288
+      ]
+    },
+    {
+      "parameters": {
+        "content": "## Simple AI Chat\n\n**Webhook URL:**\n`POST /webhook/simple-chat`\n\n**Request Body:**\n```json\n{\n  \"message\": \"Hello!\",\n  \"sessionId\": \"user123\"\n}\n```\n\n**Response:**\n```json\n{\n  \"response\": \"Hi! How can I help?\",\n  \"sessionId\": \"user123\"\n}\n```",
+        "height": 280,
+        "width": 300
+      },
+      "id": "note",
+      "name": "Instructions",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        112,
+        32
+      ]
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "mode": "list",
+          "value": "claude-sonnet-4-5-20250929",
+          "cachedResultName": "Claude Sonnet 4.5"
+        },
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatAnthropic",
+      "typeVersion": 1.3,
+      "position": [
+        368,
+        512
+      ],
+      "id": "dc3dc6b2-26b4-4165-aa1c-a808293b8865",
+      "name": "Anthropic Chat Model",
+      "credentials": {
+        "anthropicApi": {
+          "id": "4TWuiQeAevzJx8R6",
+          "name": "Anthropic account"
+        }
+      }
+    }
+  ],
+  "connections": {
+    "Chat Webhook": {
+      "main": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "AI Agent": {
+      "main": [
+        [
+          {
+            "node": "Send Response",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Chat Memory": {
+      "ai_memory": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_memory",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Anthropic Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1",
+    "callerPolicy": "workflowsFromSameOwner",
+    "availableInMCP": false
+  },
+  "staticData": null,
+  "meta": {
+    "templateCredsSetupCompleted": true
+  },
+  "pinData": {},
+  "versionId": "52ae0b22-a9d4-4265-ac86-1e7d1c5c3e41",
+  "activeVersionId": "52ae0b22-a9d4-4265-ac86-1e7d1c5c3e41",
+  "triggerCount": 1,
+  "shared": [
+    {
+      "updatedAt": "2026-02-01T14:21:35.942Z",
+      "createdAt": "2026-02-01T14:21:35.942Z",
+      "role": "workflow:owner",
+      "workflowId": "yQ7ZyjcVjIMnsQ9A",
+      "projectId": "DT8YjHwLZsQjJqVc"
+    }
+  ],
+  "activeVersion": {
+    "updatedAt": "2026-02-01T14:31:34.000Z",
+    "createdAt": "2026-02-01T14:31:21.344Z",
+    "versionId": "52ae0b22-a9d4-4265-ac86-1e7d1c5c3e41",
+    "workflowId": "yQ7ZyjcVjIMnsQ9A",
+    "nodes": [
+      {
+        "parameters": {
+          "httpMethod": "POST",
+          "path": "simple-chat",
+          "responseMode": "responseNode",
+          "options": {}
+        },
+        "id": "webhook",
+        "name": "Chat Webhook",
+        "type": "n8n-nodes-base.webhook",
+        "typeVersion": 2,
+        "position": [
+          192,
+          352
+        ],
+        "webhookId": "simple-chat"
+      },
+      {
+        "parameters": {
+          "promptType": "define",
+          "text": "={{ $json.body.message || $json.query.message || $json.body.chatInput }}",
+          "options": {
+            "systemMessage": "You are a helpful AI assistant for Dhruv. Be concise, friendly, and actionable. Keep responses under 3 sentences unless more detail is needed."
+          }
+        },
+        "id": "ai-agent",
+        "name": "AI Agent",
+        "type": "@n8n/n8n-nodes-langchain.agent",
+        "typeVersion": 2,
+        "position": [
+          432,
+          320
+        ]
+      },
+      {
+        "parameters": {
+          "sessionIdType": "customKey",
+          "sessionKey": "={{ $json.body.sessionId || 'default' }}"
+        },
+        "id": "memory",
+        "name": "Chat Memory",
+        "type": "@n8n/n8n-nodes-langchain.memoryBufferWindow",
+        "typeVersion": 1.2,
+        "position": [
+          560,
+          512
+        ]
+      },
+      {
+        "parameters": {
+          "respondWith": "json",
+          "responseBody": "={{ JSON.stringify({ response: $json.output, sessionId: $('Chat Webhook').item.json.body.sessionId || 'default' }) }}",
+          "options": {}
+        },
+        "id": "respond",
+        "name": "Send Response",
+        "type": "n8n-nodes-base.respondToWebhook",
+        "typeVersion": 1.1,
+        "position": [
+          768,
+          288
+        ]
+      },
+      {
+        "parameters": {
+          "content": "## Simple AI Chat\n\n**Webhook URL:**\n`POST /webhook/simple-chat`\n\n**Request Body:**\n```json\n{\n  \"message\": \"Hello!\",\n  \"sessionId\": \"user123\"\n}\n```\n\n**Response:**\n```json\n{\n  \"response\": \"Hi! How can I help?\",\n  \"sessionId\": \"user123\"\n}\n```",
+          "height": 280,
+          "width": 300
+        },
+        "id": "note",
+        "name": "Instructions",
+        "type": "n8n-nodes-base.stickyNote",
+        "typeVersion": 1,
+        "position": [
+          112,
+          32
+        ]
+      },
+      {
+        "parameters": {
+          "model": {
+            "__rl": true,
+            "mode": "list",
+            "value": "claude-sonnet-4-5-20250929",
+            "cachedResultName": "Claude Sonnet 4.5"
+          },
+          "options": {}
+        },
+        "type": "@n8n/n8n-nodes-langchain.lmChatAnthropic",
+        "typeVersion": 1.3,
+        "position": [
+          368,
+          512
+        ],
+        "id": "dc3dc6b2-26b4-4165-aa1c-a808293b8865",
+        "name": "Anthropic Chat Model",
+        "credentials": {
+          "anthropicApi": {
+            "id": "4TWuiQeAevzJx8R6",
+            "name": "Anthropic account"
+          }
+        }
+      }
+    ],
+    "connections": {
+      "Chat Webhook": {
+        "main": [
+          [
+            {
+              "node": "AI Agent",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "AI Agent": {
+        "main": [
+          [
+            {
+              "node": "Send Response",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Chat Memory": {
+        "ai_memory": [
+          [
+            {
+              "node": "AI Agent",
+              "type": "ai_memory",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Anthropic Chat Model": {
+        "ai_languageModel": [
+          [
+            {
+              "node": "AI Agent",
+              "type": "ai_languageModel",
+              "index": 0
+            }
+          ]
+        ]
+      }
+    },
+    "authors": "Dhruv Tomar",
+    "name": "Version 52ae0b22",
+    "description": "",
+    "autosaved": true
+  },
+  "tags": []
+}

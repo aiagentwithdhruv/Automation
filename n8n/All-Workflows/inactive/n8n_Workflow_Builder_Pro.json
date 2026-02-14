@@ -1,0 +1,451 @@
+{
+  "updatedAt": "2026-01-10T16:46:53.974Z",
+  "createdAt": "2026-01-10T16:30:16.973Z",
+  "id": "XpXL0zxXUmgqf3SK",
+  "name": "n8n Workflow Builder Pro",
+  "active": false,
+  "isArchived": false,
+  "nodes": [
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.chatTrigger",
+      "typeVersion": 1.1,
+      "position": [
+        48,
+        144
+      ],
+      "id": "158512df-4a29-47ea-874b-f5e806c35a01",
+      "name": "When chat message received",
+      "webhookId": "a55c1b4f-1dd4-40e7-9a99-a89902e2f5a9"
+    },
+    {
+      "parameters": {
+        "options": {
+          "systemMessage": "=You are an **elite n8n workflow architect** with deep expertise in building production-ready automation workflows. Your mission is to translate natural language requests into fully functional, importable n8n workflow JSON.\n\n---\n\n## \ud83c\udfaf YOUR CORE RESPONSIBILITIES\n\n1. **Analyze** the user's request and break it into logical automation steps\n2. **Design** an optimal workflow architecture\n3. **Generate** complete, valid n8n JSON that works immediately upon import\n4. **Document** with sticky notes explaining each section\n\n---\n\n## \ud83d\udccb OUTPUT REQUIREMENTS\n\n### Format Rules (CRITICAL)\n- Output **ONLY** valid JSON - nothing else\n- Start with `{` and end with `}`\n- **NO** markdown formatting (no ```json or ```)\n- **NO** explanations before or after the JSON\n- **NO** comments inside JSON\n- All strings must be properly escaped\n- All node IDs must be unique UUIDs\n\n### Required Top-Level Fields\n```\n{\n  \"name\": \"Descriptive Workflow Name\",\n  \"nodes\": [...],\n  \"connections\": {...},\n  \"settings\": {\n    \"executionOrder\": \"v1\",\n    \"saveManualExecutions\": true,\n    \"saveDataSuccessExecution\": \"all\",\n    \"saveExecutionProgress\": true,\n    \"saveDataErrorExecution\": \"all\",\n    \"timezone\": \"Asia/Kolkata\"\n  },\n  \"staticData\": null,\n  \"pinData\": {},\n  \"meta\": {\n    \"templateCredsSetupCompleted\": true\n  }\n}\n```\n\n---\n\n## \ud83d\udd27 NODE STRUCTURE REFERENCE\n\n### Every Node Must Have:\n```\n{\n  \"parameters\": {...},\n  \"type\": \"node-type-string\",\n  \"typeVersion\": number,\n  \"position\": [x, y],\n  \"id\": \"unique-uuid\",\n  \"name\": \"Descriptive Name\"\n}\n```\n\n### Position Guidelines:\n- Start trigger at [0, 0]\n- Space nodes 220px horizontally\n- Space parallel paths 150px vertically\n- Sticky notes offset by [-20, -200] from related nodes\n\n---\n\n## \ud83d\udcda COMMON NODE TYPES & EXAMPLES\n\n### TRIGGERS\n\n**Schedule Trigger:**\n```\n{\n  \"parameters\": {\n    \"rule\": {\n      \"interval\": [{\"field\": \"cronExpression\", \"expression\": \"0 9 * * *\"}]\n    }\n  },\n  \"type\": \"n8n-nodes-base.scheduleTrigger\",\n  \"typeVersion\": 1.2,\n  \"position\": [0, 0],\n  \"id\": \"uuid-here\",\n  \"name\": \"Daily 9 AM\"\n}\n```\n\n**Webhook Trigger:**\n```\n{\n  \"parameters\": {\n    \"httpMethod\": \"POST\",\n    \"path\": \"webhook-path\",\n    \"options\": {}\n  },\n  \"type\": \"n8n-nodes-base.webhook\",\n  \"typeVersion\": 2,\n  \"position\": [0, 0],\n  \"id\": \"uuid-here\",\n  \"name\": \"Webhook\",\n  \"webhookId\": \"unique-webhook-id\"\n}\n```\n\n**Telegram Trigger:**\n```\n{\n  \"parameters\": {\n    \"updates\": [\"message\"]\n  },\n  \"type\": \"n8n-nodes-base.telegramTrigger\",\n  \"typeVersion\": 1.2,\n  \"position\": [0, 0],\n  \"id\": \"uuid-here\",\n  \"name\": \"Telegram Trigger\",\n  \"webhookId\": \"unique-id\"\n}\n```\n\n### DATA PROCESSING\n\n**Set Node (Set Values):**\n```\n{\n  \"parameters\": {\n    \"assignments\": {\n      \"assignments\": [\n        {\n          \"id\": \"unique-id\",\n          \"name\": \"fieldName\",\n          \"value\": \"={{ $json.someField }}\",\n          \"type\": \"string\"\n        }\n      ]\n    },\n    \"options\": {}\n  },\n  \"type\": \"n8n-nodes-base.set\",\n  \"typeVersion\": 3.4,\n  \"position\": [220, 0],\n  \"id\": \"uuid-here\",\n  \"name\": \"Set Values\"\n}\n```\n\n**Code Node:**\n```\n{\n  \"parameters\": {\n    \"mode\": \"runOnceForEachItem\",\n    \"jsCode\": \"// Your JavaScript code here\\nconst input = $input.first().json;\\nreturn { json: { result: input } };\"\n  },\n  \"type\": \"n8n-nodes-base.code\",\n  \"typeVersion\": 2,\n  \"position\": [440, 0],\n  \"id\": \"uuid-here\",\n  \"name\": \"Process Data\"\n}\n```\n\n**IF Node (Conditional):**\n```\n{\n  \"parameters\": {\n    \"conditions\": {\n      \"options\": {\"caseSensitive\": true, \"leftValue\": \"\", \"typeValidation\": \"strict\", \"version\": 2},\n      \"conditions\": [\n        {\n          \"id\": \"condition-id\",\n          \"leftValue\": \"={{ $json.status }}\",\n          \"rightValue\": \"active\",\n          \"operator\": {\"type\": \"string\", \"operation\": \"equals\"}\n        }\n      ],\n      \"combinator\": \"and\"\n    }\n  },\n  \"type\": \"n8n-nodes-base.if\",\n  \"typeVersion\": 2.2,\n  \"position\": [660, 0],\n  \"id\": \"uuid-here\",\n  \"name\": \"Check Condition\"\n}\n```\n\n**Switch Node (Multiple Routes):**\n```\n{\n  \"parameters\": {\n    \"rules\": {\n      \"values\": [\n        {\n          \"conditions\": {\n            \"options\": {\"caseSensitive\": true, \"leftValue\": \"\", \"typeValidation\": \"strict\", \"version\": 2},\n            \"conditions\": [{\"id\": \"cond-1\", \"leftValue\": \"={{ $json.type }}\", \"rightValue\": \"email\", \"operator\": {\"type\": \"string\", \"operation\": \"equals\"}}],\n            \"combinator\": \"and\"\n          },\n          \"renameOutput\": true,\n          \"outputKey\": \"Email\"\n        }\n      ]\n    },\n    \"options\": {\"fallbackOutput\": \"extra\"}\n  },\n  \"type\": \"n8n-nodes-base.switch\",\n  \"typeVersion\": 3.2,\n  \"position\": [880, 0],\n  \"id\": \"uuid-here\",\n  \"name\": \"Route by Type\"\n}\n```\n\n### INTEGRATIONS\n\n**HTTP Request:**\n```\n{\n  \"parameters\": {\n    \"method\": \"POST\",\n    \"url\": \"https://api.example.com/endpoint\",\n    \"sendHeaders\": true,\n    \"headerParameters\": {\n      \"parameters\": [{\"name\": \"Content-Type\", \"value\": \"application/json\"}]\n    },\n    \"sendBody\": true,\n    \"specifyBody\": \"json\",\n    \"jsonBody\": \"={{ JSON.stringify($json) }}\",\n    \"options\": {}\n  },\n  \"type\": \"n8n-nodes-base.httpRequest\",\n  \"typeVersion\": 4.2,\n  \"position\": [1100, 0],\n  \"id\": \"uuid-here\",\n  \"name\": \"HTTP Request\"\n}\n```\n\n**Google Sheets (Read):**\n```\n{\n  \"parameters\": {\n    \"operation\": \"read\",\n    \"documentId\": {\"__rl\": true, \"value\": \"SHEET_ID_HERE\", \"mode\": \"id\"},\n    \"sheetName\": {\"__rl\": true, \"value\": \"Sheet1\", \"mode\": \"name\"},\n    \"options\": {}\n  },\n  \"type\": \"n8n-nodes-base.googleSheets\",\n  \"typeVersion\": 4.5,\n  \"position\": [1320, 0],\n  \"id\": \"uuid-here\",\n  \"name\": \"Read Sheet\",\n  \"credentials\": {\"googleSheetsOAuth2Api\": {\"id\": \"YOUR_CREDENTIAL_ID\", \"name\": \"Google Sheets account\"}}\n}\n```\n\n**Google Sheets (Append):**\n```\n{\n  \"parameters\": {\n    \"operation\": \"append\",\n    \"documentId\": {\"__rl\": true, \"value\": \"SHEET_ID_HERE\", \"mode\": \"id\"},\n    \"sheetName\": {\"__rl\": true, \"value\": \"Sheet1\", \"mode\": \"name\"},\n    \"columns\": {\n      \"mappingMode\": \"defineBelow\",\n      \"value\": {\n        \"column1\": \"={{ $json.field1 }}\",\n        \"column2\": \"={{ $json.field2 }}\"\n      }\n    },\n    \"options\": {}\n  },\n  \"type\": \"n8n-nodes-base.googleSheets\",\n  \"typeVersion\": 4.5,\n  \"position\": [1540, 0],\n  \"id\": \"uuid-here\",\n  \"name\": \"Append to Sheet\",\n  \"credentials\": {\"googleSheetsOAuth2Api\": {\"id\": \"YOUR_CREDENTIAL_ID\", \"name\": \"Google Sheets account\"}}\n}\n```\n\n**Telegram (Send Message):**\n```\n{\n  \"parameters\": {\n    \"chatId\": \"={{ $json.chat_id }}\",\n    \"text\": \"={{ $json.message }}\",\n    \"additionalFields\": {\"parse_mode\": \"Markdown\"}\n  },\n  \"type\": \"n8n-nodes-base.telegram\",\n  \"typeVersion\": 1.2,\n  \"position\": [1760, 0],\n  \"id\": \"uuid-here\",\n  \"name\": \"Send Telegram\",\n  \"credentials\": {\"telegramApi\": {\"id\": \"YOUR_CREDENTIAL_ID\", \"name\": \"Telegram account\"}}\n}\n```\n\n**Gmail (Send):**\n```\n{\n  \"parameters\": {\n    \"sendTo\": \"={{ $json.email }}\",\n    \"subject\": \"={{ $json.subject }}\",\n    \"emailType\": \"html\",\n    \"message\": \"={{ $json.body }}\"\n  },\n  \"type\": \"n8n-nodes-base.gmail\",\n  \"typeVersion\": 2.1,\n  \"position\": [1980, 0],\n  \"id\": \"uuid-here\",\n  \"name\": \"Send Email\",\n  \"credentials\": {\"gmailOAuth2\": {\"id\": \"YOUR_CREDENTIAL_ID\", \"name\": \"Gmail account\"}}\n}\n```\n\n### AI NODES\n\n**AI Agent:**\n```\n{\n  \"parameters\": {\n    \"promptType\": \"define\",\n    \"text\": \"={{ $json.userMessage }}\",\n    \"options\": {\n      \"systemMessage\": \"You are a helpful assistant.\"\n    }\n  },\n  \"type\": \"@n8n/n8n-nodes-langchain.agent\",\n  \"typeVersion\": 2,\n  \"position\": [2200, 0],\n  \"id\": \"uuid-here\",\n  \"name\": \"AI Agent\"\n}\n```\n\n**OpenRouter LLM:**\n```\n{\n  \"parameters\": {\n    \"model\": \"google/gemini-2.5-flash-preview\",\n    \"options\": {\"temperature\": 0.7}\n  },\n  \"type\": \"@n8n/n8n-nodes-langchain.lmChatOpenRouter\",\n  \"typeVersion\": 1,\n  \"position\": [2100, 200],\n  \"id\": \"uuid-here\",\n  \"name\": \"OpenRouter LLM\",\n  \"credentials\": {\"openRouterApi\": {\"id\": \"YOUR_CREDENTIAL_ID\", \"name\": \"OpenRouter account\"}}\n}\n```\n\n### STICKY NOTES\n```\n{\n  \"parameters\": {\n    \"content\": \"## \ud83d\udccc Section Title\\n\\nDescription here.\\n\\n**Setup:**\\n- Step 1\\n- Step 2\",\n    \"height\": 200,\n    \"width\": 300,\n    \"color\": 5\n  },\n  \"type\": \"n8n-nodes-base.stickyNote\",\n  \"typeVersion\": 1,\n  \"position\": [-20, -200],\n  \"id\": \"uuid-here\",\n  \"name\": \"Sticky Note\"\n}\n```\n\n**Sticky Note Colors:** 1=Yellow, 2=Blue, 3=Green, 4=Orange, 5=Purple, 6=Cyan, 7=Gray\n\n---\n\n## \ud83d\udd17 CONNECTION STRUCTURE\n\n### Standard Connection:\n```\n\"connections\": {\n  \"Node Name\": {\n    \"main\": [\n      [\n        {\"node\": \"Next Node Name\", \"type\": \"main\", \"index\": 0}\n      ]\n    ]\n  }\n}\n```\n\n### IF Node (Two Outputs):\n```\n\"IF Node\": {\n  \"main\": [\n    [{\"node\": \"True Branch\", \"type\": \"main\", \"index\": 0}],\n    [{\"node\": \"False Branch\", \"type\": \"main\", \"index\": 0}]\n  ]\n}\n```\n\n### Switch Node (Multiple Outputs):\n```\n\"Switch Node\": {\n  \"main\": [\n    [{\"node\": \"Route 1\", \"type\": \"main\", \"index\": 0}],\n    [{\"node\": \"Route 2\", \"type\": \"main\", \"index\": 0}],\n    [{\"node\": \"Fallback\", \"type\": \"main\", \"index\": 0}]\n  ]\n}\n```\n\n### AI Node Connections:\n```\n\"LLM Model\": {\n  \"ai_languageModel\": [\n    [{\"node\": \"AI Agent\", \"type\": \"ai_languageModel\", \"index\": 0}]\n  ]\n},\n\"Memory\": {\n  \"ai_memory\": [\n    [{\"node\": \"AI Agent\", \"type\": \"ai_memory\", \"index\": 0}]\n  ]\n},\n\"Tool\": {\n  \"ai_tool\": [\n    [{\"node\": \"AI Agent\", \"type\": \"ai_tool\", \"index\": 0}]\n  ]\n}\n```\n\n---\n\n## \u2705 QUALITY CHECKLIST\n\nBefore outputting, verify:\n- [ ] All node IDs are unique UUIDs\n- [ ] All node names are unique and descriptive\n- [ ] Connections reference exact node names\n- [ ] Trigger node is first (position [0,0])\n- [ ] Expressions use correct syntax: `={{ $json.field }}`\n- [ ] Sticky notes explain setup requirements\n- [ ] Credential placeholders are clearly marked\n- [ ] No trailing commas in arrays/objects\n- [ ] All strings are properly escaped\n\n---\n\n## \ud83c\udfa8 BEST PRACTICES\n\n1. **Use descriptive node names** - \"Send Welcome Email\" not \"Gmail1\"\n2. **Add error handling** - Use IF nodes to check for errors\n3. **Include sticky notes** - Document setup steps and credentials needed\n4. **Validate data** - Add Code nodes to validate/transform data\n5. **Use consistent spacing** - 220px horizontal, 150px vertical\n6. **Group related nodes** - Keep related functionality together\n7. **Add logging** - Include Set nodes to track progress\n\n---\n\n## \ud83d\udea8 COMMON MISTAKES TO AVOID\n\n1. **Wrong expression syntax** - Use `={{ }}` not `${}`\n2. **Missing credentials block** - Always include credential references\n3. **Incorrect typeVersion** - Use latest versions (check examples above)\n4. **Duplicate node IDs** - Every ID must be unique\n5. **Missing webhookId** - Trigger nodes need unique webhookId\n6. **Incorrect connection names** - Must match node names exactly\n7. **Invalid JSON** - No trailing commas, proper escaping\n\n---\n\nNow, analyze the user's request carefully and generate a complete, production-ready n8n workflow JSON. Think step by step about what nodes are needed, how they should connect, and what parameters each requires.\n\nRemember: Output ONLY the JSON. No explanations. No markdown. Just pure JSON starting with { and ending with }."
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 2,
+      "position": [
+        272,
+        144
+      ],
+      "id": "d792bc5d-6cbe-4cc6-90f9-740c8365ec8b",
+      "name": "n8n Workflow Architect"
+    },
+    {
+      "parameters": {
+        "model": "anthropic/claude-sonnet-4",
+        "options": {
+          "temperature": 0.3
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenRouter",
+      "typeVersion": 1,
+      "position": [
+        -64,
+        400
+      ],
+      "id": "1ea6acdf-ce07-44dd-a691-81f7494bb0f8",
+      "name": "Claude Sonnet 4",
+      "credentials": {
+        "openRouterApi": {
+          "id": "5NHf7ILbLoMVxKcb",
+          "name": "OpenRouter account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "description": "Use this tool when you need to think through complex workflow design, break down requirements, or plan the workflow architecture before generating JSON."
+      },
+      "type": "@n8n/n8n-nodes-langchain.toolThink",
+      "typeVersion": 1.1,
+      "position": [
+        304,
+        368
+      ],
+      "id": "fe5f9f5e-3638-47d9-b67b-80403a49d910",
+      "name": "Think"
+    },
+    {
+      "parameters": {
+        "mode": "runOnceForEachItem",
+        "jsCode": "// Extract and validate JSON from AI output\nconst output = $input.first().json.output || $input.first().json.text || '';\n\nlet jsonString = output;\n\n// Try to extract JSON if wrapped in markdown or has extra text\nconst jsonMatch = output.match(/\\{[\\s\\S]*\\}/);\nif (jsonMatch) {\n  jsonString = jsonMatch[0];\n}\n\n// Clean common issues\njsonString = jsonString\n  .replace(/^```json\\s*/i, '')\n  .replace(/^```\\s*/i, '')\n  .replace(/\\s*```$/i, '')\n  .replace(/,\\s*([}\\]])/g, '$1') // Remove trailing commas\n  .trim();\n\nlet workflow = null;\nlet isValid = false;\nlet error = '';\n\ntry {\n  workflow = JSON.parse(jsonString);\n  \n  // Validate required fields\n  if (!workflow.name) {\n    workflow.name = 'Generated Workflow';\n  }\n  \n  if (!workflow.nodes || !Array.isArray(workflow.nodes)) {\n    throw new Error('Missing or invalid nodes array');\n  }\n  \n  if (!workflow.connections || typeof workflow.connections !== 'object') {\n    workflow.connections = {};\n  }\n  \n  // Ensure settings exist\n  if (!workflow.settings) {\n    workflow.settings = {\n      executionOrder: 'v1',\n      saveManualExecutions: true,\n      saveDataSuccessExecution: 'all',\n      saveExecutionProgress: true,\n      saveDataErrorExecution: 'all',\n      timezone: 'Asia/Kolkata'\n    };\n  }\n  \n  // Ensure other required fields\n  if (!workflow.staticData) workflow.staticData = null;\n  if (!workflow.pinData) workflow.pinData = {};\n  \n  // Validate each node has required fields\n  for (let i = 0; i < workflow.nodes.length; i++) {\n    const node = workflow.nodes[i];\n    if (!node.id) {\n      node.id = 'node-' + Math.random().toString(36).substr(2, 9);\n    }\n    if (!node.name) {\n      node.name = 'Node ' + (i + 1);\n    }\n    if (!node.position) {\n      node.position = [i * 220, 0];\n    }\n    if (!node.parameters) {\n      node.parameters = {};\n    }\n  }\n  \n  isValid = true;\n  \n} catch (e) {\n  error = e.message;\n  isValid = false;\n}\n\nreturn {\n  json: {\n    isValid: isValid,\n    error: error,\n    workflow: workflow,\n    raw_output: output.substring(0, 500) + '...'\n  }\n};"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        576,
+        144
+      ],
+      "id": "29cdf2e8-3f1a-45a4-9585-44d29fd8103f",
+      "name": "Validate & Clean JSON"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "valid-check",
+              "leftValue": "={{ $json.isValid }}",
+              "rightValue": true,
+              "operator": {
+                "type": "boolean",
+                "operation": "equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        768,
+        144
+      ],
+      "id": "889bcf40-6894-4472-a230-ee6fe0708343",
+      "name": "Is Valid JSON?"
+    },
+    {
+      "parameters": {
+        "operation": "create",
+        "workflowObject": "={{ JSON.stringify($json.workflow) }}",
+        "requestOptions": {}
+      },
+      "type": "n8n-nodes-base.n8n",
+      "typeVersion": 1,
+      "position": [
+        992,
+        96
+      ],
+      "id": "d7f88ae2-49ad-4f94-a5ef-cfe44c6b6b10",
+      "name": "Create Workflow",
+      "credentials": {
+        "n8nApi": {
+          "id": "DT1EIK03hJSUj0ig",
+          "name": "n8n account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "mode": "runOnceForEachItem",
+        "jsCode": "// Format success response\nconst workflow = $input.first().json;\nconst workflowData = $('Validate & Clean JSON').first().json.workflow;\n\nconst nodeCount = workflowData?.nodes?.length || 0;\nconst stickyCount = workflowData?.nodes?.filter(n => n.type === 'n8n-nodes-base.stickyNote').length || 0;\nconst triggerNode = workflowData?.nodes?.find(n => n.type?.includes('Trigger') || n.type?.includes('trigger') || n.type?.includes('webhook'));\n\nconst response = `\u2705 **Workflow Created Successfully!**\n\n\ud83d\udccb **Name:** ${workflowData?.name || 'Workflow'}\n\ud83d\udd17 **Link:** https://n8n.aiwithdhruv.cloud/workflow/${workflow.id}\n\ud83d\udcca **Nodes:** ${nodeCount} (${stickyCount} sticky notes)\n\u26a1 **Trigger:** ${triggerNode?.name || 'Manual'}\n\n**Next Steps:**\n1. Open the workflow link above\n2. Configure any credentials marked with \"YOUR_CREDENTIAL_ID\"\n3. Update placeholder values (SHEET_ID, etc.)\n4. Test the workflow\n5. Activate when ready!\n\n_Workflow ID: ${workflow.id}_`;\n\nreturn {\n  json: {\n    response: response,\n    workflowId: workflow.id,\n    workflowName: workflowData?.name,\n    workflowUrl: `https://n8n.aiwithdhruv.cloud/workflow/${workflow.id}`,\n    nodeCount: nodeCount,\n    success: true\n  }\n};"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1216,
+        96
+      ],
+      "id": "ce146f13-42b3-42b4-8281-4618ce5efe9c",
+      "name": "Format Success Response"
+    },
+    {
+      "parameters": {
+        "mode": "runOnceForEachItem",
+        "jsCode": "// Format error response\nconst data = $input.first().json;\n\nconst response = `\u274c **Workflow Generation Failed**\n\n**Error:** ${data.error || 'Invalid JSON structure'}\n\n**Possible Causes:**\n- Complex request that confused the AI\n- JSON syntax error in generation\n- Missing required fields\n\n**Please try:**\n1. Simplify your request\n2. Be more specific about what you need\n3. Break complex workflows into steps\n\n**Debug Info:**\n\\`\\`\\`\n${data.raw_output?.substring(0, 200) || 'No output captured'}...\n\\`\\`\\``;\n\nreturn {\n  json: {\n    response: response,\n    success: false,\n    error: data.error\n  }\n};"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        992,
+        256
+      ],
+      "id": "d04a3d30-abac-476a-b857-7dde83f0a0e7",
+      "name": "Format Error Response"
+    },
+    {
+      "parameters": {
+        "sessionIdType": "customKey",
+        "sessionKey": "n8n_builder_session",
+        "contextWindowLength": 10
+      },
+      "type": "@n8n/n8n-nodes-langchain.memoryBufferWindow",
+      "typeVersion": 1.3,
+      "position": [
+        112,
+        432
+      ],
+      "id": "c7a36b92-80a4-4263-859a-d3dad05c28e0",
+      "name": "Conversation Memory"
+    },
+    {
+      "parameters": {
+        "content": "## \ud83c\udfd7\ufe0f n8n WORKFLOW BUILDER PRO\n### AI-Powered Workflow Generator\n\n**What it does:**\nConverts natural language descriptions into fully functional n8n workflows that are automatically created in your instance.\n\n**How to use:**\n1. Describe the workflow you need\n2. AI generates the JSON\n3. Validates and cleans output\n4. Creates workflow automatically\n5. Returns link to your new workflow\n\n**Example prompts:**\n- \"Create a workflow that monitors RSS feeds and sends Telegram alerts\"\n- \"Build a task manager with Google Sheets and reminders\"\n- \"Make a webhook that processes data and stores in Airtable\"",
+        "height": 380,
+        "width": 340,
+        "color": 5
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -608,
+        -64
+      ],
+      "id": "5d132d1c-a8d8-41c3-97a5-4c3e38e8ec78",
+      "name": "Sticky Note - Header"
+    },
+    {
+      "parameters": {
+        "content": "## \ud83e\udd16 AI ARCHITECT\n\n**Model:** Claude Sonnet 4\n**Temperature:** 0.3 (precise)\n**Max Tokens:** 16,000\n\n**Features:**\n- Comprehensive system prompt\n- Node examples library\n- Connection patterns\n- Best practices guide\n- Think tool for planning\n- Conversation memory\n\n**Improvements over original:**\n\u2705 Better node documentation\n\u2705 More examples\n\u2705 Lower temperature\n\u2705 Think tool added\n\u2705 Memory for context",
+        "height": 456,
+        "width": 280,
+        "color": 2
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -240,
+        -288
+      ],
+      "id": "8f9a331a-f8e8-4d24-afc5-96187c73f2e3",
+      "name": "Sticky Note - AI"
+    },
+    {
+      "parameters": {
+        "content": "## \u2705 VALIDATION\n\n**What it checks:**\n- Valid JSON syntax\n- Required fields present\n- Nodes array exists\n- Connections object valid\n- Node IDs unique\n\n**Auto-fixes:**\n- Removes markdown wrappers\n- Strips trailing commas\n- Adds missing settings\n- Generates missing IDs\n- Sets default positions\n\n**On error:**\n\u2192 Returns helpful message\n\u2192 Shows debug info\n\u2192 Suggests fixes",
+        "height": 452,
+        "width": 260,
+        "color": 3
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        128,
+        -336
+      ],
+      "id": "14f3c4a2-951d-44d9-a824-eebeee76ff9a",
+      "name": "Sticky Note - Validation"
+    },
+    {
+      "parameters": {
+        "content": "## \ud83d\ude80 AUTO CREATION\n\n**Uses n8n API to:**\n1. Create workflow in your instance\n2. Return workflow ID\n3. Generate direct link\n\n**Success response includes:**\n- Workflow name\n- Direct link\n- Node count\n- Trigger type\n- Setup instructions\n\n**Credentials Required:**\n- n8n API key (already configured)",
+        "height": 412,
+        "width": 260,
+        "color": 4
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        560,
+        -304
+      ],
+      "id": "53dd1d8b-e48d-42d5-a781-efa75f37d4b7",
+      "name": "Sticky Note - Create"
+    },
+    {
+      "parameters": {
+        "content": "## \ud83d\udcdd TIPS FOR BEST RESULTS\n\n**Be specific:**\n\u2705 \"Schedule trigger at 9 AM daily, fetch from Google Sheets, send via Telegram\"\n\u274c \"Make something that does stuff\"\n\n**Include details:**\n- Trigger type (schedule, webhook, etc.)\n- Data sources (Sheets, API, etc.)\n- Actions (send email, store data, etc.)\n- Conditions (if X then Y)\n\n**Complex workflows:**\nBreak into steps:\n1. First, describe the trigger\n2. Then the data processing\n3. Finally the output/actions",
+        "height": 468,
+        "width": 300,
+        "color": 6
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        688,
+        384
+      ],
+      "id": "a26468c7-59be-4fba-b818-6833162baff0",
+      "name": "Sticky Note - Tips"
+    },
+    {
+      "parameters": {
+        "respondWith": "text",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.1,
+      "position": [
+        1424,
+        96
+      ],
+      "id": "e4325715-efff-4a43-af69-c17c83c0415c",
+      "name": "Respond Success"
+    },
+    {
+      "parameters": {
+        "respondWith": "text",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.1,
+      "position": [
+        1216,
+        256
+      ],
+      "id": "e2550868-ec69-43d5-9333-583e3e4deedb",
+      "name": "Respond Error"
+    },
+    {
+      "parameters": {
+        "operation": "download"
+      },
+      "type": "n8n-nodes-base.dropbox",
+      "typeVersion": 1,
+      "position": [
+        1312,
+        384
+      ],
+      "id": "08493a1d-9b48-45fd-abdb-16cd5b84a498",
+      "name": "Download a file"
+    }
+  ],
+  "connections": {
+    "When chat message received": {
+      "main": [
+        [
+          {
+            "node": "n8n Workflow Architect",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "n8n Workflow Architect": {
+      "main": [
+        [
+          {
+            "node": "Validate & Clean JSON",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Claude Sonnet 4": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "n8n Workflow Architect",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Think": {
+      "ai_tool": [
+        [
+          {
+            "node": "n8n Workflow Architect",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Conversation Memory": {
+      "ai_memory": [
+        [
+          {
+            "node": "n8n Workflow Architect",
+            "type": "ai_memory",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Validate & Clean JSON": {
+      "main": [
+        [
+          {
+            "node": "Is Valid JSON?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Is Valid JSON?": {
+      "main": [
+        [
+          {
+            "node": "Create Workflow",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Download a file",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Format Error Response",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Create Workflow": {
+      "main": [
+        [
+          {
+            "node": "Format Success Response",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Format Success Response": {
+      "main": [
+        [
+          {
+            "node": "Respond Success",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Format Error Response": {
+      "main": [
+        [
+          {
+            "node": "Respond Error",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1",
+    "availableInMCP": false
+  },
+  "staticData": null,
+  "meta": null,
+  "pinData": {},
+  "versionId": "0bab009d-2c82-4e77-b213-bc02962142a7",
+  "activeVersionId": null,
+  "triggerCount": 0,
+  "shared": [
+    {
+      "updatedAt": "2026-01-10T16:30:16.979Z",
+      "createdAt": "2026-01-10T16:30:16.979Z",
+      "role": "workflow:owner",
+      "workflowId": "XpXL0zxXUmgqf3SK",
+      "projectId": "DT8YjHwLZsQjJqVc"
+    }
+  ],
+  "activeVersion": null,
+  "tags": []
+}

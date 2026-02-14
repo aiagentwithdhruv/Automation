@@ -1,0 +1,77 @@
+{
+  "updatedAt": "2025-12-12T11:49:06.110Z",
+  "createdAt": "2025-12-12T09:31:47.901Z",
+  "id": "GktE4FxDCXVRtwoz",
+  "name": "Zoho CRM",
+  "active": false,
+  "isArchived": false,
+  "nodes": [
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [
+        -352,
+        -112
+      ],
+      "id": "5c769c32-e140-4ff2-ba9d-722fec574f65",
+      "name": "When clicking \u2018Execute workflow\u2019"
+    },
+    {
+      "parameters": {
+        "resource": "lead",
+        "operation": "get",
+        "leadId": "257304000067859155"
+      },
+      "type": "n8n-nodes-base.zohoCrm",
+      "typeVersion": 1,
+      "position": [
+        -144,
+        -112
+      ],
+      "id": "7a932e6d-cad6-4963-a710-714675145b80",
+      "name": "Get a lead",
+      "credentials": {
+        "zohoOAuth2Api": {
+          "id": "ssrugLuFl83JQtxS",
+          "name": "Zoho account"
+        }
+      }
+    }
+  ],
+  "connections": {
+    "When clicking \u2018Execute workflow\u2019": {
+      "main": [
+        [
+          {
+            "node": "Get a lead",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "staticData": null,
+  "meta": {
+    "templateCredsSetupCompleted": true
+  },
+  "pinData": {},
+  "versionId": "30f37f25-4832-41dd-a3d9-b622ffea1974",
+  "activeVersionId": null,
+  "triggerCount": 0,
+  "shared": [
+    {
+      "updatedAt": "2025-12-12T09:31:47.907Z",
+      "createdAt": "2025-12-12T09:31:47.907Z",
+      "role": "workflow:owner",
+      "workflowId": "GktE4FxDCXVRtwoz",
+      "projectId": "DT8YjHwLZsQjJqVc"
+    }
+  ],
+  "activeVersion": null,
+  "tags": []
+}

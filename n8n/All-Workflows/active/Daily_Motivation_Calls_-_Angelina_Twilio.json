@@ -1,0 +1,380 @@
+{
+  "updatedAt": "2026-02-10T19:26:42.931Z",
+  "createdAt": "2026-02-07T12:32:44.243Z",
+  "id": "rqtJW3GFbdDOn0Gb",
+  "name": "Daily Motivation Calls - Angelina (Twilio)",
+  "active": true,
+  "isArchived": false,
+  "nodes": [
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "field": "cronExpression",
+              "expression": "30 4,8,13 * * *"
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.2,
+      "position": [
+        -144,
+        304
+      ],
+      "id": "a1b2c3d4-1111-4aaa-bbbb-000000000001",
+      "name": "3x Daily (10AM, 2PM, 7PM IST)"
+    },
+    {
+      "parameters": {
+        "jsCode": "// Determine time of day (IST = UTC + 5:30)\nconst now = new Date();\nconst utcH = now.getUTCHours();\nconst utcM = now.getUTCMinutes();\nconst totalMin = utcH * 60 + utcM + 330;\nconst istHour = Math.floor((totalMin % 1440) / 60);\n\nlet message = '';\nlet timeSlot = '';\n\nif (istHour >= 9 && istHour <= 11) {\n  timeSlot = 'morning';\n  message = \"Good morning Dhruv! Quick check-in from Angelina. Here's your morning push. Focus on your top 3 priorities today. Close those deals, create content, and keep building the pipeline. You've got the skills, now execute. Let's make today count! Have a great one.\";\n} else if (istHour >= 13 && istHour <= 15) {\n  timeSlot = 'afternoon';\n  message = \"Hey Dhruv, afternoon check-in! How's the progress? Remember, outreach first, then build. Don't get stuck in perfection. Ship it, test it, improve it. Check your pipeline, follow up on pending leads, and keep the momentum going. Back to work, you got this!\";\n} else {\n  timeSlot = 'evening';\n  message = \"Evening Dhruv! Hope you crushed it today. Before you wrap up, review what you accomplished, celebrate the wins, and set your top 3 priorities for tomorrow. Rest well tonight, recharge, and come back stronger. Angelina out, see you tomorrow morning!\";\n}\n\n// Build TwiML for Twilio direct call\nconst twiml = `<Response><Say voice=\"Polly.Joanna\" language=\"en-US\">${message}</Say><Pause length=\"1\"/><Say voice=\"Polly.Joanna\">Talk soon Dhruv!</Say></Response>`;\n\nreturn [{ json: { message, timeSlot, twiml, timestamp: now.toISOString() } }];"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        64,
+        304
+      ],
+      "id": "a1b2c3d4-2222-4aaa-bbbb-000000000002",
+      "name": "Set Reminder Message"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "=https://api.twilio.com/2010-04-01/Accounts/TWILIO_ACCOUNT_SID_REDACTED/Calls.json",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendBody": true,
+        "contentType": "form-urlencoded",
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "To",
+              "value": "+918770101822"
+            },
+            {
+              "name": "From",
+              "value": "+19036257896"
+            },
+            {
+              "name": "Twiml",
+              "value": "={{ $json.twiml }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.3,
+      "position": [
+        320,
+        304
+      ],
+      "id": "a1b2c3d4-3333-4aaa-bbbb-000000000003",
+      "name": "Call Dhruv (Twilio)",
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "8ByVimGgNLohhpOE",
+          "name": "Twilio Basic Auth"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "chatId": "637313836",
+        "text": "=\ud83d\udcde **Angelina Reminder Call**\n\n\u23f0 Time: {{ $('Set Reminder Message').item.json.timeSlot }} slot\n\ud83d\udcca Call Status: {{ $json.status || 'queued' }}\n\ud83c\udd94 Call SID: {{ $json.sid || 'N/A' }}\n\ud83d\udcf1 Via: Twilio Direct (no Vapi cost)\n\n_Daily motivation call to Dhruv completed._",
+        "additionalFields": {
+          "parse_mode": "Markdown"
+        }
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        592,
+        304
+      ],
+      "id": "a1b2c3d4-4444-4aaa-bbbb-000000000004",
+      "name": "Log to Telegram",
+      "webhookId": "86f55f04-d89f-41dd-97ae-5c634416f32f",
+      "credentials": {
+        "telegramApi": {
+          "id": "oejH8VUyC9QHNPHe",
+          "name": "Lead_Alert"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "content": "## DAILY MOTIVATION CALLS - ANGELINA\n\nAngelina calls Dhruv 3x/day via **Twilio Direct** (no Vapi cost!):\n- \u2600\ufe0f 10:00 AM IST \u2192 Morning push (priorities)\n- \ud83d\udd25 2:00 PM IST \u2192 Afternoon check-in (progress)\n- \ud83c\udf19 7:00 PM IST \u2192 Evening wrap-up (review)\n\n**Call duration:** ~15 seconds (one-way TTS)\n**Voice:** Amazon Polly Joanna\n**Twilio Number:** +19036257896\n**Dhruv's Number:** +918770101822\n\n**Cron (UTC):** `30 4,8,13 * * *`\n\n**How it works:**\n1. Schedule fires 3x daily\n2. Code node picks time-appropriate message\n3. Builds TwiML (Text-to-Speech)\n4. Twilio calls Dhruv, speaks message, hangs up\n5. Telegram logs the call\n\n**To pause:** Deactivate workflow\n**To change times:** Edit cron in trigger\n\n**SETUP:** Create 'Twilio Basic Auth' credential:\n- Header Name: Authorization\n- Header Value: Basic [base64 of SID:Token]",
+        "height": 540,
+        "width": 400,
+        "color": 5
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -576,
+        144
+      ],
+      "id": "a1b2c3d4-5555-4aaa-bbbb-000000000005",
+      "name": "Sticky Note"
+    },
+    {
+      "parameters": {
+        "content": "## CREDENTIALS SETUP\n\n**Twilio:**\nSID: TWILIO_ACCOUNT_SID_REDACTED\nToken: 3dd41e691291cc867b69d6826ebd052f\nNumber: +19036257896\n\n**In n8n, create HTTP Header Auth:**\nName: Twilio Basic Auth\nHeader Name: Authorization\nHeader Value:\nBasic QUM5ZGMwMmNjMDNiYWIwZDFhYmM1Y2U4ZmI2YjU3NjQ0MDozZGQ0MWU2OTEyOTFjYzg2N2I2OWQ2ODI2ZWJkMDUyZg==\n\n(That's base64 of SID:Token)\n\n**Telegram:** Chat ID 637313836",
+        "height": 340,
+        "width": 400,
+        "color": 7
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -608,
+        1840
+      ],
+      "id": "a1b2c3d4-6666-4aaa-bbbb-000000000006",
+      "name": "Sticky Note1"
+    }
+  ],
+  "connections": {
+    "3x Daily (10AM, 2PM, 7PM IST)": {
+      "main": [
+        [
+          {
+            "node": "Set Reminder Message",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Set Reminder Message": {
+      "main": [
+        [
+          {
+            "node": "Call Dhruv (Twilio)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Call Dhruv (Twilio)": {
+      "main": [
+        [
+          {
+            "node": "Log to Telegram",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1",
+    "callerPolicy": "workflowsFromSameOwner",
+    "availableInMCP": false,
+    "timeSavedMode": "fixed",
+    "timezone": "Asia/Kolkata",
+    "binaryMode": "separate"
+  },
+  "staticData": {
+    "node:3x Daily (10AM, 2PM, 7PM IST)": {
+      "recurrenceRules": []
+    }
+  },
+  "meta": null,
+  "pinData": {},
+  "versionId": "2a9c940b-c924-4555-930a-3435a942205f",
+  "activeVersionId": "2a9c940b-c924-4555-930a-3435a942205f",
+  "triggerCount": 1,
+  "shared": [
+    {
+      "updatedAt": "2026-02-07T12:32:44.245Z",
+      "createdAt": "2026-02-07T12:32:44.245Z",
+      "role": "workflow:owner",
+      "workflowId": "rqtJW3GFbdDOn0Gb",
+      "projectId": "DT8YjHwLZsQjJqVc"
+    }
+  ],
+  "activeVersion": {
+    "updatedAt": "2026-02-07T12:35:47.000Z",
+    "createdAt": "2026-02-07T12:35:46.047Z",
+    "versionId": "2a9c940b-c924-4555-930a-3435a942205f",
+    "workflowId": "rqtJW3GFbdDOn0Gb",
+    "nodes": [
+      {
+        "parameters": {
+          "rule": {
+            "interval": [
+              {
+                "field": "cronExpression",
+                "expression": "30 4,8,13 * * *"
+              }
+            ]
+          }
+        },
+        "type": "n8n-nodes-base.scheduleTrigger",
+        "typeVersion": 1.2,
+        "position": [
+          -144,
+          304
+        ],
+        "id": "a1b2c3d4-1111-4aaa-bbbb-000000000001",
+        "name": "3x Daily (10AM, 2PM, 7PM IST)"
+      },
+      {
+        "parameters": {
+          "jsCode": "// Determine time of day (IST = UTC + 5:30)\nconst now = new Date();\nconst utcH = now.getUTCHours();\nconst utcM = now.getUTCMinutes();\nconst totalMin = utcH * 60 + utcM + 330;\nconst istHour = Math.floor((totalMin % 1440) / 60);\n\nlet message = '';\nlet timeSlot = '';\n\nif (istHour >= 9 && istHour <= 11) {\n  timeSlot = 'morning';\n  message = \"Good morning Dhruv! Quick check-in from Angelina. Here's your morning push. Focus on your top 3 priorities today. Close those deals, create content, and keep building the pipeline. You've got the skills, now execute. Let's make today count! Have a great one.\";\n} else if (istHour >= 13 && istHour <= 15) {\n  timeSlot = 'afternoon';\n  message = \"Hey Dhruv, afternoon check-in! How's the progress? Remember, outreach first, then build. Don't get stuck in perfection. Ship it, test it, improve it. Check your pipeline, follow up on pending leads, and keep the momentum going. Back to work, you got this!\";\n} else {\n  timeSlot = 'evening';\n  message = \"Evening Dhruv! Hope you crushed it today. Before you wrap up, review what you accomplished, celebrate the wins, and set your top 3 priorities for tomorrow. Rest well tonight, recharge, and come back stronger. Angelina out, see you tomorrow morning!\";\n}\n\n// Build TwiML for Twilio direct call\nconst twiml = `<Response><Say voice=\"Polly.Joanna\" language=\"en-US\">${message}</Say><Pause length=\"1\"/><Say voice=\"Polly.Joanna\">Talk soon Dhruv!</Say></Response>`;\n\nreturn [{ json: { message, timeSlot, twiml, timestamp: now.toISOString() } }];"
+        },
+        "type": "n8n-nodes-base.code",
+        "typeVersion": 2,
+        "position": [
+          64,
+          304
+        ],
+        "id": "a1b2c3d4-2222-4aaa-bbbb-000000000002",
+        "name": "Set Reminder Message"
+      },
+      {
+        "parameters": {
+          "method": "POST",
+          "url": "=https://api.twilio.com/2010-04-01/Accounts/TWILIO_ACCOUNT_SID_REDACTED/Calls.json",
+          "authentication": "genericCredentialType",
+          "genericAuthType": "httpHeaderAuth",
+          "sendBody": true,
+          "contentType": "form-urlencoded",
+          "bodyParameters": {
+            "parameters": [
+              {
+                "name": "To",
+                "value": "+918770101822"
+              },
+              {
+                "name": "From",
+                "value": "+19036257896"
+              },
+              {
+                "name": "Twiml",
+                "value": "={{ $json.twiml }}"
+              }
+            ]
+          },
+          "options": {}
+        },
+        "type": "n8n-nodes-base.httpRequest",
+        "typeVersion": 4.3,
+        "position": [
+          320,
+          304
+        ],
+        "id": "a1b2c3d4-3333-4aaa-bbbb-000000000003",
+        "name": "Call Dhruv (Twilio)",
+        "credentials": {
+          "httpHeaderAuth": {
+            "id": "8ByVimGgNLohhpOE",
+            "name": "Twilio Basic Auth"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "chatId": "637313836",
+          "text": "=\ud83d\udcde **Angelina Reminder Call**\n\n\u23f0 Time: {{ $('Set Reminder Message').item.json.timeSlot }} slot\n\ud83d\udcca Call Status: {{ $json.status || 'queued' }}\n\ud83c\udd94 Call SID: {{ $json.sid || 'N/A' }}\n\ud83d\udcf1 Via: Twilio Direct (no Vapi cost)\n\n_Daily motivation call to Dhruv completed._",
+          "additionalFields": {
+            "parse_mode": "Markdown"
+          }
+        },
+        "type": "n8n-nodes-base.telegram",
+        "typeVersion": 1.2,
+        "position": [
+          592,
+          304
+        ],
+        "id": "a1b2c3d4-4444-4aaa-bbbb-000000000004",
+        "name": "Log to Telegram",
+        "webhookId": "86f55f04-d89f-41dd-97ae-5c634416f32f",
+        "credentials": {
+          "telegramApi": {
+            "id": "oejH8VUyC9QHNPHe",
+            "name": "Lead_Alert"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "content": "## DAILY MOTIVATION CALLS - ANGELINA\n\nAngelina calls Dhruv 3x/day via **Twilio Direct** (no Vapi cost!):\n- \u2600\ufe0f 10:00 AM IST \u2192 Morning push (priorities)\n- \ud83d\udd25 2:00 PM IST \u2192 Afternoon check-in (progress)\n- \ud83c\udf19 7:00 PM IST \u2192 Evening wrap-up (review)\n\n**Call duration:** ~15 seconds (one-way TTS)\n**Voice:** Amazon Polly Joanna\n**Twilio Number:** +19036257896\n**Dhruv's Number:** +918770101822\n\n**Cron (UTC):** `30 4,8,13 * * *`\n\n**How it works:**\n1. Schedule fires 3x daily\n2. Code node picks time-appropriate message\n3. Builds TwiML (Text-to-Speech)\n4. Twilio calls Dhruv, speaks message, hangs up\n5. Telegram logs the call\n\n**To pause:** Deactivate workflow\n**To change times:** Edit cron in trigger\n\n**SETUP:** Create 'Twilio Basic Auth' credential:\n- Header Name: Authorization\n- Header Value: Basic [base64 of SID:Token]",
+          "height": 540,
+          "width": 400,
+          "color": 5
+        },
+        "type": "n8n-nodes-base.stickyNote",
+        "typeVersion": 1,
+        "position": [
+          -576,
+          144
+        ],
+        "id": "a1b2c3d4-5555-4aaa-bbbb-000000000005",
+        "name": "Sticky Note"
+      },
+      {
+        "parameters": {
+          "content": "## CREDENTIALS SETUP\n\n**Twilio:**\nSID: TWILIO_ACCOUNT_SID_REDACTED\nToken: 3dd41e691291cc867b69d6826ebd052f\nNumber: +19036257896\n\n**In n8n, create HTTP Header Auth:**\nName: Twilio Basic Auth\nHeader Name: Authorization\nHeader Value:\nBasic QUM5ZGMwMmNjMDNiYWIwZDFhYmM1Y2U4ZmI2YjU3NjQ0MDozZGQ0MWU2OTEyOTFjYzg2N2I2OWQ2ODI2ZWJkMDUyZg==\n\n(That's base64 of SID:Token)\n\n**Telegram:** Chat ID 637313836",
+          "height": 340,
+          "width": 400,
+          "color": 7
+        },
+        "type": "n8n-nodes-base.stickyNote",
+        "typeVersion": 1,
+        "position": [
+          -608,
+          1840
+        ],
+        "id": "a1b2c3d4-6666-4aaa-bbbb-000000000006",
+        "name": "Sticky Note1"
+      }
+    ],
+    "connections": {
+      "3x Daily (10AM, 2PM, 7PM IST)": {
+        "main": [
+          [
+            {
+              "node": "Set Reminder Message",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Set Reminder Message": {
+        "main": [
+          [
+            {
+              "node": "Call Dhruv (Twilio)",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Call Dhruv (Twilio)": {
+        "main": [
+          [
+            {
+              "node": "Log to Telegram",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      }
+    },
+    "authors": "Dhruv Tomar",
+    "name": "Version 2a9c940b",
+    "description": "",
+    "autosaved": true
+  },
+  "tags": []
+}

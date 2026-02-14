@@ -1,0 +1,805 @@
+{
+  "updatedAt": "2026-01-22T16:16:57.317Z",
+  "createdAt": "2026-01-20T14:58:09.462Z",
+  "id": "vUYW78jJuM78xTED",
+  "name": "Lead Management System_2",
+  "active": false,
+  "isArchived": false,
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "lead-capture",
+        "responseMode": "responseNode",
+        "options": {}
+      },
+      "id": "044d6589-438f-4e2e-ba52-f00f7bf69e02",
+      "name": "Webhook - Lead Form Submission",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 1,
+      "position": [
+        -32,
+        0
+      ],
+      "webhookId": "lead-capture-webhook"
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={{ {\"success\": true, \"message\": \"Lead captured successfully\", \"leadId\": $json.leadId} }}",
+        "options": {}
+      },
+      "id": "b4929fea-de6f-4a77-b371-eb38221c0f54",
+      "name": "Webhook Response",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1,
+      "position": [
+        1424,
+        0
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "INSERT INTO leads (first_name, last_name, email, phone, company, source, message, created_at, status)\nVALUES (\n  '{{ $json.body.firstName }}',\n  '{{ $json.body.lastName }}',\n  '{{ $json.body.email }}',\n  '{{ $json.body.phone }}',\n  '{{ $json.body.company }}',\n  '{{ $json.body.source }}',\n  '{{ $json.body.message }}',\n  NOW(),\n  'new'\n)\nRETURNING id;",
+        "options": {}
+      },
+      "id": "6569b5dd-2e6e-4f51-968d-07a6d09ce2b1",
+      "name": "Store Lead in Database",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2,
+      "position": [
+        224,
+        0
+      ]
+    },
+    {
+      "parameters": {
+        "otherOptions": {}
+      },
+      "id": "16ef2501-cdb2-43d4-93dc-4555c0398fc3",
+      "name": "Notify Sales Team on Slack",
+      "type": "n8n-nodes-base.slack",
+      "typeVersion": 2.1,
+      "position": [
+        480,
+        0
+      ],
+      "webhookId": "7d1e255c-243a-4379-821b-a6580bf1c617"
+    },
+    {
+      "parameters": {
+        "jsCode": "// Prepare lead data for email personalization\nconst webhookData = $('Webhook - Lead Form Submission').first().json.body;\nconst dbData = $('Store Lead in Database').first().json;\n\nreturn {\n  json: {\n    leadId: dbData.id,\n    firstName: webhookData.firstName,\n    lastName: webhookData.lastName,\n    email: webhookData.email,\n    phone: webhookData.phone,\n    company: webhookData.company,\n    source: webhookData.source,\n    message: webhookData.message,\n    fullName: `${webhookData.firstName} ${webhookData.lastName}`,\n    timestamp: new Date().toISOString()\n  }\n};"
+      },
+      "id": "852ea815-e09f-47d5-959b-d0ef8575040d",
+      "name": "Get Lead Details",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        720,
+        0
+      ],
+      "executeOnce": false,
+      "alwaysOutputData": true
+    },
+    {
+      "parameters": {
+        "operation": "text",
+        "requestOptions": {}
+      },
+      "id": "e14d685c-1c79-4015-ab5c-d20f07a43af6",
+      "name": "Generate Personalized Email Content",
+      "type": "n8n-nodes-base.openAi",
+      "typeVersion": 1,
+      "position": [
+        976,
+        0
+      ]
+    },
+    {
+      "parameters": {
+        "fromEmail": "sales@yourcompany.com",
+        "toEmail": "={{ $('Get Lead Details').item.json.email }}",
+        "subject": "=Thank you for reaching out, {{ $('Get Lead Details').item.json.firstName }}!",
+        "options": {
+          "ccEmail": "sales-team@yourcompany.com",
+          "replyTo": "sales@yourcompany.com"
+        }
+      },
+      "id": "41f2dd6a-70d6-437d-a7ef-55259ccce158",
+      "name": "Send Personalized Follow-up Email",
+      "type": "n8n-nodes-base.emailSend",
+      "typeVersion": 2,
+      "position": [
+        1232,
+        0
+      ],
+      "webhookId": "dc488875-88f4-41a4-a8eb-114999b473fa"
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "UPDATE leads \nSET status = 'contacted', \n    contacted_at = NOW(),\n    email_sent = true\nWHERE id = {{ $('Store Lead in Database').item.json.id }};",
+        "options": {}
+      },
+      "id": "ad724a0f-beff-4d77-86c9-370a4561b2b8",
+      "name": "Update Lead Status",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2,
+      "position": [
+        1232,
+        208
+      ]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "string": [
+            {
+              "value1": "={{ $('Webhook - Lead Form Submission').item.json.body.source }}",
+              "operation": "equals",
+              "value2": "high-priority"
+            }
+          ]
+        }
+      },
+      "id": "9d0e7f94-a6e1-4acf-98bc-673e12634dd8",
+      "name": "Check if High Priority Lead",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 1,
+      "position": [
+        480,
+        208
+      ]
+    },
+    {
+      "parameters": {
+        "otherOptions": {}
+      },
+      "id": "82423014-5b7d-4aa8-9c1f-43f36095169a",
+      "name": "Send Urgent Slack Alert",
+      "type": "n8n-nodes-base.slack",
+      "typeVersion": 2.1,
+      "position": [
+        720,
+        208
+      ],
+      "webhookId": "75f37819-ba55-4625-a16f-8f6d13145c89"
+    },
+    {
+      "parameters": {
+        "formTitle": "Lead Capture Form",
+        "formDescription": "Please share your details so we can get in touch with you",
+        "formFields": {
+          "values": [
+            {
+              "fieldName": "name",
+              "fieldLabel": "Full Name",
+              "requiredField": true
+            },
+            {
+              "fieldName": "email",
+              "fieldLabel": "Email Address",
+              "fieldType": "email",
+              "requiredField": true
+            },
+            {
+              "fieldName": "phone",
+              "fieldLabel": "Phone Number",
+              "requiredField": true
+            },
+            {
+              "fieldName": "source",
+              "fieldLabel": "How did you hear about us?",
+              "fieldType": "dropdown",
+              "fieldOptions": {
+                "values": [
+                  {
+                    "option": "Website"
+                  },
+                  {
+                    "option": "Social Media"
+                  },
+                  {
+                    "option": "Referral"
+                  },
+                  {
+                    "option": "Advertisement"
+                  },
+                  {
+                    "option": "Other"
+                  }
+                ]
+              },
+              "requiredField": true
+            }
+          ]
+        },
+        "options": {
+          "appendAttribution": false,
+          "buttonLabel": "Submit Lead",
+          "respondWithOptions": {
+            "values": {
+              "formSubmittedText": "Thank you! We will contact you shortly."
+            }
+          }
+        }
+      },
+      "id": "ed1ed8ac-1e6c-4b78-8357-badaee8fb63c",
+      "name": "Lead Capture Form",
+      "type": "n8n-nodes-base.formTrigger",
+      "typeVersion": 2.4,
+      "position": [
+        -48,
+        672
+      ],
+      "webhookId": "22d37feb-67c6-4f49-810c-b79208af9760"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "id-1",
+              "name": "telegram_chat_id",
+              "value": "YOUR_TELEGRAM_CHAT_ID",
+              "type": "string"
+            },
+            {
+              "id": "id-2",
+              "name": "sales_team_name",
+              "value": "Sales Team",
+              "type": "string"
+            },
+            {
+              "id": "id-3",
+              "name": "company_name",
+              "value": "Your Company",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "2e2c506f-4e8b-4895-979e-483796723e80",
+      "name": "Workflow Configuration",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        176,
+        672
+      ]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": false,
+            "leftValue": "",
+            "typeValidation": "loose"
+          },
+          "conditions": [
+            {
+              "id": "id-1",
+              "leftValue": "={{ $('Lead Capture Form').item.json.email }}",
+              "operator": {
+                "type": "string",
+                "operation": "notEmpty"
+              }
+            },
+            {
+              "id": "id-2",
+              "leftValue": "={{ $('Lead Capture Form').item.json.email }}",
+              "rightValue": "@",
+              "operator": {
+                "type": "string",
+                "operation": "contains"
+              }
+            },
+            {
+              "id": "id-3",
+              "leftValue": "={{ $('Lead Capture Form').item.json.name }}",
+              "operator": {
+                "type": "string",
+                "operation": "notEmpty"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "8f832456-c778-405b-a1a4-9089d6535df2",
+      "name": "Validate Lead Data",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [
+        400,
+        672
+      ]
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "id-1",
+              "name": "name",
+              "value": "={{ $json.name }}",
+              "type": "string"
+            },
+            {
+              "id": "id-2",
+              "name": "email",
+              "value": "={{ $json.email }}",
+              "type": "string"
+            },
+            {
+              "id": "id-3",
+              "name": "phone",
+              "value": "={{ $json.phone }}",
+              "type": "string"
+            },
+            {
+              "id": "id-4",
+              "name": "source",
+              "value": "={{ $json.source }}",
+              "type": "string"
+            },
+            {
+              "id": "id-5",
+              "name": "timestamp",
+              "value": "={{ $now.toISO() }}",
+              "type": "string"
+            },
+            {
+              "id": "id-6",
+              "name": "status",
+              "value": "New Lead",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "104bfeb2-be47-4a9c-a4be-75b079264e9c",
+      "name": "Structure Lead Data",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        624,
+        576
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "appendOrUpdate",
+        "documentId": {
+          "__rl": true,
+          "mode": "id",
+          "value": "YOUR_GOOGLE_SHEET_ID"
+        },
+        "sheetName": {
+          "__rl": true,
+          "mode": "name",
+          "value": "Leads"
+        },
+        "columns": {
+          "mappingMode": "autoMapInputData",
+          "value": {},
+          "matchingColumns": [
+            "email"
+          ],
+          "schema": []
+        },
+        "options": {}
+      },
+      "id": "3e46d13a-e832-43bc-9d78-72bc8a79fae0",
+      "name": "Store in Google Sheets CRM",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        848,
+        576
+      ]
+    },
+    {
+      "parameters": {
+        "chatId": "={{ $('Workflow Configuration').item.json.telegram_chat_id }}",
+        "text": "=\ud83c\udfaf New Lead Alert!\n\n\ud83d\udc64 Name: {{ $json.name }}\n\ud83d\udce7 Email: {{ $json.email }}\n\ud83d\udcf1 Phone: {{ $json.phone }}\n\ud83d\udd17 Source: {{ $json.source }}\n\u23f0 Time: {{ $json.timestamp }}\n\nStatus: {{ $json.status }}",
+        "additionalFields": {
+          "parse_mode": "Markdown"
+        }
+      },
+      "id": "2f785f93-1f89-4e7d-b3ae-87452772ae40",
+      "name": "Alert Sales Team",
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        1072,
+        480
+      ],
+      "webhookId": "c82e367e-64f6-433d-9818-d78241f2e553"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "id-1",
+              "name": "lead_name",
+              "value": "={{ $json.name }}",
+              "type": "string"
+            },
+            {
+              "id": "id-2",
+              "name": "lead_email",
+              "value": "={{ $json.email }}",
+              "type": "string"
+            },
+            {
+              "id": "id-3",
+              "name": "lead_source",
+              "value": "={{ $json.source }}",
+              "type": "string"
+            },
+            {
+              "id": "id-4",
+              "name": "company_name",
+              "value": "={{ $('Workflow Configuration').item.json.company_name }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "7b0eebb9-d741-4d9e-b660-2e879053a347",
+      "name": "Prepare AI Input",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        1072,
+        672
+      ]
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=Generate a personalized follow-up email for this new lead:\n\nLead Details:\n- Name: {{ $json.lead_name }}\n- Email: {{ $json.lead_email }}\n- Source: {{ $json.lead_source }}\n- Company: {{ $json.company_name }}\n\nThe email should:\n1. Thank them for their interest\n2. Acknowledge how they found us ({{ $json.lead_source }})\n3. Briefly introduce our company\n4. Offer to schedule a call or answer questions\n5. Include a clear call-to-action\n\nMake it feel personalized, not templated.",
+        "hasOutputParser": true,
+        "options": {
+          "systemMessage": "You are a professional sales representative who writes warm, personalized follow-up emails for new leads. Your emails should be friendly but professional, acknowledge how the lead found the company, and include a clear call-to-action."
+        }
+      },
+      "id": "ed835e58-fd71-4f8d-8502-2922c3162623",
+      "name": "Generate Personalized Email",
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 3.1,
+      "position": [
+        1296,
+        672
+      ]
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "mode": "id",
+          "value": "gpt-4o-mini"
+        },
+        "builtInTools": {},
+        "options": {
+          "temperature": 0.7
+        }
+      },
+      "id": "99114033-ff44-4050-8c87-00eb5479f2b9",
+      "name": "OpenAI GPT Model",
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.3,
+      "position": [
+        1264,
+        896
+      ]
+    },
+    {
+      "parameters": {
+        "jsonSchemaExample": "{\n\t\"subject\": \"Email subject line\",\n\t\"greeting\": \"Opening greeting\",\n\t\"body\": \"Email body content\"\n}"
+      },
+      "id": "b146db8d-34ff-4ff3-adf2-a0cc6c2e0b41",
+      "name": "Email Structure Parser",
+      "type": "@n8n/n8n-nodes-langchain.outputParserStructured",
+      "typeVersion": 1.3,
+      "position": [
+        1472,
+        896
+      ]
+    },
+    {
+      "parameters": {
+        "sendTo": "={{ $('Structure Lead Data').item.json.email }}",
+        "subject": "={{ $json.subject }}",
+        "emailType": "text",
+        "message": "={{ $json.body }}",
+        "options": {}
+      },
+      "id": "3b3f9084-f951-4bf1-9469-1f3b471ee053",
+      "name": "Send Follow-up Email",
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.2,
+      "position": [
+        1648,
+        672
+      ],
+      "webhookId": "942ac669-b40a-4d99-bafe-d5598609a136"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "id-1",
+              "name": "error_message",
+              "value": "Invalid lead data: Missing or invalid email address",
+              "type": "string"
+            },
+            {
+              "id": "id-2",
+              "name": "lead_data",
+              "value": "={{ $json }}",
+              "type": "object"
+            },
+            {
+              "id": "id-3",
+              "name": "timestamp",
+              "value": "={{ $now.toISO() }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "bd5d8f36-de48-4984-9228-5c2ab308d2c6",
+      "name": "Error Handler",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        624,
+        768
+      ]
+    }
+  ],
+  "connections": {
+    "Webhook - Lead Form Submission": {
+      "main": [
+        [
+          {
+            "node": "Store Lead in Database",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Store Lead in Database": {
+      "main": [
+        [
+          {
+            "node": "Notify Sales Team on Slack",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Check if High Priority Lead",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Notify Sales Team on Slack": {
+      "main": [
+        [
+          {
+            "node": "Get Lead Details",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get Lead Details": {
+      "main": [
+        [
+          {
+            "node": "Generate Personalized Email Content",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Generate Personalized Email Content": {
+      "main": [
+        [
+          {
+            "node": "Send Personalized Follow-up Email",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Update Lead Status",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Send Personalized Follow-up Email": {
+      "main": [
+        [
+          {
+            "node": "Webhook Response",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Check if High Priority Lead": {
+      "main": [
+        [
+          {
+            "node": "Send Urgent Slack Alert",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Lead Capture Form": {
+      "main": [
+        [
+          {
+            "node": "Workflow Configuration",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Workflow Configuration": {
+      "main": [
+        [
+          {
+            "node": "Validate Lead Data",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Validate Lead Data": {
+      "main": [
+        [
+          {
+            "node": "Structure Lead Data",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Error Handler",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Structure Lead Data": {
+      "main": [
+        [
+          {
+            "node": "Store in Google Sheets CRM",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Store in Google Sheets CRM": {
+      "main": [
+        [
+          {
+            "node": "Alert Sales Team",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Prepare AI Input",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Prepare AI Input": {
+      "main": [
+        [
+          {
+            "node": "Generate Personalized Email",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Generate Personalized Email": {
+      "main": [
+        [
+          {
+            "node": "Send Follow-up Email",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI GPT Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Generate Personalized Email",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Email Structure Parser": {
+      "ai_outputParser": [
+        [
+          {
+            "node": "Generate Personalized Email",
+            "type": "ai_outputParser",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1",
+    "availableInMCP": false
+  },
+  "staticData": null,
+  "meta": null,
+  "pinData": {},
+  "versionId": "4dc0a588-ac1d-42ca-b9f1-5809f125d111",
+  "activeVersionId": null,
+  "triggerCount": 0,
+  "shared": [
+    {
+      "updatedAt": "2026-01-20T14:58:09.467Z",
+      "createdAt": "2026-01-20T14:58:09.467Z",
+      "role": "workflow:owner",
+      "workflowId": "vUYW78jJuM78xTED",
+      "projectId": "DT8YjHwLZsQjJqVc"
+    }
+  ],
+  "activeVersion": null,
+  "tags": [
+    {
+      "updatedAt": "2026-01-20T14:57:28.926Z",
+      "createdAt": "2026-01-20T14:57:28.926Z",
+      "id": "DG5EpakZPAHgE4Sd",
+      "name": "Sales Automation"
+    },
+    {
+      "updatedAt": "2026-01-20T14:57:28.929Z",
+      "createdAt": "2026-01-20T14:57:28.929Z",
+      "id": "SqHfbCOlQXAjWXbu",
+      "name": "Lead Management"
+    }
+  ]
+}

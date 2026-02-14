@@ -1,0 +1,659 @@
+{
+  "updatedAt": "2026-02-01T12:25:37.000Z",
+  "createdAt": "2026-02-01T12:20:21.301Z",
+  "id": "-9nNXrCDZFMh-V2FC6Yip",
+  "name": "AI News Daily Gmail Digest",
+  "active": false,
+  "isArchived": true,
+  "nodes": [
+    {
+      "parameters": {
+        "content": "# \ud83d\udcf0 AI NEWS DAILY DIGEST\n\n**Automated AI News to Gmail**\n\n\u2705 Fetches from 4 RSS sources\n\u2705 Filters last 24 hours only\n\u2705 AI summarizes top stories\n\u2705 Beautiful HTML email\n\u2705 Sent daily at 8 AM\n\n**Sources:**\n\u2022 Google News AI\n\u2022 TechCrunch AI\n\u2022 The Verge AI\n\u2022 Hacker News AI\n\n**AI:** GPT-4o-mini for summaries",
+        "height": 400,
+        "width": 300,
+        "color": 5
+      },
+      "id": "cac33b5c-e513-4097-97f9-76e256c3c276",
+      "name": "Sticky Note",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -576,
+        -128
+      ]
+    },
+    {
+      "parameters": {
+        "content": "# \u23f0 STEP 1: TRIGGER\n\n**Schedule:** Daily at 8:00 AM\n\nRuns automatically every morning\nto fetch fresh AI news\n\n**Timezone:** Asia/Kolkata (IST)\n\nChange `triggerAtHour` to adjust time",
+        "height": 220,
+        "width": 260,
+        "color": 2
+      },
+      "id": "71c0bc58-7ac2-43fa-93a9-0ec7982ae425",
+      "name": "Sticky Note1",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -576,
+        320
+      ]
+    },
+    {
+      "parameters": {
+        "content": "# \ud83d\udce1 STEP 2: RSS FEEDS\n\n**4 News Sources:**\n\n1. **Google News** - AI search\n2. **TechCrunch** - AI tag\n3. **The Verge** - AI section\n4. **Hacker News** - AI/LLM/GPT\n\nFeeds are merged using\nchained merge nodes\n(2 inputs each)",
+        "height": 280,
+        "width": 260,
+        "color": 7
+      },
+      "id": "9bc192ee-4b2e-41e1-afd3-6d3b7d91e04c",
+      "name": "Sticky Note2",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -224,
+        320
+      ]
+    },
+    {
+      "parameters": {
+        "content": "# \ud83d\udd50 STEP 3: FILTER\n\n**Code Node Logic:**\n\n\u2022 Keeps only last 24 hours\n\u2022 Removes duplicate titles\n\u2022 Sorts by newest first\n\u2022 Limits to top 10 articles\n\n```\nHOURS = 24\ncutoff = now - 24h\n```",
+        "height": 260,
+        "color": 3
+      },
+      "id": "b5750834-0093-4451-a01c-9be0e765bd44",
+      "name": "Sticky Note3",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        256,
+        320
+      ]
+    },
+    {
+      "parameters": {
+        "content": "# \ud83e\udd16 STEP 4: AI SUMMARY\n\n**GPT-4o-mini** creates:\n\n\u2022 2-line summary per article\n\u2022 Key insight extraction\n\u2022 Why it matters\n\nMakes news scannable\nand easy to read quickly\n\n**Temperature:** 0.3 (focused)",
+        "height": 260,
+        "width": 260,
+        "color": 6
+      },
+      "id": "66e0874e-76e3-4136-98d7-559ca672c47e",
+      "name": "Sticky Note4",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        736,
+        320
+      ]
+    },
+    {
+      "parameters": {
+        "content": "# \ud83d\udce7 STEP 5: EMAIL\n\n**Gmail sends:**\n\n\u2022 Beautiful HTML format\n\u2022 Gradient header\n\u2022 Article cards\n\u2022 Source + timestamp\n\u2022 Click to read full\n\n**Subject:**\n\ud83e\udd16 AI News Digest - [Date]",
+        "height": 260,
+        "color": 4
+      },
+      "id": "74a1c17d-541a-4fad-98b4-42797a61fb67",
+      "name": "Sticky Note5",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        1376,
+        320
+      ]
+    },
+    {
+      "parameters": {
+        "content": "# \ud83d\udd27 SETUP REQUIRED\n\n**1. Gmail OAuth**\nConnect Google account\nwith Gmail scope\n\n**2. OpenAI API Key**\nFor article summaries\n\n**3. Your Email**\nReplace in Send Gmail node:\n`YOUR_EMAIL@gmail.com`\n\n**4. Activate Workflow**\nToggle ON when ready",
+        "height": 300,
+        "width": 260
+      },
+      "id": "84afddc0-856e-4c72-82e3-903193bb91ff",
+      "name": "Sticky Note6",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        1696,
+        320
+      ]
+    },
+    {
+      "parameters": {
+        "content": "# \ud83d\udcca COMPLETE FLOW\n\n```\nDaily 8 AM\n    \u2193\n\u250c\u2500\u2500\u2500\u2534\u2500\u2500\u2500\u252c\u2500\u2500\u2500\u252c\u2500\u2500\u2500\u2510\n\u2193   \u2193   \u2193   \u2193\nRSS RSS RSS RSS\n\u2193   \u2193   \u2193   \u2193\n\u2514\u2500\u252c\u2500\u2518   \u2514\u2500\u252c\u2500\u2518\n  \u2193       \u2193\nMerge   Merge\n  \u2514\u2500\u2500\u2500\u252c\u2500\u2500\u2500\u2518\n      \u2193\n  Merge All\n      \u2193\n Filter 24h\n      \u2193\n  Limit 10\n      \u2193\n Has News?\n   \u2193 Yes\n Extract Data\n      \u2193\nAI Summarize\n      \u2193\n Combine All\n      \u2193\nBuild HTML\n      \u2193\nSend Gmail \u2709\ufe0f\n```",
+        "height": 560,
+        "width": 220,
+        "color": 5
+      },
+      "id": "6f623085-e729-449f-b39b-56a8c90f1c38",
+      "name": "Sticky Note7",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        2016,
+        -16
+      ]
+    },
+    {
+      "parameters": {
+        "content": "# \ud83d\udd17 RSS FEED URLS\n\n**Google News:**\n`news.google.com/rss/search?q=AI`\n\n**TechCrunch:**\n`techcrunch.com/.../feed/`\n\n**The Verge:**\n`theverge.com/rss/ai.../index.xml`\n\n**Hacker News:**\n`hnrss.org/newest?q=AI+OR+LLM`\n\nAdd more feeds by duplicating\nRSS nodes and merging",
+        "height": 320,
+        "width": 300,
+        "color": 7
+      },
+      "id": "13c219c8-42ad-493f-b3e3-48cfb0d3ddea",
+      "name": "Sticky Note8",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -224,
+        -128
+      ]
+    },
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "triggerAtHour": 8
+            }
+          ]
+        }
+      },
+      "id": "dd676531-efb3-473b-9391-06102bf68330",
+      "name": "Daily 8 AM",
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.3,
+      "position": [
+        -352,
+        112
+      ]
+    },
+    {
+      "parameters": {
+        "url": "https://news.google.com/rss/search?q=artificial+intelligence+when:1d&hl=en-US&gl=US&ceid=US:en",
+        "options": {}
+      },
+      "id": "4b671706-4d91-4175-9619-3c1b9c86c8f4",
+      "name": "RSS - Google AI",
+      "type": "n8n-nodes-base.rssFeedRead",
+      "typeVersion": 1.2,
+      "position": [
+        -112,
+        0
+      ]
+    },
+    {
+      "parameters": {
+        "url": "https://techcrunch.com/tag/artificial-intelligence/feed/",
+        "options": {}
+      },
+      "id": "cbd8cfb8-cd50-4b99-a16a-dae77b284bac",
+      "name": "RSS - TechCrunch",
+      "type": "n8n-nodes-base.rssFeedRead",
+      "typeVersion": 1.2,
+      "position": [
+        -112,
+        112
+      ]
+    },
+    {
+      "parameters": {
+        "url": "https://www.theverge.com/rss/ai-artificial-intelligence/index.xml",
+        "options": {}
+      },
+      "id": "dd3ad589-b289-4a03-8ba4-67253a1b4197",
+      "name": "RSS - The Verge",
+      "type": "n8n-nodes-base.rssFeedRead",
+      "typeVersion": 1.2,
+      "position": [
+        -112,
+        240
+      ]
+    },
+    {
+      "parameters": {
+        "url": "https://hnrss.org/newest?q=AI+OR+LLM+OR+GPT",
+        "options": {}
+      },
+      "id": "17a93925-4ae4-4f6d-9186-e6a27ce05758",
+      "name": "RSS - Hacker News",
+      "type": "n8n-nodes-base.rssFeedRead",
+      "typeVersion": 1.2,
+      "position": [
+        -112,
+        352
+      ]
+    },
+    {
+      "parameters": {
+        "mode": "combine",
+        "combineBy": "combineAll",
+        "options": {}
+      },
+      "id": "426e3379-b004-4aae-9d13-aba668bd1e82",
+      "name": "Merge Google+TC",
+      "type": "n8n-nodes-base.merge",
+      "typeVersion": 3,
+      "position": [
+        128,
+        64
+      ]
+    },
+    {
+      "parameters": {
+        "mode": "combine",
+        "combineBy": "combineAll",
+        "options": {}
+      },
+      "id": "9a422a77-25e9-4a98-8d69-dbb0e7028b2c",
+      "name": "Merge Verge+HN",
+      "type": "n8n-nodes-base.merge",
+      "typeVersion": 3,
+      "position": [
+        128,
+        304
+      ]
+    },
+    {
+      "parameters": {
+        "mode": "combine",
+        "combineBy": "combineAll",
+        "options": {}
+      },
+      "id": "14e807bc-1332-4bc9-adcc-4b417560114a",
+      "name": "Merge All Feeds",
+      "type": "n8n-nodes-base.merge",
+      "typeVersion": 3,
+      "position": [
+        368,
+        176
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "// Filter articles from last 24 hours and remove duplicates\nconst HOURS = 24;\nconst now = new Date();\nconst cutoff = new Date(now.getTime() - HOURS * 60 * 60 * 1000);\n\n// Track seen titles to remove duplicates\nconst seenTitles = new Set();\n\nconst filtered = items.filter(item => {\n  const rawDate = item.json.pubDate || item.json.isoDate || item.json.published || item.json.date;\n  \n  if (!rawDate) return true; // Keep if no date (rare)\n  \n  const articleDate = new Date(rawDate);\n  if (isNaN(articleDate.getTime())) return true;\n  \n  // Check if within last 24 hours\n  if (articleDate < cutoff) return false;\n  \n  // Check for duplicates by title\n  const title = (item.json.title || '').toLowerCase().trim().substring(0, 50);\n  if (seenTitles.has(title)) return false;\n  seenTitles.add(title);\n  \n  return true;\n});\n\n// Sort by date (newest first)\nfiltered.sort((a, b) => {\n  const dateA = new Date(a.json.pubDate || a.json.isoDate || 0);\n  const dateB = new Date(b.json.pubDate || b.json.isoDate || 0);\n  return dateB - dateA;\n});\n\nreturn filtered.length > 0 ? filtered : [{ json: { noArticles: true } }];"
+      },
+      "id": "05041bc5-c67b-4e66-ac38-e6645b186aae",
+      "name": "Filter Last 24h",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        576,
+        176
+      ]
+    },
+    {
+      "parameters": {
+        "maxItems": 10
+      },
+      "id": "d4ee7f7c-8839-47e0-a26e-6bbdc1890f10",
+      "name": "Limit 10",
+      "type": "n8n-nodes-base.limit",
+      "typeVersion": 1,
+      "position": [
+        768,
+        176
+      ]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "has-articles",
+              "leftValue": "={{ $json.title }}",
+              "rightValue": "",
+              "operator": {
+                "type": "string",
+                "operation": "exists",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "d8c0e3d0-1b55-4f96-ab74-11ae9481f2f3",
+      "name": "Has Articles?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        976,
+        176
+      ]
+    },
+    {
+      "parameters": {
+        "mode": "runOnceForEachItem",
+        "jsCode": "// Extract clean article data\nconst item = $input.item.json;\n\n// Clean description/content - remove HTML tags\nlet description = item.content || item.contentSnippet || item.description || item.summary || '';\ndescription = description.replace(/<[^>]*>/g, '').replace(/&[^;]+;/g, ' ').substring(0, 500).trim();\n\n// Determine source from URL\nconst link = item.link || item.url || '';\nlet source = 'News';\nif (link.includes('techcrunch')) source = 'TechCrunch';\nelse if (link.includes('theverge')) source = 'The Verge';\nelse if (link.includes('arstechnica')) source = 'Ars Technica';\nelse if (link.includes('ycombinator') || link.includes('hnrss')) source = 'Hacker News';\nelse if (link.includes('google.com')) source = 'Google News';\n\n// Format date nicely\nlet pubDate = item.pubDate || item.isoDate || item.published || item.date || '';\ntry {\n  const d = new Date(pubDate);\n  pubDate = d.toLocaleString('en-IN', { \n    timeZone: 'Asia/Kolkata',\n    day: 'numeric',\n    month: 'short',\n    hour: '2-digit',\n    minute: '2-digit'\n  });\n} catch (e) {\n  pubDate = 'Recent';\n}\n\nreturn {\n  title: (item.title || 'Untitled Article').substring(0, 200),\n  description: description || 'No description available.',\n  link: link,\n  source: source,\n  pubDate: pubDate\n};"
+      },
+      "id": "9dc4407f-3e6e-47db-a77f-8cbb495bc33a",
+      "name": "Extract Article Data",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1168,
+        112
+      ]
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=Summarize this AI news article in exactly 2 concise sentences. Focus on the key insight and why it matters to tech professionals.\n\nTitle: {{ $json.title }}\n\nDescription: {{ $json.description }}\n\nReturn ONLY the 2-sentence summary, nothing else. Be direct and informative.",
+        "batching": {}
+      },
+      "id": "fe8c973d-d0a4-46a1-bb3e-da6fbefdc8e8",
+      "name": "AI Summarize",
+      "type": "@n8n/n8n-nodes-langchain.chainLlm",
+      "typeVersion": 1.7,
+      "position": [
+        1376,
+        112
+      ]
+    },
+    {
+      "parameters": {
+        "model": "gpt-4o-mini",
+        "options": {
+          "temperature": 0.3
+        }
+      },
+      "id": "adaa27c5-bdf2-4494-83b0-c7f2d7b339cc",
+      "name": "OpenAI GPT-4o-mini",
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.2,
+      "position": [
+        1376,
+        320
+      ]
+    },
+    {
+      "parameters": {
+        "mode": "runOnceForEachItem",
+        "jsCode": "// Combine original data with AI summary\nconst original = $('Extract Article Data').item.json;\nconst aiOutput = $input.item.json;\nconst summary = aiOutput.text || aiOutput.output || aiOutput.response || 'Summary not available.';\n\nreturn {\n  ...original,\n  summary: summary.trim()\n};"
+      },
+      "id": "ca3718a8-52c8-40a4-a7f7-4395f48e0584",
+      "name": "Combine Summary",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1568,
+        112
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "// Build beautiful HTML email\nconst articles = $input.all();\nconst today = new Date().toLocaleDateString('en-IN', {\n  weekday: 'long',\n  year: 'numeric',\n  month: 'long',\n  day: 'numeric',\n  timeZone: 'Asia/Kolkata'\n});\n\nconst readTime = Math.ceil(articles.length * 0.5); // 30 sec per article\n\nlet html = `\n<!DOCTYPE html>\n<html>\n<head>\n  <meta charset=\"UTF-8\">\n  <meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\">\n  <style>\n    body { \n      font-family: 'Segoe UI', -apple-system, BlinkMacSystemFont, Arial, sans-serif; \n      background: #f0f2f5; \n      margin: 0; \n      padding: 20px; \n      line-height: 1.6;\n    }\n    .container { \n      max-width: 640px; \n      margin: 0 auto; \n      background: white; \n      border-radius: 16px; \n      overflow: hidden; \n      box-shadow: 0 4px 20px rgba(0,0,0,0.08); \n    }\n    .header { \n      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); \n      color: white; \n      padding: 40px 30px; \n      text-align: center; \n    }\n    .header h1 { \n      margin: 0; \n      font-size: 32px; \n      font-weight: 700;\n      letter-spacing: -0.5px;\n    }\n    .header .subtitle { \n      margin: 12px 0 0; \n      opacity: 0.9; \n      font-size: 15px; \n    }\n    .header .stats {\n      margin-top: 20px;\n      display: inline-block;\n      background: rgba(255,255,255,0.2);\n      padding: 8px 20px;\n      border-radius: 20px;\n      font-size: 13px;\n    }\n    .content { \n      padding: 10px 25px 25px; \n    }\n    .article { \n      border-bottom: 1px solid #eef0f2; \n      padding: 25px 0; \n    }\n    .article:last-child { \n      border-bottom: none; \n    }\n    .article-number {\n      display: inline-block;\n      background: linear-gradient(135deg, #667eea, #764ba2);\n      color: white;\n      width: 28px;\n      height: 28px;\n      border-radius: 50%;\n      text-align: center;\n      line-height: 28px;\n      font-size: 13px;\n      font-weight: 600;\n      margin-right: 12px;\n    }\n    .article-title { \n      font-size: 18px; \n      font-weight: 600; \n      color: #1a1a2e; \n      margin: 0 0 10px; \n      line-height: 1.4;\n    }\n    .article-title a { \n      color: #667eea; \n      text-decoration: none; \n    }\n    .article-title a:hover { \n      text-decoration: underline; \n    }\n    .article-meta { \n      font-size: 12px; \n      color: #8b8fa3; \n      margin-bottom: 12px; \n    }\n    .article-meta span { \n      margin-right: 16px; \n    }\n    .source-badge {\n      display: inline-block;\n      background: #f0f2f5;\n      color: #555;\n      padding: 3px 10px;\n      border-radius: 12px;\n      font-size: 11px;\n      font-weight: 500;\n    }\n    .article-summary { \n      font-size: 14px; \n      color: #4a4a5a; \n      line-height: 1.7;\n      margin: 0;\n    }\n    .read-more {\n      display: inline-block;\n      margin-top: 12px;\n      color: #667eea;\n      font-size: 13px;\n      font-weight: 500;\n      text-decoration: none;\n    }\n    .read-more:hover {\n      text-decoration: underline;\n    }\n    .footer { \n      background: #f8f9fa; \n      padding: 25px; \n      text-align: center; \n      font-size: 13px; \n      color: #8b8fa3; \n    }\n    .footer strong {\n      color: #667eea;\n    }\n    .footer p {\n      margin: 5px 0;\n    }\n  </style>\n</head>\n<body>\n  <div class=\"container\">\n    <div class=\"header\">\n      <h1>\ud83e\udd16 AI News Digest</h1>\n      <p class=\"subtitle\">${today}</p>\n      <div class=\"stats\">\ud83d\udcf0 ${articles.length} articles \u2022 \u23f1\ufe0f ${readTime} min read</div>\n    </div>\n    <div class=\"content\">\n`;\n\narticles.forEach((item, index) => {\n  const a = item.json;\n  html += `\n      <div class=\"article\">\n        <h2 class=\"article-title\">\n          <span class=\"article-number\">${index + 1}</span>\n          <a href=\"${a.link}\" target=\"_blank\">${a.title}</a>\n        </h2>\n        <div class=\"article-meta\">\n          <span class=\"source-badge\">${a.source}</span>\n          <span>\ud83d\udd50 ${a.pubDate}</span>\n        </div>\n        <p class=\"article-summary\">${a.summary}</p>\n        <a href=\"${a.link}\" target=\"_blank\" class=\"read-more\">Read full article \u2192</a>\n      </div>\n`;\n});\n\nhtml += `\n    </div>\n    <div class=\"footer\">\n      <p>Generated by <strong>AIwithDhruv News Bot</strong></p>\n      <p>Powered by n8n + OpenAI \u2022 Delivered with \u2764\ufe0f</p>\n    </div>\n  </div>\n</body>\n</html>\n`;\n\nreturn [{\n  json: {\n    subject: `\ud83e\udd16 AI News Digest - ${today} (${articles.length} stories)`,\n    htmlBody: html,\n    articleCount: articles.length,\n    generatedAt: new Date().toISOString()\n  }\n}];"
+      },
+      "id": "bc2c9ec9-33f3-4a85-88c2-4dc044bdab28",
+      "name": "Build HTML Email",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1776,
+        112
+      ]
+    },
+    {
+      "parameters": {
+        "sendTo": "YOUR_EMAIL@gmail.com",
+        "subject": "={{ $json.subject }}",
+        "message": "={{ $json.htmlBody }}",
+        "options": {}
+      },
+      "id": "c0a601a3-9672-45c5-a3bb-c8c40648c5ad",
+      "name": "Send to Gmail",
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.1,
+      "position": [
+        1968,
+        112
+      ],
+      "webhookId": "68b2eabf-8205-44ae-8660-33c05d6b81b2"
+    },
+    {
+      "parameters": {
+        "chatId": "YOUR_TELEGRAM_CHAT_ID",
+        "text": "=\ud83d\udced No new AI news found in the last 24 hours.\n\nChecked: Google News, TechCrunch, The Verge, Hacker News\n\nWill try again tomorrow at 8 AM!",
+        "additionalFields": {
+          "appendAttribution": false
+        }
+      },
+      "id": "f8316a8f-09b2-4e35-8aac-dba2b44d0188",
+      "name": "Notify No Articles",
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        1168,
+        256
+      ],
+      "webhookId": "6b18bdd8-62dc-44b3-aecb-23f66b2a285c"
+    }
+  ],
+  "connections": {
+    "Daily 8 AM": {
+      "main": [
+        [
+          {
+            "node": "RSS - Google AI",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "RSS - TechCrunch",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "RSS - The Verge",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "RSS - Hacker News",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "RSS - Google AI": {
+      "main": [
+        [
+          {
+            "node": "Merge Google+TC",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "RSS - TechCrunch": {
+      "main": [
+        [
+          {
+            "node": "Merge Google+TC",
+            "type": "main",
+            "index": 1
+          }
+        ]
+      ]
+    },
+    "RSS - The Verge": {
+      "main": [
+        [
+          {
+            "node": "Merge Verge+HN",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "RSS - Hacker News": {
+      "main": [
+        [
+          {
+            "node": "Merge Verge+HN",
+            "type": "main",
+            "index": 1
+          }
+        ]
+      ]
+    },
+    "Merge Google+TC": {
+      "main": [
+        [
+          {
+            "node": "Merge All Feeds",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Merge Verge+HN": {
+      "main": [
+        [
+          {
+            "node": "Merge All Feeds",
+            "type": "main",
+            "index": 1
+          }
+        ]
+      ]
+    },
+    "Merge All Feeds": {
+      "main": [
+        [
+          {
+            "node": "Filter Last 24h",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Filter Last 24h": {
+      "main": [
+        [
+          {
+            "node": "Limit 10",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Limit 10": {
+      "main": [
+        [
+          {
+            "node": "Has Articles?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Has Articles?": {
+      "main": [
+        [
+          {
+            "node": "Extract Article Data",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Notify No Articles",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Extract Article Data": {
+      "main": [
+        [
+          {
+            "node": "AI Summarize",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI GPT-4o-mini": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Summarize",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "AI Summarize": {
+      "main": [
+        [
+          {
+            "node": "Combine Summary",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Combine Summary": {
+      "main": [
+        [
+          {
+            "node": "Build HTML Email",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Build HTML Email": {
+      "main": [
+        [
+          {
+            "node": "Send to Gmail",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1",
+    "availableInMCP": false
+  },
+  "staticData": null,
+  "meta": null,
+  "pinData": {},
+  "versionId": "2c22aac0-9a36-49aa-9025-a5bf6844af3e",
+  "activeVersionId": null,
+  "triggerCount": 0,
+  "shared": [
+    {
+      "updatedAt": "2026-02-01T12:20:21.303Z",
+      "createdAt": "2026-02-01T12:20:21.303Z",
+      "role": "workflow:owner",
+      "workflowId": "-9nNXrCDZFMh-V2FC6Yip",
+      "projectId": "DT8YjHwLZsQjJqVc"
+    }
+  ],
+  "activeVersion": null,
+  "tags": []
+}

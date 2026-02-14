@@ -1,0 +1,258 @@
+{
+  "updatedAt": "2026-01-03T14:13:38.193Z",
+  "createdAt": "2026-01-02T17:40:36.351Z",
+  "id": "l37paLWQksC8BdLP",
+  "name": "My workflow 15",
+  "active": false,
+  "isArchived": false,
+  "nodes": [
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.chatTrigger",
+      "typeVersion": 1.4,
+      "position": [
+        -592,
+        -384
+      ],
+      "id": "6e552751-5782-4833-a3f1-f9bbbd1fb187",
+      "name": "When chat message received",
+      "webhookId": "317aa97b-f70c-4f8f-a295-9abeb691fa0e"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 3.1,
+      "position": [
+        -240,
+        -416
+      ],
+      "id": "1e851b33-8f19-4fd6-ae41-d9296b4a19ab",
+      "name": "AI Agent"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenRouter",
+      "typeVersion": 1,
+      "position": [
+        -464,
+        -96
+      ],
+      "id": "188cf367-fff7-4d74-899c-0d26e7ae54bb",
+      "name": "OpenRouter Chat Model",
+      "credentials": {
+        "openRouterApi": {
+          "id": "5NHf7ILbLoMVxKcb",
+          "name": "OpenRouter account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "getAll",
+        "limit": 5,
+        "filters": {}
+      },
+      "type": "n8n-nodes-base.gmailTool",
+      "typeVersion": 2.2,
+      "position": [
+        -64,
+        -208
+      ],
+      "id": "9e7862f1-f2a1-451e-bf9e-26d17b5a497f",
+      "name": "Get many messages in Gmail",
+      "webhookId": "5ab26bb1-626e-4f22-a26e-2b87c662ab34",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "gPGYzjuIbblOf3E1",
+          "name": "Ai with Dhruv"
+        }
+      }
+    },
+    {
+      "parameters": {},
+      "type": "@n8n/n8n-nodes-langchain.memoryBufferWindow",
+      "typeVersion": 1.3,
+      "position": [
+        -256,
+        16
+      ],
+      "id": "105d4751-0f7c-403a-990d-95db780fcb71",
+      "name": "Simple Memory"
+    },
+    {
+      "parameters": {
+        "operation": "select",
+        "schema": {
+          "__rl": true,
+          "mode": "list",
+          "value": "public"
+        },
+        "table": {
+          "__rl": true,
+          "value": "users",
+          "mode": "list",
+          "cachedResultName": "users"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.6,
+      "position": [
+        352,
+        -288
+      ],
+      "id": "893bed17-a02e-4054-b6cb-e60383fe3ab8",
+      "name": "Select rows from a table",
+      "credentials": {
+        "postgres": {
+          "id": "615Oq63vxM1BDmBi",
+          "name": "Postgres neon"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "select",
+        "schema": {
+          "__rl": true,
+          "mode": "list",
+          "value": "public"
+        },
+        "table": {
+          "__rl": true,
+          "value": "users",
+          "mode": "list",
+          "cachedResultName": "users"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.postgresTool",
+      "typeVersion": 2.6,
+      "position": [
+        240,
+        -128
+      ],
+      "id": "d3715c5a-5da9-4eb1-a93e-bfd831268961",
+      "name": "Select rows from a table in Postgres",
+      "credentials": {
+        "postgres": {
+          "id": "615Oq63vxM1BDmBi",
+          "name": "Postgres neon"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "insert",
+        "collection": "Dhruv",
+        "fields": "{   \"lead_id\": \"LEAD-1023\",   \"full_name\": \"Amit Sharma\",   \"email\": \"amit.sharma@gmail.com\",   \"phone\": \"+91-9876543210\",   \"company\": \"ABC Infra Pvt Ltd\",   \"interest\": \"AI Automation for Sales\",   \"status\": \"new\",   \"assigned_to\": \"Dhruv\",   \"source\": \"website_form\",   \"createdAt\": \"2026-01-03T11:00:00Z\" }",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.mongoDb",
+      "typeVersion": 1.2,
+      "position": [
+        480,
+        -192
+      ],
+      "id": "a7cf692a-572b-4514-84b1-bc0274c96cab",
+      "name": "Insert documents",
+      "credentials": {
+        "mongoDb": {
+          "id": "zNnv2Os5LY0RRZEP",
+          "name": "MongoDB account"
+        }
+      }
+    }
+  ],
+  "connections": {
+    "When chat message received": {
+      "main": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "AI Agent": {
+      "main": [
+        []
+      ]
+    },
+    "OpenRouter Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get many messages in Gmail": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Simple Memory": {
+      "ai_memory": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_memory",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Select rows from a table in Postgres": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1",
+    "availableInMCP": false
+  },
+  "staticData": null,
+  "meta": {
+    "templateCredsSetupCompleted": true
+  },
+  "pinData": {},
+  "versionId": "72d788e0-ae18-4b54-99e1-ebb002f36fc9",
+  "activeVersionId": null,
+  "triggerCount": 0,
+  "shared": [
+    {
+      "updatedAt": "2026-01-02T17:40:36.357Z",
+      "createdAt": "2026-01-02T17:40:36.357Z",
+      "role": "workflow:owner",
+      "workflowId": "l37paLWQksC8BdLP",
+      "projectId": "DT8YjHwLZsQjJqVc"
+    }
+  ],
+  "activeVersion": null,
+  "tags": []
+}

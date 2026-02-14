@@ -1,0 +1,2193 @@
+{
+  "updatedAt": "2025-12-16T11:19:47.083Z",
+  "createdAt": "2025-09-30T15:15:33.495Z",
+  "id": "qbWjLjqmTXha48b0",
+  "name": "Email Auto followups",
+  "active": true,
+  "isArchived": false,
+  "nodes": [
+    {
+      "parameters": {
+        "rules": {
+          "values": [
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $json['Email Status'] }}",
+                    "rightValue": "To Do",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    },
+                    "id": "e2c86968-5855-4cee-afce-4a4bd38d73f4"
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "To Do"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "id": "8fa0db76-1329-4088-8e3d-02b19bcdc0dc",
+                    "leftValue": "={{ $json['Email Status'] }}",
+                    "rightValue": "1st Sent",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals",
+                      "name": "filter.operator.equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "1st Sent"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "id": "04709582-179e-42dc-9290-b011a60e464a",
+                    "leftValue": "={{ $json['Email Status'] }}",
+                    "rightValue": "2nd Sent",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals",
+                      "name": "filter.operator.equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "2nd Sent"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3.2,
+      "position": [
+        -528,
+        336
+      ],
+      "id": "a460c918-7ac6-43c4-8fa7-72a22019a339",
+      "name": "Switch"
+    },
+    {
+      "parameters": {
+        "sendTo": "={{ $json['Linkedin Email'] }}",
+        "subject": "Avoid Projects Delays and Cost Overruns ? [via BNI]",
+        "emailType": "text",
+        "message": "=Hi {{ $('BNI Data').item.json['Full Name'] }}\n\nAre you worried about delays and cost overruns in your projects?\n\nConstruction projects are complex\u2014continuous tracking of labour, materials, and teams is critical to deliver projects on time and within budget. Even a small error can lead to huge losses, theft, or wastage. Do you currently use any software to manage budgets and track sites?\n\nOnsite is designed exclusively for construction projects, letting you track all project elements in one place. Its mobile + web interface enables real-time site tracking and project control.\n\nWe\u2019d love to give you a 10-minute demo of the software. How about tomorrow evening?\n\nJust reply \u201cYES\u201d, and I\u2019ll set up a convenient time.\n\nWarm regards,\nAkshansh Agarwal\nCofounder & CEO\nBNI Member (Acheivers, Noida)",
+        "options": {
+          "appendAttribution": false
+        }
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.1,
+      "position": [
+        400,
+        32
+      ],
+      "id": "7eeae21c-7d49-4782-a10b-1ec348b409a9",
+      "name": "1st",
+      "webhookId": "ac37b081-949a-43e6-b2a5-66d5aa68f817",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "SooWfmoHe0hYNcMR",
+          "name": "Akshansh_Onsite_Teams"
+        }
+      },
+      "onError": "continueRegularOutput"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "n8n-nodes-base.splitInBatches",
+      "typeVersion": 3,
+      "position": [
+        144,
+        16
+      ],
+      "id": "4ce24190-cd18-4572-bfc4-413b891f3af4",
+      "name": "Loop Over Items2"
+    },
+    {
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "value": "1ssg0Q73hu6ALbQMrYhGae40Ex1qStkAmIXoG4rjSO6o",
+          "mode": "list",
+          "cachedResultName": "Scrapped Construction Data  Base",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1ssg0Q73hu6ALbQMrYhGae40Ex1qStkAmIXoG4rjSO6o/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 119380453,
+          "mode": "list",
+          "cachedResultName": "BNI",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1ssg0Q73hu6ALbQMrYhGae40Ex1qStkAmIXoG4rjSO6o/edit#gid=119380453"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        -768,
+        352
+      ],
+      "id": "20505ddb-c8ab-47cc-af0e-fcbf2cdc7c84",
+      "name": "BNI Data",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "WbzVyGwbDVzvcV25",
+          "name": "Ai with Dhruv"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "documentId": {
+          "__rl": true,
+          "value": "1ssg0Q73hu6ALbQMrYhGae40Ex1qStkAmIXoG4rjSO6o",
+          "mode": "list",
+          "cachedResultName": "Scrapped Construction Data  Base",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1ssg0Q73hu6ALbQMrYhGae40Ex1qStkAmIXoG4rjSO6o/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 119380453,
+          "mode": "list",
+          "cachedResultName": "BNI",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1ssg0Q73hu6ALbQMrYhGae40Ex1qStkAmIXoG4rjSO6o/edit#gid=119380453"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Email Status": "1st Sent",
+            "Linkedin Email": "={{ $('BNI Data').item.json['Linkedin Email'] }}",
+            "Message Id": "={{ $json.id }}"
+          },
+          "matchingColumns": [
+            "Linkedin Email"
+          ],
+          "schema": [
+            {
+              "id": "Email Status",
+              "displayName": "Email Status",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Message Id",
+              "displayName": "Message Id",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Full Name",
+              "displayName": "Full Name",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Linkedin Email",
+              "displayName": "Linkedin Email",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Company",
+              "displayName": "Company",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Team Size",
+              "displayName": "Team Size",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "state_mobile",
+              "displayName": "state_mobile",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Lead Status",
+              "displayName": "Lead Status",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Remark/Notes",
+              "displayName": "Remark/Notes",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "userdate",
+              "displayName": "userdate",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Lead Source Date",
+              "displayName": "Lead Source Date",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "row_number",
+              "displayName": "row_number",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "number",
+              "canBeUsedToMatch": true,
+              "readOnly": true,
+              "removed": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        624,
+        32
+      ],
+      "id": "3e66c72d-fb09-47a8-bee4-5dac4378eb9e",
+      "name": "Update to 1st Sent",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "WbzVyGwbDVzvcV25",
+          "name": "Ai with Dhruv"
+        }
+      },
+      "onError": "continueRegularOutput"
+    },
+    {
+      "parameters": {
+        "unit": "minutes"
+      },
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1.1,
+      "position": [
+        848,
+        32
+      ],
+      "id": "b2701c00-c19a-400c-901e-a9eb0d4e1b8d",
+      "name": "5 Minute",
+      "webhookId": "d7429b86-e2fb-4dd7-8ed2-73473fc01712"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "n8n-nodes-base.splitInBatches",
+      "typeVersion": 3,
+      "position": [
+        144,
+        352
+      ],
+      "id": "09da37c9-e64b-478f-880d-9786f01d0099",
+      "name": "Loop Over Items"
+    },
+    {
+      "parameters": {
+        "unit": "minutes"
+      },
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1.1,
+      "position": [
+        848,
+        368
+      ],
+      "id": "c27e5ad3-f753-40b6-97be-7a7f269454e1",
+      "name": "5 Minute1",
+      "webhookId": "d7429b86-e2fb-4dd7-8ed2-73473fc01712"
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "documentId": {
+          "__rl": true,
+          "value": "1ssg0Q73hu6ALbQMrYhGae40Ex1qStkAmIXoG4rjSO6o",
+          "mode": "list",
+          "cachedResultName": "Scrapped Construction Data  Base",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1ssg0Q73hu6ALbQMrYhGae40Ex1qStkAmIXoG4rjSO6o/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 119380453,
+          "mode": "list",
+          "cachedResultName": "BNI",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1ssg0Q73hu6ALbQMrYhGae40Ex1qStkAmIXoG4rjSO6o/edit#gid=119380453"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Email Status": "2nd Sent",
+            "Linkedin Email": "={{ $('BNI Data').item.json['Linkedin Email'] }}",
+            "Message Id": "={{ $json.id }}"
+          },
+          "matchingColumns": [
+            "Linkedin Email"
+          ],
+          "schema": [
+            {
+              "id": "Email Status",
+              "displayName": "Email Status",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Message Id",
+              "displayName": "Message Id",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Full Name",
+              "displayName": "Full Name",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Linkedin Email",
+              "displayName": "Linkedin Email",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Company",
+              "displayName": "Company",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Team Size",
+              "displayName": "Team Size",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "state_mobile",
+              "displayName": "state_mobile",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Lead Status",
+              "displayName": "Lead Status",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Remark/Notes",
+              "displayName": "Remark/Notes",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "userdate",
+              "displayName": "userdate",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Lead Source Date",
+              "displayName": "Lead Source Date",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "row_number",
+              "displayName": "row_number",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "number",
+              "canBeUsedToMatch": true,
+              "readOnly": true,
+              "removed": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        624,
+        368
+      ],
+      "id": "8ed86541-7491-4731-bf99-7281e9bfbe47",
+      "name": "Update to 2nd Sent",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "WbzVyGwbDVzvcV25",
+          "name": "Ai with Dhruv"
+        }
+      },
+      "onError": "continueRegularOutput"
+    },
+    {
+      "parameters": {
+        "maxItems": 150
+      },
+      "type": "n8n-nodes-base.limit",
+      "typeVersion": 1,
+      "position": [
+        -144,
+        16
+      ],
+      "id": "4784abac-ce52-4e60-8001-ec48bbfc2800",
+      "name": "Limit - 150"
+    },
+    {
+      "parameters": {
+        "maxItems": 150
+      },
+      "type": "n8n-nodes-base.limit",
+      "typeVersion": 1,
+      "position": [
+        -160,
+        352
+      ],
+      "id": "af3a6689-6d18-4590-9dfe-4fc76189ddc4",
+      "name": "Limit -- 150"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "n8n-nodes-base.splitInBatches",
+      "typeVersion": 3,
+      "position": [
+        144,
+        736
+      ],
+      "id": "85262e23-d5e9-4af6-b536-c21065f6a5e2",
+      "name": "Loop Over Items1"
+    },
+    {
+      "parameters": {
+        "unit": "minutes"
+      },
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1.1,
+      "position": [
+        848,
+        752
+      ],
+      "id": "0b2a2664-d9a9-4759-8f2e-bb5d3a858533",
+      "name": "5 Minute2",
+      "webhookId": "d7429b86-e2fb-4dd7-8ed2-73473fc01712"
+    },
+    {
+      "parameters": {
+        "maxItems": 150
+      },
+      "type": "n8n-nodes-base.limit",
+      "typeVersion": 1,
+      "position": [
+        -160,
+        736
+      ],
+      "id": "29669ab4-574e-404a-b619-c9f5c0d6789d",
+      "name": "Limit 150-"
+    },
+    {
+      "parameters": {
+        "operation": "reply",
+        "messageId": "={{ $json['Message Id'] }}",
+        "emailType": "text",
+        "message": "=Hi {{ $('BNI Data').item.json['Full Name'] }}\n\nCost overruns are the biggest challenge in any construction project\u2014and often, nobody knows why the costs increased.\n\nThat\u2019s why we built Onsite: a software platform designed to solve real on-ground challenges across every stage of a project. With Onsite, you can do budgeting, planning, and tracking of labour, materials, and progress\u2014all in one place.\n\nWould you be open to a quick 10-minute chat to see how we\u2019re helping 2,000+ companies stay on time and on budget?\n\nJust reply \u201cYES\u201d, and I\u2019ll schedule a convenient time.\n\nWarm regards,\nAkshansh Agarwal\nCofounder & CEO\nBNI Member (Acheivers, Noida)",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.1,
+      "position": [
+        416,
+        368
+      ],
+      "id": "f19a7c28-dcbb-44f2-b5dc-226dcd54bb73",
+      "name": "2nd",
+      "webhookId": "81b60981-934e-4f00-8c8b-cfa254061843",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "SooWfmoHe0hYNcMR",
+          "name": "Akshansh_Onsite_Teams"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "reply",
+        "messageId": "={{ $json['Message Id'] }}",
+        "emailType": "text",
+        "message": "=Hi {{ $json['Full Name'] }}\n\nThere are countless ways projects lose money\u2014but only one proven way to save: deeper control.\n\nOnsite helps you achieve exactly that\u2014reducing theft, cutting wastage, and enabling smarter negotiations, driving savings at every stage of your project.\n\nWould you be open to letting {{ $json.Company }} explore a quick 10-minute chat to see how we\u2019re helping 2,000+ companies deliver projects on time and within budget?\n?\n\nJust reply \u201cYES\u201d, and I\u2019ll schedule a convenient time.\n\nWarm regards,\nAkshansh Agarwal\nCofounder & CEO\nBNI Member (Acheivers, Noida)",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.1,
+      "position": [
+        416,
+        752
+      ],
+      "id": "af040f9e-3727-4b6c-9df5-916442e868d9",
+      "name": "3rd",
+      "webhookId": "81b60981-934e-4f00-8c8b-cfa254061843",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "SooWfmoHe0hYNcMR",
+          "name": "Akshansh_Onsite_Teams"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "triggerAtHour": 9
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.2,
+      "position": [
+        -976,
+        352
+      ],
+      "id": "f1649349-9bb0-402e-81e6-dde621d8b744",
+      "name": "9 AM"
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "documentId": {
+          "__rl": true,
+          "value": "1ssg0Q73hu6ALbQMrYhGae40Ex1qStkAmIXoG4rjSO6o",
+          "mode": "list",
+          "cachedResultName": "Scrapped Construction Data  Base",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1ssg0Q73hu6ALbQMrYhGae40Ex1qStkAmIXoG4rjSO6o/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 119380453,
+          "mode": "list",
+          "cachedResultName": "BNI",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1ssg0Q73hu6ALbQMrYhGae40Ex1qStkAmIXoG4rjSO6o/edit#gid=119380453"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Email Status": "3rd Sent",
+            "Linkedin Email": "={{ $('BNI Data').item.json['Linkedin Email'] }}",
+            "Message Id": "={{ $json.id }}"
+          },
+          "matchingColumns": [
+            "Linkedin Email"
+          ],
+          "schema": [
+            {
+              "id": "Email Status",
+              "displayName": "Email Status",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Message Id",
+              "displayName": "Message Id",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Full Name",
+              "displayName": "Full Name",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Linkedin Email",
+              "displayName": "Linkedin Email",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Company",
+              "displayName": "Company",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Team Size",
+              "displayName": "Team Size",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "state_mobile",
+              "displayName": "state_mobile",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Lead Status",
+              "displayName": "Lead Status",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Remark/Notes",
+              "displayName": "Remark/Notes",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "userdate",
+              "displayName": "userdate",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Lead Source Date",
+              "displayName": "Lead Source Date",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "row_number",
+              "displayName": "row_number",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "number",
+              "canBeUsedToMatch": true,
+              "readOnly": true,
+              "removed": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        624,
+        752
+      ],
+      "id": "8be6230b-dc93-4bce-af64-20feba7f02fd",
+      "name": "Update to 3rd Sent",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "WbzVyGwbDVzvcV25",
+          "name": "Ai with Dhruv"
+        }
+      },
+      "onError": "continueRegularOutput"
+    }
+  ],
+  "connections": {
+    "Switch": {
+      "main": [
+        [
+          {
+            "node": "Limit - 150",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Limit -- 150",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Limit 150-",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "1st": {
+      "main": [
+        [
+          {
+            "node": "Update to 1st Sent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Loop Over Items2": {
+      "main": [
+        [],
+        [
+          {
+            "node": "1st",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "BNI Data": {
+      "main": [
+        [
+          {
+            "node": "Switch",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Update to 1st Sent": {
+      "main": [
+        [
+          {
+            "node": "5 Minute",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "5 Minute": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Loop Over Items": {
+      "main": [
+        [],
+        [
+          {
+            "node": "2nd",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "5 Minute1": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Update to 2nd Sent": {
+      "main": [
+        [
+          {
+            "node": "5 Minute1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Limit - 150": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Limit -- 150": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Loop Over Items1": {
+      "main": [
+        [],
+        [
+          {
+            "node": "3rd",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "5 Minute2": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Limit 150-": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "2nd": {
+      "main": [
+        [
+          {
+            "node": "Update to 2nd Sent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "3rd": {
+      "main": [
+        [
+          {
+            "node": "Update to 3rd Sent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "9 AM": {
+      "main": [
+        [
+          {
+            "node": "BNI Data",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Update to 3rd Sent": {
+      "main": [
+        [
+          {
+            "node": "5 Minute2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1",
+    "callerPolicy": "workflowsFromSameOwner",
+    "timeSavedMode": "fixed",
+    "timezone": "Asia/Kolkata",
+    "availableInMCP": false
+  },
+  "staticData": {
+    "node:9 Am": {
+      "recurrenceRules": []
+    },
+    "node:5 AM": {
+      "recurrenceRules": []
+    },
+    "node:9 AM": {
+      "recurrenceRules": []
+    }
+  },
+  "meta": {
+    "templateCredsSetupCompleted": true
+  },
+  "pinData": {},
+  "versionId": "e9743152-3996-4546-8267-67f656fca9e8",
+  "activeVersionId": "e9743152-3996-4546-8267-67f656fca9e8",
+  "triggerCount": 1,
+  "shared": [
+    {
+      "updatedAt": "2025-09-30T15:15:33.498Z",
+      "createdAt": "2025-09-30T15:15:33.498Z",
+      "role": "workflow:owner",
+      "workflowId": "qbWjLjqmTXha48b0",
+      "projectId": "DT8YjHwLZsQjJqVc"
+    }
+  ],
+  "activeVersion": {
+    "updatedAt": "2025-12-16T11:14:37.000Z",
+    "createdAt": "2025-12-15T08:18:59.327Z",
+    "versionId": "e9743152-3996-4546-8267-67f656fca9e8",
+    "workflowId": "qbWjLjqmTXha48b0",
+    "nodes": [
+      {
+        "parameters": {
+          "rules": {
+            "values": [
+              {
+                "conditions": {
+                  "options": {
+                    "caseSensitive": true,
+                    "leftValue": "",
+                    "typeValidation": "strict",
+                    "version": 2
+                  },
+                  "conditions": [
+                    {
+                      "leftValue": "={{ $json['Email Status'] }}",
+                      "rightValue": "To Do",
+                      "operator": {
+                        "type": "string",
+                        "operation": "equals"
+                      },
+                      "id": "e2c86968-5855-4cee-afce-4a4bd38d73f4"
+                    }
+                  ],
+                  "combinator": "and"
+                },
+                "renameOutput": true,
+                "outputKey": "To Do"
+              },
+              {
+                "conditions": {
+                  "options": {
+                    "caseSensitive": true,
+                    "leftValue": "",
+                    "typeValidation": "strict",
+                    "version": 2
+                  },
+                  "conditions": [
+                    {
+                      "id": "8fa0db76-1329-4088-8e3d-02b19bcdc0dc",
+                      "leftValue": "={{ $json['Email Status'] }}",
+                      "rightValue": "1st Sent",
+                      "operator": {
+                        "type": "string",
+                        "operation": "equals",
+                        "name": "filter.operator.equals"
+                      }
+                    }
+                  ],
+                  "combinator": "and"
+                },
+                "renameOutput": true,
+                "outputKey": "1st Sent"
+              },
+              {
+                "conditions": {
+                  "options": {
+                    "caseSensitive": true,
+                    "leftValue": "",
+                    "typeValidation": "strict",
+                    "version": 2
+                  },
+                  "conditions": [
+                    {
+                      "id": "04709582-179e-42dc-9290-b011a60e464a",
+                      "leftValue": "={{ $json['Email Status'] }}",
+                      "rightValue": "2nd Sent",
+                      "operator": {
+                        "type": "string",
+                        "operation": "equals",
+                        "name": "filter.operator.equals"
+                      }
+                    }
+                  ],
+                  "combinator": "and"
+                },
+                "renameOutput": true,
+                "outputKey": "2nd Sent"
+              }
+            ]
+          },
+          "options": {}
+        },
+        "type": "n8n-nodes-base.switch",
+        "typeVersion": 3.2,
+        "position": [
+          -528,
+          336
+        ],
+        "id": "a460c918-7ac6-43c4-8fa7-72a22019a339",
+        "name": "Switch"
+      },
+      {
+        "parameters": {
+          "sendTo": "={{ $json['Linkedin Email'] }}",
+          "subject": "Avoid Projects Delays and Cost Overruns ? [via BNI]",
+          "emailType": "text",
+          "message": "=Hi {{ $('BNI Data').item.json['Full Name'] }}\n\nAre you worried about delays and cost overruns in your projects?\n\nConstruction projects are complex\u2014continuous tracking of labour, materials, and teams is critical to deliver projects on time and within budget. Even a small error can lead to huge losses, theft, or wastage. Do you currently use any software to manage budgets and track sites?\n\nOnsite is designed exclusively for construction projects, letting you track all project elements in one place. Its mobile + web interface enables real-time site tracking and project control.\n\nWe\u2019d love to give you a 10-minute demo of the software. How about tomorrow evening?\n\nJust reply \u201cYES\u201d, and I\u2019ll set up a convenient time.\n\nWarm regards,\nAkshansh Agarwal\nCofounder & CEO\nBNI Member (Acheivers, Noida)",
+          "options": {
+            "appendAttribution": false
+          }
+        },
+        "type": "n8n-nodes-base.gmail",
+        "typeVersion": 2.1,
+        "position": [
+          400,
+          32
+        ],
+        "id": "7eeae21c-7d49-4782-a10b-1ec348b409a9",
+        "name": "1st",
+        "webhookId": "ac37b081-949a-43e6-b2a5-66d5aa68f817",
+        "credentials": {
+          "gmailOAuth2": {
+            "id": "SooWfmoHe0hYNcMR",
+            "name": "Akshansh_Onsite_Teams"
+          }
+        },
+        "onError": "continueRegularOutput"
+      },
+      {
+        "parameters": {
+          "options": {}
+        },
+        "type": "n8n-nodes-base.splitInBatches",
+        "typeVersion": 3,
+        "position": [
+          144,
+          16
+        ],
+        "id": "4ce24190-cd18-4572-bfc4-413b891f3af4",
+        "name": "Loop Over Items2"
+      },
+      {
+        "parameters": {
+          "documentId": {
+            "__rl": true,
+            "value": "1ssg0Q73hu6ALbQMrYhGae40Ex1qStkAmIXoG4rjSO6o",
+            "mode": "list",
+            "cachedResultName": "Scrapped Construction Data  Base",
+            "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1ssg0Q73hu6ALbQMrYhGae40Ex1qStkAmIXoG4rjSO6o/edit?usp=drivesdk"
+          },
+          "sheetName": {
+            "__rl": true,
+            "value": 119380453,
+            "mode": "list",
+            "cachedResultName": "BNI",
+            "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1ssg0Q73hu6ALbQMrYhGae40Ex1qStkAmIXoG4rjSO6o/edit#gid=119380453"
+          },
+          "options": {}
+        },
+        "type": "n8n-nodes-base.googleSheets",
+        "typeVersion": 4.7,
+        "position": [
+          -768,
+          352
+        ],
+        "id": "20505ddb-c8ab-47cc-af0e-fcbf2cdc7c84",
+        "name": "BNI Data",
+        "credentials": {
+          "googleSheetsOAuth2Api": {
+            "id": "WbzVyGwbDVzvcV25",
+            "name": "Ai with Dhruv"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "operation": "update",
+          "documentId": {
+            "__rl": true,
+            "value": "1ssg0Q73hu6ALbQMrYhGae40Ex1qStkAmIXoG4rjSO6o",
+            "mode": "list",
+            "cachedResultName": "Scrapped Construction Data  Base",
+            "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1ssg0Q73hu6ALbQMrYhGae40Ex1qStkAmIXoG4rjSO6o/edit?usp=drivesdk"
+          },
+          "sheetName": {
+            "__rl": true,
+            "value": 119380453,
+            "mode": "list",
+            "cachedResultName": "BNI",
+            "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1ssg0Q73hu6ALbQMrYhGae40Ex1qStkAmIXoG4rjSO6o/edit#gid=119380453"
+          },
+          "columns": {
+            "mappingMode": "defineBelow",
+            "value": {
+              "Email Status": "1st Sent",
+              "Linkedin Email": "={{ $('BNI Data').item.json['Linkedin Email'] }}",
+              "Message Id": "={{ $json.id }}"
+            },
+            "matchingColumns": [
+              "Linkedin Email"
+            ],
+            "schema": [
+              {
+                "id": "Email Status",
+                "displayName": "Email Status",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true,
+                "removed": false
+              },
+              {
+                "id": "Message Id",
+                "displayName": "Message Id",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true,
+                "removed": false
+              },
+              {
+                "id": "Full Name",
+                "displayName": "Full Name",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true,
+                "removed": true
+              },
+              {
+                "id": "Linkedin Email",
+                "displayName": "Linkedin Email",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true,
+                "removed": false
+              },
+              {
+                "id": "Company",
+                "displayName": "Company",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true,
+                "removed": true
+              },
+              {
+                "id": "Team Size",
+                "displayName": "Team Size",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true,
+                "removed": true
+              },
+              {
+                "id": "state_mobile",
+                "displayName": "state_mobile",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true,
+                "removed": true
+              },
+              {
+                "id": "Lead Status",
+                "displayName": "Lead Status",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true,
+                "removed": true
+              },
+              {
+                "id": "Remark/Notes",
+                "displayName": "Remark/Notes",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true,
+                "removed": true
+              },
+              {
+                "id": "userdate",
+                "displayName": "userdate",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true,
+                "removed": true
+              },
+              {
+                "id": "Lead Source Date",
+                "displayName": "Lead Source Date",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true,
+                "removed": true
+              },
+              {
+                "id": "row_number",
+                "displayName": "row_number",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "number",
+                "canBeUsedToMatch": true,
+                "readOnly": true,
+                "removed": true
+              }
+            ],
+            "attemptToConvertTypes": false,
+            "convertFieldsToString": false
+          },
+          "options": {}
+        },
+        "type": "n8n-nodes-base.googleSheets",
+        "typeVersion": 4.7,
+        "position": [
+          624,
+          32
+        ],
+        "id": "3e66c72d-fb09-47a8-bee4-5dac4378eb9e",
+        "name": "Update to 1st Sent",
+        "credentials": {
+          "googleSheetsOAuth2Api": {
+            "id": "WbzVyGwbDVzvcV25",
+            "name": "Ai with Dhruv"
+          }
+        },
+        "onError": "continueRegularOutput"
+      },
+      {
+        "parameters": {
+          "unit": "minutes"
+        },
+        "type": "n8n-nodes-base.wait",
+        "typeVersion": 1.1,
+        "position": [
+          848,
+          32
+        ],
+        "id": "b2701c00-c19a-400c-901e-a9eb0d4e1b8d",
+        "name": "5 Minute",
+        "webhookId": "d7429b86-e2fb-4dd7-8ed2-73473fc01712"
+      },
+      {
+        "parameters": {
+          "options": {}
+        },
+        "type": "n8n-nodes-base.splitInBatches",
+        "typeVersion": 3,
+        "position": [
+          144,
+          352
+        ],
+        "id": "09da37c9-e64b-478f-880d-9786f01d0099",
+        "name": "Loop Over Items"
+      },
+      {
+        "parameters": {
+          "unit": "minutes"
+        },
+        "type": "n8n-nodes-base.wait",
+        "typeVersion": 1.1,
+        "position": [
+          848,
+          368
+        ],
+        "id": "c27e5ad3-f753-40b6-97be-7a7f269454e1",
+        "name": "5 Minute1",
+        "webhookId": "d7429b86-e2fb-4dd7-8ed2-73473fc01712"
+      },
+      {
+        "parameters": {
+          "operation": "update",
+          "documentId": {
+            "__rl": true,
+            "value": "1ssg0Q73hu6ALbQMrYhGae40Ex1qStkAmIXoG4rjSO6o",
+            "mode": "list",
+            "cachedResultName": "Scrapped Construction Data  Base",
+            "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1ssg0Q73hu6ALbQMrYhGae40Ex1qStkAmIXoG4rjSO6o/edit?usp=drivesdk"
+          },
+          "sheetName": {
+            "__rl": true,
+            "value": 119380453,
+            "mode": "list",
+            "cachedResultName": "BNI",
+            "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1ssg0Q73hu6ALbQMrYhGae40Ex1qStkAmIXoG4rjSO6o/edit#gid=119380453"
+          },
+          "columns": {
+            "mappingMode": "defineBelow",
+            "value": {
+              "Email Status": "2nd Sent",
+              "Linkedin Email": "={{ $('BNI Data').item.json['Linkedin Email'] }}",
+              "Message Id": "={{ $json.id }}"
+            },
+            "matchingColumns": [
+              "Linkedin Email"
+            ],
+            "schema": [
+              {
+                "id": "Email Status",
+                "displayName": "Email Status",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true,
+                "removed": false
+              },
+              {
+                "id": "Message Id",
+                "displayName": "Message Id",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true,
+                "removed": false
+              },
+              {
+                "id": "Full Name",
+                "displayName": "Full Name",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true,
+                "removed": true
+              },
+              {
+                "id": "Linkedin Email",
+                "displayName": "Linkedin Email",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true,
+                "removed": false
+              },
+              {
+                "id": "Company",
+                "displayName": "Company",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true,
+                "removed": true
+              },
+              {
+                "id": "Team Size",
+                "displayName": "Team Size",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true,
+                "removed": true
+              },
+              {
+                "id": "state_mobile",
+                "displayName": "state_mobile",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true,
+                "removed": true
+              },
+              {
+                "id": "Lead Status",
+                "displayName": "Lead Status",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true,
+                "removed": true
+              },
+              {
+                "id": "Remark/Notes",
+                "displayName": "Remark/Notes",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true,
+                "removed": true
+              },
+              {
+                "id": "userdate",
+                "displayName": "userdate",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true,
+                "removed": true
+              },
+              {
+                "id": "Lead Source Date",
+                "displayName": "Lead Source Date",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true,
+                "removed": true
+              },
+              {
+                "id": "row_number",
+                "displayName": "row_number",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "number",
+                "canBeUsedToMatch": true,
+                "readOnly": true,
+                "removed": true
+              }
+            ],
+            "attemptToConvertTypes": false,
+            "convertFieldsToString": false
+          },
+          "options": {}
+        },
+        "type": "n8n-nodes-base.googleSheets",
+        "typeVersion": 4.7,
+        "position": [
+          624,
+          368
+        ],
+        "id": "8ed86541-7491-4731-bf99-7281e9bfbe47",
+        "name": "Update to 2nd Sent",
+        "credentials": {
+          "googleSheetsOAuth2Api": {
+            "id": "WbzVyGwbDVzvcV25",
+            "name": "Ai with Dhruv"
+          }
+        },
+        "onError": "continueRegularOutput"
+      },
+      {
+        "parameters": {
+          "maxItems": 150
+        },
+        "type": "n8n-nodes-base.limit",
+        "typeVersion": 1,
+        "position": [
+          -144,
+          16
+        ],
+        "id": "4784abac-ce52-4e60-8001-ec48bbfc2800",
+        "name": "Limit - 150"
+      },
+      {
+        "parameters": {
+          "maxItems": 150
+        },
+        "type": "n8n-nodes-base.limit",
+        "typeVersion": 1,
+        "position": [
+          -160,
+          352
+        ],
+        "id": "af3a6689-6d18-4590-9dfe-4fc76189ddc4",
+        "name": "Limit -- 150"
+      },
+      {
+        "parameters": {
+          "options": {}
+        },
+        "type": "n8n-nodes-base.splitInBatches",
+        "typeVersion": 3,
+        "position": [
+          144,
+          736
+        ],
+        "id": "85262e23-d5e9-4af6-b536-c21065f6a5e2",
+        "name": "Loop Over Items1"
+      },
+      {
+        "parameters": {
+          "unit": "minutes"
+        },
+        "type": "n8n-nodes-base.wait",
+        "typeVersion": 1.1,
+        "position": [
+          848,
+          752
+        ],
+        "id": "0b2a2664-d9a9-4759-8f2e-bb5d3a858533",
+        "name": "5 Minute2",
+        "webhookId": "d7429b86-e2fb-4dd7-8ed2-73473fc01712"
+      },
+      {
+        "parameters": {
+          "maxItems": 150
+        },
+        "type": "n8n-nodes-base.limit",
+        "typeVersion": 1,
+        "position": [
+          -160,
+          736
+        ],
+        "id": "29669ab4-574e-404a-b619-c9f5c0d6789d",
+        "name": "Limit 150-"
+      },
+      {
+        "parameters": {
+          "operation": "reply",
+          "messageId": "={{ $json['Message Id'] }}",
+          "emailType": "text",
+          "message": "=Hi {{ $('BNI Data').item.json['Full Name'] }}\n\nCost overruns are the biggest challenge in any construction project\u2014and often, nobody knows why the costs increased.\n\nThat\u2019s why we built Onsite: a software platform designed to solve real on-ground challenges across every stage of a project. With Onsite, you can do budgeting, planning, and tracking of labour, materials, and progress\u2014all in one place.\n\nWould you be open to a quick 10-minute chat to see how we\u2019re helping 2,000+ companies stay on time and on budget?\n\nJust reply \u201cYES\u201d, and I\u2019ll schedule a convenient time.\n\nWarm regards,\nAkshansh Agarwal\nCofounder & CEO\nBNI Member (Acheivers, Noida)",
+          "options": {}
+        },
+        "type": "n8n-nodes-base.gmail",
+        "typeVersion": 2.1,
+        "position": [
+          416,
+          368
+        ],
+        "id": "f19a7c28-dcbb-44f2-b5dc-226dcd54bb73",
+        "name": "2nd",
+        "webhookId": "81b60981-934e-4f00-8c8b-cfa254061843",
+        "credentials": {
+          "gmailOAuth2": {
+            "id": "SooWfmoHe0hYNcMR",
+            "name": "Akshansh_Onsite_Teams"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "operation": "reply",
+          "messageId": "={{ $json['Message Id'] }}",
+          "emailType": "text",
+          "message": "=Hi {{ $json['Full Name'] }}\n\nThere are countless ways projects lose money\u2014but only one proven way to save: deeper control.\n\nOnsite helps you achieve exactly that\u2014reducing theft, cutting wastage, and enabling smarter negotiations, driving savings at every stage of your project.\n\nWould you be open to letting {{ $json.Company }} explore a quick 10-minute chat to see how we\u2019re helping 2,000+ companies deliver projects on time and within budget?\n?\n\nJust reply \u201cYES\u201d, and I\u2019ll schedule a convenient time.\n\nWarm regards,\nAkshansh Agarwal\nCofounder & CEO\nBNI Member (Acheivers, Noida)",
+          "options": {}
+        },
+        "type": "n8n-nodes-base.gmail",
+        "typeVersion": 2.1,
+        "position": [
+          416,
+          752
+        ],
+        "id": "af040f9e-3727-4b6c-9df5-916442e868d9",
+        "name": "3rd",
+        "webhookId": "81b60981-934e-4f00-8c8b-cfa254061843",
+        "credentials": {
+          "gmailOAuth2": {
+            "id": "SooWfmoHe0hYNcMR",
+            "name": "Akshansh_Onsite_Teams"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "rule": {
+            "interval": [
+              {
+                "triggerAtHour": 9
+              }
+            ]
+          }
+        },
+        "type": "n8n-nodes-base.scheduleTrigger",
+        "typeVersion": 1.2,
+        "position": [
+          -976,
+          352
+        ],
+        "id": "f1649349-9bb0-402e-81e6-dde621d8b744",
+        "name": "9 AM"
+      },
+      {
+        "parameters": {
+          "operation": "update",
+          "documentId": {
+            "__rl": true,
+            "value": "1ssg0Q73hu6ALbQMrYhGae40Ex1qStkAmIXoG4rjSO6o",
+            "mode": "list",
+            "cachedResultName": "Scrapped Construction Data  Base",
+            "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1ssg0Q73hu6ALbQMrYhGae40Ex1qStkAmIXoG4rjSO6o/edit?usp=drivesdk"
+          },
+          "sheetName": {
+            "__rl": true,
+            "value": 119380453,
+            "mode": "list",
+            "cachedResultName": "BNI",
+            "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1ssg0Q73hu6ALbQMrYhGae40Ex1qStkAmIXoG4rjSO6o/edit#gid=119380453"
+          },
+          "columns": {
+            "mappingMode": "defineBelow",
+            "value": {
+              "Email Status": "3rd Sent",
+              "Linkedin Email": "={{ $('BNI Data').item.json['Linkedin Email'] }}",
+              "Message Id": "={{ $json.id }}"
+            },
+            "matchingColumns": [
+              "Linkedin Email"
+            ],
+            "schema": [
+              {
+                "id": "Email Status",
+                "displayName": "Email Status",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true,
+                "removed": false
+              },
+              {
+                "id": "Message Id",
+                "displayName": "Message Id",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true,
+                "removed": false
+              },
+              {
+                "id": "Full Name",
+                "displayName": "Full Name",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true,
+                "removed": true
+              },
+              {
+                "id": "Linkedin Email",
+                "displayName": "Linkedin Email",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true,
+                "removed": false
+              },
+              {
+                "id": "Company",
+                "displayName": "Company",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true,
+                "removed": true
+              },
+              {
+                "id": "Team Size",
+                "displayName": "Team Size",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true,
+                "removed": true
+              },
+              {
+                "id": "state_mobile",
+                "displayName": "state_mobile",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true,
+                "removed": true
+              },
+              {
+                "id": "Lead Status",
+                "displayName": "Lead Status",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true,
+                "removed": true
+              },
+              {
+                "id": "Remark/Notes",
+                "displayName": "Remark/Notes",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true,
+                "removed": true
+              },
+              {
+                "id": "userdate",
+                "displayName": "userdate",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true,
+                "removed": true
+              },
+              {
+                "id": "Lead Source Date",
+                "displayName": "Lead Source Date",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true,
+                "removed": true
+              },
+              {
+                "id": "row_number",
+                "displayName": "row_number",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "number",
+                "canBeUsedToMatch": true,
+                "readOnly": true,
+                "removed": true
+              }
+            ],
+            "attemptToConvertTypes": false,
+            "convertFieldsToString": false
+          },
+          "options": {}
+        },
+        "type": "n8n-nodes-base.googleSheets",
+        "typeVersion": 4.7,
+        "position": [
+          624,
+          752
+        ],
+        "id": "8be6230b-dc93-4bce-af64-20feba7f02fd",
+        "name": "Update to 3rd Sent",
+        "credentials": {
+          "googleSheetsOAuth2Api": {
+            "id": "WbzVyGwbDVzvcV25",
+            "name": "Ai with Dhruv"
+          }
+        },
+        "onError": "continueRegularOutput"
+      }
+    ],
+    "connections": {
+      "Switch": {
+        "main": [
+          [
+            {
+              "node": "Limit - 150",
+              "type": "main",
+              "index": 0
+            }
+          ],
+          [
+            {
+              "node": "Limit -- 150",
+              "type": "main",
+              "index": 0
+            }
+          ],
+          [
+            {
+              "node": "Limit 150-",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "1st": {
+        "main": [
+          [
+            {
+              "node": "Update to 1st Sent",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Loop Over Items2": {
+        "main": [
+          [],
+          [
+            {
+              "node": "1st",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "BNI Data": {
+        "main": [
+          [
+            {
+              "node": "Switch",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Update to 1st Sent": {
+        "main": [
+          [
+            {
+              "node": "5 Minute",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "5 Minute": {
+        "main": [
+          [
+            {
+              "node": "Loop Over Items2",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Loop Over Items": {
+        "main": [
+          [],
+          [
+            {
+              "node": "2nd",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "5 Minute1": {
+        "main": [
+          [
+            {
+              "node": "Loop Over Items",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Update to 2nd Sent": {
+        "main": [
+          [
+            {
+              "node": "5 Minute1",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Limit - 150": {
+        "main": [
+          [
+            {
+              "node": "Loop Over Items2",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Limit -- 150": {
+        "main": [
+          [
+            {
+              "node": "Loop Over Items",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Loop Over Items1": {
+        "main": [
+          [],
+          [
+            {
+              "node": "3rd",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "5 Minute2": {
+        "main": [
+          [
+            {
+              "node": "Loop Over Items1",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Limit 150-": {
+        "main": [
+          [
+            {
+              "node": "Loop Over Items1",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "2nd": {
+        "main": [
+          [
+            {
+              "node": "Update to 2nd Sent",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "3rd": {
+        "main": [
+          [
+            {
+              "node": "Update to 3rd Sent",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "9 AM": {
+        "main": [
+          [
+            {
+              "node": "BNI Data",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Update to 3rd Sent": {
+        "main": [
+          [
+            {
+              "node": "5 Minute2",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      }
+    },
+    "authors": "Dhruv Tomar",
+    "name": "Version 1.O",
+    "description": "",
+    "autosaved": false
+  },
+  "tags": []
+}

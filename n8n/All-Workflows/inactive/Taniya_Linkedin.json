@@ -1,0 +1,580 @@
+{
+  "updatedAt": "2025-09-30T17:33:55.000Z",
+  "createdAt": "2025-09-30T15:18:29.912Z",
+  "id": "dbL1DqoTx8pghvUP",
+  "name": "Taniya Linkedin",
+  "active": false,
+  "isArchived": false,
+  "nodes": [
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=Topic - {{ $json.Topic }}\nTarget Audience - Contractors, Construction Interior Companies Foundres and Mds, Pject Mangaeres, everyone who is into construction",
+        "options": {
+          "systemMessage": "=# Overview\nYou are an AI agent specialized in creating professional, educational, and engaging LinkedIn posts based on any topic provided by the user.\n## Objectives:\nAlways begin by conducting a real-time search using the Tavily tool to gather the most accurate, up-to-date information on the topic. The post should be written to appeal to the provided target audience.\nBased on your research, generate a well-structured LinkedIn post that:\n- Starts with an engaging hook\n- Professional in tone\n-\nClear and easy to read\nEducational and insightful\n- Light on emojis (use only when highly relevant and minimal)\n-\nIncludes proper source attribution (e.g., \"according to [source]\")\n- Contains relevant hashtags to improve visibility\n- Ends with a clear call to action (e.g., asking for thoughts, feedback, or shares)\n## Output Instructions:\n- Your ONLY output should be the final LinkedIn post text.\n- Do not include explanations, notes, or anything beyond the post itself.\n## Example Workflow:\n1) Receive a topic (e.g., \"The ROI of warehouse automation\")\n2) Use Perplexity Web Search to search and gather recent information or case studies\n3) Draft a LinkedIn post using that research\n4) Format it with source citations, clean structure, optional hashtags, and a call to action\n\n\nTake action if{{ $json.Topic }} is related constructioin problem - Onsiteteams.com a Project Management software provider form project managment till operation control so indirect way at the end whereever needed you can ask to dm or commnent if you wan to streamline your process lets us know we are best in the market or just you can think and write in short on your own\n\n\nVery Importnat - Do Not exceed more then 3000 Character as linkedin maximum post lenth "
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 2,
+      "position": [
+        448,
+        0
+      ],
+      "id": "3e562431-243b-4b8e-989d-8b38cde6ae29",
+      "name": "Taniya Linkedin Post Creator"
+    },
+    {
+      "parameters": {
+        "toolDescription": "Use to Search web for topics when getting instruction from Ai node and return output ",
+        "method": "POST",
+        "url": "https://api.perplexity.ai/chat/completions",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"model\": \"sonar\",\n  \"messages\": [\n    {\n      \"role\": \"system\",\n      \"content\": \"Be precise and concise.\"\n    },\n    {\n      \"role\": \"user\",\n      \"content\": \"{{ $('Get row(s) in sheet1').item.json.Topic }}\"\n    }\n  ]\n}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequestTool",
+      "typeVersion": 4.2,
+      "position": [
+        480,
+        272
+      ],
+      "id": "02fb375a-538e-44e8-99c9-510eb3d1d09f",
+      "name": "Perplexity Web Search"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "23c0d1fa-897f-4a1a-b201-8103e473adea",
+              "name": "data",
+              "value": "={{ $json.choices[0].message.images[0].image_url.url }}",
+              "type": "string"
+            },
+            {
+              "id": "bcf338f7-575f-492b-ab68-535263d65a17",
+              "name": "base",
+              "value": "={{ $json.choices[0].message.images[0].image_url.url.split(\",\")[1] }}",
+              "type": "string"
+            },
+            {
+              "id": "6fff18a2-acc9-42b9-bf7c-6662ddb18ab3",
+              "name": "mime",
+              "value": "image/png",
+              "type": "string"
+            },
+            {
+              "id": "cb656296-3407-40cd-9271-88ee33710e12",
+              "name": "fileName",
+              "value": ".png",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        1376,
+        0
+      ],
+      "id": "4f19f2c9-6e21-45c8-874a-ed2f58f58f40",
+      "name": "Edit Fields",
+      "onError": "continueRegularOutput"
+    },
+    {
+      "parameters": {
+        "modelId": {
+          "__rl": true,
+          "value": "gpt-5-mini",
+          "mode": "list",
+          "cachedResultName": "GPT-5-MINI"
+        },
+        "messages": {
+          "values": [
+            {
+              "content": "=Write a high quality image prompt for an AI image generator to generate a super high-quality image, super realistic according to this description: {{ $('Get row(s) in sheet1').item.json.Topic }}\nMake it super detailed, vibrant and beautiful.\n\nMake it suited for JSON string, so without any symbols or newlines. Just one plain text. \n\nand this image we will be posting in linkedin so you can make in that way "
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.openAi",
+      "typeVersion": 1.8,
+      "position": [
+        816,
+        0
+      ],
+      "id": "b592a8d1-d806-439e-a9cf-fe57f3723e81",
+      "name": "IMAGE PROMPT"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://openrouter.ai/api/v1/chat/completions",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"model\": \"google/gemini-2.5-flash-image-preview\",\n  \"messages\": [\n    {\n      \"role\": \"user\",\n      \"content\": [\n        {\n          \"type\": \"text\",\n          \"text\": \"{{ $json.message.content }}\"\n        }\n      ]\n    }\n  ]\n}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        1184,
+        0
+      ],
+      "id": "f5dede3d-519b-4783-b465-b9b22f66f01a",
+      "name": "NANO BANANA"
+    },
+    {
+      "parameters": {
+        "operation": "toBinary",
+        "sourceProperty": "base",
+        "options": {
+          "fileName": "={{ $json.fileName }}",
+          "mimeType": "={{ $json.mime }}"
+        }
+      },
+      "type": "n8n-nodes-base.convertToFile",
+      "typeVersion": 1.1,
+      "position": [
+        1552,
+        0
+      ],
+      "id": "7b64384c-da6d-44fa-addd-bc4ce9fd1df3",
+      "name": "Image",
+      "onError": "continueRegularOutput"
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "documentId": {
+          "__rl": true,
+          "value": "1YZk12lNR7ZpjtJ6pOB2ugIgVIyF15-oAGPhuzCg2KE4",
+          "mode": "list",
+          "cachedResultName": "LInkedin Ai Autmation",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1YZk12lNR7ZpjtJ6pOB2ugIgVIyF15-oAGPhuzCg2KE4/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 459286853,
+          "mode": "list",
+          "cachedResultName": "Taniya Linkedin Auto Post",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1YZk12lNR7ZpjtJ6pOB2ugIgVIyF15-oAGPhuzCg2KE4/edit#gid=459286853"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Status": "Posted",
+            "Content": "={{ $('Taniya Linkedin Post Creator').item.json.output }}",
+            "Topic": "={{ $('Get row(s) in sheet1').item.json.Topic }}",
+            "Drive Image Link": "={{ $json.webViewLink }}"
+          },
+          "matchingColumns": [
+            "Topic"
+          ],
+          "schema": [
+            {
+              "id": "Topic",
+              "displayName": "Topic",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Status",
+              "displayName": "Status",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Content",
+              "displayName": "Content",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Drive Image Link",
+              "displayName": "Drive Image Link",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "output",
+              "displayName": "output",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "row_number",
+              "displayName": "row_number",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "number",
+              "canBeUsedToMatch": true,
+              "readOnly": true,
+              "removed": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        1936,
+        0
+      ],
+      "id": "e19936c4-f79f-4295-9a3f-01ad47130714",
+      "name": "Update row in sheet1",
+      "onError": "continueRegularOutput"
+    },
+    {
+      "parameters": {
+        "name": "={{ $('Get row(s) in sheet1').item.json.Topic }}",
+        "driveId": {
+          "__rl": true,
+          "value": "My Drive",
+          "mode": "list",
+          "cachedResultName": "My Drive",
+          "cachedResultUrl": "https://drive.google.com/drive/my-drive"
+        },
+        "folderId": {
+          "__rl": true,
+          "value": "1Qh-s0dD3joJWQFVUvRM8MGyxKopBlmQC",
+          "mode": "list",
+          "cachedResultName": "Linkedin N8n Taniya",
+          "cachedResultUrl": "https://drive.google.com/drive/folders/1Qh-s0dD3joJWQFVUvRM8MGyxKopBlmQC"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleDrive",
+      "typeVersion": 3,
+      "position": [
+        1744,
+        0
+      ],
+      "id": "f9e21bed-85b3-4146-a96c-36677b13c610",
+      "name": "Upload file1",
+      "onError": "continueRegularOutput"
+    },
+    {
+      "parameters": {
+        "person": "EDRr5PtOm4",
+        "text": "={{ $('Taniya Linkedin Post Creator').item.json.output }}",
+        "shareMediaCategory": "IMAGE",
+        "additionalFields": {}
+      },
+      "type": "n8n-nodes-base.linkedIn",
+      "typeVersion": 1,
+      "position": [
+        704,
+        352
+      ],
+      "id": "8c1c6dc4-8100-4948-a27d-91ea562e4147",
+      "name": "Create a post2",
+      "onError": "continueRegularOutput"
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "value": "gpt-5",
+          "mode": "list",
+          "cachedResultName": "gpt-5"
+        },
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.2,
+      "position": [
+        288,
+        256
+      ],
+      "id": "9bcf6a35-052a-4891-bded-9304f83e37e6",
+      "name": "GPT_5"
+    },
+    {
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "value": "1YZk12lNR7ZpjtJ6pOB2ugIgVIyF15-oAGPhuzCg2KE4",
+          "mode": "list",
+          "cachedResultName": "LInkedin Ai Autmation",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1YZk12lNR7ZpjtJ6pOB2ugIgVIyF15-oAGPhuzCg2KE4/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 459286853,
+          "mode": "list",
+          "cachedResultName": "Taniya Linkedin Auto Post",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1YZk12lNR7ZpjtJ6pOB2ugIgVIyF15-oAGPhuzCg2KE4/edit#gid=459286853"
+        },
+        "filtersUI": {
+          "values": [
+            {
+              "lookupColumn": "Status",
+              "lookupValue": "To Do"
+            }
+          ]
+        },
+        "options": {
+          "returnFirstMatch": true
+        }
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        256,
+        0
+      ],
+      "id": "1b11a7af-7c67-4aa2-8baa-520220da3482",
+      "name": "Get row(s) in sheet1"
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.noOp",
+      "typeVersion": 1,
+      "position": [
+        1216,
+        352
+      ],
+      "id": "96247f32-cba7-482e-b233-e971885e1a1e",
+      "name": "No Operation, do nothing1"
+    },
+    {
+      "parameters": {
+        "sendTo": "taniya.malhotra@onsiteteams.com",
+        "subject": "=Linkedin Post Title - {{ $('Get row(s) in sheet1').item.json.Topic }}",
+        "emailType": "text",
+        "message": "={{ $('Taniya Linkedin Post Creator').item.json.output }}\n\nDrive Link - {{ $json.webContentLink }}",
+        "options": {
+          "appendAttribution": false
+        }
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.1,
+      "position": [
+        976,
+        352
+      ],
+      "id": "cc4fc8f1-0dbf-45f3-aa4b-25e1dfc0235a",
+      "name": "Send a message",
+      "webhookId": "5ff2fafe-8b0c-4226-97e0-f8f8708d8042"
+    },
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "triggerAtHour": 14
+            },
+            {
+              "triggerAtHour": 22
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.2,
+      "position": [
+        0,
+        0
+      ],
+      "id": "e5932d2a-e9e4-413c-9ecd-a651217515f2",
+      "name": "Schedule Trigger"
+    }
+  ],
+  "connections": {
+    "Taniya Linkedin Post Creator": {
+      "main": [
+        [
+          {
+            "node": "IMAGE PROMPT",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Perplexity Web Search": {
+      "ai_tool": [
+        [
+          {
+            "node": "Taniya Linkedin Post Creator",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields": {
+      "main": [
+        [
+          {
+            "node": "Image",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "IMAGE PROMPT": {
+      "main": [
+        [
+          {
+            "node": "NANO BANANA",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "NANO BANANA": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Image": {
+      "main": [
+        [
+          {
+            "node": "Upload file1",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Create a post2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Upload file1": {
+      "main": [
+        [
+          {
+            "node": "Update row in sheet1",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Send a message",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "GPT_5": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Taniya Linkedin Post Creator",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get row(s) in sheet1": {
+      "main": [
+        [
+          {
+            "node": "Taniya Linkedin Post Creator",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Create a post2": {
+      "main": [
+        [
+          {
+            "node": "Send a message",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Send a message": {
+      "main": [
+        [
+          {
+            "node": "No Operation, do nothing1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Schedule Trigger": {
+      "main": [
+        [
+          {
+            "node": "Get row(s) in sheet1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "staticData": null,
+  "meta": null,
+  "pinData": {},
+  "versionId": "a4d01015-a885-4fdb-95fc-aebe5d49fb31",
+  "activeVersionId": null,
+  "triggerCount": 0,
+  "shared": [
+    {
+      "updatedAt": "2025-09-30T15:18:29.915Z",
+      "createdAt": "2025-09-30T15:18:29.915Z",
+      "role": "workflow:owner",
+      "workflowId": "dbL1DqoTx8pghvUP",
+      "projectId": "DT8YjHwLZsQjJqVc"
+    }
+  ],
+  "activeVersion": null,
+  "tags": []
+}

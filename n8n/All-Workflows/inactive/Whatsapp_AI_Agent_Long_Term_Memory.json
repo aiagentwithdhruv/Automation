@@ -1,0 +1,238 @@
+{
+  "updatedAt": "2025-10-01T16:47:55.000Z",
+  "createdAt": "2025-10-01T16:47:55.360Z",
+  "id": "rE1Vtpwtqzn4qOI6",
+  "name": "Whatsapp AI Agent + Long Term Memory",
+  "active": false,
+  "isArchived": false,
+  "nodes": [
+    {
+      "parameters": {
+        "updates": [
+          "messages"
+        ],
+        "options": {}
+      },
+      "type": "n8n-nodes-base.whatsAppTrigger",
+      "typeVersion": 1,
+      "position": [
+        -144,
+        0
+      ],
+      "id": "892c2677-7224-4c93-a7c2-0e99d8f5005d",
+      "name": "WhatsApp Trigger",
+      "webhookId": "6647df41-003e-48cb-9d25-691237eaac20"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "={{ $('WhatsApp Trigger').item.json.messages[0].text.body }}",
+        "options": {
+          "systemMessage": "=# ROLE\nYou are a friendly AI assistant.\nYou are currently talking to a user over WhatsApp.\n\n# RULES\nWhen the user sends a new message, decide if they shared any **noteworthy information** that should be **saved in memory** for future reference.\n\nIf so, use the **Save Memory** tool to store this information.\nDO NOT inform the user that you are saving this information.\n\nSimply continue the conversation as normal.\n\n# Tools\n## Save Memory\nUse this tool to **store any important facts** shared by the user.\nSummarize the information clearly and pass it to this tool.\n\n# Memories\nThese are the **last stored facts** collected from the user (including date/time).\n\n{{ $json.ConversationMemories.toJsonString() }}\n\n!! IMPORTANT !!\nTake these stored facts into account when replying.\nIf a fact was already stored, do not repeat asking for it.\n\nRespond naturally and conversationally.\n"
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 1.8,
+      "position": [
+        336,
+        0
+      ],
+      "id": "b8bb22a7-b29e-4356-9e40-0c11f9d6de27",
+      "name": "AI Agent"
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "mode": "list",
+          "value": "gpt-4o-mini"
+        },
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.2,
+      "position": [
+        320,
+        208
+      ],
+      "id": "e65fd6ce-bfbe-44c2-b28b-339ae95ea1a4",
+      "name": "OpenAI Chat Model"
+    },
+    {
+      "parameters": {
+        "operation": "send",
+        "phoneNumberId": "662396106948639",
+        "recipientPhoneNumber": "={{ $('WhatsApp Trigger').item.json.messages[0].from }}",
+        "textBody": "={{ $json.output }}",
+        "additionalFields": {}
+      },
+      "type": "n8n-nodes-base.whatsApp",
+      "typeVersion": 1,
+      "position": [
+        640,
+        0
+      ],
+      "id": "effd6909-8b2d-470b-8a58-0c47a60e981d",
+      "name": "WhatsApp Respond",
+      "webhookId": "8f34d76d-59e4-44af-bdf4-a60a001689d6"
+    },
+    {
+      "parameters": {
+        "tableId": "ConversationMemory",
+        "fieldsUi": {
+          "fieldValues": [
+            {
+              "fieldId": "message",
+              "fieldValue": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Field_Value', ``, 'string') }}"
+            },
+            {
+              "fieldId": "sender",
+              "fieldValue": "={{ $('WhatsApp Trigger').item.json.messages[0].from }}"
+            },
+            {
+              "fieldId": "recipient",
+              "fieldValue": "={{ $('WhatsApp Trigger').item.json.metadata.display_phone_number }}"
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.supabaseTool",
+      "typeVersion": 1,
+      "position": [
+        496,
+        208
+      ],
+      "id": "4b295b2b-09f6-43bf-bf50-c0501ae01350",
+      "name": "Save Message"
+    },
+    {
+      "parameters": {
+        "operation": "getAll",
+        "tableId": "ConversationMemory",
+        "returnAll": true,
+        "filters": {
+          "conditions": [
+            {
+              "keyName": "sender",
+              "condition": "eq",
+              "keyValue": "={{ $json.messages[0].from }}"
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.supabase",
+      "typeVersion": 1,
+      "position": [
+        16,
+        0
+      ],
+      "id": "4f267782-9cda-4d0b-9305-bb80476b997e",
+      "name": "Get Memory"
+    },
+    {
+      "parameters": {
+        "aggregate": "aggregateAllItemData",
+        "destinationFieldName": "ConversationMemories",
+        "include": "specifiedFields",
+        "fieldsToInclude": "message, created_at ",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.aggregate",
+      "typeVersion": 1,
+      "position": [
+        176,
+        0
+      ],
+      "id": "76a7e0e4-d9b8-44ba-b0a1-7475ce0f8bc6",
+      "name": "Aggregate"
+    }
+  ],
+  "connections": {
+    "WhatsApp Trigger": {
+      "main": [
+        [
+          {
+            "node": "Get Memory",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "AI Agent": {
+      "main": [
+        [
+          {
+            "node": "WhatsApp Respond",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Save Message": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get Memory": {
+      "main": [
+        [
+          {
+            "node": "Aggregate",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Aggregate": {
+      "main": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "staticData": null,
+  "meta": null,
+  "pinData": {},
+  "versionId": "470d515f-ed95-4ad2-9bd1-6569c4ce8053",
+  "activeVersionId": null,
+  "triggerCount": 0,
+  "shared": [
+    {
+      "updatedAt": "2025-10-01T16:47:55.363Z",
+      "createdAt": "2025-10-01T16:47:55.363Z",
+      "role": "workflow:owner",
+      "workflowId": "rE1Vtpwtqzn4qOI6",
+      "projectId": "DT8YjHwLZsQjJqVc"
+    }
+  ],
+  "activeVersion": null,
+  "tags": []
+}

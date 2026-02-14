@@ -1,0 +1,215 @@
+{
+  "updatedAt": "2026-02-03T18:25:57.088Z",
+  "createdAt": "2026-02-03T12:34:29.544Z",
+  "id": "TzK1dE5GzI3HoSFH",
+  "name": "ClickUp - Update Task Status",
+  "active": false,
+  "isArchived": false,
+  "nodes": [
+    {
+      "parameters": {},
+      "id": "manual",
+      "name": "Manual Trigger",
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [
+        -496,
+        0
+      ]
+    },
+    {
+      "parameters": {
+        "mode": "manual",
+        "duplicateItem": false,
+        "assignments": {
+          "assignments": [
+            {
+              "id": "taskName",
+              "name": "taskName",
+              "value": "Setup: Waalaxy Account + Campaigns",
+              "type": "string"
+            },
+            {
+              "id": "newStatus",
+              "name": "newStatus",
+              "value": "COMPLETE",
+              "type": "string"
+            }
+          ]
+        }
+      },
+      "id": "config",
+      "name": "Task + Status",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        -304,
+        0
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "getAll",
+        "team": "90161464007",
+        "space": "90166202270",
+        "folder": "90168365781",
+        "list": "901613344354",
+        "filters": {}
+      },
+      "id": "getTasks",
+      "name": "Get Tasks from List",
+      "type": "n8n-nodes-base.clickUp",
+      "typeVersion": 1,
+      "position": [
+        -160,
+        112
+      ],
+      "credentials": {
+        "clickUpApi": {
+          "id": "OQFYtlbfr1sDEzmd",
+          "name": "ClickUp_Dhruv"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "const items = $input.all();\nconst match = items.find(i => i.json.name === i.json.taskName);\nif (!match) throw new Error('Task not found. Check taskName in Task + Status node.');\nreturn [{ json: { taskId: match.json.id, newStatus: match.json.newStatus } }];"
+      },
+      "id": "findTask",
+      "name": "Find Task by Name",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        160,
+        -96
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "id": "={{ $json.taskId }}",
+        "updateFields": {
+          "status": "={{ $json.newStatus }}"
+        }
+      },
+      "id": "updateTask",
+      "name": "Update Task Status",
+      "type": "n8n-nodes-base.clickUp",
+      "typeVersion": 1,
+      "position": [
+        304,
+        0
+      ],
+      "credentials": {
+        "clickUpApi": {
+          "id": "OQFYtlbfr1sDEzmd",
+          "name": "ClickUp_Dhruv"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "mode": "combine",
+        "options": {}
+      },
+      "id": "merge",
+      "name": "Merge",
+      "type": "n8n-nodes-base.merge",
+      "typeVersion": 3,
+      "position": [
+        0,
+        0
+      ]
+    }
+  ],
+  "connections": {
+    "Manual Trigger": {
+      "main": [
+        [
+          {
+            "node": "Task + Status",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Task + Status": {
+      "main": [
+        [
+          {
+            "node": "Get Tasks from List",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Merge",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Find Task by Name": {
+      "main": [
+        [
+          {
+            "node": "Update Task Status",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get Tasks from List": {
+      "main": [
+        [
+          {
+            "node": "Merge",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Merge": {
+      "main": [
+        [
+          {
+            "node": "Find Task by Name",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1",
+    "saveDataErrorExecution": "all",
+    "saveDataSuccessExecution": "all",
+    "saveManualExecutions": true,
+    "saveExecutionProgress": true,
+    "callerPolicy": "workflowsFromSameOwner",
+    "availableInMCP": false
+  },
+  "staticData": null,
+  "meta": {
+    "templateCredsSetupCompleted": true
+  },
+  "pinData": {},
+  "versionId": "a4696cf9-a343-46d3-bc9d-858f9c6af336",
+  "activeVersionId": null,
+  "triggerCount": 0,
+  "shared": [
+    {
+      "updatedAt": "2026-02-03T12:34:29.552Z",
+      "createdAt": "2026-02-03T12:34:29.552Z",
+      "role": "workflow:owner",
+      "workflowId": "TzK1dE5GzI3HoSFH",
+      "projectId": "DT8YjHwLZsQjJqVc"
+    }
+  ],
+  "activeVersion": null,
+  "tags": []
+}

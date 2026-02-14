@@ -1,0 +1,338 @@
+{
+  "updatedAt": "2025-12-07T17:59:51.000Z",
+  "createdAt": "2025-12-03T18:48:48.367Z",
+  "id": "yF28FCC1m6ZQgDvz",
+  "name": "Euri API Use Cases",
+  "active": false,
+  "isArchived": false,
+  "nodes": [
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.chatTrigger",
+      "typeVersion": 1.4,
+      "position": [
+        -400,
+        -272
+      ],
+      "id": "3f5826d5-3d1e-4b7f-b84d-9ae91610ff74",
+      "name": "When chat message received",
+      "webhookId": "e0357465-1798-48c7-8efd-69e6df2d69c6"
+    },
+    {
+      "parameters": {
+        "formTitle": "Generate Image",
+        "formDescription": "Just write promt",
+        "formFields": {
+          "values": [
+            {
+              "fieldLabel": "Promt"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.formTrigger",
+      "typeVersion": 2.3,
+      "position": [
+        -384,
+        -80
+      ],
+      "id": "3b80010c-e17f-42a3-978e-97bff9a9cc29",
+      "name": "Image Promt",
+      "webhookId": "80b61f1b-593e-4d22-a7f0-86a11f8f6629"
+    },
+    {
+      "parameters": {
+        "chatId": "637313836",
+        "text": "={{ $json.data[0].url }}",
+        "additionalFields": {
+          "appendAttribution": false
+        }
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        48,
+        -80
+      ],
+      "id": "c913bae4-cb4b-4834-8e5f-572209b890ba",
+      "name": "Send a Image URL",
+      "webhookId": "494a6d15-8163-447b-9f7a-e4a3359de4f6",
+      "credentials": {
+        "telegramApi": {
+          "id": "W6XV6RQORTB3eBDg",
+          "name": "Agent Dhruv"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "formTitle": "Audio Transcrip",
+        "formDescription": "Just write promt",
+        "formFields": {
+          "values": [
+            {
+              "fieldLabel": "Input Text To Convert Audio"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.formTrigger",
+      "typeVersion": 2.3,
+      "position": [
+        -384,
+        128
+      ],
+      "id": "2b46cf82-e12c-4492-9514-9cb14d352e71",
+      "name": "Text To Audio",
+      "webhookId": "89d00740-8976-4465-aa39-254295bff5da"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.euron.one/api/v1/euri/images/generations",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpBearerAuth",
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "prompt",
+              "value": "={{ $json.Promt }}"
+            },
+            {
+              "name": "model",
+              "value": "black-forest-labs/FLUX.1-schnell"
+            },
+            {
+              "name": "size",
+              "value": "1024x1024"
+            },
+            {
+              "name": "quality",
+              "value": "standard"
+            },
+            {
+              "name": "response_format",
+              "value": "url"
+            },
+            {
+              "name": "style",
+              "value": "vivid"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.3,
+      "position": [
+        -160,
+        -80
+      ],
+      "id": "00b5bb01-ab6b-49a0-aebc-2bf0d4fcc54b",
+      "name": "Euri Image",
+      "credentials": {
+        "httpBearerAuth": {
+          "id": "8ZkhkWsck6v2KCTU",
+          "name": "Euri"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.euron.one/api/v1/euri/chat/completions",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpBearerAuth",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"messages\": [\n    {\n      \"role\": \"user\",\n      \"content\": \" {{ $json.chatInput }}\"\n    }\n  ],\n  \"model\": \"gemini-2.5-pro\",\n  \"max_tokens\": 1000,\n  \"temperature\": 0.7\n}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.3,
+      "position": [
+        -192,
+        -272
+      ],
+      "id": "1f168589-78f6-483e-b282-2aa7cf321702",
+      "name": "Euri Text",
+      "credentials": {
+        "httpBearerAuth": {
+          "id": "8ZkhkWsck6v2KCTU",
+          "name": "Euri"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.euron.one/api/v1/euri/audio/speech",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpBearerAuth",
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "input",
+              "value": "={{ $json['Input Text To Convert Audio'] }}"
+            },
+            {
+              "name": "model",
+              "value": "playai-tts"
+            },
+            {
+              "name": "voice",
+              "value": "Jennifer-PlayAI"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.3,
+      "position": [
+        -160,
+        128
+      ],
+      "id": "8f53de87-3b7e-4815-8a89-feb239cc80ab",
+      "name": "Euri Text to Speech",
+      "credentials": {
+        "httpBearerAuth": {
+          "id": "8ZkhkWsck6v2KCTU",
+          "name": "Euri"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "sendAudio",
+        "chatId": "637313836",
+        "binaryData": true,
+        "additionalFields": {}
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        64,
+        128
+      ],
+      "id": "f0c23698-181a-45aa-b02f-a3fe2f406922",
+      "name": "Send an audio file",
+      "webhookId": "494a6d15-8163-447b-9f7a-e4a3359de4f6",
+      "credentials": {
+        "telegramApi": {
+          "id": "W6XV6RQORTB3eBDg",
+          "name": "Agent Dhruv"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "return [\n  {\n    json: {\n      message: $json.choices[0].message.content\n    }\n  }\n];"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        32,
+        -272
+      ],
+      "id": "592c6835-b8f2-408b-8b74-00ae2f1b099a",
+      "name": "Structure Output"
+    }
+  ],
+  "connections": {
+    "When chat message received": {
+      "main": [
+        [
+          {
+            "node": "Euri Text",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Image Promt": {
+      "main": [
+        [
+          {
+            "node": "Euri Image",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Text To Audio": {
+      "main": [
+        [
+          {
+            "node": "Euri Text to Speech",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Euri Image": {
+      "main": [
+        [
+          {
+            "node": "Send a Image URL",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Euri Text": {
+      "main": [
+        [
+          {
+            "node": "Structure Output",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Euri Text to Speech": {
+      "main": [
+        [
+          {
+            "node": "Send an audio file",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "staticData": null,
+  "meta": {
+    "templateCredsSetupCompleted": true
+  },
+  "pinData": {},
+  "versionId": "c616af8f-4a23-4093-ae62-cc0ba632f8d4",
+  "activeVersionId": null,
+  "triggerCount": 0,
+  "shared": [
+    {
+      "updatedAt": "2025-12-03T18:48:48.373Z",
+      "createdAt": "2025-12-03T18:48:48.373Z",
+      "role": "workflow:owner",
+      "workflowId": "yF28FCC1m6ZQgDvz",
+      "projectId": "DT8YjHwLZsQjJqVc"
+    }
+  ],
+  "activeVersion": null,
+  "tags": []
+}

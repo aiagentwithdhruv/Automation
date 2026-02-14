@@ -1,0 +1,150 @@
+{
+  "updatedAt": "2025-11-14T15:59:28.000Z",
+  "createdAt": "2025-11-13T17:30:37.000Z",
+  "id": "dN3LdnTkbYbCFyCX",
+  "name": "My workflow 10",
+  "active": false,
+  "isArchived": true,
+  "nodes": [
+    {
+      "parameters": {
+        "updates": [
+          "message"
+        ],
+        "additionalFields": {}
+      },
+      "type": "n8n-nodes-base.telegramTrigger",
+      "typeVersion": 1.2,
+      "position": [
+        -176,
+        -80
+      ],
+      "id": "8fb66198-ab44-49fb-86c4-c232b0c2e532",
+      "name": "Telegram Trigger",
+      "webhookId": "e950ede6-783a-472f-b6ea-267197f67981",
+      "credentials": {
+        "telegramApi": {
+          "id": "3vuB03L5tD6mBjxm",
+          "name": "Erron Test"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "={{ $json.message.text }}",
+        "options": {
+          "systemMessage": "You are a helpful assistant\ngove response in max 50-100 words in telgram format so any cna read "
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 2.2,
+      "position": [
+        32,
+        -80
+      ],
+      "id": "84769b19-957f-4b95-bdf6-f97a039c9a2a",
+      "name": "AI Agent"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatGoogleGemini",
+      "typeVersion": 1,
+      "position": [
+        -112,
+        128
+      ],
+      "id": "b5c97712-4385-4d04-9cc1-aedd6b451f15",
+      "name": "Google Gemini Chat Model",
+      "credentials": {
+        "googlePalmApi": {
+          "id": "1YAglGZ0F8CcWPRL",
+          "name": "Gemini"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "chatId": "={{ $('Telegram Trigger').item.json.message.chat.id }}",
+        "text": "={{ $json.output }}",
+        "additionalFields": {
+          "appendAttribution": false
+        }
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        384,
+        -80
+      ],
+      "id": "f9cfbd7a-269e-4b67-8030-3e69343bb267",
+      "name": "Send a text message",
+      "webhookId": "1a458453-b757-424d-8965-86bb3c9f1ad3",
+      "credentials": {
+        "telegramApi": {
+          "id": "3vuB03L5tD6mBjxm",
+          "name": "Erron Test"
+        }
+      }
+    }
+  ],
+  "connections": {
+    "Telegram Trigger": {
+      "main": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Gemini Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "AI Agent": {
+      "main": [
+        [
+          {
+            "node": "Send a text message",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "staticData": null,
+  "meta": {
+    "templateCredsSetupCompleted": true
+  },
+  "pinData": {},
+  "versionId": "158394ac-2756-43a9-9106-e8185c0d5131",
+  "activeVersionId": null,
+  "triggerCount": 0,
+  "shared": [
+    {
+      "updatedAt": "2025-11-13T17:30:37.002Z",
+      "createdAt": "2025-11-13T17:30:37.002Z",
+      "role": "workflow:owner",
+      "workflowId": "dN3LdnTkbYbCFyCX",
+      "projectId": "DT8YjHwLZsQjJqVc"
+    }
+  ],
+  "activeVersion": null,
+  "tags": []
+}

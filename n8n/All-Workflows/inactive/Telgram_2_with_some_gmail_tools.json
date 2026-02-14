@@ -1,0 +1,514 @@
+{
+  "updatedAt": "2025-12-20T13:51:36.991Z",
+  "createdAt": "2025-12-20T13:26:01.164Z",
+  "id": "qrkPPf414F9fny2G",
+  "name": "Telgram 2 with some gmail tools",
+  "active": false,
+  "isArchived": false,
+  "nodes": [
+    {
+      "parameters": {
+        "updates": [
+          "message"
+        ],
+        "additionalFields": {}
+      },
+      "type": "n8n-nodes-base.telegramTrigger",
+      "typeVersion": 1.1,
+      "position": [
+        496,
+        -32
+      ],
+      "id": "adc6e3e5-a392-4f47-9d87-c23dc966c5e8",
+      "name": "Telegram Trigger",
+      "webhookId": "5f3fe51b-27a9-41ba-927e-f00ea5ae79c2",
+      "credentials": {
+        "telegramApi": {
+          "id": "W6XV6RQORTB3eBDg",
+          "name": "Agent Dhruv"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "rules": {
+          "values": [
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $json.message.text }}",
+                    "rightValue": "",
+                    "operator": {
+                      "type": "string",
+                      "operation": "exists",
+                      "singleValue": true
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "text"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "id": "8d4b916c-d38a-455f-a10a-0c8e440bfe67",
+                    "leftValue": "={{ $json.message.voice.file_id }}",
+                    "rightValue": "",
+                    "operator": {
+                      "type": "string",
+                      "operation": "exists",
+                      "singleValue": true
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "audio"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3.2,
+      "position": [
+        656,
+        -32
+      ],
+      "id": "18dec4c2-fc8b-4eb1-9f19-65e3e0661239",
+      "name": "Switch"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "e4145e69-b00c-43dc-bf65-7647a862fbe4",
+              "name": "text",
+              "value": "={{ $('Telegram Trigger').item.json.message.text }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        832,
+        -80
+      ],
+      "id": "d7436e92-5c49-4865-8e99-22e327a2766d",
+      "name": "Edit Fields"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "={{ $json.text }}",
+        "options": {
+          "systemMessage": "=# Role  \nYou are an assistant with access to multiple tools.  \n\n# Behavior  \nYou respond concisely and succinctly in a friendly and approachable style.\n\n# Date and Time: {{ $now }}\n\n# Tools  \nYou have access to multiple tools and always use the appropriate one depending on the task.  \n\n## Gmail_Summary  \nUse this tool to summarize emails.  \n\n## Gmail_Send  \nUse this tool to send emails. You sign every email with \"Dhruv\" and never use empty placeholders for names.  \nEnsure that emails are well-formatted with a proper body.  \n\n## Calendar_Set  \nUse this tool to schedule appointments in the calendar.\n\n\n## Calendar_Get  \nUse this tool to find calendar events and inform me when I have an appointment."
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 1.7,
+      "position": [
+        1072,
+        -32
+      ],
+      "id": "0c3f493c-f992-466a-b8cf-f043c678c853",
+      "name": "AI Agent"
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "value": "gpt-5-mini",
+          "mode": "list",
+          "cachedResultName": "gpt-5-mini"
+        },
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.2,
+      "position": [
+        944,
+        336
+      ],
+      "id": "eb4c56cb-602e-473d-9d88-8a02b12a9494",
+      "name": "OpenAI Chat Model",
+      "credentials": {
+        "openAiApi": {
+          "id": "8IidOdkLmo0Xt32q",
+          "name": "OpenAi account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "resource": "file",
+        "fileId": "={{ $json.message.voice.file_id }}",
+        "additionalFields": {}
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        720,
+        144
+      ],
+      "id": "2a4b2ec9-674c-4237-a81f-153c0c63bfd2",
+      "name": "Telegram",
+      "webhookId": "52f4d0ed-5036-4014-bdcd-8ff723ddfb33",
+      "credentials": {
+        "telegramApi": {
+          "id": "W6XV6RQORTB3eBDg",
+          "name": "Agent Dhruv"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "resource": "audio",
+        "operation": "transcribe",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.openAi",
+      "typeVersion": 1.8,
+      "position": [
+        864,
+        144
+      ],
+      "id": "025fc2e8-9420-438e-8919-50a157ea7708",
+      "name": "OpenAI",
+      "credentials": {
+        "openAiApi": {
+          "id": "8IidOdkLmo0Xt32q",
+          "name": "OpenAi account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "sessionIdType": "customKey",
+        "sessionKey": "={{ $('Switch').item.json.message.chat.id }}",
+        "contextWindowLength": 10
+      },
+      "type": "@n8n/n8n-nodes-langchain.memoryBufferWindow",
+      "typeVersion": 1.3,
+      "position": [
+        1056,
+        256
+      ],
+      "id": "9268464f-df41-4924-bbf0-63f7ed04639c",
+      "name": "Window Buffer Memory"
+    },
+    {
+      "parameters": {
+        "chatId": "={{ $('Switch').item.json.message.chat.id }}",
+        "text": "={{ $json.output }}",
+        "additionalFields": {
+          "appendAttribution": false
+        }
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        1440,
+        -32
+      ],
+      "id": "2479bf4e-1d8d-4734-87b9-02cd2c491e0a",
+      "name": "Telegram1",
+      "webhookId": "19dc4578-bd30-4424-ba2e-23e9d33a6db7",
+      "credentials": {
+        "telegramApi": {
+          "id": "W6XV6RQORTB3eBDg",
+          "name": "Agent Dhruv"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "getAll",
+        "limit": 10,
+        "filters": {}
+      },
+      "type": "n8n-nodes-base.gmailTool",
+      "typeVersion": 2.1,
+      "position": [
+        1200,
+        288
+      ],
+      "id": "1f2f6be9-ad4c-459e-91d0-3ba7e1745c74",
+      "name": "Gmail_Summary",
+      "webhookId": "13391f05-03c0-477a-89ce-6800f33178b2",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "gPGYzjuIbblOf3E1",
+          "name": "Ai with Dhruv"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "sendTo": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('To', ``, 'string') }}",
+        "subject": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Subject', ``, 'string') }}",
+        "emailType": "text",
+        "message": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Message', ``, 'string') }}",
+        "options": {
+          "appendAttribution": false
+        }
+      },
+      "type": "n8n-nodes-base.gmailTool",
+      "typeVersion": 2.1,
+      "position": [
+        1312,
+        288
+      ],
+      "id": "347149ad-d80c-4fe8-ba67-9369ccc6f62b",
+      "name": "Gmail",
+      "webhookId": "77da1f26-3d43-4d35-a434-03e026bcacc1",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "gPGYzjuIbblOf3E1",
+          "name": "Ai with Dhruv"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "calendar": {
+          "__rl": true,
+          "value": "arnio93@gmail.com",
+          "mode": "list",
+          "cachedResultName": "arnio93@gmail.com"
+        },
+        "start": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Start', ``, 'string') }}",
+        "end": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('End', ``, 'string') }}",
+        "additionalFields": {
+          "summary": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Summary', ``, 'string') }}"
+        }
+      },
+      "type": "n8n-nodes-base.googleCalendarTool",
+      "typeVersion": 1.3,
+      "position": [
+        1440,
+        288
+      ],
+      "id": "97a91752-8082-4c58-9fd5-cca325b82b83",
+      "name": "Calendar_Set",
+      "credentials": {
+        "googleCalendarOAuth2Api": {
+          "id": "m1dWuBfvWEjtCte8",
+          "name": "Ai with Dhruv"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "getAll",
+        "calendar": {
+          "__rl": true,
+          "value": "aiwithdhruv@gmail.com",
+          "mode": "list",
+          "cachedResultName": "aiwithdhruv@gmail.com"
+        },
+        "timeMin": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('After', ``, 'string') }}",
+        "timeMax": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Before', ``, 'string') }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleCalendarTool",
+      "typeVersion": 1.3,
+      "position": [
+        1584,
+        288
+      ],
+      "id": "575b6c49-4f75-4ed1-9c22-eecb61fda9ab",
+      "name": "Calendar_Get",
+      "credentials": {
+        "googleCalendarOAuth2Api": {
+          "id": "m1dWuBfvWEjtCte8",
+          "name": "Ai with Dhruv"
+        }
+      }
+    }
+  ],
+  "connections": {
+    "Telegram Trigger": {
+      "main": [
+        [
+          {
+            "node": "Switch",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Switch": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Telegram",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields": {
+      "main": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Telegram": {
+      "main": [
+        [
+          {
+            "node": "OpenAI",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI": {
+      "main": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Window Buffer Memory": {
+      "ai_memory": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_memory",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "AI Agent": {
+      "main": [
+        [
+          {
+            "node": "Telegram1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Gmail_Summary": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Gmail": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Calendar_Set": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Calendar_Get": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "staticData": null,
+  "meta": {
+    "templateCredsSetupCompleted": true
+  },
+  "pinData": {},
+  "versionId": "737e2c0b-f67c-4032-ae43-e7f3c694d255",
+  "activeVersionId": null,
+  "triggerCount": 0,
+  "shared": [
+    {
+      "updatedAt": "2025-12-20T13:26:01.195Z",
+      "createdAt": "2025-12-20T13:26:01.195Z",
+      "role": "workflow:owner",
+      "workflowId": "qrkPPf414F9fny2G",
+      "projectId": "DT8YjHwLZsQjJqVc"
+    }
+  ],
+  "activeVersion": null,
+  "tags": []
+}

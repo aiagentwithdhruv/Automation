@@ -1,0 +1,81 @@
+{
+  "updatedAt": "2026-02-03T12:18:40.816Z",
+  "createdAt": "2026-02-03T12:11:56.789Z",
+  "id": "SkW1QPa6yIWj-nDod74bx",
+  "name": "ClickUp - Create Task",
+  "active": false,
+  "isArchived": false,
+  "nodes": [
+    {
+      "parameters": {},
+      "id": "c0d58853-2e5a-4a51-94ea-f77efe990c2e",
+      "name": "Manual Trigger",
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [
+        -208,
+        -48
+      ]
+    },
+    {
+      "parameters": {
+        "team": "90161464007",
+        "space": "90166202270",
+        "folder": "90168365781",
+        "list": "901613344354",
+        "name": "\u2705 n8n + ClickUp Connected!",
+        "additionalFields": {}
+      },
+      "id": "dfbec70b-9176-493f-837f-e1f090beee0c",
+      "name": "Create Task",
+      "type": "n8n-nodes-base.clickUp",
+      "typeVersion": 1,
+      "position": [
+        16,
+        -48
+      ],
+      "credentials": {
+        "clickUpApi": {
+          "id": "OQFYtlbfr1sDEzmd",
+          "name": "ClickUp_Dhruv"
+        }
+      }
+    }
+  ],
+  "connections": {
+    "Manual Trigger": {
+      "main": [
+        [
+          {
+            "node": "Create Task",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1",
+    "availableInMCP": false
+  },
+  "staticData": null,
+  "meta": {
+    "templateCredsSetupCompleted": true
+  },
+  "pinData": {},
+  "versionId": "c6ebee49-4f66-4475-93ca-ecf217e21c31",
+  "activeVersionId": null,
+  "triggerCount": 0,
+  "shared": [
+    {
+      "updatedAt": "2026-02-03T12:11:56.795Z",
+      "createdAt": "2026-02-03T12:11:56.795Z",
+      "role": "workflow:owner",
+      "workflowId": "SkW1QPa6yIWj-nDod74bx",
+      "projectId": "DT8YjHwLZsQjJqVc"
+    }
+  ],
+  "activeVersion": null,
+  "tags": []
+}

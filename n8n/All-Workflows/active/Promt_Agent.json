@@ -1,0 +1,443 @@
+{
+  "updatedAt": "2025-12-21T10:49:03.546Z",
+  "createdAt": "2025-12-21T10:47:47.808Z",
+  "id": "P5pSr2vZIQhhr7S3",
+  "name": "Promt_Agent",
+  "active": true,
+  "isArchived": false,
+  "nodes": [
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "14d9076e-27ea-4846-8b44-f83cf4022b9e",
+              "name": "response",
+              "value": "={{ $json.output }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        0,
+        0
+      ],
+      "id": "dd4d7332-ccf9-4b68-9a6c-29d4ec117814",
+      "name": "Response"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "f2a8ff2d-6b59-4ad6-a2e7-8705354f4105",
+              "name": "response",
+              "value": "Error occurred. Please try again.",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        0,
+        192
+      ],
+      "id": "98b8dc72-a785-4455-a9c1-1a65b558fb87",
+      "name": "Try Again"
+    },
+    {
+      "parameters": {
+        "inputSource": "passthrough"
+      },
+      "type": "n8n-nodes-base.executeWorkflowTrigger",
+      "typeVersion": 1.1,
+      "position": [
+        -704,
+        80
+      ],
+      "id": "cce3e635-70c2-4327-80fd-04e25c22c23d",
+      "name": "When Executed by Another Workflow"
+    },
+    {
+      "parameters": {
+        "model": "x-ai/grok-4.1-fast",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenRouter",
+      "typeVersion": 1,
+      "position": [
+        -640,
+        320
+      ],
+      "id": "9f8810a5-04d1-4348-a199-3393de3835cf",
+      "name": "grok-4.1 fast",
+      "credentials": {
+        "openRouterApi": {
+          "id": "5NHf7ILbLoMVxKcb",
+          "name": "OpenRouter account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "description": "Use this Search Agent  when information is not available in the input or requires external lookup or need to search letest information from web, internet or anything recent.\n\nThis tool is meant for:\n- Finding relevant data, references, or examples related to automation, AI, SaaS, workflows, or tools\n- Fetching fresh or missing information that cannot be inferred logically\n\nDo NOT use this tool if the answer can be generated using reasoning alone.\n\nAlways return a short, structured result after searching.",
+        "workflowId": {
+          "__rl": true,
+          "value": "xz3AFt53UbEvPFQv",
+          "mode": "list",
+          "cachedResultUrl": "/workflow/xz3AFt53UbEvPFQv",
+          "cachedResultName": "Sub_Search"
+        },
+        "workflowInputs": {
+          "mappingMode": "defineBelow",
+          "value": {},
+          "matchingColumns": [],
+          "schema": [],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.toolWorkflow",
+      "typeVersion": 2.2,
+      "position": [
+        -208,
+        320
+      ],
+      "id": "2c01981f-3784-4285-bf4b-48bcd56fb57d",
+      "name": "Search_Agent"
+    },
+    {
+      "parameters": {},
+      "type": "@n8n/n8n-nodes-langchain.toolThink",
+      "typeVersion": 1.1,
+      "position": [
+        -528,
+        320
+      ],
+      "id": "5005bae0-addf-497c-9594-9a169e55ef61",
+      "name": "Think"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "={{ $json.query}}",
+        "options": {
+          "systemMessage": "=1. Agent Role\n\nYou are the Prompt Agent, an AI master prompt engineer with 10+ years of expertise in creating world-class prompts.\nYou transform any topic or goal into the most optimized AI prompt possible \u2014 tailored for the right output type (text, image, video, code, or workflow).\n\n\u2e3b\n\n2. Core Purpose\n\t\u2022\tGenerate the best prompts on demand for any AI system.\n\t\u2022\tCover all modalities: text, images, videos, code, audio, workflows.\n\t\u2022\tEnsure prompts are clear, detailed, actionable, and context-aware.\n\t\u2022\tAlways structure them for maximum performance in the target AI model.\n\n\u2e3b\n\n3. Responsibilities & Capabilities\n\nA. Prompt Creation by Type\n\t\u2022\tImage Prompts \u2192 For MidJourney, DALL\u00b7E, Stable Diffusion (photorealistic, cinematic, product mockups).\n\t\u2022\tVideo Prompts \u2192 For Runway, Pika, or any text-to-video tool (storyboard-style detail).\n\t\u2022\tText Prompts \u2192 For ChatGPT, Claude (articles, LinkedIn posts, scripts, Q&A).\n\t\u2022\tCode Prompts \u2192 For AI coding agents (detailed instructions, constraints, language-specific context).\n\t\u2022\tWorkflow Prompts \u2192 For n8n, Zapier, automation agents (system + action + variables).\n\nB. Prompt Optimization\n\t\u2022\tBreak vague topics into precise instructions.\n\t\u2022\tAdd style, tone, structure, and format.\n\t\u2022\tDefine roles (e.g., \u201cYou are a McKinsey consultant\u201d or \u201cYou are a Pixar animator\u201d).\n\t\u2022\tInclude constraints (max length, format, tools allowed).\n\nC. Prompt Enhancement\n\t\u2022\tSuggest alternatives (3\u20135 variations for testing).\n\t\u2022\tAdd context injection (industry, audience, style).\n\t\u2022\tAdapt prompts for different AIs (ChatGPT, MidJourney, Runway, etc.).\n\nD. Web Agent Integration\n\t\u2022\tIf context is missing (e.g., \u201clatest market trend\u201d or \u201c2025 film style\u201d), call Web Agent to fetch supporting info and then embed it into the prompt.\n\n\u2e3b\n\n4. Rules for Outputs\n\t1.\tAlways start with the optimized prompt \u2014 formatted cleanly and copy-paste ready.\n\t2.\tClearly label the target use: (Image Prompt / Video Prompt / Text Prompt / Code Prompt).\n\t3.\tProvide 2\u20133 variations if helpful (creative vs professional vs concise).\n\t4.\tIf unclear request, ask clarifying questions before generating.\n\t5.\tNever give meta-explanations \u2014 output must be usable directly.\n\n\u2e3b\n\n5. Input Examples It Can Handle\n\t\u2022\t\u201cGive me a cinematic image prompt of a lion on Wall Street.\u201d\n\t\u2022\t\u201cWrite a text-to-video prompt for a SaaS founder pitching investors.\u201d\n\t\u2022\t\u201cI need a LinkedIn post prompt for AI sales growth hacks.\u201d\n\t\u2022\t\u201cGenerate a Python code prompt to scrape Google Maps leads.\u201d\n\t\u2022\t\u201cCreate an automation workflow prompt for n8n to sync leads to CRM.\u201d\n\n\u2e3b\n\n6. Example Behaviors\n\nUser Input: \u201cI want an image of an astronaut drinking chai on the moon at sunset.\u201d\nPrompt Agent Output:\n\nImage Prompt (Photorealistic): \n\"A cinematic ultra-HD image of an astronaut sitting cross-legged on the moon, drinking chai in a small steel cup, with Earth rising in the background, warm golden sunset lighting, realistic textures, high contrast shadows, DSLR depth of field.\"\n\nUser Input: \u201cCreate a LinkedIn post about AI saving time for founders.\u201d\nPrompt Agent Output:\nText Prompt:\n\"Write a conversational LinkedIn post (max 2,800 characters) targeted at startup founders. \nTone: casual yet insightful. \nHook: start with a time-frustration story. \nBody: show 3 AI use-cases saving 10+ hours/week. \nEnd with reflection and hashtags. \nAdd emoji sequence for readability.\"\n\n7. Final Notes\n\t\u2022\tCurrent date/time: {{ $now }}\n\t\u2022\tThe Prompt Agent must always assume the goal is to create the single best possible prompt for the specified type.\n\t\u2022\tIf the request is ambiguous, generate prompts for multiple formats (e.g., both text + image).\n\t\u2022\tOutput must always be ready-to-use, no explanations.\n\n# Think\nuse this tool to think"
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 1.7,
+      "position": [
+        -448,
+        80
+      ],
+      "id": "5b9828a3-7c81-48f8-9b6d-2602b9b10617",
+      "name": "Promt_Agent",
+      "onError": "continueErrorOutput"
+    }
+  ],
+  "connections": {
+    "When Executed by Another Workflow": {
+      "main": [
+        [
+          {
+            "node": "Promt_Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "grok-4.1 fast": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Promt_Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Search_Agent": {
+      "ai_tool": [
+        [
+          {
+            "node": "Promt_Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Think": {
+      "ai_tool": [
+        [
+          {
+            "node": "Promt_Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Promt_Agent": {
+      "main": [
+        [
+          {
+            "node": "Response",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Try Again",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "staticData": null,
+  "meta": {
+    "templateCredsSetupCompleted": true
+  },
+  "pinData": {},
+  "versionId": "0500459d-4b63-49ed-8333-361c326d30bf",
+  "activeVersionId": "0500459d-4b63-49ed-8333-361c326d30bf",
+  "triggerCount": 0,
+  "shared": [
+    {
+      "updatedAt": "2025-12-21T10:47:47.812Z",
+      "createdAt": "2025-12-21T10:47:47.812Z",
+      "role": "workflow:owner",
+      "workflowId": "P5pSr2vZIQhhr7S3",
+      "projectId": "DT8YjHwLZsQjJqVc"
+    }
+  ],
+  "activeVersion": {
+    "updatedAt": "2025-12-21T10:49:06.000Z",
+    "createdAt": "2025-12-21T10:49:03.547Z",
+    "versionId": "0500459d-4b63-49ed-8333-361c326d30bf",
+    "workflowId": "P5pSr2vZIQhhr7S3",
+    "nodes": [
+      {
+        "parameters": {
+          "assignments": {
+            "assignments": [
+              {
+                "id": "14d9076e-27ea-4846-8b44-f83cf4022b9e",
+                "name": "response",
+                "value": "={{ $json.output }}",
+                "type": "string"
+              }
+            ]
+          },
+          "options": {}
+        },
+        "type": "n8n-nodes-base.set",
+        "typeVersion": 3.4,
+        "position": [
+          0,
+          0
+        ],
+        "id": "dd4d7332-ccf9-4b68-9a6c-29d4ec117814",
+        "name": "Response"
+      },
+      {
+        "parameters": {
+          "assignments": {
+            "assignments": [
+              {
+                "id": "f2a8ff2d-6b59-4ad6-a2e7-8705354f4105",
+                "name": "response",
+                "value": "Error occurred. Please try again.",
+                "type": "string"
+              }
+            ]
+          },
+          "options": {}
+        },
+        "type": "n8n-nodes-base.set",
+        "typeVersion": 3.4,
+        "position": [
+          0,
+          192
+        ],
+        "id": "98b8dc72-a785-4455-a9c1-1a65b558fb87",
+        "name": "Try Again"
+      },
+      {
+        "parameters": {
+          "inputSource": "passthrough"
+        },
+        "type": "n8n-nodes-base.executeWorkflowTrigger",
+        "typeVersion": 1.1,
+        "position": [
+          -704,
+          80
+        ],
+        "id": "cce3e635-70c2-4327-80fd-04e25c22c23d",
+        "name": "When Executed by Another Workflow"
+      },
+      {
+        "parameters": {
+          "model": "x-ai/grok-4.1-fast",
+          "options": {}
+        },
+        "type": "@n8n/n8n-nodes-langchain.lmChatOpenRouter",
+        "typeVersion": 1,
+        "position": [
+          -640,
+          320
+        ],
+        "id": "9f8810a5-04d1-4348-a199-3393de3835cf",
+        "name": "grok-4.1 fast",
+        "credentials": {
+          "openRouterApi": {
+            "id": "5NHf7ILbLoMVxKcb",
+            "name": "OpenRouter account"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "description": "Use this Search Agent  when information is not available in the input or requires external lookup or need to search letest information from web, internet or anything recent.\n\nThis tool is meant for:\n- Finding relevant data, references, or examples related to automation, AI, SaaS, workflows, or tools\n- Fetching fresh or missing information that cannot be inferred logically\n\nDo NOT use this tool if the answer can be generated using reasoning alone.\n\nAlways return a short, structured result after searching.",
+          "workflowId": {
+            "__rl": true,
+            "value": "xz3AFt53UbEvPFQv",
+            "mode": "list",
+            "cachedResultUrl": "/workflow/xz3AFt53UbEvPFQv",
+            "cachedResultName": "Sub_Search"
+          },
+          "workflowInputs": {
+            "mappingMode": "defineBelow",
+            "value": {},
+            "matchingColumns": [],
+            "schema": [],
+            "attemptToConvertTypes": false,
+            "convertFieldsToString": false
+          }
+        },
+        "type": "@n8n/n8n-nodes-langchain.toolWorkflow",
+        "typeVersion": 2.2,
+        "position": [
+          -208,
+          320
+        ],
+        "id": "2c01981f-3784-4285-bf4b-48bcd56fb57d",
+        "name": "Search_Agent"
+      },
+      {
+        "parameters": {},
+        "type": "@n8n/n8n-nodes-langchain.toolThink",
+        "typeVersion": 1.1,
+        "position": [
+          -528,
+          320
+        ],
+        "id": "5005bae0-addf-497c-9594-9a169e55ef61",
+        "name": "Think"
+      },
+      {
+        "parameters": {
+          "promptType": "define",
+          "text": "={{ $json.query}}",
+          "options": {
+            "systemMessage": "=1. Agent Role\n\nYou are the Prompt Agent, an AI master prompt engineer with 10+ years of expertise in creating world-class prompts.\nYou transform any topic or goal into the most optimized AI prompt possible \u2014 tailored for the right output type (text, image, video, code, or workflow).\n\n\u2e3b\n\n2. Core Purpose\n\t\u2022\tGenerate the best prompts on demand for any AI system.\n\t\u2022\tCover all modalities: text, images, videos, code, audio, workflows.\n\t\u2022\tEnsure prompts are clear, detailed, actionable, and context-aware.\n\t\u2022\tAlways structure them for maximum performance in the target AI model.\n\n\u2e3b\n\n3. Responsibilities & Capabilities\n\nA. Prompt Creation by Type\n\t\u2022\tImage Prompts \u2192 For MidJourney, DALL\u00b7E, Stable Diffusion (photorealistic, cinematic, product mockups).\n\t\u2022\tVideo Prompts \u2192 For Runway, Pika, or any text-to-video tool (storyboard-style detail).\n\t\u2022\tText Prompts \u2192 For ChatGPT, Claude (articles, LinkedIn posts, scripts, Q&A).\n\t\u2022\tCode Prompts \u2192 For AI coding agents (detailed instructions, constraints, language-specific context).\n\t\u2022\tWorkflow Prompts \u2192 For n8n, Zapier, automation agents (system + action + variables).\n\nB. Prompt Optimization\n\t\u2022\tBreak vague topics into precise instructions.\n\t\u2022\tAdd style, tone, structure, and format.\n\t\u2022\tDefine roles (e.g., \u201cYou are a McKinsey consultant\u201d or \u201cYou are a Pixar animator\u201d).\n\t\u2022\tInclude constraints (max length, format, tools allowed).\n\nC. Prompt Enhancement\n\t\u2022\tSuggest alternatives (3\u20135 variations for testing).\n\t\u2022\tAdd context injection (industry, audience, style).\n\t\u2022\tAdapt prompts for different AIs (ChatGPT, MidJourney, Runway, etc.).\n\nD. Web Agent Integration\n\t\u2022\tIf context is missing (e.g., \u201clatest market trend\u201d or \u201c2025 film style\u201d), call Web Agent to fetch supporting info and then embed it into the prompt.\n\n\u2e3b\n\n4. Rules for Outputs\n\t1.\tAlways start with the optimized prompt \u2014 formatted cleanly and copy-paste ready.\n\t2.\tClearly label the target use: (Image Prompt / Video Prompt / Text Prompt / Code Prompt).\n\t3.\tProvide 2\u20133 variations if helpful (creative vs professional vs concise).\n\t4.\tIf unclear request, ask clarifying questions before generating.\n\t5.\tNever give meta-explanations \u2014 output must be usable directly.\n\n\u2e3b\n\n5. Input Examples It Can Handle\n\t\u2022\t\u201cGive me a cinematic image prompt of a lion on Wall Street.\u201d\n\t\u2022\t\u201cWrite a text-to-video prompt for a SaaS founder pitching investors.\u201d\n\t\u2022\t\u201cI need a LinkedIn post prompt for AI sales growth hacks.\u201d\n\t\u2022\t\u201cGenerate a Python code prompt to scrape Google Maps leads.\u201d\n\t\u2022\t\u201cCreate an automation workflow prompt for n8n to sync leads to CRM.\u201d\n\n\u2e3b\n\n6. Example Behaviors\n\nUser Input: \u201cI want an image of an astronaut drinking chai on the moon at sunset.\u201d\nPrompt Agent Output:\n\nImage Prompt (Photorealistic): \n\"A cinematic ultra-HD image of an astronaut sitting cross-legged on the moon, drinking chai in a small steel cup, with Earth rising in the background, warm golden sunset lighting, realistic textures, high contrast shadows, DSLR depth of field.\"\n\nUser Input: \u201cCreate a LinkedIn post about AI saving time for founders.\u201d\nPrompt Agent Output:\nText Prompt:\n\"Write a conversational LinkedIn post (max 2,800 characters) targeted at startup founders. \nTone: casual yet insightful. \nHook: start with a time-frustration story. \nBody: show 3 AI use-cases saving 10+ hours/week. \nEnd with reflection and hashtags. \nAdd emoji sequence for readability.\"\n\n7. Final Notes\n\t\u2022\tCurrent date/time: {{ $now }}\n\t\u2022\tThe Prompt Agent must always assume the goal is to create the single best possible prompt for the specified type.\n\t\u2022\tIf the request is ambiguous, generate prompts for multiple formats (e.g., both text + image).\n\t\u2022\tOutput must always be ready-to-use, no explanations.\n\n# Think\nuse this tool to think"
+          }
+        },
+        "type": "@n8n/n8n-nodes-langchain.agent",
+        "typeVersion": 1.7,
+        "position": [
+          -448,
+          80
+        ],
+        "id": "5b9828a3-7c81-48f8-9b6d-2602b9b10617",
+        "name": "Promt_Agent",
+        "onError": "continueErrorOutput"
+      }
+    ],
+    "connections": {
+      "When Executed by Another Workflow": {
+        "main": [
+          [
+            {
+              "node": "Promt_Agent",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "grok-4.1 fast": {
+        "ai_languageModel": [
+          [
+            {
+              "node": "Promt_Agent",
+              "type": "ai_languageModel",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Search_Agent": {
+        "ai_tool": [
+          [
+            {
+              "node": "Promt_Agent",
+              "type": "ai_tool",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Think": {
+        "ai_tool": [
+          [
+            {
+              "node": "Promt_Agent",
+              "type": "ai_tool",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Promt_Agent": {
+        "main": [
+          [
+            {
+              "node": "Response",
+              "type": "main",
+              "index": 0
+            }
+          ],
+          [
+            {
+              "node": "Try Again",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      }
+    },
+    "authors": "Dhruv Tomar",
+    "name": "Version 0500459d",
+    "description": "",
+    "autosaved": false
+  },
+  "tags": []
+}

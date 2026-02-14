@@ -1,0 +1,361 @@
+{
+  "updatedAt": "2026-02-04T08:50:28.455Z",
+  "createdAt": "2026-02-04T08:31:04.878Z",
+  "id": "gZ94tdSunYpLwWFV",
+  "name": "Outlook Daily Email Summary (For Ramu)",
+  "active": false,
+  "isArchived": false,
+  "nodes": [
+    {
+      "parameters": {
+        "content": "# \ud83d\udce7 Outlook Daily Email Summary\n\n**What this workflow does:**\nEvery morning, it reads all your unread Outlook emails, uses AI to summarize them, and sends you ONE email with everything you need to know.\n\n---\n\n## \u2705 Setup Steps:\n1. Connect your **Microsoft Outlook** account\n2. Add your **OpenAI API** key\n3. Update your **email address** in the last node\n4. Click **Activate** to turn it on!\n\n---\n\n**Created by:** AIwithDhruv\n**Support:** aiwithdhruv@gmail.com",
+        "height": 420,
+        "width": 340,
+        "color": 2
+      },
+      "id": "sticky-intro",
+      "name": "Sticky Note - Introduction",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -432,
+        -208
+      ]
+    },
+    {
+      "parameters": {
+        "content": "# \u23f0 STEP 1: Schedule\n\nThis triggers the workflow every day at **8:00 AM**.\n\n**To change time:**\nDouble-click the node and adjust the hour.",
+        "height": 264,
+        "color": 4
+      },
+      "id": "sticky-trigger",
+      "name": "Sticky Note - Trigger",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -48,
+        -384
+      ]
+    },
+    {
+      "parameters": {
+        "content": "# \ud83d\udce5 STEP 2: Get Emails\n\nConnects to your **Outlook** and fetches all **unread emails** (up to 50).\n\n**\u26a0\ufe0f REQUIRED:**\nClick the node \u2192 Add your Microsoft Outlook credentials",
+        "height": 280,
+        "width": 260,
+        "color": 6
+      },
+      "id": "sticky-outlook",
+      "name": "Sticky Note - Outlook",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        224,
+        -352
+      ]
+    },
+    {
+      "parameters": {
+        "content": "# \ud83e\udd16 STEP 3: AI Magic\n\nSends your emails to **OpenAI** to create a smart summary with action items.\n\n**\u26a0\ufe0f REQUIRED:**\nClick the AI node \u2192 Add your OpenAI API key",
+        "height": 312,
+        "width": 280,
+        "color": 7
+      },
+      "id": "sticky-ai",
+      "name": "Sticky Note - AI",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        624,
+        -384
+      ]
+    },
+    {
+      "parameters": {
+        "content": "# \ud83d\udce4 STEP 4: Send Summary\n\nSends the beautiful summary email back to your Outlook inbox.\n\n**\u26a0\ufe0f REQUIRED:**\nChange `your_email@outlook.com` to your actual email address!",
+        "height": 296,
+        "width": 280,
+        "color": 3
+      },
+      "id": "sticky-send",
+      "name": "Sticky Note - Send",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        1104,
+        -416
+      ]
+    },
+    {
+      "parameters": {
+        "content": "# \ud83d\udca1 No Emails?\n\nIf there are no unread emails, the workflow stops here. No email will be sent.",
+        "height": 284,
+        "width": 220
+      },
+      "id": "sticky-no-emails",
+      "name": "Sticky Note - No Emails",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        1136,
+        128
+      ]
+    },
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "field": "hours",
+              "hoursInterval": 24
+            }
+          ]
+        }
+      },
+      "id": "schedule-trigger",
+      "name": "Daily 8 AM",
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.2,
+      "position": [
+        0,
+        0
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "getAll",
+        "limit": 50,
+        "options": {}
+      },
+      "id": "outlook-get-emails",
+      "name": "Get Unread Emails",
+      "type": "n8n-nodes-base.microsoftOutlook",
+      "typeVersion": 2,
+      "position": [
+        224,
+        0
+      ],
+      "webhookId": "46611185-ed2b-404d-879a-7615ed92368a",
+      "credentials": {
+        "microsoftOutlookOAuth2Api": {
+          "id": "",
+          "name": ""
+        }
+      }
+    },
+    {
+      "parameters": {
+        "functionCode": "// Extract email details for summarization\nconst emails = $input.all();\n\nif (emails.length === 0) {\n  return [{\n    json: {\n      hasEmails: false,\n      emailCount: 0,\n      summaryPrompt: \"No unread emails found.\",\n      emailList: []\n    }\n  }];\n}\n\nconst emailList = emails.map((email, index) => {\n  const data = email.json;\n  return {\n    index: index + 1,\n    from: data.from?.emailAddress?.name || data.from?.emailAddress?.address || 'Unknown',\n    fromEmail: data.from?.emailAddress?.address || '',\n    subject: data.subject || 'No subject',\n    preview: (data.bodyPreview || '').substring(0, 300),\n    receivedAt: data.receivedDateTime || '',\n    importance: data.importance || 'normal'\n  };\n});\n\n// Build prompt for AI summarization\nlet summaryPrompt = `You are an email assistant. Summarize the following ${emailList.length} unread emails into a clear, actionable morning briefing.\n\nFor each email, provide:\n- **From**: sender name\n- **Subject**: email subject  \n- **Summary**: 1-2 sentence summary\n- **Action**: what action is needed (Reply, Review, FYI, Urgent)\n\nHere are the emails:\n\n`;\n\nemailList.forEach(email => {\n  summaryPrompt += `---\nEmail ${email.index}:\nFrom: ${email.from} (${email.fromEmail})\nSubject: ${email.subject}\nImportance: ${email.importance}\nPreview: ${email.preview}\n\n`;\n});\n\nsummaryPrompt += `---\n\nPlease provide a structured summary with clear action items. Group by priority if needed.`;\n\nreturn [{\n  json: {\n    hasEmails: true,\n    emailCount: emailList.length,\n    summaryPrompt: summaryPrompt,\n    emailList: emailList\n  }\n}];"
+      },
+      "id": "prepare-for-ai",
+      "name": "Prepare Emails",
+      "type": "n8n-nodes-base.function",
+      "typeVersion": 1,
+      "position": [
+        448,
+        0
+      ]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "boolean": [
+            {
+              "value1": "={{ $json.hasEmails }}",
+              "value2": true
+            }
+          ]
+        }
+      },
+      "id": "check-emails",
+      "name": "Has Emails?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 1,
+      "position": [
+        672,
+        0
+      ]
+    },
+    {
+      "parameters": {
+        "modelId": {
+          "__rl": true,
+          "value": "chatgpt-4o-latest",
+          "mode": "list",
+          "cachedResultName": "CHATGPT-4O-LATEST"
+        },
+        "messages": {
+          "values": [
+            {
+              "content": "You are a professional email assistant that creates concise, actionable email summaries.",
+              "role": "system"
+            },
+            {
+              "content": "={{ $json.summaryPrompt }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "openai-summarize",
+      "name": "AI Summarize",
+      "type": "@n8n/n8n-nodes-langchain.openAi",
+      "typeVersion": 1.8,
+      "position": [
+        880,
+        -96
+      ],
+      "credentials": {
+        "openAiApi": {
+          "id": "t2xlHGBT89qC17Hp",
+          "name": "RAG_Vector"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "functionCode": "// Format the AI summary into a nice HTML email\nconst aiSummary = $input.first().json.message?.content || $input.first().json.text || 'No summary generated';\nconst emailCount = $('Prepare Emails').first().json.emailCount;\n\nconst today = new Date().toLocaleDateString('en-US', { \n  weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' \n});\n\n// Convert markdown-style formatting to HTML\nlet formattedSummary = aiSummary\n  .replace(/\\*\\*(.+?)\\*\\*/g, '<strong>$1</strong>')\n  .replace(/\\n/g, '<br>')\n  .replace(/---/g, '<hr style=\"border: none; border-top: 1px solid #e2e8f0; margin: 15px 0;\">');\n\nconst emailHtml = `\n<div style=\"font-family: 'Segoe UI', Arial, sans-serif; max-width: 650px; margin: 0 auto; background: #ffffff;\">\n  <div style=\"background: linear-gradient(135deg, #0078d4 0%, #106ebe 100%); padding: 25px; border-radius: 8px 8px 0 0;\">\n    <h1 style=\"color: white; margin: 0; font-size: 24px;\">\ud83d\udcec Your Morning Email Briefing</h1>\n    <p style=\"color: rgba(255,255,255,0.9); margin: 8px 0 0 0; font-size: 14px;\">${today}</p>\n  </div>\n  \n  <div style=\"padding: 25px; background: #f8fafc; border: 1px solid #e2e8f0;\">\n    <div style=\"background: white; padding: 20px; border-radius: 8px; border-left: 4px solid #0078d4;\">\n      <p style=\"margin: 0 0 5px 0; font-size: 13px; color: #64748b;\">UNREAD EMAILS</p>\n      <p style=\"margin: 0; font-size: 28px; font-weight: bold; color: #0078d4;\">${emailCount}</p>\n    </div>\n  </div>\n  \n  <div style=\"padding: 25px;\">\n    <h2 style=\"color: #1e293b; font-size: 18px; margin: 0 0 20px 0; padding-bottom: 10px; border-bottom: 2px solid #0078d4;\">\n      \ud83d\udccb Summary & Action Items\n    </h2>\n    <div style=\"color: #334155; font-size: 14px; line-height: 1.8;\">\n      ${formattedSummary}\n    </div>\n  </div>\n  \n  <div style=\"padding: 20px 25px; background: #f1f5f9; border-radius: 0 0 8px 8px; border-top: 1px solid #e2e8f0;\">\n    <p style=\"margin: 0; font-size: 12px; color: #64748b; text-align: center;\">\n      \u26a1 Generated by n8n Workflow | Created by AIwithDhruv\n    </p>\n  </div>\n</div>\n`;\n\nreturn [{\n  json: {\n    emailSubject: \\`\ud83d\udcec Morning Briefing: \\${emailCount} Unread Emails - \\${today}\\`,\n    emailHtml: emailHtml,\n    emailCount: emailCount\n  }\n}];"
+      },
+      "id": "format-summary",
+      "name": "Format Email",
+      "type": "n8n-nodes-base.function",
+      "typeVersion": 1,
+      "position": [
+        1136,
+        -96
+      ]
+    },
+    {
+      "parameters": {
+        "toRecipients": "your_email@outlook.com",
+        "subject": "={{ $json.emailSubject }}",
+        "bodyContent": "={{ $json.emailHtml }}",
+        "additionalFields": {}
+      },
+      "id": "send-outlook",
+      "name": "Send Summary Email",
+      "type": "n8n-nodes-base.microsoftOutlook",
+      "typeVersion": 2,
+      "position": [
+        1328,
+        -96
+      ],
+      "webhookId": "c659bcc6-c5e7-43d6-ac1b-ddb016b434d7",
+      "credentials": {
+        "microsoftOutlookOAuth2Api": {
+          "id": "",
+          "name": ""
+        }
+      }
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "id": "no-emails",
+      "name": "No Emails Today",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        928,
+        320
+      ]
+    }
+  ],
+  "connections": {
+    "Daily 8 AM": {
+      "main": [
+        [
+          {
+            "node": "Get Unread Emails",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get Unread Emails": {
+      "main": [
+        [
+          {
+            "node": "Prepare Emails",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Prepare Emails": {
+      "main": [
+        [
+          {
+            "node": "Has Emails?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Has Emails?": {
+      "main": [
+        [
+          {
+            "node": "AI Summarize",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "No Emails Today",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "AI Summarize": {
+      "main": [
+        [
+          {
+            "node": "Format Email",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Format Email": {
+      "main": [
+        [
+          {
+            "node": "Send Summary Email",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1",
+    "callerPolicy": "workflowsFromSameOwner",
+    "availableInMCP": false
+  },
+  "staticData": null,
+  "meta": null,
+  "pinData": {},
+  "versionId": "f788a143-2cd3-4526-a2a3-8a88f33e4e4e",
+  "activeVersionId": null,
+  "triggerCount": 0,
+  "shared": [
+    {
+      "updatedAt": "2026-02-04T08:31:04.882Z",
+      "createdAt": "2026-02-04T08:31:04.882Z",
+      "role": "workflow:owner",
+      "workflowId": "gZ94tdSunYpLwWFV",
+      "projectId": "DT8YjHwLZsQjJqVc"
+    }
+  ],
+  "activeVersion": null,
+  "tags": []
+}

@@ -1,0 +1,30 @@
+{
+  "updatedAt": "2025-10-11T18:47:39.000Z",
+  "createdAt": "2025-10-11T18:47:39.788Z",
+  "id": "ib8YlFF2t5FPXIKt",
+  "name": "Customer Support Email Automation",
+  "active": false,
+  "isArchived": false,
+  "nodes": [],
+  "connections": {},
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "staticData": null,
+  "meta": null,
+  "pinData": {},
+  "versionId": "f5268688-3f18-4465-b933-d2eac84f3f61",
+  "activeVersionId": null,
+  "triggerCount": 0,
+  "shared": [
+    {
+      "updatedAt": "2025-10-11T18:47:39.791Z",
+      "createdAt": "2025-10-11T18:47:39.791Z",
+      "role": "workflow:owner",
+      "workflowId": "ib8YlFF2t5FPXIKt",
+      "projectId": "DT8YjHwLZsQjJqVc"
+    }
+  ],
+  "activeVersion": null,
+  "tags": []
+}

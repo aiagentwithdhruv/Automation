@@ -1,0 +1,178 @@
+{
+  "updatedAt": "2025-12-30T13:35:02.000Z",
+  "createdAt": "2025-12-30T09:15:48.083Z",
+  "id": "jI1V4qUzJt5eDsoL",
+  "name": "Invoice Google Drive to Gmail Notifier",
+  "active": false,
+  "isArchived": true,
+  "nodes": [
+    {
+      "parameters": {
+        "pollTimes": {
+          "item": [
+            {
+              "mode": "everyMinute"
+            }
+          ]
+        },
+        "event": "fileCreated",
+        "options": {
+          "folderId": "root"
+        }
+      },
+      "id": "e0d0a0b0-1234-4567-890a-abcdef123456",
+      "name": "Google Drive Trigger",
+      "type": "n8n-nodes-base.googleDriveTrigger",
+      "typeVersion": 1,
+      "position": [
+        380,
+        240
+      ],
+      "credentials": {
+        "googleDriveOAuth2Api": {
+          "id": "YOUR_GD_CRED_ID",
+          "name": "Google Drive account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "string": [
+            {
+              "value1": "={{ $json.name.toLowerCase() }}",
+              "operation": "contains",
+              "value2": "invoice"
+            }
+          ]
+        }
+      },
+      "id": "a1b2c3d4-e5f6-4789-0123-456789abcdef",
+      "name": "Is Invoice?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 1,
+      "position": [
+        600,
+        240
+      ]
+    },
+    {
+      "parameters": {
+        "resource": "message",
+        "subject": "New Invoice Uploaded: {{ $node[\"Google Drive Trigger\"].json[\"name\"] }}",
+        "emailType": "text",
+        "message": "Hello,\n\nA new invoice has been uploaded to your Google Drive.\n\nFile Name: {{ $node[\"Google Drive Trigger\"].json[\"name\"] }}\nFile ID: {{ $node[\"Google Drive Trigger\"].json[\"id\"] }}\nView Link: {{ $node[\"Google Drive Trigger\"].json[\"webViewLink\"] }}\n\nThis is an automated notification.",
+        "options": {
+          "appendAttachements": "={{ true }}"
+        }
+      },
+      "id": "b2c3d4e5-f6g7-4890-1234-567890abcdef",
+      "name": "Send Gmail Notification",
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.1,
+      "position": [
+        820,
+        220
+      ],
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "YOUR_GMAIL_CRED_ID",
+          "name": "Gmail account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "content": "### 1. Trigger\nMonitors a specific Google Drive folder (or root) for new files. Set your folder ID in the parameters.",
+        "color": 4
+      },
+      "id": "s1",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        320,
+        140
+      ],
+      "name": "Note 1"
+    },
+    {
+      "parameters": {
+        "content": "### 2. Filter\nChecks if the file name contains the word 'invoice' (case-insensitive).",
+        "color": 6
+      },
+      "id": "s2",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        560,
+        380
+      ],
+      "name": "Note 2"
+    },
+    {
+      "parameters": {
+        "content": "### 3. Action\nSends an email via Gmail with the file details. Ensure Google Cloud Console has Gmail API enabled.",
+        "color": 3
+      },
+      "id": "s3",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        800,
+        80
+      ],
+      "name": "Note 3"
+    }
+  ],
+  "connections": {
+    "Google Drive Trigger": {
+      "main": [
+        [
+          {
+            "node": "Is Invoice?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Is Invoice?": {
+      "main": [
+        [
+          {
+            "node": "Send Gmail Notification",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1",
+    "saveManualExecutions": true,
+    "saveDataSuccessExecution": "all",
+    "saveExecutionProgress": true,
+    "saveDataErrorExecution": "all",
+    "timezone": "America/New_York",
+    "callerPolicy": "workflowsFromSameOwner",
+    "availableInMCP": false
+  },
+  "staticData": null,
+  "meta": null,
+  "pinData": null,
+  "versionId": "54f700e0-b4d5-4c38-b48f-100c3c0ffba3",
+  "activeVersionId": null,
+  "triggerCount": 0,
+  "shared": [
+    {
+      "updatedAt": "2025-12-30T09:15:48.086Z",
+      "createdAt": "2025-12-30T09:15:48.086Z",
+      "role": "workflow:owner",
+      "workflowId": "jI1V4qUzJt5eDsoL",
+      "projectId": "DT8YjHwLZsQjJqVc"
+    }
+  ],
+  "activeVersion": null,
+  "tags": []
+}

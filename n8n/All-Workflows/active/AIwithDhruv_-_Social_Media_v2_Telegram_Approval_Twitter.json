@@ -1,0 +1,2864 @@
+{
+  "updatedAt": "2026-02-07T09:00:57.152Z",
+  "createdAt": "2026-02-07T08:24:16.619Z",
+  "id": "O1QJ1JCxjRMdz8EgrNJqY",
+  "name": "AIwithDhruv - Social Media v2 (Telegram Approval + Twitter)",
+  "active": true,
+  "isArchived": false,
+  "nodes": [
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "triggerAtHour": 14
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.2,
+      "position": [
+        -864,
+        112
+      ],
+      "id": "3928e665-01f7-4554-a425-6eb9170ff32f",
+      "name": "2 PM Trigger"
+    },
+    {
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "value": "1YZk12lNR7ZpjtJ6pOB2ugIgVIyF15-oAGPhuzCg2KE4",
+          "mode": "list",
+          "cachedResultName": "LInkedin Ai Autmation"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 1811610359,
+          "mode": "list",
+          "cachedResultName": "2Pm Dhruv Auto Linkedin Post"
+        },
+        "filtersUI": {
+          "values": [
+            {
+              "lookupColumn": "Status",
+              "lookupValue": "To Do"
+            }
+          ]
+        },
+        "options": {
+          "returnFirstMatch": true
+        }
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        -656,
+        112
+      ],
+      "id": "fac767b6-26ff-472e-8ee9-682ae2efd2b2",
+      "name": "Get To Do Topic",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "WbzVyGwbDVzvcV25",
+          "name": "Ai with Dhruv"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "36a064dd-de73-40cd-bd62-7655f5588c5c",
+              "leftValue": "={{ $json.Topic }}",
+              "rightValue": "",
+              "operator": {
+                "type": "string",
+                "operation": "exists",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [
+        -432,
+        112
+      ],
+      "id": "2dd33c56-dc7a-45a2-b01b-7eaf87ff970a",
+      "name": "Has Topic?"
+    },
+    {
+      "parameters": {
+        "chatId": "637313836",
+        "text": "\u26a0\ufe0f No 'To Do' topics left in the sheet. Add new topics to continue posting.",
+        "additionalFields": {}
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        -256,
+        432
+      ],
+      "id": "7b3a75b1-8ed8-4dce-a935-24f93447f1ef",
+      "name": "Notify No Topics",
+      "webhookId": "663215d5-dfb1-4b2a-85e1-dec7d12f3fef",
+      "credentials": {
+        "telegramApi": {
+          "id": "W6XV6RQORTB3eBDg",
+          "name": "Agent Dhruv"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=Topic - {{ $('Get To Do Topic').item.json.Topic }} \n\nDo not exceed more than 3000 Characters as LinkedIn has limits so keep under that",
+        "options": {
+          "systemMessage": "# Overview\nYou are an AI agent specialized in creating professional, educational, and engaging LinkedIn posts for AIwithDhruv brand.\n\n## Brand Voice:\n- Builder mindset, not theorist\n- Practical, no-BS, slightly witty\n- Show real systems and outcomes\n- Automation-first thinking\n\n## Objectives:\nAlways begin by conducting a real-time search using the Perplexity tool to gather the most accurate, up-to-date information on the topic.\n\nBased on your research, generate a well-structured LinkedIn post that:\n- Starts with a visceral, scroll-stopping hook (not generic stats)\n- Professional but human tone\n- Clear and easy to read with short paragraphs\n- Educational and insightful with real examples\n- Light on emojis (max 2-3, only when relevant)\n- Includes proper source attribution when citing data\n- Contains 3-5 relevant hashtags including #AIwithDhruv\n- Ends with a thought-provoking question or clear CTA\n\n## Structure:\n1. Hook (1-2 lines that create urgency or curiosity)\n2. Problem/Pain (make the reader feel it)\n3. Solution/Insight (what actually works)\n4. Proof/Examples (real data, use cases, demos)\n5. CTA (question or action)\n\n## Output:\n- ONLY output the final LinkedIn post text\n- Do not include explanations or notes\n- Keep under 3000 characters\n- Use white space generously\n- Short paragraphs (1-3 lines max)\n\n## Important Rules:\n- Do NOT use special characters like *, _, ~, ` in the post text (breaks Telegram/Twitter formatting)\n- Use plain text formatting only (line breaks, dashes, numbers)\n- Hashtags should be plain #text format\n- Keep emojis minimal and standard (no custom/rare emojis)"
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 2,
+      "position": [
+        -208,
+        -16
+      ],
+      "id": "2d173e1f-67c7-4ffd-8170-6047deec1011",
+      "name": "AI Content Generator"
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "value": "gpt-5",
+          "mode": "list",
+          "cachedResultName": "gpt-5"
+        },
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.2,
+      "position": [
+        -272,
+        240
+      ],
+      "id": "8f2b0de3-40a4-45f1-a189-ada6f75885d2",
+      "name": "GPT-5",
+      "credentials": {
+        "openAiApi": {
+          "id": "8IidOdkLmo0Xt32q",
+          "name": "OpenAi account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "modelId": {
+          "__rl": true,
+          "value": "gpt-5-nano",
+          "mode": "list",
+          "cachedResultName": "GPT-5-NANO"
+        },
+        "messages": {
+          "values": [
+            {
+              "content": "=When you get topic {{ $('Get To Do Topic').item.json.Topic }}, create an image prompt for an AI image generator.\n\nRules:\n- Style: Minimalist poster on pure black background\n- Symbols: 2-5 emoji-style icons matching the topic\n- Emoji Rules: Black-and-white, clean white outlines with subtle glow\n- Arrangement: Evenly spaced, centered, modern\n- Optional Text: Under 5 words, bold, white, glowing\n- Output: High-definition PNG\n\nEmoji reference:\nAI/Tech: \ud83e\udd16 \ud83d\udcbb \ud83d\udd0d \ud83e\udde0 \u2699\ufe0f \ud83d\udd10 \ud83d\udce1\nSales/Growth: \ud83d\udcc8 \ud83d\udcb0 \ud83d\udcbc \ud83e\udd1d \ud83c\udfc6 \ud83d\udd11\nProductivity: \ud83c\udf31 \ud83e\uddd8 \u23f0 \ud83d\udd04 \ud83d\udcd6\nAmbition: \ud83d\ude80 \ud83e\uddd7 \ud83d\udd25 \ud83c\udf0d \u2728\n\nOutput ONLY the final image prompt as JSON text."
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.openAi",
+      "typeVersion": 1.8,
+      "position": [
+        64,
+        -16
+      ],
+      "id": "5c67076a-834b-43ce-a306-6e6ff22de81e",
+      "name": "Image Prompt",
+      "credentials": {
+        "openAiApi": {
+          "id": "8IidOdkLmo0Xt32q",
+          "name": "OpenAi account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://openrouter.ai/api/v1/chat/completions",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpBearerAuth",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"model\": \"google/gemini-2.5-flash-image-preview\",\n  \"messages\": [\n    {\n      \"role\": \"user\",\n      \"content\": [\n        {\n          \"type\": \"text\",\n          \"text\": \"{{ $json.message.content }}\"\n        }\n      ]\n    }\n  ]\n}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        352,
+        96
+      ],
+      "id": "2fa08638-9117-4055-b9ff-e5bff21085e1",
+      "name": "Generate Image",
+      "credentials": {
+        "httpBearerAuth": {
+          "id": "66uBLB9Fa1yGhxGr",
+          "name": "Open Router"
+        }
+      },
+      "onError": "continueErrorOutput"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "5f13ef02-acb2-4e2c-981b-9346016379e8",
+              "name": "base",
+              "value": "={{ $json.choices ? ($json.choices[0].message.images ? $json.choices[0].message.images[0].image_url.url.split(',')[1] : ($json.choices[0].message.content.match(/data:image\\/[^;]+;base64,([^\"]+)/) ? $json.choices[0].message.content.match(/data:image\\/[^;]+;base64,([^\"]+)/)[1] : $json.choices[0].message.content)) : '' }}",
+              "type": "string"
+            },
+            {
+              "id": "d5200e9b-a741-4d08-ac60-e0b4ae4bfcad",
+              "name": "mime",
+              "value": "image/png",
+              "type": "string"
+            },
+            {
+              "id": "d98a8207-44d6-4555-b087-ef60a9846231",
+              "name": "fileName",
+              "value": "post_image.png",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        528,
+        -96
+      ],
+      "id": "ee25992b-1e8a-4fa9-b198-749ab206f840",
+      "name": "Extract Image Data"
+    },
+    {
+      "parameters": {
+        "operation": "toBinary",
+        "sourceProperty": "base",
+        "options": {
+          "fileName": "={{ $json.fileName }}",
+          "mimeType": "={{ $json.mime }}"
+        }
+      },
+      "type": "n8n-nodes-base.convertToFile",
+      "typeVersion": 1.1,
+      "position": [
+        752,
+        -96
+      ],
+      "id": "594b777a-f296-4bc4-94d2-c506134e3af2",
+      "name": "Convert to Image"
+    },
+    {
+      "parameters": {
+        "name": "={{ $('Get To Do Topic').item.json.Topic.substring(0,50) }}.png",
+        "driveId": {
+          "__rl": true,
+          "value": "My Drive",
+          "mode": "list",
+          "cachedResultName": "My Drive"
+        },
+        "folderId": {
+          "__rl": true,
+          "value": "1ap5I9i-hL00aQ62EwXW2TUGCpAP3p_Gq",
+          "mode": "list",
+          "cachedResultName": "Linkedin N8n Drhuv Auto Posting"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleDrive",
+      "typeVersion": 3,
+      "position": [
+        976,
+        -96
+      ],
+      "id": "b21d62c0-9da5-49c8-ab0a-408eb4356f2f",
+      "name": "Upload to Drive",
+      "credentials": {
+        "googleDriveOAuth2Api": {
+          "id": "etId49ji6y1gWG3l",
+          "name": "Ai with Dhruv"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "documentId": {
+          "__rl": true,
+          "value": "1YZk12lNR7ZpjtJ6pOB2ugIgVIyF15-oAGPhuzCg2KE4",
+          "mode": "list"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 1811610359,
+          "mode": "list"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Status": "Awaiting Approval",
+            "Content": "={{ $('AI Content Generator').item.json.output }}",
+            "Drive Image Link": "={{ $json.webContentLink }}",
+            "Topic": "={{ $('Get To Do Topic').item.json.Topic }}"
+          },
+          "matchingColumns": [
+            "Topic"
+          ],
+          "schema": [
+            {
+              "id": "Topic",
+              "displayName": "Topic",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Status",
+              "displayName": "Status",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Content",
+              "displayName": "Content",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Drive Image Link",
+              "displayName": "Drive Image Link",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        1184,
+        -96
+      ],
+      "id": "281b947f-312e-460e-ae41-87289f841cbb",
+      "name": "Update Awaiting (Image)",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "WbzVyGwbDVzvcV25",
+          "name": "Ai with Dhruv"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "chatId": "637313836",
+        "text": "=\ud83d\udce8 <b>NEW POST READY</b>\n\n\ud83d\udccc <b>Topic:</b> {{ $('Get To Do Topic').item.json.Topic }}\n\n\ud83d\udcd6 <b>Preview:</b>\n{{ $('AI Content Generator').item.json.output.substring(0, 800) }}...\n\n\ud83d\uddbc\ufe0f Image: {{ $json.webContentLink || 'No image' }}\n\n\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\n<b>Reply with:</b>\n\u2705 <code>approve</code> \u2192 Post to LinkedIn + Twitter\n\u274c <code>reject</code> \u2192 Skip this post\n\u270f\ufe0f <code>edit</code> \u2192 I'll edit in sheet first",
+        "additionalFields": {
+          "parse_mode": "HTML"
+        }
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        1408,
+        -96
+      ],
+      "id": "a445c7c2-9c15-4838-97da-e04006c361f6",
+      "name": "Send Preview",
+      "webhookId": "86026ca3-1402-471e-b329-a41a47c0a5d9",
+      "credentials": {
+        "telegramApi": {
+          "id": "W6XV6RQORTB3eBDg",
+          "name": "Agent Dhruv"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "sendPhoto",
+        "chatId": "637313836",
+        "binaryData": true,
+        "additionalFields": {
+          "caption": "\ud83d\uddbc\ufe0f Post image preview"
+        }
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        1408,
+        64
+      ],
+      "id": "c82bba41-2d08-4ce2-8218-18867b435833",
+      "name": "Send Image Preview",
+      "webhookId": "ffee2168-ff92-4089-a5dc-c3dea12347d1",
+      "credentials": {
+        "telegramApi": {
+          "id": "W6XV6RQORTB3eBDg",
+          "name": "Agent Dhruv"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "documentId": {
+          "__rl": true,
+          "value": "1YZk12lNR7ZpjtJ6pOB2ugIgVIyF15-oAGPhuzCg2KE4",
+          "mode": "list"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 1811610359,
+          "mode": "list"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Status": "Awaiting Approval",
+            "Content": "={{ $('AI Content Generator').item.json.output }}",
+            "Drive Image Link": "No Image Generated",
+            "Topic": "={{ $('Get To Do Topic').item.json.Topic }}"
+          },
+          "matchingColumns": [
+            "Topic"
+          ],
+          "schema": [
+            {
+              "id": "Topic",
+              "displayName": "Topic",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Status",
+              "displayName": "Status",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Content",
+              "displayName": "Content",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Drive Image Link",
+              "displayName": "Drive Image Link",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        1184,
+        144
+      ],
+      "id": "425cdb5d-9278-43a1-94f2-95df936b434d",
+      "name": "Update Awaiting (No Image)",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "WbzVyGwbDVzvcV25",
+          "name": "Ai with Dhruv"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "chatId": "637313836",
+        "text": "=\ud83d\udce8 <b>NEW POST READY</b> (No Image)\n\n\ud83d\udccc <b>Topic:</b> {{ $('Get To Do Topic').item.json.Topic }}\n\n\ud83d\udcd6 <b>Preview:</b>\n{{ $('AI Content Generator').item.json.output.substring(0, 800) }}...\n\n\u26a0\ufe0f Image generation failed. Will post text only.\n\n\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\n<b>Reply with:</b>\n\u2705 <code>approve</code> \u2192 Post to LinkedIn + Twitter\n\u274c <code>reject</code> \u2192 Skip this post\n\u270f\ufe0f <code>edit</code> \u2192 I'll edit in sheet first",
+        "additionalFields": {
+          "parse_mode": "HTML"
+        }
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        1408,
+        144
+      ],
+      "id": "80c119ed-b074-42c3-891e-a90e1c6cf394",
+      "name": "Send Preview (No Image)",
+      "webhookId": "3d4fd99d-8867-4171-9b42-4b477f47e217",
+      "credentials": {
+        "telegramApi": {
+          "id": "W6XV6RQORTB3eBDg",
+          "name": "Agent Dhruv"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "updates": [
+          "message"
+        ],
+        "additionalFields": {}
+      },
+      "type": "n8n-nodes-base.telegramTrigger",
+      "typeVersion": 1.1,
+      "position": [
+        -784,
+        992
+      ],
+      "id": "5cb7d338-6b03-48fc-a3b5-0ef871c882ea",
+      "name": "Telegram Approval",
+      "webhookId": "edf0f6ae-844a-488b-b00e-feb5e064cffa",
+      "credentials": {
+        "telegramApi": {
+          "id": "W6XV6RQORTB3eBDg",
+          "name": "Agent Dhruv"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "const text = ($input.first().json.message?.text || '').toLowerCase().trim();\nlet action = 'unknown';\n\nif (['approve', 'yes', 'y', 'ok', 'go', 'post', 'send'].some(w => text.includes(w)) || text === '\u2705') {\n  action = 'approve';\n} else if (['reject', 'no', 'n', 'skip', 'cancel', 'delete'].some(w => text.includes(w)) || text === '\u274c') {\n  action = 'reject';\n} else if (['edit', 'change', 'modify', 'update', 'fix'].some(w => text.includes(w)) || text === '\u270f\ufe0f') {\n  action = 'edit';\n}\n\nreturn [{ json: { action, raw: text } }];"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -576,
+        992
+      ],
+      "id": "690d9a23-e27f-41ae-b347-87089afcf5c1",
+      "name": "Parse Response"
+    },
+    {
+      "parameters": {
+        "rules": {
+          "values": [
+            {
+              "conditions": {
+                "conditions": [
+                  {
+                    "leftValue": "={{ $json.action }}",
+                    "rightValue": "approve",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    }
+                  }
+                ]
+              },
+              "renameOutput": true,
+              "outputKey": "Approve"
+            },
+            {
+              "conditions": {
+                "conditions": [
+                  {
+                    "leftValue": "={{ $json.action }}",
+                    "rightValue": "reject",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    }
+                  }
+                ]
+              },
+              "renameOutput": true,
+              "outputKey": "Reject"
+            },
+            {
+              "conditions": {
+                "conditions": [
+                  {
+                    "leftValue": "={{ $json.action }}",
+                    "rightValue": "edit",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    }
+                  }
+                ]
+              },
+              "renameOutput": true,
+              "outputKey": "Edit"
+            }
+          ]
+        },
+        "options": {
+          "fallbackOutput": "extra"
+        }
+      },
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3.2,
+      "position": [
+        -352,
+        992
+      ],
+      "id": "d44fb388-7a7d-4725-94fb-a2203d8f54b6",
+      "name": "Route Action"
+    },
+    {
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "value": "1YZk12lNR7ZpjtJ6pOB2ugIgVIyF15-oAGPhuzCg2KE4",
+          "mode": "list"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 1811610359,
+          "mode": "list"
+        },
+        "filtersUI": {
+          "values": [
+            {
+              "lookupColumn": "Status",
+              "lookupValue": "Awaiting Approval"
+            }
+          ]
+        },
+        "options": {
+          "returnFirstMatch": true
+        }
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        -96,
+        864
+      ],
+      "id": "8742cc88-ec0b-4341-bc8e-c6732bb37144",
+      "name": "Fetch Approved Post",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "WbzVyGwbDVzvcV25",
+          "name": "Ai with Dhruv"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "0c5c1da6-cabc-4921-983f-fc7f02eff027",
+              "leftValue": "={{ $json['Drive Image Link'] }}",
+              "rightValue": "No Image",
+              "operator": {
+                "type": "string",
+                "operation": "notContains"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [
+        128,
+        864
+      ],
+      "id": "782a31fe-3d5e-4be7-8b00-7143d98f98c3",
+      "name": "Has Image?"
+    },
+    {
+      "parameters": {
+        "url": "={{ $('Fetch Approved Post').item.json['Drive Image Link'] }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        368,
+        784
+      ],
+      "id": "41bad5d8-d65e-4c54-8582-486ea090f403",
+      "name": "Download Image"
+    },
+    {
+      "parameters": {
+        "person": "3WMM5wjeJH",
+        "text": "={{ $('Fetch Approved Post').item.json.Content }}",
+        "shareMediaCategory": "IMAGE",
+        "additionalFields": {}
+      },
+      "type": "n8n-nodes-base.linkedIn",
+      "typeVersion": 1,
+      "position": [
+        608,
+        784
+      ],
+      "id": "5654b0c2-fabb-4d77-bcef-6524dadb6cb7",
+      "name": "LinkedIn Post (Image)",
+      "credentials": {
+        "linkedInOAuth2Api": {
+          "id": "f520by1wOAMg6btX",
+          "name": "Dhruv"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "person": "3WMM5wjeJH",
+        "text": "={{ $('Fetch Approved Post').item.json.Content }}",
+        "additionalFields": {}
+      },
+      "type": "n8n-nodes-base.linkedIn",
+      "typeVersion": 1,
+      "position": [
+        608,
+        992
+      ],
+      "id": "f95a3716-fd42-49fb-8bfe-1e7e1e7ae797",
+      "name": "LinkedIn Post (Text)",
+      "credentials": {
+        "linkedInOAuth2Api": {
+          "id": "f520by1wOAMg6btX",
+          "name": "Dhruv"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "text": "={{ $('Fetch Approved Post').item.json.Content.substring(0, 275).replace(/\\s+\\S*$/, '') }}...",
+        "additionalFields": {}
+      },
+      "type": "n8n-nodes-base.twitter",
+      "typeVersion": 2,
+      "position": [
+        608,
+        1168
+      ],
+      "id": "c03f9d60-dfa6-4f9b-8813-b345492cba3e",
+      "name": "Post to Twitter",
+      "credentials": {
+        "twitterOAuth2Api": {
+          "id": "o0feRFKgKQPKR3ZX",
+          "name": "agiwithdhruv"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "documentId": {
+          "__rl": true,
+          "value": "1YZk12lNR7ZpjtJ6pOB2ugIgVIyF15-oAGPhuzCg2KE4",
+          "mode": "list"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 1811610359,
+          "mode": "list"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Status": "Posted",
+            "Topic": "={{ $('Fetch Approved Post').item.json.Topic }}"
+          },
+          "matchingColumns": [
+            "Topic"
+          ],
+          "schema": [
+            {
+              "id": "Topic",
+              "displayName": "Topic",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Status",
+              "displayName": "Status",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        848,
+        896
+      ],
+      "id": "02423a54-521d-411a-acb3-bcfd4b25b2d5",
+      "name": "Update Posted",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "WbzVyGwbDVzvcV25",
+          "name": "Ai with Dhruv"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "sendTo": "aiwithdhruv@gmail.com",
+        "subject": "=\u2705 Posted: {{ $('Fetch Approved Post').item.json.Topic }}",
+        "emailType": "text",
+        "message": "={{ $('Fetch Approved Post').item.json.Content }}\n\nImage: {{ $('Fetch Approved Post').item.json['Drive Image Link'] || 'No image' }}",
+        "options": {
+          "appendAttribution": false
+        }
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.1,
+      "position": [
+        1072,
+        896
+      ],
+      "id": "d98f184f-2957-4180-bd3f-51944a2db105",
+      "name": "Email Confirmation",
+      "webhookId": "cfb7aef5-1c01-41a4-9709-28b66f8502df",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "gPGYzjuIbblOf3E1",
+          "name": "Ai with Dhruv"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "chatId": "637313836",
+        "text": "=\u2705 <b>POSTED SUCCESSFULLY</b>\n\n\ud83d\udccc {{ $('Fetch Approved Post').item.json.Topic }}\n\n\u2705 LinkedIn \u2714\n\u2705 Twitter \u2714\n\u2705 Sheet updated \u2714\n\u2705 Email sent \u2714",
+        "additionalFields": {
+          "parse_mode": "HTML"
+        }
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        1296,
+        896
+      ],
+      "id": "132135b2-eff9-49e4-b70b-1dba747dfc49",
+      "name": "Notify Posted",
+      "webhookId": "d8b63ba6-7e96-4b7d-b5f3-fbf369fc7a92",
+      "credentials": {
+        "telegramApi": {
+          "id": "W6XV6RQORTB3eBDg",
+          "name": "Agent Dhruv"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "documentId": {
+          "__rl": true,
+          "value": "1YZk12lNR7ZpjtJ6pOB2ugIgVIyF15-oAGPhuzCg2KE4",
+          "mode": "list"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 1811610359,
+          "mode": "list"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Status": "Rejected",
+            "Topic": "={{ $('Fetch Approved Post').item.json.Topic }}"
+          },
+          "matchingColumns": [
+            "Topic"
+          ],
+          "schema": [
+            {
+              "id": "Topic",
+              "displayName": "Topic",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Status",
+              "displayName": "Status",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        -96,
+        1088
+      ],
+      "id": "21416b3f-9483-4375-998a-9c32460b3661",
+      "name": "Update Rejected",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "WbzVyGwbDVzvcV25",
+          "name": "Ai with Dhruv"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "chatId": "637313836",
+        "text": "\u274c Post rejected. Status updated in sheet.",
+        "additionalFields": {}
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        128,
+        1088
+      ],
+      "id": "2225e89c-a4fe-4203-9579-02454541b43d",
+      "name": "Notify Rejected",
+      "webhookId": "6b182b67-990b-41c0-a9ad-20b71327819f",
+      "credentials": {
+        "telegramApi": {
+          "id": "W6XV6RQORTB3eBDg",
+          "name": "Agent Dhruv"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "chatId": "637313836",
+        "text": "=\u270f\ufe0f Edit mode activated.\n\nOpen the sheet, make your changes, then reply <code>approve</code> when ready.\n\n\ud83d\udcca https://docs.google.com/spreadsheets/d/1YZk12lNR7ZpjtJ6pOB2ugIgVIyF15-oAGPhuzCg2KE4/edit#gid=1811610359",
+        "additionalFields": {}
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        -96,
+        1264
+      ],
+      "id": "6d90afed-ca51-49d6-b9e6-7d0fd679fdee",
+      "name": "Notify Edit",
+      "webhookId": "79737309-8985-47c5-9550-bf25bcda9bc7",
+      "credentials": {
+        "telegramApi": {
+          "id": "W6XV6RQORTB3eBDg",
+          "name": "Agent Dhruv"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "chatId": "637313836",
+        "text": "=\u26a0\ufe0f Didn't understand that.\n\nReply with:\n\u2705 approve\n\u274c reject\n\u270f\ufe0f edit",
+        "additionalFields": {}
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        -96,
+        1408
+      ],
+      "id": "61eda529-8d6d-4bda-97bf-8c76b1146f4f",
+      "name": "Unknown Command",
+      "webhookId": "da4ed5ae-8731-4ff0-a5ac-e78fe6a3cd54",
+      "credentials": {
+        "telegramApi": {
+          "id": "W6XV6RQORTB3eBDg",
+          "name": "Agent Dhruv"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "content": "## \ud83d\udd35 CONTENT GENERATION\n**Trigger:** Every day at 2 PM IST\n\n1. Picks first 'To Do' topic from sheet\n2. AI generates LinkedIn post (GPT-5 + Perplexity research)\n3. Generates minimalist image\n4. Uploads image to Drive\n5. Updates sheet \u2192 'Awaiting Approval'\n6. Sends preview to Telegram\n\n**You review on Telegram and approve/reject/edit**",
+        "height": 300,
+        "width": 380
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -1248,
+        -256
+      ],
+      "id": "dd7fbc98-9cb8-48ff-9e6c-4a646b7b48b3",
+      "name": "Note - Generation"
+    },
+    {
+      "parameters": {
+        "content": "## \ud83d\udfe2 APPROVAL FLOW\n**Trigger:** Telegram message from you\n\n- `approve` / `yes` \u2192 Posts to LinkedIn + Twitter, updates sheet, sends email\n- `reject` / `no` \u2192 Marks rejected in sheet\n- `edit` \u2192 Sends sheet link, reply approve when done\n\n**\u26a0\ufe0f SETUP REQUIRED:**\n1. Set `TELEGRAM_CHAT_ID` env variable in n8n\n2. Connect Telegram Bot credentials\n3. Connect Twitter/X credentials\n4. Connect LinkedIn credentials\n5. Connect Gmail credentials\n6. Connect Google Sheets credentials\n7. Connect Google Drive credentials\n8. Connect OpenAI credentials\n9. Set Perplexity + OpenRouter HTTP Header Auth",
+        "height": 380,
+        "width": 440
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -1312,
+        1184
+      ],
+      "id": "7cb9464a-ad26-430c-8256-f5e4dc91e6f8",
+      "name": "Note - Approval"
+    },
+    {
+      "parameters": {
+        "toolDescription": "Use this tool to search the web for the latest, real-time information on any topic. Pass the topic or question as input. Returns up-to-date facts, data, and insights.",
+        "messages": {
+          "message": [
+            {
+              "content": "={{ $fromAI('query', 'The search query or topic to research') }}"
+            }
+          ]
+        },
+        "options": {
+          "model": "sonar",
+          "maxTokens": 2048,
+          "temperature": 0.3
+        },
+        "requestOptions": {}
+      },
+      "type": "n8n-nodes-base.perplexityTool",
+      "typeVersion": 1,
+      "position": [
+        96,
+        288
+      ],
+      "id": "00a22962-d096-4102-a703-0c2792808695",
+      "name": "Message a model in Perplexity",
+      "credentials": {
+        "perplexityApi": {
+          "id": "mACe6bHyuo7Z3exN",
+          "name": "Perplexity 2"
+        }
+      }
+    }
+  ],
+  "connections": {
+    "2 PM Trigger": {
+      "main": [
+        [
+          {
+            "node": "Get To Do Topic",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get To Do Topic": {
+      "main": [
+        [
+          {
+            "node": "Has Topic?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Has Topic?": {
+      "main": [
+        [
+          {
+            "node": "AI Content Generator",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Notify No Topics",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "GPT-5": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Content Generator",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "AI Content Generator": {
+      "main": [
+        [
+          {
+            "node": "Image Prompt",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Image Prompt": {
+      "main": [
+        [
+          {
+            "node": "Generate Image",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Generate Image": {
+      "main": [
+        [
+          {
+            "node": "Extract Image Data",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Update Awaiting (No Image)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Extract Image Data": {
+      "main": [
+        [
+          {
+            "node": "Convert to Image",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Convert to Image": {
+      "main": [
+        [
+          {
+            "node": "Upload to Drive",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Send Image Preview",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Upload to Drive": {
+      "main": [
+        [
+          {
+            "node": "Update Awaiting (Image)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Update Awaiting (Image)": {
+      "main": [
+        [
+          {
+            "node": "Send Preview",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Update Awaiting (No Image)": {
+      "main": [
+        [
+          {
+            "node": "Send Preview (No Image)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Telegram Approval": {
+      "main": [
+        [
+          {
+            "node": "Parse Response",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Parse Response": {
+      "main": [
+        [
+          {
+            "node": "Route Action",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Route Action": {
+      "main": [
+        [
+          {
+            "node": "Fetch Approved Post",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Update Rejected",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Notify Edit",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Unknown Command",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Fetch Approved Post": {
+      "main": [
+        [
+          {
+            "node": "Has Image?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Has Image?": {
+      "main": [
+        [
+          {
+            "node": "Download Image",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "LinkedIn Post (Text)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Download Image": {
+      "main": [
+        [
+          {
+            "node": "LinkedIn Post (Image)",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Post to Twitter",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "LinkedIn Post (Image)": {
+      "main": [
+        [
+          {
+            "node": "Update Posted",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "LinkedIn Post (Text)": {
+      "main": [
+        [
+          {
+            "node": "Update Posted",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Post to Twitter",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Update Posted": {
+      "main": [
+        [
+          {
+            "node": "Email Confirmation",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Email Confirmation": {
+      "main": [
+        [
+          {
+            "node": "Notify Posted",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Update Rejected": {
+      "main": [
+        [
+          {
+            "node": "Notify Rejected",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Message a model in Perplexity": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Content Generator",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1",
+    "availableInMCP": false,
+    "timeSavedMode": "fixed",
+    "timezone": "Asia/Kolkata",
+    "callerPolicy": "workflowsFromSameOwner",
+    "binaryMode": "separate"
+  },
+  "staticData": null,
+  "meta": {
+    "templateCredsSetupCompleted": true
+  },
+  "pinData": {},
+  "versionId": "c32b1832-cfe5-4cfc-b913-48562e3c0f34",
+  "activeVersionId": "c32b1832-cfe5-4cfc-b913-48562e3c0f34",
+  "triggerCount": 2,
+  "shared": [
+    {
+      "updatedAt": "2026-02-07T08:24:16.633Z",
+      "createdAt": "2026-02-07T08:24:16.633Z",
+      "role": "workflow:owner",
+      "workflowId": "O1QJ1JCxjRMdz8EgrNJqY",
+      "projectId": "DT8YjHwLZsQjJqVc"
+    }
+  ],
+  "activeVersion": {
+    "updatedAt": "2026-02-07T09:00:57.154Z",
+    "createdAt": "2026-02-07T09:00:57.154Z",
+    "versionId": "c32b1832-cfe5-4cfc-b913-48562e3c0f34",
+    "workflowId": "O1QJ1JCxjRMdz8EgrNJqY",
+    "nodes": [
+      {
+        "parameters": {
+          "rule": {
+            "interval": [
+              {
+                "triggerAtHour": 14
+              }
+            ]
+          }
+        },
+        "type": "n8n-nodes-base.scheduleTrigger",
+        "typeVersion": 1.2,
+        "position": [
+          -864,
+          112
+        ],
+        "id": "3928e665-01f7-4554-a425-6eb9170ff32f",
+        "name": "2 PM Trigger"
+      },
+      {
+        "parameters": {
+          "documentId": {
+            "__rl": true,
+            "value": "1YZk12lNR7ZpjtJ6pOB2ugIgVIyF15-oAGPhuzCg2KE4",
+            "mode": "list",
+            "cachedResultName": "LInkedin Ai Autmation"
+          },
+          "sheetName": {
+            "__rl": true,
+            "value": 1811610359,
+            "mode": "list",
+            "cachedResultName": "2Pm Dhruv Auto Linkedin Post"
+          },
+          "filtersUI": {
+            "values": [
+              {
+                "lookupColumn": "Status",
+                "lookupValue": "To Do"
+              }
+            ]
+          },
+          "options": {
+            "returnFirstMatch": true
+          }
+        },
+        "type": "n8n-nodes-base.googleSheets",
+        "typeVersion": 4.7,
+        "position": [
+          -656,
+          112
+        ],
+        "id": "fac767b6-26ff-472e-8ee9-682ae2efd2b2",
+        "name": "Get To Do Topic",
+        "credentials": {
+          "googleSheetsOAuth2Api": {
+            "id": "WbzVyGwbDVzvcV25",
+            "name": "Ai with Dhruv"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "conditions": {
+            "options": {
+              "caseSensitive": true,
+              "leftValue": "",
+              "typeValidation": "strict",
+              "version": 3
+            },
+            "conditions": [
+              {
+                "id": "36a064dd-de73-40cd-bd62-7655f5588c5c",
+                "leftValue": "={{ $json.Topic }}",
+                "rightValue": "",
+                "operator": {
+                  "type": "string",
+                  "operation": "exists",
+                  "singleValue": true
+                }
+              }
+            ],
+            "combinator": "and"
+          },
+          "options": {}
+        },
+        "type": "n8n-nodes-base.if",
+        "typeVersion": 2.3,
+        "position": [
+          -432,
+          112
+        ],
+        "id": "2dd33c56-dc7a-45a2-b01b-7eaf87ff970a",
+        "name": "Has Topic?"
+      },
+      {
+        "parameters": {
+          "chatId": "637313836",
+          "text": "\u26a0\ufe0f No 'To Do' topics left in the sheet. Add new topics to continue posting.",
+          "additionalFields": {}
+        },
+        "type": "n8n-nodes-base.telegram",
+        "typeVersion": 1.2,
+        "position": [
+          -256,
+          432
+        ],
+        "id": "7b3a75b1-8ed8-4dce-a935-24f93447f1ef",
+        "name": "Notify No Topics",
+        "webhookId": "663215d5-dfb1-4b2a-85e1-dec7d12f3fef",
+        "credentials": {
+          "telegramApi": {
+            "id": "W6XV6RQORTB3eBDg",
+            "name": "Agent Dhruv"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "promptType": "define",
+          "text": "=Topic - {{ $('Get To Do Topic').item.json.Topic }} \n\nDo not exceed more than 3000 Characters as LinkedIn has limits so keep under that",
+          "options": {
+            "systemMessage": "# Overview\nYou are an AI agent specialized in creating professional, educational, and engaging LinkedIn posts for AIwithDhruv brand.\n\n## Brand Voice:\n- Builder mindset, not theorist\n- Practical, no-BS, slightly witty\n- Show real systems and outcomes\n- Automation-first thinking\n\n## Objectives:\nAlways begin by conducting a real-time search using the Perplexity tool to gather the most accurate, up-to-date information on the topic.\n\nBased on your research, generate a well-structured LinkedIn post that:\n- Starts with a visceral, scroll-stopping hook (not generic stats)\n- Professional but human tone\n- Clear and easy to read with short paragraphs\n- Educational and insightful with real examples\n- Light on emojis (max 2-3, only when relevant)\n- Includes proper source attribution when citing data\n- Contains 3-5 relevant hashtags including #AIwithDhruv\n- Ends with a thought-provoking question or clear CTA\n\n## Structure:\n1. Hook (1-2 lines that create urgency or curiosity)\n2. Problem/Pain (make the reader feel it)\n3. Solution/Insight (what actually works)\n4. Proof/Examples (real data, use cases, demos)\n5. CTA (question or action)\n\n## Output:\n- ONLY output the final LinkedIn post text\n- Do not include explanations or notes\n- Keep under 3000 characters\n- Use white space generously\n- Short paragraphs (1-3 lines max)\n\n## Important Rules:\n- Do NOT use special characters like *, _, ~, ` in the post text (breaks Telegram/Twitter formatting)\n- Use plain text formatting only (line breaks, dashes, numbers)\n- Hashtags should be plain #text format\n- Keep emojis minimal and standard (no custom/rare emojis)"
+          }
+        },
+        "type": "@n8n/n8n-nodes-langchain.agent",
+        "typeVersion": 2,
+        "position": [
+          -208,
+          -16
+        ],
+        "id": "2d173e1f-67c7-4ffd-8170-6047deec1011",
+        "name": "AI Content Generator"
+      },
+      {
+        "parameters": {
+          "model": {
+            "__rl": true,
+            "value": "gpt-5",
+            "mode": "list",
+            "cachedResultName": "gpt-5"
+          },
+          "options": {}
+        },
+        "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+        "typeVersion": 1.2,
+        "position": [
+          -272,
+          240
+        ],
+        "id": "8f2b0de3-40a4-45f1-a189-ada6f75885d2",
+        "name": "GPT-5",
+        "credentials": {
+          "openAiApi": {
+            "id": "8IidOdkLmo0Xt32q",
+            "name": "OpenAi account"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "modelId": {
+            "__rl": true,
+            "value": "gpt-5-nano",
+            "mode": "list",
+            "cachedResultName": "GPT-5-NANO"
+          },
+          "messages": {
+            "values": [
+              {
+                "content": "=When you get topic {{ $('Get To Do Topic').item.json.Topic }}, create an image prompt for an AI image generator.\n\nRules:\n- Style: Minimalist poster on pure black background\n- Symbols: 2-5 emoji-style icons matching the topic\n- Emoji Rules: Black-and-white, clean white outlines with subtle glow\n- Arrangement: Evenly spaced, centered, modern\n- Optional Text: Under 5 words, bold, white, glowing\n- Output: High-definition PNG\n\nEmoji reference:\nAI/Tech: \ud83e\udd16 \ud83d\udcbb \ud83d\udd0d \ud83e\udde0 \u2699\ufe0f \ud83d\udd10 \ud83d\udce1\nSales/Growth: \ud83d\udcc8 \ud83d\udcb0 \ud83d\udcbc \ud83e\udd1d \ud83c\udfc6 \ud83d\udd11\nProductivity: \ud83c\udf31 \ud83e\uddd8 \u23f0 \ud83d\udd04 \ud83d\udcd6\nAmbition: \ud83d\ude80 \ud83e\uddd7 \ud83d\udd25 \ud83c\udf0d \u2728\n\nOutput ONLY the final image prompt as JSON text."
+              }
+            ]
+          },
+          "options": {}
+        },
+        "type": "@n8n/n8n-nodes-langchain.openAi",
+        "typeVersion": 1.8,
+        "position": [
+          64,
+          -16
+        ],
+        "id": "5c67076a-834b-43ce-a306-6e6ff22de81e",
+        "name": "Image Prompt",
+        "credentials": {
+          "openAiApi": {
+            "id": "8IidOdkLmo0Xt32q",
+            "name": "OpenAi account"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "method": "POST",
+          "url": "https://openrouter.ai/api/v1/chat/completions",
+          "authentication": "genericCredentialType",
+          "genericAuthType": "httpBearerAuth",
+          "sendBody": true,
+          "specifyBody": "json",
+          "jsonBody": "={\n  \"model\": \"google/gemini-2.5-flash-image-preview\",\n  \"messages\": [\n    {\n      \"role\": \"user\",\n      \"content\": [\n        {\n          \"type\": \"text\",\n          \"text\": \"{{ $json.message.content }}\"\n        }\n      ]\n    }\n  ]\n}",
+          "options": {}
+        },
+        "type": "n8n-nodes-base.httpRequest",
+        "typeVersion": 4.2,
+        "position": [
+          352,
+          96
+        ],
+        "id": "2fa08638-9117-4055-b9ff-e5bff21085e1",
+        "name": "Generate Image",
+        "credentials": {
+          "httpBearerAuth": {
+            "id": "66uBLB9Fa1yGhxGr",
+            "name": "Open Router"
+          }
+        },
+        "onError": "continueErrorOutput"
+      },
+      {
+        "parameters": {
+          "assignments": {
+            "assignments": [
+              {
+                "id": "5f13ef02-acb2-4e2c-981b-9346016379e8",
+                "name": "base",
+                "value": "={{ $json.choices ? ($json.choices[0].message.images ? $json.choices[0].message.images[0].image_url.url.split(',')[1] : ($json.choices[0].message.content.match(/data:image\\/[^;]+;base64,([^\"]+)/) ? $json.choices[0].message.content.match(/data:image\\/[^;]+;base64,([^\"]+)/)[1] : $json.choices[0].message.content)) : '' }}",
+                "type": "string"
+              },
+              {
+                "id": "d5200e9b-a741-4d08-ac60-e0b4ae4bfcad",
+                "name": "mime",
+                "value": "image/png",
+                "type": "string"
+              },
+              {
+                "id": "d98a8207-44d6-4555-b087-ef60a9846231",
+                "name": "fileName",
+                "value": "post_image.png",
+                "type": "string"
+              }
+            ]
+          },
+          "options": {}
+        },
+        "type": "n8n-nodes-base.set",
+        "typeVersion": 3.4,
+        "position": [
+          528,
+          -96
+        ],
+        "id": "ee25992b-1e8a-4fa9-b198-749ab206f840",
+        "name": "Extract Image Data"
+      },
+      {
+        "parameters": {
+          "operation": "toBinary",
+          "sourceProperty": "base",
+          "options": {
+            "fileName": "={{ $json.fileName }}",
+            "mimeType": "={{ $json.mime }}"
+          }
+        },
+        "type": "n8n-nodes-base.convertToFile",
+        "typeVersion": 1.1,
+        "position": [
+          752,
+          -96
+        ],
+        "id": "594b777a-f296-4bc4-94d2-c506134e3af2",
+        "name": "Convert to Image"
+      },
+      {
+        "parameters": {
+          "name": "={{ $('Get To Do Topic').item.json.Topic.substring(0,50) }}.png",
+          "driveId": {
+            "__rl": true,
+            "value": "My Drive",
+            "mode": "list",
+            "cachedResultName": "My Drive"
+          },
+          "folderId": {
+            "__rl": true,
+            "value": "1ap5I9i-hL00aQ62EwXW2TUGCpAP3p_Gq",
+            "mode": "list",
+            "cachedResultName": "Linkedin N8n Drhuv Auto Posting"
+          },
+          "options": {}
+        },
+        "type": "n8n-nodes-base.googleDrive",
+        "typeVersion": 3,
+        "position": [
+          976,
+          -96
+        ],
+        "id": "b21d62c0-9da5-49c8-ab0a-408eb4356f2f",
+        "name": "Upload to Drive",
+        "credentials": {
+          "googleDriveOAuth2Api": {
+            "id": "etId49ji6y1gWG3l",
+            "name": "Ai with Dhruv"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "operation": "update",
+          "documentId": {
+            "__rl": true,
+            "value": "1YZk12lNR7ZpjtJ6pOB2ugIgVIyF15-oAGPhuzCg2KE4",
+            "mode": "list"
+          },
+          "sheetName": {
+            "__rl": true,
+            "value": 1811610359,
+            "mode": "list"
+          },
+          "columns": {
+            "mappingMode": "defineBelow",
+            "value": {
+              "Status": "Awaiting Approval",
+              "Content": "={{ $('AI Content Generator').item.json.output }}",
+              "Drive Image Link": "={{ $json.webContentLink }}",
+              "Topic": "={{ $('Get To Do Topic').item.json.Topic }}"
+            },
+            "matchingColumns": [
+              "Topic"
+            ],
+            "schema": [
+              {
+                "id": "Topic",
+                "displayName": "Topic",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true
+              },
+              {
+                "id": "Status",
+                "displayName": "Status",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true
+              },
+              {
+                "id": "Content",
+                "displayName": "Content",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true
+              },
+              {
+                "id": "Drive Image Link",
+                "displayName": "Drive Image Link",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true
+              }
+            ]
+          },
+          "options": {}
+        },
+        "type": "n8n-nodes-base.googleSheets",
+        "typeVersion": 4.7,
+        "position": [
+          1184,
+          -96
+        ],
+        "id": "281b947f-312e-460e-ae41-87289f841cbb",
+        "name": "Update Awaiting (Image)",
+        "credentials": {
+          "googleSheetsOAuth2Api": {
+            "id": "WbzVyGwbDVzvcV25",
+            "name": "Ai with Dhruv"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "chatId": "637313836",
+          "text": "=\ud83d\udce8 <b>NEW POST READY</b>\n\n\ud83d\udccc <b>Topic:</b> {{ $('Get To Do Topic').item.json.Topic }}\n\n\ud83d\udcd6 <b>Preview:</b>\n{{ $('AI Content Generator').item.json.output.substring(0, 800) }}...\n\n\ud83d\uddbc\ufe0f Image: {{ $json.webContentLink || 'No image' }}\n\n\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\n<b>Reply with:</b>\n\u2705 <code>approve</code> \u2192 Post to LinkedIn + Twitter\n\u274c <code>reject</code> \u2192 Skip this post\n\u270f\ufe0f <code>edit</code> \u2192 I'll edit in sheet first",
+          "additionalFields": {
+            "parse_mode": "HTML"
+          }
+        },
+        "type": "n8n-nodes-base.telegram",
+        "typeVersion": 1.2,
+        "position": [
+          1408,
+          -96
+        ],
+        "id": "a445c7c2-9c15-4838-97da-e04006c361f6",
+        "name": "Send Preview",
+        "webhookId": "86026ca3-1402-471e-b329-a41a47c0a5d9",
+        "credentials": {
+          "telegramApi": {
+            "id": "W6XV6RQORTB3eBDg",
+            "name": "Agent Dhruv"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "operation": "sendPhoto",
+          "chatId": "637313836",
+          "binaryData": true,
+          "additionalFields": {
+            "caption": "\ud83d\uddbc\ufe0f Post image preview"
+          }
+        },
+        "type": "n8n-nodes-base.telegram",
+        "typeVersion": 1.2,
+        "position": [
+          1408,
+          64
+        ],
+        "id": "c82bba41-2d08-4ce2-8218-18867b435833",
+        "name": "Send Image Preview",
+        "webhookId": "ffee2168-ff92-4089-a5dc-c3dea12347d1",
+        "credentials": {
+          "telegramApi": {
+            "id": "W6XV6RQORTB3eBDg",
+            "name": "Agent Dhruv"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "operation": "update",
+          "documentId": {
+            "__rl": true,
+            "value": "1YZk12lNR7ZpjtJ6pOB2ugIgVIyF15-oAGPhuzCg2KE4",
+            "mode": "list"
+          },
+          "sheetName": {
+            "__rl": true,
+            "value": 1811610359,
+            "mode": "list"
+          },
+          "columns": {
+            "mappingMode": "defineBelow",
+            "value": {
+              "Status": "Awaiting Approval",
+              "Content": "={{ $('AI Content Generator').item.json.output }}",
+              "Drive Image Link": "No Image Generated",
+              "Topic": "={{ $('Get To Do Topic').item.json.Topic }}"
+            },
+            "matchingColumns": [
+              "Topic"
+            ],
+            "schema": [
+              {
+                "id": "Topic",
+                "displayName": "Topic",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true
+              },
+              {
+                "id": "Status",
+                "displayName": "Status",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true
+              },
+              {
+                "id": "Content",
+                "displayName": "Content",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true
+              },
+              {
+                "id": "Drive Image Link",
+                "displayName": "Drive Image Link",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true
+              }
+            ]
+          },
+          "options": {}
+        },
+        "type": "n8n-nodes-base.googleSheets",
+        "typeVersion": 4.7,
+        "position": [
+          1184,
+          144
+        ],
+        "id": "425cdb5d-9278-43a1-94f2-95df936b434d",
+        "name": "Update Awaiting (No Image)",
+        "credentials": {
+          "googleSheetsOAuth2Api": {
+            "id": "WbzVyGwbDVzvcV25",
+            "name": "Ai with Dhruv"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "chatId": "637313836",
+          "text": "=\ud83d\udce8 <b>NEW POST READY</b> (No Image)\n\n\ud83d\udccc <b>Topic:</b> {{ $('Get To Do Topic').item.json.Topic }}\n\n\ud83d\udcd6 <b>Preview:</b>\n{{ $('AI Content Generator').item.json.output.substring(0, 800) }}...\n\n\u26a0\ufe0f Image generation failed. Will post text only.\n\n\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\n<b>Reply with:</b>\n\u2705 <code>approve</code> \u2192 Post to LinkedIn + Twitter\n\u274c <code>reject</code> \u2192 Skip this post\n\u270f\ufe0f <code>edit</code> \u2192 I'll edit in sheet first",
+          "additionalFields": {
+            "parse_mode": "HTML"
+          }
+        },
+        "type": "n8n-nodes-base.telegram",
+        "typeVersion": 1.2,
+        "position": [
+          1408,
+          144
+        ],
+        "id": "80c119ed-b074-42c3-891e-a90e1c6cf394",
+        "name": "Send Preview (No Image)",
+        "webhookId": "3d4fd99d-8867-4171-9b42-4b477f47e217",
+        "credentials": {
+          "telegramApi": {
+            "id": "W6XV6RQORTB3eBDg",
+            "name": "Agent Dhruv"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "updates": [
+            "message"
+          ],
+          "additionalFields": {}
+        },
+        "type": "n8n-nodes-base.telegramTrigger",
+        "typeVersion": 1.1,
+        "position": [
+          -784,
+          992
+        ],
+        "id": "5cb7d338-6b03-48fc-a3b5-0ef871c882ea",
+        "name": "Telegram Approval",
+        "webhookId": "edf0f6ae-844a-488b-b00e-feb5e064cffa",
+        "credentials": {
+          "telegramApi": {
+            "id": "W6XV6RQORTB3eBDg",
+            "name": "Agent Dhruv"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "jsCode": "const text = ($input.first().json.message?.text || '').toLowerCase().trim();\nlet action = 'unknown';\n\nif (['approve', 'yes', 'y', 'ok', 'go', 'post', 'send'].some(w => text.includes(w)) || text === '\u2705') {\n  action = 'approve';\n} else if (['reject', 'no', 'n', 'skip', 'cancel', 'delete'].some(w => text.includes(w)) || text === '\u274c') {\n  action = 'reject';\n} else if (['edit', 'change', 'modify', 'update', 'fix'].some(w => text.includes(w)) || text === '\u270f\ufe0f') {\n  action = 'edit';\n}\n\nreturn [{ json: { action, raw: text } }];"
+        },
+        "type": "n8n-nodes-base.code",
+        "typeVersion": 2,
+        "position": [
+          -576,
+          992
+        ],
+        "id": "690d9a23-e27f-41ae-b347-87089afcf5c1",
+        "name": "Parse Response"
+      },
+      {
+        "parameters": {
+          "rules": {
+            "values": [
+              {
+                "conditions": {
+                  "conditions": [
+                    {
+                      "leftValue": "={{ $json.action }}",
+                      "rightValue": "approve",
+                      "operator": {
+                        "type": "string",
+                        "operation": "equals"
+                      }
+                    }
+                  ]
+                },
+                "renameOutput": true,
+                "outputKey": "Approve"
+              },
+              {
+                "conditions": {
+                  "conditions": [
+                    {
+                      "leftValue": "={{ $json.action }}",
+                      "rightValue": "reject",
+                      "operator": {
+                        "type": "string",
+                        "operation": "equals"
+                      }
+                    }
+                  ]
+                },
+                "renameOutput": true,
+                "outputKey": "Reject"
+              },
+              {
+                "conditions": {
+                  "conditions": [
+                    {
+                      "leftValue": "={{ $json.action }}",
+                      "rightValue": "edit",
+                      "operator": {
+                        "type": "string",
+                        "operation": "equals"
+                      }
+                    }
+                  ]
+                },
+                "renameOutput": true,
+                "outputKey": "Edit"
+              }
+            ]
+          },
+          "options": {
+            "fallbackOutput": "extra"
+          }
+        },
+        "type": "n8n-nodes-base.switch",
+        "typeVersion": 3.2,
+        "position": [
+          -352,
+          992
+        ],
+        "id": "d44fb388-7a7d-4725-94fb-a2203d8f54b6",
+        "name": "Route Action"
+      },
+      {
+        "parameters": {
+          "documentId": {
+            "__rl": true,
+            "value": "1YZk12lNR7ZpjtJ6pOB2ugIgVIyF15-oAGPhuzCg2KE4",
+            "mode": "list"
+          },
+          "sheetName": {
+            "__rl": true,
+            "value": 1811610359,
+            "mode": "list"
+          },
+          "filtersUI": {
+            "values": [
+              {
+                "lookupColumn": "Status",
+                "lookupValue": "Awaiting Approval"
+              }
+            ]
+          },
+          "options": {
+            "returnFirstMatch": true
+          }
+        },
+        "type": "n8n-nodes-base.googleSheets",
+        "typeVersion": 4.7,
+        "position": [
+          -96,
+          864
+        ],
+        "id": "8742cc88-ec0b-4341-bc8e-c6732bb37144",
+        "name": "Fetch Approved Post",
+        "credentials": {
+          "googleSheetsOAuth2Api": {
+            "id": "WbzVyGwbDVzvcV25",
+            "name": "Ai with Dhruv"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "conditions": {
+            "options": {
+              "caseSensitive": true,
+              "leftValue": "",
+              "typeValidation": "strict",
+              "version": 3
+            },
+            "conditions": [
+              {
+                "id": "0c5c1da6-cabc-4921-983f-fc7f02eff027",
+                "leftValue": "={{ $json['Drive Image Link'] }}",
+                "rightValue": "No Image",
+                "operator": {
+                  "type": "string",
+                  "operation": "notContains"
+                }
+              }
+            ],
+            "combinator": "and"
+          },
+          "options": {}
+        },
+        "type": "n8n-nodes-base.if",
+        "typeVersion": 2.3,
+        "position": [
+          128,
+          864
+        ],
+        "id": "782a31fe-3d5e-4be7-8b00-7143d98f98c3",
+        "name": "Has Image?"
+      },
+      {
+        "parameters": {
+          "url": "={{ $('Fetch Approved Post').item.json['Drive Image Link'] }}",
+          "options": {}
+        },
+        "type": "n8n-nodes-base.httpRequest",
+        "typeVersion": 4.2,
+        "position": [
+          368,
+          784
+        ],
+        "id": "41bad5d8-d65e-4c54-8582-486ea090f403",
+        "name": "Download Image"
+      },
+      {
+        "parameters": {
+          "person": "3WMM5wjeJH",
+          "text": "={{ $('Fetch Approved Post').item.json.Content }}",
+          "shareMediaCategory": "IMAGE",
+          "additionalFields": {}
+        },
+        "type": "n8n-nodes-base.linkedIn",
+        "typeVersion": 1,
+        "position": [
+          608,
+          784
+        ],
+        "id": "5654b0c2-fabb-4d77-bcef-6524dadb6cb7",
+        "name": "LinkedIn Post (Image)",
+        "credentials": {
+          "linkedInOAuth2Api": {
+            "id": "f520by1wOAMg6btX",
+            "name": "Dhruv"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "person": "3WMM5wjeJH",
+          "text": "={{ $('Fetch Approved Post').item.json.Content }}",
+          "additionalFields": {}
+        },
+        "type": "n8n-nodes-base.linkedIn",
+        "typeVersion": 1,
+        "position": [
+          608,
+          992
+        ],
+        "id": "f95a3716-fd42-49fb-8bfe-1e7e1e7ae797",
+        "name": "LinkedIn Post (Text)",
+        "credentials": {
+          "linkedInOAuth2Api": {
+            "id": "f520by1wOAMg6btX",
+            "name": "Dhruv"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "text": "={{ $('Fetch Approved Post').item.json.Content.substring(0, 275).replace(/\\s+\\S*$/, '') }}...",
+          "additionalFields": {}
+        },
+        "type": "n8n-nodes-base.twitter",
+        "typeVersion": 2,
+        "position": [
+          608,
+          1168
+        ],
+        "id": "c03f9d60-dfa6-4f9b-8813-b345492cba3e",
+        "name": "Post to Twitter",
+        "credentials": {
+          "twitterOAuth2Api": {
+            "id": "o0feRFKgKQPKR3ZX",
+            "name": "agiwithdhruv"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "operation": "update",
+          "documentId": {
+            "__rl": true,
+            "value": "1YZk12lNR7ZpjtJ6pOB2ugIgVIyF15-oAGPhuzCg2KE4",
+            "mode": "list"
+          },
+          "sheetName": {
+            "__rl": true,
+            "value": 1811610359,
+            "mode": "list"
+          },
+          "columns": {
+            "mappingMode": "defineBelow",
+            "value": {
+              "Status": "Posted",
+              "Topic": "={{ $('Fetch Approved Post').item.json.Topic }}"
+            },
+            "matchingColumns": [
+              "Topic"
+            ],
+            "schema": [
+              {
+                "id": "Topic",
+                "displayName": "Topic",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true
+              },
+              {
+                "id": "Status",
+                "displayName": "Status",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true
+              }
+            ]
+          },
+          "options": {}
+        },
+        "type": "n8n-nodes-base.googleSheets",
+        "typeVersion": 4.7,
+        "position": [
+          848,
+          896
+        ],
+        "id": "02423a54-521d-411a-acb3-bcfd4b25b2d5",
+        "name": "Update Posted",
+        "credentials": {
+          "googleSheetsOAuth2Api": {
+            "id": "WbzVyGwbDVzvcV25",
+            "name": "Ai with Dhruv"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "sendTo": "aiwithdhruv@gmail.com",
+          "subject": "=\u2705 Posted: {{ $('Fetch Approved Post').item.json.Topic }}",
+          "emailType": "text",
+          "message": "={{ $('Fetch Approved Post').item.json.Content }}\n\nImage: {{ $('Fetch Approved Post').item.json['Drive Image Link'] || 'No image' }}",
+          "options": {
+            "appendAttribution": false
+          }
+        },
+        "type": "n8n-nodes-base.gmail",
+        "typeVersion": 2.1,
+        "position": [
+          1072,
+          896
+        ],
+        "id": "d98f184f-2957-4180-bd3f-51944a2db105",
+        "name": "Email Confirmation",
+        "webhookId": "cfb7aef5-1c01-41a4-9709-28b66f8502df",
+        "credentials": {
+          "gmailOAuth2": {
+            "id": "gPGYzjuIbblOf3E1",
+            "name": "Ai with Dhruv"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "chatId": "637313836",
+          "text": "=\u2705 <b>POSTED SUCCESSFULLY</b>\n\n\ud83d\udccc {{ $('Fetch Approved Post').item.json.Topic }}\n\n\u2705 LinkedIn \u2714\n\u2705 Twitter \u2714\n\u2705 Sheet updated \u2714\n\u2705 Email sent \u2714",
+          "additionalFields": {
+            "parse_mode": "HTML"
+          }
+        },
+        "type": "n8n-nodes-base.telegram",
+        "typeVersion": 1.2,
+        "position": [
+          1296,
+          896
+        ],
+        "id": "132135b2-eff9-49e4-b70b-1dba747dfc49",
+        "name": "Notify Posted",
+        "webhookId": "d8b63ba6-7e96-4b7d-b5f3-fbf369fc7a92",
+        "credentials": {
+          "telegramApi": {
+            "id": "W6XV6RQORTB3eBDg",
+            "name": "Agent Dhruv"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "operation": "update",
+          "documentId": {
+            "__rl": true,
+            "value": "1YZk12lNR7ZpjtJ6pOB2ugIgVIyF15-oAGPhuzCg2KE4",
+            "mode": "list"
+          },
+          "sheetName": {
+            "__rl": true,
+            "value": 1811610359,
+            "mode": "list"
+          },
+          "columns": {
+            "mappingMode": "defineBelow",
+            "value": {
+              "Status": "Rejected",
+              "Topic": "={{ $('Fetch Approved Post').item.json.Topic }}"
+            },
+            "matchingColumns": [
+              "Topic"
+            ],
+            "schema": [
+              {
+                "id": "Topic",
+                "displayName": "Topic",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true
+              },
+              {
+                "id": "Status",
+                "displayName": "Status",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true
+              }
+            ]
+          },
+          "options": {}
+        },
+        "type": "n8n-nodes-base.googleSheets",
+        "typeVersion": 4.7,
+        "position": [
+          -96,
+          1088
+        ],
+        "id": "21416b3f-9483-4375-998a-9c32460b3661",
+        "name": "Update Rejected",
+        "credentials": {
+          "googleSheetsOAuth2Api": {
+            "id": "WbzVyGwbDVzvcV25",
+            "name": "Ai with Dhruv"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "chatId": "637313836",
+          "text": "\u274c Post rejected. Status updated in sheet.",
+          "additionalFields": {}
+        },
+        "type": "n8n-nodes-base.telegram",
+        "typeVersion": 1.2,
+        "position": [
+          128,
+          1088
+        ],
+        "id": "2225e89c-a4fe-4203-9579-02454541b43d",
+        "name": "Notify Rejected",
+        "webhookId": "6b182b67-990b-41c0-a9ad-20b71327819f",
+        "credentials": {
+          "telegramApi": {
+            "id": "W6XV6RQORTB3eBDg",
+            "name": "Agent Dhruv"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "chatId": "637313836",
+          "text": "=\u270f\ufe0f Edit mode activated.\n\nOpen the sheet, make your changes, then reply <code>approve</code> when ready.\n\n\ud83d\udcca https://docs.google.com/spreadsheets/d/1YZk12lNR7ZpjtJ6pOB2ugIgVIyF15-oAGPhuzCg2KE4/edit#gid=1811610359",
+          "additionalFields": {}
+        },
+        "type": "n8n-nodes-base.telegram",
+        "typeVersion": 1.2,
+        "position": [
+          -96,
+          1264
+        ],
+        "id": "6d90afed-ca51-49d6-b9e6-7d0fd679fdee",
+        "name": "Notify Edit",
+        "webhookId": "79737309-8985-47c5-9550-bf25bcda9bc7",
+        "credentials": {
+          "telegramApi": {
+            "id": "W6XV6RQORTB3eBDg",
+            "name": "Agent Dhruv"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "chatId": "637313836",
+          "text": "=\u26a0\ufe0f Didn't understand that.\n\nReply with:\n\u2705 approve\n\u274c reject\n\u270f\ufe0f edit",
+          "additionalFields": {}
+        },
+        "type": "n8n-nodes-base.telegram",
+        "typeVersion": 1.2,
+        "position": [
+          -96,
+          1408
+        ],
+        "id": "61eda529-8d6d-4bda-97bf-8c76b1146f4f",
+        "name": "Unknown Command",
+        "webhookId": "da4ed5ae-8731-4ff0-a5ac-e78fe6a3cd54",
+        "credentials": {
+          "telegramApi": {
+            "id": "W6XV6RQORTB3eBDg",
+            "name": "Agent Dhruv"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "content": "## \ud83d\udd35 CONTENT GENERATION\n**Trigger:** Every day at 2 PM IST\n\n1. Picks first 'To Do' topic from sheet\n2. AI generates LinkedIn post (GPT-5 + Perplexity research)\n3. Generates minimalist image\n4. Uploads image to Drive\n5. Updates sheet \u2192 'Awaiting Approval'\n6. Sends preview to Telegram\n\n**You review on Telegram and approve/reject/edit**",
+          "height": 300,
+          "width": 380
+        },
+        "type": "n8n-nodes-base.stickyNote",
+        "typeVersion": 1,
+        "position": [
+          -1248,
+          -256
+        ],
+        "id": "dd7fbc98-9cb8-48ff-9e6c-4a646b7b48b3",
+        "name": "Note - Generation"
+      },
+      {
+        "parameters": {
+          "content": "## \ud83d\udfe2 APPROVAL FLOW\n**Trigger:** Telegram message from you\n\n- `approve` / `yes` \u2192 Posts to LinkedIn + Twitter, updates sheet, sends email\n- `reject` / `no` \u2192 Marks rejected in sheet\n- `edit` \u2192 Sends sheet link, reply approve when done\n\n**\u26a0\ufe0f SETUP REQUIRED:**\n1. Set `TELEGRAM_CHAT_ID` env variable in n8n\n2. Connect Telegram Bot credentials\n3. Connect Twitter/X credentials\n4. Connect LinkedIn credentials\n5. Connect Gmail credentials\n6. Connect Google Sheets credentials\n7. Connect Google Drive credentials\n8. Connect OpenAI credentials\n9. Set Perplexity + OpenRouter HTTP Header Auth",
+          "height": 380,
+          "width": 440
+        },
+        "type": "n8n-nodes-base.stickyNote",
+        "typeVersion": 1,
+        "position": [
+          -1312,
+          1184
+        ],
+        "id": "7cb9464a-ad26-430c-8256-f5e4dc91e6f8",
+        "name": "Note - Approval"
+      },
+      {
+        "parameters": {
+          "toolDescription": "Use this tool to search the web for the latest, real-time information on any topic. Pass the topic or question as input. Returns up-to-date facts, data, and insights.",
+          "messages": {
+            "message": [
+              {
+                "content": "={{ $fromAI('query', 'The search query or topic to research') }}"
+              }
+            ]
+          },
+          "options": {
+            "model": "sonar",
+            "maxTokens": 2048,
+            "temperature": 0.3
+          },
+          "requestOptions": {}
+        },
+        "type": "n8n-nodes-base.perplexityTool",
+        "typeVersion": 1,
+        "position": [
+          96,
+          288
+        ],
+        "id": "00a22962-d096-4102-a703-0c2792808695",
+        "name": "Message a model in Perplexity",
+        "credentials": {
+          "perplexityApi": {
+            "id": "mACe6bHyuo7Z3exN",
+            "name": "Perplexity 2"
+          }
+        }
+      }
+    ],
+    "connections": {
+      "2 PM Trigger": {
+        "main": [
+          [
+            {
+              "node": "Get To Do Topic",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Get To Do Topic": {
+        "main": [
+          [
+            {
+              "node": "Has Topic?",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Has Topic?": {
+        "main": [
+          [
+            {
+              "node": "AI Content Generator",
+              "type": "main",
+              "index": 0
+            }
+          ],
+          [
+            {
+              "node": "Notify No Topics",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "GPT-5": {
+        "ai_languageModel": [
+          [
+            {
+              "node": "AI Content Generator",
+              "type": "ai_languageModel",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "AI Content Generator": {
+        "main": [
+          [
+            {
+              "node": "Image Prompt",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Image Prompt": {
+        "main": [
+          [
+            {
+              "node": "Generate Image",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Generate Image": {
+        "main": [
+          [
+            {
+              "node": "Extract Image Data",
+              "type": "main",
+              "index": 0
+            }
+          ],
+          [
+            {
+              "node": "Update Awaiting (No Image)",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Extract Image Data": {
+        "main": [
+          [
+            {
+              "node": "Convert to Image",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Convert to Image": {
+        "main": [
+          [
+            {
+              "node": "Upload to Drive",
+              "type": "main",
+              "index": 0
+            },
+            {
+              "node": "Send Image Preview",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Upload to Drive": {
+        "main": [
+          [
+            {
+              "node": "Update Awaiting (Image)",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Update Awaiting (Image)": {
+        "main": [
+          [
+            {
+              "node": "Send Preview",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Update Awaiting (No Image)": {
+        "main": [
+          [
+            {
+              "node": "Send Preview (No Image)",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Telegram Approval": {
+        "main": [
+          [
+            {
+              "node": "Parse Response",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Parse Response": {
+        "main": [
+          [
+            {
+              "node": "Route Action",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Route Action": {
+        "main": [
+          [
+            {
+              "node": "Fetch Approved Post",
+              "type": "main",
+              "index": 0
+            }
+          ],
+          [
+            {
+              "node": "Update Rejected",
+              "type": "main",
+              "index": 0
+            }
+          ],
+          [
+            {
+              "node": "Notify Edit",
+              "type": "main",
+              "index": 0
+            }
+          ],
+          [
+            {
+              "node": "Unknown Command",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Fetch Approved Post": {
+        "main": [
+          [
+            {
+              "node": "Has Image?",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Has Image?": {
+        "main": [
+          [
+            {
+              "node": "Download Image",
+              "type": "main",
+              "index": 0
+            }
+          ],
+          [
+            {
+              "node": "LinkedIn Post (Text)",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Download Image": {
+        "main": [
+          [
+            {
+              "node": "LinkedIn Post (Image)",
+              "type": "main",
+              "index": 0
+            },
+            {
+              "node": "Post to Twitter",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "LinkedIn Post (Image)": {
+        "main": [
+          [
+            {
+              "node": "Update Posted",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "LinkedIn Post (Text)": {
+        "main": [
+          [
+            {
+              "node": "Update Posted",
+              "type": "main",
+              "index": 0
+            },
+            {
+              "node": "Post to Twitter",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Update Posted": {
+        "main": [
+          [
+            {
+              "node": "Email Confirmation",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Email Confirmation": {
+        "main": [
+          [
+            {
+              "node": "Notify Posted",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Update Rejected": {
+        "main": [
+          [
+            {
+              "node": "Notify Rejected",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Message a model in Perplexity": {
+        "ai_tool": [
+          [
+            {
+              "node": "AI Content Generator",
+              "type": "ai_tool",
+              "index": 0
+            }
+          ]
+        ]
+      }
+    },
+    "authors": "Dhruv Tomar",
+    "name": null,
+    "description": null,
+    "autosaved": false
+  },
+  "tags": []
+}

@@ -1,0 +1,361 @@
+{
+  "updatedAt": "2025-12-13T18:54:24.748Z",
+  "createdAt": "2025-12-13T14:36:54.863Z",
+  "id": "zboomRhTQn5WtbDT",
+  "name": "13th_Dec_FSA",
+  "active": false,
+  "isArchived": false,
+  "nodes": [
+    {
+      "parameters": {
+        "content": "## Class Agenda\n\n### Webhook - Security \n### Google Workspace - How to connect \n        - Gmail , Doc , Drive , Sheet ",
+        "height": 224,
+        "width": 432,
+        "color": 5
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -1472,
+        -432
+      ],
+      "id": "c499ed21-0d85-4774-ad3f-cf542e7322d5",
+      "name": "Sticky Note"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "={{ $json.body.message }}",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 3,
+      "position": [
+        -144,
+        -432
+      ],
+      "id": "f9480bd8-70cb-4da8-af36-56882e48130a",
+      "name": "AI Agent"
+    },
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "dbccb470-ea4e-4462-a748-f372c9f59fc8",
+        "responseMode": "responseNode",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2.1,
+      "position": [
+        -352,
+        -432
+      ],
+      "id": "68c3da93-6aad-4790-acf9-3ee3c27bbd19",
+      "name": "Webhook",
+      "webhookId": "dbccb470-ea4e-4462-a748-f372c9f59fc8"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.5,
+      "position": [
+        160,
+        -432
+      ],
+      "id": "d2949b9f-96c6-4d39-a048-355e5cfe0b05",
+      "name": "Respond to Webhook"
+    },
+    {
+      "parameters": {
+        "content": "## \"Which Auth Do I Use?\"\n\n### Start Here\n- Always check the external service first.\n- Use the simplest auth method that works.\n- Avoid over-engineering authentication.\n\n### Does the external service already support a specific auth method?\n- Yes \u2192 Use the auth method they officially support\n- No \u2192 Continue below\n\n### Do you need time-limited access or user-specific metadata?\n- Yes \u2192 Use JWT\n- No \u2192 Continue below\n\n### Are you using a simple API key or static token?\n- Yes \u2192 Use Header Auth\n- No \u2192 Continue below\n\n### Does the service support standard HTTP Basic Auth?\n- Yes \u2192 Use Basic Auth\n- No \u2192 Use Header Auth (most flexible option)\n\n### Real-World Examples\n- Basic Auth  \n  Connecting to enterprise tools like Jira, Jenkins, legacy CRMs\n\n- Header Auth  \n  Modern APIs like Slack, Discord, Stripe, custom SaaS APIs using API keys\n\n- JWT  \n  Microservices, mobile backends, AI agents, user-level permissions\n\n### n8n Practical Tip\n- If unsure \u2192 Start with Header Auth\n- JWT is best when security + expiry + user context is required\n- Basic Auth is fine for internal or trusted systems only",
+        "height": 960,
+        "width": 560,
+        "color": 5
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -976,
+        -528
+      ],
+      "id": "e23f790b-ec66-418a-8f04-d3e6c11a5a97",
+      "name": "Sticky Note1"
+    },
+    {
+      "parameters": {
+        "model": "nex-agi/deepseek-v3.1-nex-n1:free",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenRouter",
+      "typeVersion": 1,
+      "position": [
+        -128,
+        -256
+      ],
+      "id": "29fb6f7f-9ff2-46d1-b578-d6b191ebb073",
+      "name": "OpenRouter Chat Model",
+      "credentials": {
+        "openRouterApi": {
+          "id": "5NHf7ILbLoMVxKcb",
+          "name": "OpenRouter account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "authentication": "serviceAccount",
+        "sendTo": "aiwithdhruv@gmail.com",
+        "subject": "Hey N8N Test",
+        "message": "2 Hey Hope You Enjoyed Fulll Stack Automatino Classes",
+        "options": {
+          "appendAttribution": false
+        }
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.2,
+      "position": [
+        304,
+        -224
+      ],
+      "id": "6f7b1567-b205-4620-b5b1-a91c0cfc689b",
+      "name": "Send a message",
+      "webhookId": "ed9d3332-156f-448b-a33c-62bb41e1e9da"
+    },
+    {
+      "parameters": {
+        "operation": "get"
+      },
+      "type": "n8n-nodes-base.googleDocs",
+      "typeVersion": 2,
+      "position": [
+        784,
+        -16
+      ],
+      "id": "2156087b-e90f-4f3f-a77d-d4b012650a8e",
+      "name": "Get a document",
+      "credentials": {
+        "googleDocsOAuth2Api": {
+          "id": "Frzng5dv2ZMPNM7C",
+          "name": "Dhruv7008@"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "documentId": {
+          "__rl": true,
+          "value": "1CVpxex3gO3n94rCvfZTkLyVQ4OCysio-qmxSAFRFTJ8",
+          "mode": "list",
+          "cachedResultName": "Full Stack Automation ",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1CVpxex3gO3n94rCvfZTkLyVQ4OCysio-qmxSAFRFTJ8/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Full Stack",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1CVpxex3gO3n94rCvfZTkLyVQ4OCysio-qmxSAFRFTJ8/edit#gid=0"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Remark": "=Hey WAntd to upadte to test Cool {{ $json.message.text }}"
+          },
+          "matchingColumns": [
+            "Remark"
+          ],
+          "schema": [
+            {
+              "id": "Name",
+              "displayName": "Name",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Phone",
+              "displayName": "Phone",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Remark",
+              "displayName": "Remark",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "row_number",
+              "displayName": "row_number",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "number",
+              "canBeUsedToMatch": true,
+              "readOnly": true,
+              "removed": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        976,
+        -480
+      ],
+      "id": "7f4e70a7-cc79-4e93-96b3-e33955140ca5",
+      "name": "Update row in sheet",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "SdL7tmc5CSF99khk",
+          "name": "Dhruv7008@"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "download",
+        "fileId": {
+          "__rl": true,
+          "mode": "list",
+          "value": ""
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleDrive",
+      "typeVersion": 3,
+      "position": [
+        240,
+        -16
+      ],
+      "id": "d4ee3723-8d2a-454c-b268-e92da1c1449a",
+      "name": "Download file",
+      "credentials": {
+        "googleDriveOAuth2Api": {
+          "id": "psUvEIKl2HJGhQqf",
+          "name": "Dhruv7008@"
+        }
+      },
+      "disabled": true
+    },
+    {
+      "parameters": {
+        "updates": [
+          "message"
+        ],
+        "additionalFields": {}
+      },
+      "type": "n8n-nodes-base.telegramTrigger",
+      "typeVersion": 1.2,
+      "position": [
+        752,
+        -480
+      ],
+      "id": "4224e89e-d76b-4c02-bb24-115e62686de0",
+      "name": "Telegram Trigger",
+      "webhookId": "e254cf2e-a972-4bac-8554-b1b1f631669a",
+      "credentials": {
+        "telegramApi": {
+          "id": "W6XV6RQORTB3eBDg",
+          "name": "Agent Dhruv"
+        }
+      }
+    }
+  ],
+  "connections": {
+    "Webhook": {
+      "main": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "AI Agent": {
+      "main": [
+        [
+          {
+            "node": "Respond to Webhook",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenRouter Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Send a message": {
+      "main": [
+        []
+      ]
+    },
+    "Download file": {
+      "main": [
+        []
+      ]
+    },
+    "Telegram Trigger": {
+      "main": [
+        [
+          {
+            "node": "Update row in sheet",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "staticData": null,
+  "meta": {
+    "templateCredsSetupCompleted": true
+  },
+  "pinData": {},
+  "versionId": "a0f63340-3e3a-462d-9d31-b845f53b3b13",
+  "activeVersionId": null,
+  "triggerCount": 1,
+  "shared": [
+    {
+      "updatedAt": "2025-12-13T14:36:54.869Z",
+      "createdAt": "2025-12-13T14:36:54.869Z",
+      "role": "workflow:owner",
+      "workflowId": "zboomRhTQn5WtbDT",
+      "projectId": "DT8YjHwLZsQjJqVc"
+    }
+  ],
+  "activeVersion": null,
+  "tags": []
+}

@@ -1,0 +1,496 @@
+{
+  "updatedAt": "2026-01-25T12:51:36.006Z",
+  "createdAt": "2026-01-25T12:25:54.146Z",
+  "id": "fCeItUjW-GAtpp6yjQKQA",
+  "name": "25th_Jan_EuriAPI_Telegram_Basic chat",
+  "active": false,
+  "isArchived": false,
+  "nodes": [
+    {
+      "parameters": {
+        "content": "# Class Agenda\n\n## input  processing - output\n\n",
+        "height": 256
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        0,
+        0
+      ],
+      "typeVersion": 1,
+      "id": "a9839b19-13c5-4442-b3fd-b399dab8df39",
+      "name": "Sticky Note"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.chatTrigger",
+      "typeVersion": 1.4,
+      "position": [
+        368,
+        96
+      ],
+      "id": "6976bb7e-fedb-4b2f-93c7-e90b3b0bfcb9",
+      "name": "When chat message received",
+      "webhookId": "69086fd0-5926-4c13-9f5f-4390f98c9273"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "={{ $json.message.text }}",
+        "options": {
+          "systemMessage": "User Tavliy to get letest inforamtion from internet"
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 3.1,
+      "position": [
+        576,
+        96
+      ],
+      "id": "dc7270bd-b2f9-49bf-931e-97f7ba875d16",
+      "name": "AI Agent"
+    },
+    {
+      "parameters": {},
+      "type": "@n8n/n8n-nodes-langchain.memoryBufferWindow",
+      "typeVersion": 1.3,
+      "position": [
+        640,
+        288
+      ],
+      "id": "26c562e0-e2fc-42a5-a938-b77cb87e3579",
+      "name": "Simple Memory"
+    },
+    {
+      "parameters": {
+        "descriptionType": "manual",
+        "toolDescription": "Use this tool to get letest information",
+        "messages": {
+          "message": [
+            {
+              "content": "={{ $json.chatInput }}"
+            }
+          ]
+        },
+        "options": {},
+        "requestOptions": {}
+      },
+      "type": "n8n-nodes-base.perplexityTool",
+      "typeVersion": 1,
+      "position": [
+        832,
+        288
+      ],
+      "id": "b362c58d-60bc-4d2c-ab02-27b91703508d",
+      "name": "Perplexity",
+      "credentials": {
+        "perplexityApi": {
+          "id": "mACe6bHyuo7Z3exN",
+          "name": "Perplexity 2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "query": "={{ $json.chatInput }}",
+        "options": {}
+      },
+      "type": "@tavily/n8n-nodes-tavily.tavilyTool",
+      "typeVersion": 1,
+      "position": [
+        992,
+        288
+      ],
+      "id": "3e5f8014-d20f-4e69-a45e-f835a86b3544",
+      "name": "Tavily",
+      "credentials": {
+        "tavilyApi": {
+          "id": "5GWaJhYsrLHYZkOF",
+          "name": "Tavily account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "model": "google/gemini-3-flash-preview",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenRouter",
+      "typeVersion": 1,
+      "position": [
+        480,
+        288
+      ],
+      "id": "79275f18-8376-4daf-afe3-c2f34e432937",
+      "name": "OpenRouter Chat Model",
+      "credentials": {
+        "openRouterApi": {
+          "id": "5NHf7ILbLoMVxKcb",
+          "name": "OpenRouter account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.euron.one/api/v1/euri/images/generations",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Authorization",
+              "value": "Bearer euri-ecdee08805352f002f7387e5d848f3787d31fcdc28e1ab13f6855d952ae3d4a9"
+            }
+          ]
+        },
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "prompt",
+              "value": "={{ $json.output }}"
+            },
+            {
+              "name": "model",
+              "value": "gemini-3-pro-image-preview"
+            },
+            {
+              "name": "n",
+              "value": "1"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.3,
+      "position": [
+        1888,
+        160
+      ],
+      "id": "3b81b910-37fb-4998-8fc7-cbe623e103f4",
+      "name": "HTTP Request"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "={{ $json.message.text }}",
+        "options": {
+          "systemMessage": "You are an expert Image Prompt Generator.\n\nYour job is to convert a user\u2019s input into a clear, detailed, and visually rich image prompt that can be directly used by any AI image generation model (such as Midjourney, DALL\u00b7E, Stable Diffusion, etc.).\n\nRULES:\n1. Always output a well-structured image prompt in plain text (no JSON).\n2. The prompt must describe:\n   - Subject (who or what is in the image)\n   - Environment / background\n   - Style (realistic, cinematic, illustration, anime, 3D, etc.)\n   - Lighting and mood\n   - Colors and textures\n   - Camera angle or composition (if applicable)\n   - Level of detail and quality (e.g., ultra-detailed, 8K, photorealistic)\n3. Enhance the user\u2019s idea creatively while staying true to their intent.\n4. Do NOT include explanations, reasoning, or extra text \u2014 only the final image prompt.\n\nCLARIFICATION RULE:\n- If the user input is vague, random, or unclear, do NOT guess.\n- Ask a short follow-up question like:\n  \u201cCan you describe what kind of image you want? (subject, style, mood, setting)\u201d\n\nOUTPUT FORMAT:\n- Always return ONLY the final image prompt as a single, well-written paragraph.\n- No bullet points, no headings, no markdown.\n\nGOAL:\nCreate image prompts that consistently produce beautiful, high-quality, visually stunning AI-generated images."
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 3.1,
+      "position": [
+        1568,
+        160
+      ],
+      "id": "cdfff146-daf0-4352-a135-a5fe8c8c311f",
+      "name": "AI Agent1"
+    },
+    {
+      "parameters": {
+        "model": "google/gemini-3-flash-preview",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenRouter",
+      "typeVersion": 1,
+      "position": [
+        1520,
+        384
+      ],
+      "id": "ddcc0266-bd21-45bd-a000-c4a3ae9d1553",
+      "name": "OpenRouter Chat Model1",
+      "credentials": {
+        "openRouterApi": {
+          "id": "5NHf7ILbLoMVxKcb",
+          "name": "OpenRouter account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "chatId": "637313836",
+        "text": "=Here is your image URL for the promt - \n{{ $json.data[0].revised_prompt }}\n\nURL - {{ $json.data[0].url }}",
+        "additionalFields": {
+          "appendAttribution": false
+        }
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        2096,
+        160
+      ],
+      "id": "7f3097cd-633e-424c-9fb1-0e3b44b41113",
+      "name": "Send a text message",
+      "webhookId": "1d876432-478a-41b2-b99e-488d7d57c274",
+      "credentials": {
+        "telegramApi": {
+          "id": "pBebIzAkaPLrot3S",
+          "name": "dgenai2026"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "updates": [
+          "message"
+        ],
+        "additionalFields": {}
+      },
+      "type": "n8n-nodes-base.telegramTrigger",
+      "typeVersion": 1.2,
+      "position": [
+        1376,
+        160
+      ],
+      "id": "ba3585bc-a94f-425e-bbf1-dbf4c9e1cbac",
+      "name": "Telegram Trigger",
+      "webhookId": "1f0399fd-7844-4c0c-be79-567f46b1a48b",
+      "credentials": {
+        "telegramApi": {
+          "id": "pBebIzAkaPLrot3S",
+          "name": "dgenai2026"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.euron.one/api/v1/euri/chat/completions",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpBearerAuth",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"messages\": [\n    {\n      \"role\": \"user\",\n      \"content\": \" {{ $json.chatInput }}\"\n    }\n  ],\n  \"model\": \"gemini-2.5-pro\",\n  \"max_tokens\": 1000,\n  \"temperature\": 0.7\n}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.3,
+      "position": [
+        1600,
+        608
+      ],
+      "id": "514ca302-d789-45cf-841e-4099019c7232",
+      "name": "Euri Text",
+      "credentials": {
+        "httpBearerAuth": {
+          "id": "8ZkhkWsck6v2KCTU",
+          "name": "Euri"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "return [\n  {\n    json: {\n      message: $json.choices[0].message.content\n    }\n  }\n];"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1824,
+        608
+      ],
+      "id": "a6b1a015-7ef7-47d5-a825-c72c28bc1df8",
+      "name": "Structure Output"
+    },
+    {
+      "parameters": {
+        "updates": [
+          "message"
+        ],
+        "additionalFields": {}
+      },
+      "type": "n8n-nodes-base.telegramTrigger",
+      "typeVersion": 1.2,
+      "position": [
+        1360,
+        608
+      ],
+      "id": "ee8fa560-5f8c-4ff2-9fd8-fc1e85203c5c",
+      "name": "Telegram Trigger1",
+      "webhookId": "1f0399fd-7844-4c0c-be79-567f46b1a48b",
+      "credentials": {
+        "telegramApi": {
+          "id": "pBebIzAkaPLrot3S",
+          "name": "dgenai2026"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "content": "## Chat  Text using Euri Chat End  Point",
+        "width": 1184
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        912,
+        592
+      ],
+      "typeVersion": 1,
+      "id": "e9319211-f4ed-4198-b1c0-cbad4a4d9187",
+      "name": "Sticky Note1"
+    },
+    {
+      "parameters": {
+        "content": "## Generate Image  using Euri Image End  Point",
+        "height": 464,
+        "width": 1184,
+        "color": 5
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        1088,
+        80
+      ],
+      "typeVersion": 1,
+      "id": "7a273424-6173-4787-b057-509c7baab63e",
+      "name": "Sticky Note2"
+    }
+  ],
+  "connections": {
+    "When chat message received": {
+      "main": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Simple Memory": {
+      "ai_memory": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_memory",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Perplexity": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Tavily": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenRouter Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenRouter Chat Model1": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent1",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "AI Agent1": {
+      "main": [
+        [
+          {
+            "node": "HTTP Request",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HTTP Request": {
+      "main": [
+        [
+          {
+            "node": "Send a text message",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Telegram Trigger": {
+      "main": [
+        [
+          {
+            "node": "AI Agent1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Euri Text": {
+      "main": [
+        [
+          {
+            "node": "Structure Output",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Telegram Trigger1": {
+      "main": [
+        [
+          {
+            "node": "Euri Text",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1",
+    "availableInMCP": false
+  },
+  "staticData": null,
+  "meta": null,
+  "pinData": {},
+  "versionId": "f20a2397-cbc1-4247-acf4-7cfe35cc08a1",
+  "activeVersionId": null,
+  "triggerCount": 0,
+  "shared": [
+    {
+      "updatedAt": "2026-01-25T12:25:54.151Z",
+      "createdAt": "2026-01-25T12:25:54.151Z",
+      "role": "workflow:owner",
+      "workflowId": "fCeItUjW-GAtpp6yjQKQA",
+      "projectId": "DT8YjHwLZsQjJqVc"
+    }
+  ],
+  "activeVersion": null,
+  "tags": []
+}

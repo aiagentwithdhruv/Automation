@@ -1,0 +1,1176 @@
+{
+  "updatedAt": "2026-02-07T14:58:29.637Z",
+  "createdAt": "2026-02-06T13:30:08.564Z",
+  "id": "a7B0-JVg-KXoqP_0VImy5",
+  "name": "Setu - Research & Copywriting Pipeline (Demo)",
+  "active": true,
+  "isArchived": false,
+  "nodes": [
+    {
+      "parameters": {
+        "content": "## \ud83d\udcb0 INVESTMENT & ROI\n\n**Pilot Build:** \u20b940,000 (one-time)\n**API Cost:** ~\u20b9500-1,500/month (OpenAI + Search)\n**Maintenance:** Optional \u20b95,000/month\n\n---\n\n**\u23f1\ufe0f Time Saved:** 15-20 hrs/week\n**\ud83d\udcb5 Cost per copy set:** Under \u20b95\n**\ud83d\udcb5 Current cost:** \u20b92,000-5,000 (freelancer) or 4-6 hrs (in-house)\n\n**\ud83c\udfaf ROI: Pays for itself in Week 1.**",
+        "height": 80,
+        "width": 340,
+        "color": 4
+      },
+      "id": "968f0724-d36f-457f-b400-056667c67818",
+      "name": "Sticky Note7",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -336,
+        1952
+      ]
+    },
+    {
+      "parameters": {
+        "messages": {
+          "message": [
+            {
+              "content": "=You are a pharmaceutical research analyst. Research the supplement ingredient \"{{ $json['Product or Ingredient Name'] }}\" and provide:\n\n1. TOP 3 CLINICAL BENEFITS \u2014 cite specific studies, dosages, and measurable outcomes (e.g., \"500mg daily reduced X by 23% in a 12-week RCT\")\n2. MECHANISM OF ACTION \u2014 how it works in the body (simple, clear)\n3. RECOMMENDED DOSAGE \u2014 standard effective dose range\n4. SAFETY PROFILE \u2014 any contraindications or side effects\n5. KEY DIFFERENTIATOR \u2014 what makes this ingredient special vs alternatives\n\nBe specific. Include numbers, study references, and clinical data. No generic claims."
+            }
+          ]
+        },
+        "options": {},
+        "requestOptions": {}
+      },
+      "type": "n8n-nodes-base.perplexity",
+      "typeVersion": 1,
+      "position": [
+        544,
+        1520
+      ],
+      "id": "9204bd4f-f04f-478a-9ee8-560938b93f94",
+      "name": "Research \u2014 Clinical Studies",
+      "credentials": {
+        "perplexityApi": {
+          "id": "mACe6bHyuo7Z3exN",
+          "name": "Perplexity 2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "messages": {
+          "message": [
+            {
+              "content": "=Analyze how top D2C supplement brands in India are marketing \"{{ $json['Product or Ingredient Name'] }}\" products. Look at brands like Setu, Wellbeing Nutrition, Oziva, Plix, Carbamide Forte on Amazon.in, Nykaa, 1mg.\n\nProvide:\n1. TOP 3 COMPETITOR PRODUCT NAMES & PRICES\n2. MOST USED CLAIMS \u2014 what benefits do they highlight?\n3. COMMON HOOKS \u2014 what language patterns work? (e.g., \"clinically proven\", \"doctor recommended\")\n4. GAP ANALYSIS \u2014 what are competitors NOT saying that Setu could own?\n5. BEST-SELLING FORMAT \u2014 capsules, gummies, powder, effervescent?\n\nBe specific with brand names, prices, and exact copy phrases used."
+            }
+          ]
+        },
+        "options": {},
+        "requestOptions": {}
+      },
+      "type": "n8n-nodes-base.perplexity",
+      "typeVersion": 1,
+      "position": [
+        544,
+        1760
+      ],
+      "id": "1115bfeb-0914-428c-af35-52a4451484b5",
+      "name": "Research \u2014 Competitor Analysis",
+      "credentials": {
+        "perplexityApi": {
+          "id": "mACe6bHyuo7Z3exN",
+          "name": "Perplexity 2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "modelId": {
+          "__rl": true,
+          "value": "gpt-5.1",
+          "mode": "list",
+          "cachedResultName": "GPT-5.1"
+        },
+        "messages": {
+          "values": [
+            {
+              "content": "=You are the Head of Content at Setu Nutrition (setu.in) \u2014 India's premium, science-backed supplement brand founded by Nihaal Mariwala.\n\nBrand Voice: Clean. Trustworthy. Science-forward. Premium but approachable. Never salesy or exaggerated.\nBrand Values: Transparency, clinical backing, daily wellness made simple.\n\n---\n\nPRODUCT / INGREDIENT: {{ $json.product_name }}\nTARGET AUDIENCE: {{ $json.target_audience }}\nCOPY TYPE REQUESTED: {{ $json.copy_type }}\n\n\ud83d\udcca CLINICAL RESEARCH:\n{{ $json.clinical_research }}\n\n\ud83d\udcc8 COMPETITOR ANALYSIS:\n{{ $json.competitor_analysis }}\n\n---\n\nGenerate ALL of the following in clean, structured format:\n\n\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\n\ud83d\udcc4 1. PRODUCT PAGE DESCRIPTION\n\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\n- 150-200 words\n- Lead with the #1 consumer benefit (not the ingredient name)\n- Include 2-3 specific research-backed claims with numbers\n- Mention dosage and form factor\n- End with a confident CTA\n- Write in Setu's tone: clean, premium, science-backed\n\n\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\n\ud83d\udcf1 2. SOCIAL MEDIA CAPTIONS (3 variants)\n\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\nEach caption:\n- 80-120 words\n- Pattern-interrupt hook in first line\n- 3 benefit bullets with emojis\n- Strong CTA\n- 5 relevant hashtags including #SetuNutrition\n\nVariant A: Educational / myth-busting\nVariant B: Lifestyle / aspirational\nVariant C: Testimonial-style / social proof\n\n\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\n\ud83d\udce2 3. AD COPY (3 variants, 30-50 words each)\n\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\n- Variant A: Problem \u2192 Solution\n- Variant B: Benefit-led (transformation)\n- Variant C: Social proof / statistic-led\n\nInclude suggested CTA button text for each.\n\n\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\n\u2709\ufe0f 4. EMAIL SUBJECT LINES (5 options)\n\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\nMix of:\n- Curiosity gap\n- Benefit-first\n- Urgency/FOMO\n- Question-based\n- Personal/conversational\n\n\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\n\ud83d\udd2c 5. RESEARCH SUMMARY & COMPLIANCE FLAGS\n\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\n- Key clinical claims used (with source references)\n- Flag any claims that need FSSAI/AYUSH compliance review\n- Recommended disclaimers\n\n\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\n\ud83d\udca1 6. CONTENT STRATEGY NOTES\n\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\n- Top 3 angles competitors are missing\n- Suggested influencer talking points\n- Recommended content formats (reel, carousel, blog)\n\nWrite copy that converts. Be specific. No fluff. Every claim must be backed by the research provided."
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "004c02ea-0486-4318-8122-74906b188249",
+      "name": "AI \u2014 Generate Copy Variants",
+      "type": "@n8n/n8n-nodes-langchain.openAi",
+      "typeVersion": 1.8,
+      "position": [
+        1312,
+        1648
+      ],
+      "credentials": {
+        "openAiApi": {
+          "id": "t2xlHGBT89qC17Hp",
+          "name": "RAG_Vector"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "// Get AI output and metadata\nconst aiOutput = $('AI \u2014 Generate Copy Variants').item.json.message?.content || $('AI \u2014 Generate Copy Variants').item.json.choices?.[0]?.message?.content || 'Copy generation completed \u2014 check raw output';\nconst product = $('Prepare AI Context1').item.json.product_name;\nconst audience = $('Prepare AI Context1').item.json.target_audience;\nconst copyType = $('Prepare AI Context1').item.json.copy_type;\nconst timestamp = new Date().toLocaleString('en-IN', { timeZone: 'Asia/Kolkata' });\n\n// Convert markdown-style formatting to HTML\nlet formattedContent = aiOutput\n  // Section headers with dividers\n  .replace(/\u2501+/g, '')\n  .replace(/^(\ud83d\udcc4|\ud83d\udcf1|\ud83d\udce2|\u2709\ufe0f|\ud83d\udd2c|\ud83d\udca1)\\s*\\d+\\.\\s*(.+)$/gm, '<tr><td colspan=\"2\" style=\"background:#0a2540; color:#00e5c0; padding:16px 24px; font-size:16px; font-weight:700; letter-spacing:0.5px; border-radius:8px;\">$1 $2</td></tr><tr><td colspan=\"2\" style=\"padding:4px;\"></td></tr>')\n  // Bold text\n  .replace(/\\*\\*(.+?)\\*\\*/g, '<strong style=\"color:#0a2540;\">$1</strong>')\n  // Variant headers\n  .replace(/^(Variant [A-C]:?.*)$/gm, '<tr><td colspan=\"2\" style=\"padding:12px 24px 4px; color:#00b894; font-weight:600; font-size:14px;\">$1</td></tr>')\n  // Bullet points with checkmarks\n  .replace(/^[-\u2022]\\s*(.+)$/gm, '<tr><td style=\"width:24px; padding:4px 0 4px 24px; vertical-align:top; color:#00e5c0;\">\u2726</td><td style=\"padding:4px 24px 4px 8px; color:#334155; line-height:1.6;\">$1</td></tr>')\n  // Numbered items\n  .replace(/^(\\d+)\\.\\s*(.+)$/gm, '<tr><td style=\"width:24px; padding:4px 0 4px 24px; vertical-align:top; color:#00e5c0; font-weight:700;\">$1.</td><td style=\"padding:4px 24px 4px 8px; color:#334155; line-height:1.6;\">$2</td></tr>')\n  // Regular paragraphs\n  .replace(/^(?!<tr)(.+)$/gm, '<tr><td colspan=\"2\" style=\"padding:4px 24px; color:#334155; line-height:1.7;\">$1</td></tr>')\n  // Clean up empty lines\n  .replace(/^\\s*$/gm, '<tr><td colspan=\"2\" style=\"padding:6px;\"></td></tr>');\n\n// Build the full branded HTML email\nconst htmlEmail = `\n<!DOCTYPE html>\n<html>\n<head><meta charset=\"utf-8\"><meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\"></head>\n<body style=\"margin:0; padding:0; background:#f0f4f8; font-family:'Segoe UI',Roboto,Helvetica,Arial,sans-serif;\">\n<table width=\"100%\" cellpadding=\"0\" cellspacing=\"0\" style=\"background:#f0f4f8; padding:24px 0;\">\n<tr><td align=\"center\">\n<table width=\"640\" cellpadding=\"0\" cellspacing=\"0\" style=\"background:#ffffff; border-radius:16px; overflow:hidden; box-shadow:0 4px 24px rgba(0,0,0,0.08);\">\n\n<!-- HEADER -->\n<tr><td style=\"background:linear-gradient(135deg, #0a2540 0%, #1a3a5c 100%); padding:32px 40px; text-align:center;\">\n  <table width=\"100%\" cellpadding=\"0\" cellspacing=\"0\">\n  <tr><td style=\"text-align:center;\">\n    <div style=\"font-size:28px; font-weight:800; color:#ffffff; letter-spacing:-0.5px;\">SETU</div>\n    <div style=\"font-size:11px; color:#00e5c0; letter-spacing:3px; margin-top:4px; text-transform:uppercase;\">Nutrition Science</div>\n  </td></tr>\n  <tr><td style=\"padding-top:20px; text-align:center;\">\n    <div style=\"display:inline-block; background:rgba(0,229,192,0.15); border:1px solid rgba(0,229,192,0.3); border-radius:50px; padding:8px 24px;\">\n      <span style=\"color:#00e5c0; font-size:13px; font-weight:600;\">\u2728 AI-Generated Content Ready for Review</span>\n    </div>\n  </td></tr>\n  </table>\n</td></tr>\n\n<!-- META BAR -->\n<tr><td style=\"background:#f8fafc; padding:20px 40px; border-bottom:1px solid #e2e8f0;\">\n  <table width=\"100%\" cellpadding=\"0\" cellspacing=\"0\">\n  <tr>\n    <td style=\"width:33%;\">\n      <div style=\"font-size:10px; color:#94a3b8; text-transform:uppercase; letter-spacing:1px;\">Product</div>\n      <div style=\"font-size:15px; color:#0a2540; font-weight:700; margin-top:4px;\">${product}</div>\n    </td>\n    <td style=\"width:33%; text-align:center;\">\n      <div style=\"font-size:10px; color:#94a3b8; text-transform:uppercase; letter-spacing:1px;\">Audience</div>\n      <div style=\"font-size:15px; color:#0a2540; font-weight:700; margin-top:4px;\">${audience}</div>\n    </td>\n    <td style=\"width:33%; text-align:right;\">\n      <div style=\"font-size:10px; color:#94a3b8; text-transform:uppercase; letter-spacing:1px;\">Copy Type</div>\n      <div style=\"font-size:15px; color:#0a2540; font-weight:700; margin-top:4px;\">${copyType}</div>\n    </td>\n  </tr>\n  </table>\n</td></tr>\n\n<!-- CONTENT -->\n<tr><td style=\"padding:8px 0;\">\n  <table width=\"100%\" cellpadding=\"0\" cellspacing=\"0\">\n  ${formattedContent}\n  </table>\n</td></tr>\n\n<!-- DIVIDER -->\n<tr><td style=\"padding:0 40px;\">\n  <div style=\"border-top:2px solid #e2e8f0;\"></div>\n</td></tr>\n\n<!-- FOOTER -->\n<tr><td style=\"padding:24px 40px; text-align:center;\">\n  <div style=\"font-size:11px; color:#94a3b8; text-transform:uppercase; letter-spacing:2px; margin-bottom:8px;\">Powered by</div>\n  <div style=\"font-size:18px; font-weight:700; color:#0a2540;\">Agentic AI Hub</div>\n  <div style=\"font-size:12px; color:#64748b; margin-top:4px;\">Turning AI into Outcomes</div>\n  <div style=\"margin-top:12px;\">\n    <span style=\"display:inline-block; background:#0a2540; color:#00e5c0; padding:8px 20px; border-radius:6px; font-size:12px; font-weight:600; text-decoration:none;\">Built by AIwithDhruv</span>\n  </div>\n  <div style=\"font-size:11px; color:#cbd5e1; margin-top:16px;\">Generated on ${timestamp} IST</div>\n</td></tr>\n\n</table>\n</td></tr>\n</table>\n</body>\n</html>`;\n\nreturn [{\n  json: {\n    htmlEmail: htmlEmail,\n    rawContent: aiOutput,\n    product_name: product,\n    target_audience: audience,\n    copy_type: copyType,\n    generated_at: timestamp\n  }\n}];"
+      },
+      "id": "b6f31f3e-0e78-4bf9-8262-3bdb37cfd5b4",
+      "name": "Format \u2014 Setu Branded Email",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1600,
+        1648
+      ]
+    },
+    {
+      "parameters": {
+        "sendTo": "=kamaljd99@gmail.com",
+        "subject": "=\ud83e\uddec Setu Content Ready \u2014 {{ $json.product_name }} | {{ $json.copy_type }}",
+        "message": "={{ $json.htmlEmail }}",
+        "options": {
+          "appendAttribution": false
+        }
+      },
+      "id": "a15d17d0-ae7a-410e-9c0e-d908031d5f17",
+      "name": "Email \u2014 Branded Report",
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.1,
+      "position": [
+        1840,
+        1776
+      ],
+      "webhookId": "90b6dfd8-d062-47f9-9795-06e017700f8a",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "gPGYzjuIbblOf3E1",
+          "name": "Ai with Dhruv"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "content": "## \ud83d\udce4 STAGE 6 \u2014 DELIVERY\n\nResults go to **two places automatically:**\n\n**Google Sheet** \u2192 Master content library.\nColumns: Product, Audience, Copy Type, Content, Timestamp.\nEvery SKU's copy logged, searchable, reusable.\n\n**Branded Email** \u2192 Sent directly to the content team.\nFormatted HTML report. Ready to review, edit, publish.\n\n\ud83d\udd04 No manual copy-pasting\n\ud83d\udd04 No \"where's the copy?\" messages\n\ud83d\udd04 No version confusion\n\ud83d\udd04 Complete audit trail",
+        "height": 400,
+        "width": 320,
+        "color": 5
+      },
+      "id": "f6611746-9d6b-4910-ba2f-1c8d6ac35d6b",
+      "name": "Sticky Note - Delivery",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        1840,
+        1024
+      ]
+    },
+    {
+      "parameters": {
+        "formTitle": "Setu - Product Research & Copy Generator",
+        "formDescription": "Enter a product name or ingredient to generate research-backed marketing copy",
+        "formFields": {
+          "values": [
+            {
+              "fieldLabel": "Product or Ingredient Name",
+              "placeholder": "e.g. Glutathione, Melatonin, Collagen, Biotin",
+              "requiredField": true
+            },
+            {
+              "fieldLabel": "Target Audience",
+              "placeholder": "e.g. Women 25-35, health-conscious millennials"
+            },
+            {
+              "fieldLabel": "Copy Type Needed",
+              "fieldType": "dropdown",
+              "fieldOptions": {
+                "values": [
+                  {
+                    "option": "Product Page Description"
+                  },
+                  {
+                    "option": "Instagram / Social Caption"
+                  },
+                  {
+                    "option": "Ad Copy (Facebook / Google)"
+                  },
+                  {
+                    "option": "Email Campaign"
+                  },
+                  {
+                    "option": "All Variants"
+                  }
+                ]
+              },
+              "requiredField": true
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "e1567be2-112c-44e1-8249-5aedbe856ff0",
+      "name": "Product Input Form1",
+      "type": "n8n-nodes-base.formTrigger",
+      "typeVersion": 2.2,
+      "position": [
+        176,
+        1648
+      ],
+      "webhookId": "a03efe39-8d6a-491a-9393-19c848a32e94"
+    },
+    {
+      "parameters": {
+        "mode": "combine",
+        "fieldsToMatchString": "search_results",
+        "joinMode": "keepEverything",
+        "options": {}
+      },
+      "id": "9619c436-2feb-4683-b0ea-e5b5dd1f7ace",
+      "name": "Merge All Research1",
+      "type": "n8n-nodes-base.merge",
+      "typeVersion": 3,
+      "position": [
+        816,
+        1648
+      ]
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "set-product",
+              "name": "product_name",
+              "value": "={{ $('Product Input Form1').item.json['Product or Ingredient Name'] }}",
+              "type": "string"
+            },
+            {
+              "id": "set-audience",
+              "name": "target_audience",
+              "value": "={{ $('Product Input Form1').item.json['Target Audience'] || 'Health-conscious Indian millennials 25-40' }}",
+              "type": "string"
+            },
+            {
+              "id": "set-copytype",
+              "name": "copy_type",
+              "value": "={{ $('Product Input Form1').item.json['Copy Type Needed'] }}",
+              "type": "string"
+            },
+            {
+              "id": "set-clinical",
+              "name": "clinical_research",
+              "value": "={{ $('Research \u2014 Clinical Studies').item.json.choices[0].message.content }}",
+              "type": "string"
+            },
+            {
+              "id": "set-competitor",
+              "name": "competitor_analysis",
+              "value": "={{ $('Research \u2014 Competitor Analysis').item.json.choices[0].message.content }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "458befed-4b56-4a2d-92c4-1e2064fe518b",
+      "name": "Prepare AI Context1",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        1072,
+        1648
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "append",
+        "documentId": {
+          "__rl": true,
+          "value": "1QXT0-GD0HZ36rTwPQQFDii1qWJYBjcFm_kUC0FyX-P4",
+          "mode": "list",
+          "cachedResultName": "Aiwithdhruv_n8n",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1QXT0-GD0HZ36rTwPQQFDii1qWJYBjcFm_kUC0FyX-P4/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 587622717,
+          "mode": "list",
+          "cachedResultName": "Setu",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1QXT0-GD0HZ36rTwPQQFDii1qWJYBjcFm_kUC0FyX-P4/edit#gid=587622717"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Product": "={{ $json.product_name }}",
+            "Audience": "={{ $json.target_audience }}",
+            "Copy Type": "={{ $json.copy_type }}",
+            "Content": "={{ $json.rawContent }}",
+            "Generated At": "={{ $json.generated_at }}"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "Product",
+              "displayName": "Product",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Audience",
+              "displayName": "Audience",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Copy Type",
+              "displayName": "Copy Type",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Content",
+              "displayName": "Content",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Generated At",
+              "displayName": "Generated At",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": true
+        },
+        "options": {}
+      },
+      "id": "3e8f057b-d0e2-4d4b-9006-1988253ace34",
+      "name": "Save to Content Sheet1",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.5,
+      "position": [
+        1840,
+        1552
+      ],
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "WbzVyGwbDVzvcV25",
+          "name": "Ai with Dhruv"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "content": "## \ud83e\uddec SETU NUTRITION \u2014 AI Research & Copywriting Pipeline\n\n**Built by:** Agentic AI Hub (AIwithDhruv)\n**For:** Setu Nutrition Content Team\n\n---\n\n### What This Does\nYour team enters a **product or ingredient name** \u2192 the system automatically:\n\n1. **Researches** clinical studies & competitor copy via Perplexity AI\n2. **Generates** 10+ ready-to-use copy variants via GPT\n3. **Formats** output into a branded HTML email report\n4. **Delivers** results to Google Sheet + email\n\n### Time Saved\n\u23f1\ufe0f **Before:** 4-6 hours per product (manual research + writing)\n\u23f1\ufe0f **After:** Under 2 minutes. Fully automated.\n\n### ROI\nWith 50+ SKUs and constant launches, this saves **15-20 hours/week** for your content team.",
+        "height": 696,
+        "width": 420,
+        "color": 4
+      },
+      "id": "450c3a0a-e4a0-4f14-bb3e-356be18c873a",
+      "name": "Sticky Note8",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -336,
+        1216
+      ]
+    },
+    {
+      "parameters": {
+        "content": "## \ud83d\udce5 STAGE 1 \u2014 INPUT\n\nSimple form \u2014 anyone on Setu's team can use it.\n\n**No technical skills needed.**\n\nJust type the product name, pick the copy type, and hit submit.\n\n\u2705 Works on mobile too\n\u2705 Can be shared as a link\n\u2705 Triggers the entire pipeline automatically",
+        "height": 320,
+        "width": 260,
+        "color": 6
+      },
+      "id": "dff7fb81-afd3-4d08-863a-65fcfd8b5732",
+      "name": "Sticky Note9",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        112,
+        1184
+      ]
+    },
+    {
+      "parameters": {
+        "content": "## \ud83d\udd0d STAGE 2 \u2014 AI-POWERED RESEARCH\n\nTwo Perplexity AI searches run **simultaneously**:\n\n**Research A:** Clinical studies \u2014 PubMed, RCTs, dosage data, mechanism of action, safety profiles\n\n**Research B:** Competitor intelligence \u2014 how Amazon, Nykaa, 1mg brands position the same ingredient. Pricing, claims, gaps.\n\n\ud83d\udca1 This replaces 2-3 hours of manual Googling with **real-time AI research in seconds**.\n\n\ud83d\udd2c Perplexity returns cited, sourced data \u2014 not generic AI fluff.",
+        "height": 416,
+        "width": 300,
+        "color": 3
+      },
+      "id": "fa92bcc1-b318-472b-a1e7-35739c9b76b7",
+      "name": "Sticky Note10",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        448,
+        1072
+      ]
+    },
+    {
+      "parameters": {
+        "content": "## \ud83e\udde0 STAGE 3 \u2014 CONTEXT ASSEMBLY\n\nResearch from both Perplexity calls is **merged and structured**.\n\nThe AI copywriter receives:\n\u2192 Product / ingredient name\n\u2192 Target audience profile\n\u2192 Clinical research with citations\n\u2192 Competitor positioning & gaps\n\u2192 Requested copy type\n\nThis ensures every word written is backed by **real data and market intelligence**.",
+        "height": 384,
+        "width": 380,
+        "color": 2
+      },
+      "id": "0503d964-fefc-41eb-a32b-3c2886f686bd",
+      "name": "Sticky Note11",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        752,
+        1056
+      ]
+    },
+    {
+      "parameters": {
+        "content": "## \u270d\ufe0f STAGE 4 \u2014 COPY GENERATION\n\nGPT generates **all variants in one shot:**\n\n\ud83d\udcc4 Product Page Description (150-200 words)\n\ud83d\udcf1 3x Social Media Captions (educational, lifestyle, social proof)\n\ud83d\udce2 3x Ad Copy variants + CTA buttons\n\u2709\ufe0f 5x Email Subject Lines (curiosity, benefit, urgency)\n\ud83d\udd2c Research summary + FSSAI compliance flags\n\ud83d\udca1 Content strategy notes + influencer talking points\n\n**Output is written in Setu's brand voice.**\nTone: science-backed, clean, premium, trustworthy.\n\n\u26a1 One form submission = full content pack for any SKU.",
+        "height": 436,
+        "width": 300
+      },
+      "id": "6063d155-513d-456d-a0d2-15058b55c855",
+      "name": "Sticky Note12",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        1168,
+        1088
+      ]
+    },
+    {
+      "parameters": {
+        "content": "## \ud83c\udfa8 STAGE 5 \u2014 BRANDED FORMATTING\n\nRaw AI output is transformed into a **professional HTML email report** with:\n\n\u2192 Setu brand header & color scheme\n\u2192 Product / audience / type metadata bar\n\u2192 Structured sections with visual hierarchy\n\u2192 Compliance flags highlighted\n\u2192 \"Powered by Agentic AI Hub\" footer\n\u2192 IST timestamp\n\n\ud83d\udce7 The email Nihaal receives looks like it came from a **\u20b95L/year content agency** \u2014 not an automation.\n\n\u2705 Copy-paste ready for the content team.",
+        "height": 400,
+        "width": 320,
+        "color": 5
+      },
+      "id": "94b32160-ff20-452e-89b0-ff758adfce3f",
+      "name": "Sticky Note13",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        1488,
+        1136
+      ]
+    },
+    {
+      "parameters": {
+        "content": "## \ud83d\ude80 PHASE 2 \u2014 EXPANSION OPTIONS\n\n**Once this pipeline is proven, we can add:**\n\n\u2192 WhatsApp alerts when copy is ready\n\u2192 Auto-post to Instagram / LinkedIn\n\u2192 Email campaign builder (full drip sequences)\n\u2192 SEO blog post pipeline from same research\n\u2192 Multilingual copy \u2014 Hindi, Tamil, Bengali\n\u2192 Review/UGC collector & repurposer\n\u2192 Cart abandonment email sequences\n\u2192 Product launch content calendar\n\u2192 Amazon listing optimizer\n\n---\n\ud83d\udcde **Built by Agentic AI Hub**\n\ud83d\udd17 calendly.com/aiwithdhruv/makeaiworkforyou",
+        "height": 796,
+        "width": 340,
+        "color": 7
+      },
+      "id": "482c946f-7b48-4c74-80dc-1635977ead5e",
+      "name": "Sticky Note14",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        2208,
+        1424
+      ]
+    }
+  ],
+  "connections": {
+    "Research \u2014 Clinical Studies": {
+      "main": [
+        [
+          {
+            "node": "Merge All Research1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Research \u2014 Competitor Analysis": {
+      "main": [
+        [
+          {
+            "node": "Merge All Research1",
+            "type": "main",
+            "index": 1
+          }
+        ]
+      ]
+    },
+    "AI \u2014 Generate Copy Variants": {
+      "main": [
+        [
+          {
+            "node": "Format \u2014 Setu Branded Email",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Format \u2014 Setu Branded Email": {
+      "main": [
+        [
+          {
+            "node": "Save to Content Sheet1",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Email \u2014 Branded Report",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Product Input Form1": {
+      "main": [
+        [
+          {
+            "node": "Research \u2014 Clinical Studies",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Research \u2014 Competitor Analysis",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Merge All Research1": {
+      "main": [
+        [
+          {
+            "node": "Prepare AI Context1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Prepare AI Context1": {
+      "main": [
+        [
+          {
+            "node": "AI \u2014 Generate Copy Variants",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1",
+    "availableInMCP": false
+  },
+  "staticData": null,
+  "meta": {
+    "templateCredsSetupCompleted": true
+  },
+  "pinData": {},
+  "versionId": "52cd4a9e-4850-4baa-ad46-b7b27ea94b99",
+  "activeVersionId": "52cd4a9e-4850-4baa-ad46-b7b27ea94b99",
+  "triggerCount": 1,
+  "shared": [
+    {
+      "updatedAt": "2026-02-06T13:30:08.571Z",
+      "createdAt": "2026-02-06T13:30:08.571Z",
+      "role": "workflow:owner",
+      "workflowId": "a7B0-JVg-KXoqP_0VImy5",
+      "projectId": "DT8YjHwLZsQjJqVc"
+    }
+  ],
+  "activeVersion": {
+    "updatedAt": "2026-02-07T14:58:30.000Z",
+    "createdAt": "2026-02-07T14:58:29.640Z",
+    "versionId": "52cd4a9e-4850-4baa-ad46-b7b27ea94b99",
+    "workflowId": "a7B0-JVg-KXoqP_0VImy5",
+    "nodes": [
+      {
+        "parameters": {
+          "content": "## \ud83d\udcb0 INVESTMENT & ROI\n\n**Pilot Build:** \u20b940,000 (one-time)\n**API Cost:** ~\u20b9500-1,500/month (OpenAI + Search)\n**Maintenance:** Optional \u20b95,000/month\n\n---\n\n**\u23f1\ufe0f Time Saved:** 15-20 hrs/week\n**\ud83d\udcb5 Cost per copy set:** Under \u20b95\n**\ud83d\udcb5 Current cost:** \u20b92,000-5,000 (freelancer) or 4-6 hrs (in-house)\n\n**\ud83c\udfaf ROI: Pays for itself in Week 1.**",
+          "height": 80,
+          "width": 340,
+          "color": 4
+        },
+        "id": "968f0724-d36f-457f-b400-056667c67818",
+        "name": "Sticky Note7",
+        "type": "n8n-nodes-base.stickyNote",
+        "typeVersion": 1,
+        "position": [
+          -336,
+          1952
+        ]
+      },
+      {
+        "parameters": {
+          "messages": {
+            "message": [
+              {
+                "content": "=You are a pharmaceutical research analyst. Research the supplement ingredient \"{{ $json['Product or Ingredient Name'] }}\" and provide:\n\n1. TOP 3 CLINICAL BENEFITS \u2014 cite specific studies, dosages, and measurable outcomes (e.g., \"500mg daily reduced X by 23% in a 12-week RCT\")\n2. MECHANISM OF ACTION \u2014 how it works in the body (simple, clear)\n3. RECOMMENDED DOSAGE \u2014 standard effective dose range\n4. SAFETY PROFILE \u2014 any contraindications or side effects\n5. KEY DIFFERENTIATOR \u2014 what makes this ingredient special vs alternatives\n\nBe specific. Include numbers, study references, and clinical data. No generic claims."
+              }
+            ]
+          },
+          "options": {},
+          "requestOptions": {}
+        },
+        "type": "n8n-nodes-base.perplexity",
+        "typeVersion": 1,
+        "position": [
+          544,
+          1520
+        ],
+        "id": "9204bd4f-f04f-478a-9ee8-560938b93f94",
+        "name": "Research \u2014 Clinical Studies",
+        "credentials": {
+          "perplexityApi": {
+            "id": "mACe6bHyuo7Z3exN",
+            "name": "Perplexity 2"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "messages": {
+            "message": [
+              {
+                "content": "=Analyze how top D2C supplement brands in India are marketing \"{{ $json['Product or Ingredient Name'] }}\" products. Look at brands like Setu, Wellbeing Nutrition, Oziva, Plix, Carbamide Forte on Amazon.in, Nykaa, 1mg.\n\nProvide:\n1. TOP 3 COMPETITOR PRODUCT NAMES & PRICES\n2. MOST USED CLAIMS \u2014 what benefits do they highlight?\n3. COMMON HOOKS \u2014 what language patterns work? (e.g., \"clinically proven\", \"doctor recommended\")\n4. GAP ANALYSIS \u2014 what are competitors NOT saying that Setu could own?\n5. BEST-SELLING FORMAT \u2014 capsules, gummies, powder, effervescent?\n\nBe specific with brand names, prices, and exact copy phrases used."
+              }
+            ]
+          },
+          "options": {},
+          "requestOptions": {}
+        },
+        "type": "n8n-nodes-base.perplexity",
+        "typeVersion": 1,
+        "position": [
+          544,
+          1760
+        ],
+        "id": "1115bfeb-0914-428c-af35-52a4451484b5",
+        "name": "Research \u2014 Competitor Analysis",
+        "credentials": {
+          "perplexityApi": {
+            "id": "mACe6bHyuo7Z3exN",
+            "name": "Perplexity 2"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "modelId": {
+            "__rl": true,
+            "value": "gpt-5.1",
+            "mode": "list",
+            "cachedResultName": "GPT-5.1"
+          },
+          "messages": {
+            "values": [
+              {
+                "content": "=You are the Head of Content at Setu Nutrition (setu.in) \u2014 India's premium, science-backed supplement brand founded by Nihaal Mariwala.\n\nBrand Voice: Clean. Trustworthy. Science-forward. Premium but approachable. Never salesy or exaggerated.\nBrand Values: Transparency, clinical backing, daily wellness made simple.\n\n---\n\nPRODUCT / INGREDIENT: {{ $json.product_name }}\nTARGET AUDIENCE: {{ $json.target_audience }}\nCOPY TYPE REQUESTED: {{ $json.copy_type }}\n\n\ud83d\udcca CLINICAL RESEARCH:\n{{ $json.clinical_research }}\n\n\ud83d\udcc8 COMPETITOR ANALYSIS:\n{{ $json.competitor_analysis }}\n\n---\n\nGenerate ALL of the following in clean, structured format:\n\n\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\n\ud83d\udcc4 1. PRODUCT PAGE DESCRIPTION\n\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\n- 150-200 words\n- Lead with the #1 consumer benefit (not the ingredient name)\n- Include 2-3 specific research-backed claims with numbers\n- Mention dosage and form factor\n- End with a confident CTA\n- Write in Setu's tone: clean, premium, science-backed\n\n\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\n\ud83d\udcf1 2. SOCIAL MEDIA CAPTIONS (3 variants)\n\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\nEach caption:\n- 80-120 words\n- Pattern-interrupt hook in first line\n- 3 benefit bullets with emojis\n- Strong CTA\n- 5 relevant hashtags including #SetuNutrition\n\nVariant A: Educational / myth-busting\nVariant B: Lifestyle / aspirational\nVariant C: Testimonial-style / social proof\n\n\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\n\ud83d\udce2 3. AD COPY (3 variants, 30-50 words each)\n\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\n- Variant A: Problem \u2192 Solution\n- Variant B: Benefit-led (transformation)\n- Variant C: Social proof / statistic-led\n\nInclude suggested CTA button text for each.\n\n\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\n\u2709\ufe0f 4. EMAIL SUBJECT LINES (5 options)\n\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\nMix of:\n- Curiosity gap\n- Benefit-first\n- Urgency/FOMO\n- Question-based\n- Personal/conversational\n\n\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\n\ud83d\udd2c 5. RESEARCH SUMMARY & COMPLIANCE FLAGS\n\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\n- Key clinical claims used (with source references)\n- Flag any claims that need FSSAI/AYUSH compliance review\n- Recommended disclaimers\n\n\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\n\ud83d\udca1 6. CONTENT STRATEGY NOTES\n\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\n- Top 3 angles competitors are missing\n- Suggested influencer talking points\n- Recommended content formats (reel, carousel, blog)\n\nWrite copy that converts. Be specific. No fluff. Every claim must be backed by the research provided."
+              }
+            ]
+          },
+          "options": {}
+        },
+        "id": "004c02ea-0486-4318-8122-74906b188249",
+        "name": "AI \u2014 Generate Copy Variants",
+        "type": "@n8n/n8n-nodes-langchain.openAi",
+        "typeVersion": 1.8,
+        "position": [
+          1312,
+          1648
+        ],
+        "credentials": {
+          "openAiApi": {
+            "id": "t2xlHGBT89qC17Hp",
+            "name": "RAG_Vector"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "jsCode": "// Get AI output and metadata\nconst aiOutput = $('AI \u2014 Generate Copy Variants').item.json.message?.content || $('AI \u2014 Generate Copy Variants').item.json.choices?.[0]?.message?.content || 'Copy generation completed \u2014 check raw output';\nconst product = $('Prepare AI Context1').item.json.product_name;\nconst audience = $('Prepare AI Context1').item.json.target_audience;\nconst copyType = $('Prepare AI Context1').item.json.copy_type;\nconst timestamp = new Date().toLocaleString('en-IN', { timeZone: 'Asia/Kolkata' });\n\n// Convert markdown-style formatting to HTML\nlet formattedContent = aiOutput\n  // Section headers with dividers\n  .replace(/\u2501+/g, '')\n  .replace(/^(\ud83d\udcc4|\ud83d\udcf1|\ud83d\udce2|\u2709\ufe0f|\ud83d\udd2c|\ud83d\udca1)\\s*\\d+\\.\\s*(.+)$/gm, '<tr><td colspan=\"2\" style=\"background:#0a2540; color:#00e5c0; padding:16px 24px; font-size:16px; font-weight:700; letter-spacing:0.5px; border-radius:8px;\">$1 $2</td></tr><tr><td colspan=\"2\" style=\"padding:4px;\"></td></tr>')\n  // Bold text\n  .replace(/\\*\\*(.+?)\\*\\*/g, '<strong style=\"color:#0a2540;\">$1</strong>')\n  // Variant headers\n  .replace(/^(Variant [A-C]:?.*)$/gm, '<tr><td colspan=\"2\" style=\"padding:12px 24px 4px; color:#00b894; font-weight:600; font-size:14px;\">$1</td></tr>')\n  // Bullet points with checkmarks\n  .replace(/^[-\u2022]\\s*(.+)$/gm, '<tr><td style=\"width:24px; padding:4px 0 4px 24px; vertical-align:top; color:#00e5c0;\">\u2726</td><td style=\"padding:4px 24px 4px 8px; color:#334155; line-height:1.6;\">$1</td></tr>')\n  // Numbered items\n  .replace(/^(\\d+)\\.\\s*(.+)$/gm, '<tr><td style=\"width:24px; padding:4px 0 4px 24px; vertical-align:top; color:#00e5c0; font-weight:700;\">$1.</td><td style=\"padding:4px 24px 4px 8px; color:#334155; line-height:1.6;\">$2</td></tr>')\n  // Regular paragraphs\n  .replace(/^(?!<tr)(.+)$/gm, '<tr><td colspan=\"2\" style=\"padding:4px 24px; color:#334155; line-height:1.7;\">$1</td></tr>')\n  // Clean up empty lines\n  .replace(/^\\s*$/gm, '<tr><td colspan=\"2\" style=\"padding:6px;\"></td></tr>');\n\n// Build the full branded HTML email\nconst htmlEmail = `\n<!DOCTYPE html>\n<html>\n<head><meta charset=\"utf-8\"><meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\"></head>\n<body style=\"margin:0; padding:0; background:#f0f4f8; font-family:'Segoe UI',Roboto,Helvetica,Arial,sans-serif;\">\n<table width=\"100%\" cellpadding=\"0\" cellspacing=\"0\" style=\"background:#f0f4f8; padding:24px 0;\">\n<tr><td align=\"center\">\n<table width=\"640\" cellpadding=\"0\" cellspacing=\"0\" style=\"background:#ffffff; border-radius:16px; overflow:hidden; box-shadow:0 4px 24px rgba(0,0,0,0.08);\">\n\n<!-- HEADER -->\n<tr><td style=\"background:linear-gradient(135deg, #0a2540 0%, #1a3a5c 100%); padding:32px 40px; text-align:center;\">\n  <table width=\"100%\" cellpadding=\"0\" cellspacing=\"0\">\n  <tr><td style=\"text-align:center;\">\n    <div style=\"font-size:28px; font-weight:800; color:#ffffff; letter-spacing:-0.5px;\">SETU</div>\n    <div style=\"font-size:11px; color:#00e5c0; letter-spacing:3px; margin-top:4px; text-transform:uppercase;\">Nutrition Science</div>\n  </td></tr>\n  <tr><td style=\"padding-top:20px; text-align:center;\">\n    <div style=\"display:inline-block; background:rgba(0,229,192,0.15); border:1px solid rgba(0,229,192,0.3); border-radius:50px; padding:8px 24px;\">\n      <span style=\"color:#00e5c0; font-size:13px; font-weight:600;\">\u2728 AI-Generated Content Ready for Review</span>\n    </div>\n  </td></tr>\n  </table>\n</td></tr>\n\n<!-- META BAR -->\n<tr><td style=\"background:#f8fafc; padding:20px 40px; border-bottom:1px solid #e2e8f0;\">\n  <table width=\"100%\" cellpadding=\"0\" cellspacing=\"0\">\n  <tr>\n    <td style=\"width:33%;\">\n      <div style=\"font-size:10px; color:#94a3b8; text-transform:uppercase; letter-spacing:1px;\">Product</div>\n      <div style=\"font-size:15px; color:#0a2540; font-weight:700; margin-top:4px;\">${product}</div>\n    </td>\n    <td style=\"width:33%; text-align:center;\">\n      <div style=\"font-size:10px; color:#94a3b8; text-transform:uppercase; letter-spacing:1px;\">Audience</div>\n      <div style=\"font-size:15px; color:#0a2540; font-weight:700; margin-top:4px;\">${audience}</div>\n    </td>\n    <td style=\"width:33%; text-align:right;\">\n      <div style=\"font-size:10px; color:#94a3b8; text-transform:uppercase; letter-spacing:1px;\">Copy Type</div>\n      <div style=\"font-size:15px; color:#0a2540; font-weight:700; margin-top:4px;\">${copyType}</div>\n    </td>\n  </tr>\n  </table>\n</td></tr>\n\n<!-- CONTENT -->\n<tr><td style=\"padding:8px 0;\">\n  <table width=\"100%\" cellpadding=\"0\" cellspacing=\"0\">\n  ${formattedContent}\n  </table>\n</td></tr>\n\n<!-- DIVIDER -->\n<tr><td style=\"padding:0 40px;\">\n  <div style=\"border-top:2px solid #e2e8f0;\"></div>\n</td></tr>\n\n<!-- FOOTER -->\n<tr><td style=\"padding:24px 40px; text-align:center;\">\n  <div style=\"font-size:11px; color:#94a3b8; text-transform:uppercase; letter-spacing:2px; margin-bottom:8px;\">Powered by</div>\n  <div style=\"font-size:18px; font-weight:700; color:#0a2540;\">Agentic AI Hub</div>\n  <div style=\"font-size:12px; color:#64748b; margin-top:4px;\">Turning AI into Outcomes</div>\n  <div style=\"margin-top:12px;\">\n    <span style=\"display:inline-block; background:#0a2540; color:#00e5c0; padding:8px 20px; border-radius:6px; font-size:12px; font-weight:600; text-decoration:none;\">Built by AIwithDhruv</span>\n  </div>\n  <div style=\"font-size:11px; color:#cbd5e1; margin-top:16px;\">Generated on ${timestamp} IST</div>\n</td></tr>\n\n</table>\n</td></tr>\n</table>\n</body>\n</html>`;\n\nreturn [{\n  json: {\n    htmlEmail: htmlEmail,\n    rawContent: aiOutput,\n    product_name: product,\n    target_audience: audience,\n    copy_type: copyType,\n    generated_at: timestamp\n  }\n}];"
+        },
+        "id": "b6f31f3e-0e78-4bf9-8262-3bdb37cfd5b4",
+        "name": "Format \u2014 Setu Branded Email",
+        "type": "n8n-nodes-base.code",
+        "typeVersion": 2,
+        "position": [
+          1600,
+          1648
+        ]
+      },
+      {
+        "parameters": {
+          "sendTo": "=kamaljd99@gmail.com",
+          "subject": "=\ud83e\uddec Setu Content Ready \u2014 {{ $json.product_name }} | {{ $json.copy_type }}",
+          "message": "={{ $json.htmlEmail }}",
+          "options": {
+            "appendAttribution": false
+          }
+        },
+        "id": "a15d17d0-ae7a-410e-9c0e-d908031d5f17",
+        "name": "Email \u2014 Branded Report",
+        "type": "n8n-nodes-base.gmail",
+        "typeVersion": 2.1,
+        "position": [
+          1840,
+          1776
+        ],
+        "webhookId": "90b6dfd8-d062-47f9-9795-06e017700f8a",
+        "credentials": {
+          "gmailOAuth2": {
+            "id": "gPGYzjuIbblOf3E1",
+            "name": "Ai with Dhruv"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "content": "## \ud83d\udce4 STAGE 6 \u2014 DELIVERY\n\nResults go to **two places automatically:**\n\n**Google Sheet** \u2192 Master content library.\nColumns: Product, Audience, Copy Type, Content, Timestamp.\nEvery SKU's copy logged, searchable, reusable.\n\n**Branded Email** \u2192 Sent directly to the content team.\nFormatted HTML report. Ready to review, edit, publish.\n\n\ud83d\udd04 No manual copy-pasting\n\ud83d\udd04 No \"where's the copy?\" messages\n\ud83d\udd04 No version confusion\n\ud83d\udd04 Complete audit trail",
+          "height": 400,
+          "width": 320,
+          "color": 5
+        },
+        "id": "f6611746-9d6b-4910-ba2f-1c8d6ac35d6b",
+        "name": "Sticky Note - Delivery",
+        "type": "n8n-nodes-base.stickyNote",
+        "typeVersion": 1,
+        "position": [
+          1840,
+          1024
+        ]
+      },
+      {
+        "parameters": {
+          "formTitle": "Setu - Product Research & Copy Generator",
+          "formDescription": "Enter a product name or ingredient to generate research-backed marketing copy",
+          "formFields": {
+            "values": [
+              {
+                "fieldLabel": "Product or Ingredient Name",
+                "placeholder": "e.g. Glutathione, Melatonin, Collagen, Biotin",
+                "requiredField": true
+              },
+              {
+                "fieldLabel": "Target Audience",
+                "placeholder": "e.g. Women 25-35, health-conscious millennials"
+              },
+              {
+                "fieldLabel": "Copy Type Needed",
+                "fieldType": "dropdown",
+                "fieldOptions": {
+                  "values": [
+                    {
+                      "option": "Product Page Description"
+                    },
+                    {
+                      "option": "Instagram / Social Caption"
+                    },
+                    {
+                      "option": "Ad Copy (Facebook / Google)"
+                    },
+                    {
+                      "option": "Email Campaign"
+                    },
+                    {
+                      "option": "All Variants"
+                    }
+                  ]
+                },
+                "requiredField": true
+              }
+            ]
+          },
+          "options": {}
+        },
+        "id": "e1567be2-112c-44e1-8249-5aedbe856ff0",
+        "name": "Product Input Form1",
+        "type": "n8n-nodes-base.formTrigger",
+        "typeVersion": 2.2,
+        "position": [
+          176,
+          1648
+        ],
+        "webhookId": "a03efe39-8d6a-491a-9393-19c848a32e94"
+      },
+      {
+        "parameters": {
+          "mode": "combine",
+          "fieldsToMatchString": "search_results",
+          "joinMode": "keepEverything",
+          "options": {}
+        },
+        "id": "9619c436-2feb-4683-b0ea-e5b5dd1f7ace",
+        "name": "Merge All Research1",
+        "type": "n8n-nodes-base.merge",
+        "typeVersion": 3,
+        "position": [
+          816,
+          1648
+        ]
+      },
+      {
+        "parameters": {
+          "assignments": {
+            "assignments": [
+              {
+                "id": "set-product",
+                "name": "product_name",
+                "value": "={{ $('Product Input Form1').item.json['Product or Ingredient Name'] }}",
+                "type": "string"
+              },
+              {
+                "id": "set-audience",
+                "name": "target_audience",
+                "value": "={{ $('Product Input Form1').item.json['Target Audience'] || 'Health-conscious Indian millennials 25-40' }}",
+                "type": "string"
+              },
+              {
+                "id": "set-copytype",
+                "name": "copy_type",
+                "value": "={{ $('Product Input Form1').item.json['Copy Type Needed'] }}",
+                "type": "string"
+              },
+              {
+                "id": "set-clinical",
+                "name": "clinical_research",
+                "value": "={{ $('Research \u2014 Clinical Studies').item.json.choices[0].message.content }}",
+                "type": "string"
+              },
+              {
+                "id": "set-competitor",
+                "name": "competitor_analysis",
+                "value": "={{ $('Research \u2014 Competitor Analysis').item.json.choices[0].message.content }}",
+                "type": "string"
+              }
+            ]
+          },
+          "options": {}
+        },
+        "id": "458befed-4b56-4a2d-92c4-1e2064fe518b",
+        "name": "Prepare AI Context1",
+        "type": "n8n-nodes-base.set",
+        "typeVersion": 3.4,
+        "position": [
+          1072,
+          1648
+        ]
+      },
+      {
+        "parameters": {
+          "operation": "append",
+          "documentId": {
+            "__rl": true,
+            "value": "1QXT0-GD0HZ36rTwPQQFDii1qWJYBjcFm_kUC0FyX-P4",
+            "mode": "list",
+            "cachedResultName": "Aiwithdhruv_n8n",
+            "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1QXT0-GD0HZ36rTwPQQFDii1qWJYBjcFm_kUC0FyX-P4/edit?usp=drivesdk"
+          },
+          "sheetName": {
+            "__rl": true,
+            "value": 587622717,
+            "mode": "list",
+            "cachedResultName": "Setu",
+            "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1QXT0-GD0HZ36rTwPQQFDii1qWJYBjcFm_kUC0FyX-P4/edit#gid=587622717"
+          },
+          "columns": {
+            "mappingMode": "defineBelow",
+            "value": {
+              "Product": "={{ $json.product_name }}",
+              "Audience": "={{ $json.target_audience }}",
+              "Copy Type": "={{ $json.copy_type }}",
+              "Content": "={{ $json.rawContent }}",
+              "Generated At": "={{ $json.generated_at }}"
+            },
+            "matchingColumns": [],
+            "schema": [
+              {
+                "id": "Product",
+                "displayName": "Product",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true
+              },
+              {
+                "id": "Audience",
+                "displayName": "Audience",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true
+              },
+              {
+                "id": "Copy Type",
+                "displayName": "Copy Type",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true
+              },
+              {
+                "id": "Content",
+                "displayName": "Content",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true
+              },
+              {
+                "id": "Generated At",
+                "displayName": "Generated At",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true
+              }
+            ],
+            "attemptToConvertTypes": false,
+            "convertFieldsToString": true
+          },
+          "options": {}
+        },
+        "id": "3e8f057b-d0e2-4d4b-9006-1988253ace34",
+        "name": "Save to Content Sheet1",
+        "type": "n8n-nodes-base.googleSheets",
+        "typeVersion": 4.5,
+        "position": [
+          1840,
+          1552
+        ],
+        "credentials": {
+          "googleSheetsOAuth2Api": {
+            "id": "WbzVyGwbDVzvcV25",
+            "name": "Ai with Dhruv"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "content": "## \ud83e\uddec SETU NUTRITION \u2014 AI Research & Copywriting Pipeline\n\n**Built by:** Agentic AI Hub (AIwithDhruv)\n**For:** Setu Nutrition Content Team\n\n---\n\n### What This Does\nYour team enters a **product or ingredient name** \u2192 the system automatically:\n\n1. **Researches** clinical studies & competitor copy via Perplexity AI\n2. **Generates** 10+ ready-to-use copy variants via GPT\n3. **Formats** output into a branded HTML email report\n4. **Delivers** results to Google Sheet + email\n\n### Time Saved\n\u23f1\ufe0f **Before:** 4-6 hours per product (manual research + writing)\n\u23f1\ufe0f **After:** Under 2 minutes. Fully automated.\n\n### ROI\nWith 50+ SKUs and constant launches, this saves **15-20 hours/week** for your content team.",
+          "height": 696,
+          "width": 420,
+          "color": 4
+        },
+        "id": "450c3a0a-e4a0-4f14-bb3e-356be18c873a",
+        "name": "Sticky Note8",
+        "type": "n8n-nodes-base.stickyNote",
+        "typeVersion": 1,
+        "position": [
+          -336,
+          1216
+        ]
+      },
+      {
+        "parameters": {
+          "content": "## \ud83d\udce5 STAGE 1 \u2014 INPUT\n\nSimple form \u2014 anyone on Setu's team can use it.\n\n**No technical skills needed.**\n\nJust type the product name, pick the copy type, and hit submit.\n\n\u2705 Works on mobile too\n\u2705 Can be shared as a link\n\u2705 Triggers the entire pipeline automatically",
+          "height": 320,
+          "width": 260,
+          "color": 6
+        },
+        "id": "dff7fb81-afd3-4d08-863a-65fcfd8b5732",
+        "name": "Sticky Note9",
+        "type": "n8n-nodes-base.stickyNote",
+        "typeVersion": 1,
+        "position": [
+          112,
+          1184
+        ]
+      },
+      {
+        "parameters": {
+          "content": "## \ud83d\udd0d STAGE 2 \u2014 AI-POWERED RESEARCH\n\nTwo Perplexity AI searches run **simultaneously**:\n\n**Research A:** Clinical studies \u2014 PubMed, RCTs, dosage data, mechanism of action, safety profiles\n\n**Research B:** Competitor intelligence \u2014 how Amazon, Nykaa, 1mg brands position the same ingredient. Pricing, claims, gaps.\n\n\ud83d\udca1 This replaces 2-3 hours of manual Googling with **real-time AI research in seconds**.\n\n\ud83d\udd2c Perplexity returns cited, sourced data \u2014 not generic AI fluff.",
+          "height": 416,
+          "width": 300,
+          "color": 3
+        },
+        "id": "fa92bcc1-b318-472b-a1e7-35739c9b76b7",
+        "name": "Sticky Note10",
+        "type": "n8n-nodes-base.stickyNote",
+        "typeVersion": 1,
+        "position": [
+          448,
+          1072
+        ]
+      },
+      {
+        "parameters": {
+          "content": "## \ud83e\udde0 STAGE 3 \u2014 CONTEXT ASSEMBLY\n\nResearch from both Perplexity calls is **merged and structured**.\n\nThe AI copywriter receives:\n\u2192 Product / ingredient name\n\u2192 Target audience profile\n\u2192 Clinical research with citations\n\u2192 Competitor positioning & gaps\n\u2192 Requested copy type\n\nThis ensures every word written is backed by **real data and market intelligence**.",
+          "height": 384,
+          "width": 380,
+          "color": 2
+        },
+        "id": "0503d964-fefc-41eb-a32b-3c2886f686bd",
+        "name": "Sticky Note11",
+        "type": "n8n-nodes-base.stickyNote",
+        "typeVersion": 1,
+        "position": [
+          752,
+          1056
+        ]
+      },
+      {
+        "parameters": {
+          "content": "## \u270d\ufe0f STAGE 4 \u2014 COPY GENERATION\n\nGPT generates **all variants in one shot:**\n\n\ud83d\udcc4 Product Page Description (150-200 words)\n\ud83d\udcf1 3x Social Media Captions (educational, lifestyle, social proof)\n\ud83d\udce2 3x Ad Copy variants + CTA buttons\n\u2709\ufe0f 5x Email Subject Lines (curiosity, benefit, urgency)\n\ud83d\udd2c Research summary + FSSAI compliance flags\n\ud83d\udca1 Content strategy notes + influencer talking points\n\n**Output is written in Setu's brand voice.**\nTone: science-backed, clean, premium, trustworthy.\n\n\u26a1 One form submission = full content pack for any SKU.",
+          "height": 436,
+          "width": 300
+        },
+        "id": "6063d155-513d-456d-a0d2-15058b55c855",
+        "name": "Sticky Note12",
+        "type": "n8n-nodes-base.stickyNote",
+        "typeVersion": 1,
+        "position": [
+          1168,
+          1088
+        ]
+      },
+      {
+        "parameters": {
+          "content": "## \ud83c\udfa8 STAGE 5 \u2014 BRANDED FORMATTING\n\nRaw AI output is transformed into a **professional HTML email report** with:\n\n\u2192 Setu brand header & color scheme\n\u2192 Product / audience / type metadata bar\n\u2192 Structured sections with visual hierarchy\n\u2192 Compliance flags highlighted\n\u2192 \"Powered by Agentic AI Hub\" footer\n\u2192 IST timestamp\n\n\ud83d\udce7 The email Nihaal receives looks like it came from a **\u20b95L/year content agency** \u2014 not an automation.\n\n\u2705 Copy-paste ready for the content team.",
+          "height": 400,
+          "width": 320,
+          "color": 5
+        },
+        "id": "94b32160-ff20-452e-89b0-ff758adfce3f",
+        "name": "Sticky Note13",
+        "type": "n8n-nodes-base.stickyNote",
+        "typeVersion": 1,
+        "position": [
+          1488,
+          1136
+        ]
+      },
+      {
+        "parameters": {
+          "content": "## \ud83d\ude80 PHASE 2 \u2014 EXPANSION OPTIONS\n\n**Once this pipeline is proven, we can add:**\n\n\u2192 WhatsApp alerts when copy is ready\n\u2192 Auto-post to Instagram / LinkedIn\n\u2192 Email campaign builder (full drip sequences)\n\u2192 SEO blog post pipeline from same research\n\u2192 Multilingual copy \u2014 Hindi, Tamil, Bengali\n\u2192 Review/UGC collector & repurposer\n\u2192 Cart abandonment email sequences\n\u2192 Product launch content calendar\n\u2192 Amazon listing optimizer\n\n---\n\ud83d\udcde **Built by Agentic AI Hub**\n\ud83d\udd17 calendly.com/aiwithdhruv/makeaiworkforyou",
+          "height": 796,
+          "width": 340,
+          "color": 7
+        },
+        "id": "482c946f-7b48-4c74-80dc-1635977ead5e",
+        "name": "Sticky Note14",
+        "type": "n8n-nodes-base.stickyNote",
+        "typeVersion": 1,
+        "position": [
+          2208,
+          1424
+        ]
+      }
+    ],
+    "connections": {
+      "Research \u2014 Clinical Studies": {
+        "main": [
+          [
+            {
+              "node": "Merge All Research1",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Research \u2014 Competitor Analysis": {
+        "main": [
+          [
+            {
+              "node": "Merge All Research1",
+              "type": "main",
+              "index": 1
+            }
+          ]
+        ]
+      },
+      "AI \u2014 Generate Copy Variants": {
+        "main": [
+          [
+            {
+              "node": "Format \u2014 Setu Branded Email",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Format \u2014 Setu Branded Email": {
+        "main": [
+          [
+            {
+              "node": "Save to Content Sheet1",
+              "type": "main",
+              "index": 0
+            },
+            {
+              "node": "Email \u2014 Branded Report",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Product Input Form1": {
+        "main": [
+          [
+            {
+              "node": "Research \u2014 Clinical Studies",
+              "type": "main",
+              "index": 0
+            },
+            {
+              "node": "Research \u2014 Competitor Analysis",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Merge All Research1": {
+        "main": [
+          [
+            {
+              "node": "Prepare AI Context1",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Prepare AI Context1": {
+        "main": [
+          [
+            {
+              "node": "AI \u2014 Generate Copy Variants",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      }
+    },
+    "authors": "Dhruv Tomar",
+    "name": "Version 52cd4a9e",
+    "description": "",
+    "autosaved": true
+  },
+  "tags": []
+}

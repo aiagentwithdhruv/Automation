@@ -1,0 +1,186 @@
+{
+  "updatedAt": "2026-01-10T15:35:40.419Z",
+  "createdAt": "2026-01-10T15:35:40.419Z",
+  "id": "PQwaceHT2wPmZ71a",
+  "name": "AI Chat Agent with Supabase Memory",
+  "active": false,
+  "isArchived": false,
+  "nodes": [
+    {
+      "parameters": {
+        "options": {}
+      },
+      "id": "76ec184c-e8f0-4660-848e-2af6d306368d",
+      "name": "Chat Trigger",
+      "type": "n8n-nodes-base.chatTrigger",
+      "typeVersion": 1.1,
+      "position": [
+        380,
+        240
+      ]
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "id": "e9876543-abcd-4321-bcde-1234567890ab",
+      "name": "AI Agent",
+      "type": "n8n-nodes-base.aiAgent",
+      "typeVersion": 1.6,
+      "position": [
+        600,
+        240
+      ]
+    },
+    {
+      "parameters": {
+        "model": "gpt-4o-mini",
+        "options": {}
+      },
+      "id": "f1234567-89ab-cdef-0123-456789abcdef",
+      "name": "OpenAI Chat Model",
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1,
+      "position": [
+        500,
+        460
+      ],
+      "credentials": {
+        "openaiApi": {
+          "id": "your_openai_credential_id",
+          "name": "OpenAI account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "tableName": "chat_history",
+        "sessionIdKey": "sessionId"
+      },
+      "id": "a1b2c3d4-e5f6-4789-9a0b-c1d2e3f4a5b6",
+      "name": "Supabase Chat Memory",
+      "type": "@n8n/n8n-nodes-langchain.memorySupabase",
+      "typeVersion": 1,
+      "position": [
+        720,
+        460
+      ],
+      "credentials": {
+        "supabaseApi": {
+          "id": "nSNX1dS5NWyUGe2R",
+          "name": "Supabase account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "content": "## 1. Chat Interface\nThis node provides the UI for the chat. You can use it via the n8n public chat link.",
+        "height": 160,
+        "width": 200,
+        "color": 6
+      },
+      "id": "s1",
+      "name": "Note1",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        320,
+        80
+      ]
+    },
+    {
+      "parameters": {
+        "content": "## 2. Supabase Memory\nThis node stores chat history in a Supabase table.\n\n**Setup:**\n1. Connect Supabase credentials.\n2. Create a table named `chat_history` with columns: `id` (int8/uuid), `session_id` (text), and `message` (jsonb).",
+        "height": 220,
+        "width": 250,
+        "color": 4
+      },
+      "id": "s2",
+      "name": "Note2",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        700,
+        580
+      ]
+    },
+    {
+      "parameters": {
+        "content": "## 3. AI Brain\nUsing OpenAI GPT-4o-mini to process queries. Ensure your API key is configured.",
+        "height": 160,
+        "width": 200,
+        "color": 2
+      },
+      "id": "s3",
+      "name": "Note3",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        460,
+        580
+      ]
+    }
+  ],
+  "connections": {
+    "Chat Trigger": {
+      "main": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Supabase Chat Memory": {
+      "ai_memory": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_memory",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1",
+    "saveManualExecutions": true,
+    "saveDataSuccessExecution": "all",
+    "saveExecutionProgress": true,
+    "saveDataErrorExecution": "all",
+    "timezone": "UTC",
+    "callerPolicy": "workflowsFromSameOwner",
+    "availableInMCP": false
+  },
+  "staticData": null,
+  "meta": null,
+  "pinData": null,
+  "versionId": "32506ead-2dd5-412b-ae41-7813b83cf92d",
+  "activeVersionId": null,
+  "triggerCount": 0,
+  "shared": [
+    {
+      "updatedAt": "2026-01-10T15:35:40.424Z",
+      "createdAt": "2026-01-10T15:35:40.424Z",
+      "role": "workflow:owner",
+      "workflowId": "PQwaceHT2wPmZ71a",
+      "projectId": "DT8YjHwLZsQjJqVc"
+    }
+  ],
+  "activeVersion": null,
+  "tags": []
+}

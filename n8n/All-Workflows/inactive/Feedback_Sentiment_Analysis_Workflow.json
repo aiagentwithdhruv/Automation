@@ -1,0 +1,296 @@
+{
+  "updatedAt": "2026-01-03T16:09:23.497Z",
+  "createdAt": "2026-01-03T16:09:23.497Z",
+  "id": "fspxjalJuCCYYMrD",
+  "name": "Feedback & Sentiment Analysis Workflow",
+  "active": false,
+  "isArchived": false,
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "feedback",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 1,
+      "position": [
+        0,
+        0
+      ],
+      "id": "webhook-trigger",
+      "name": "Webhook Trigger"
+    },
+    {
+      "parameters": {
+        "model": "gpt-4o-mini",
+        "options": {
+          "temperature": 0
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1,
+      "position": [
+        200,
+        220
+      ],
+      "id": "openai-model",
+      "name": "OpenAI Chat Model"
+    },
+    {
+      "parameters": {
+        "jsonSchema": "{\n  \"type\": \"object\",\n  \"properties\": {\n    \"sentiment\": {\n      \"type\": \"string\",\n      \"enum\": [\"Positive\", \"Neutral\", \"Negative\"],\n      \"description\": \"The overall sentiment of the feedback\"\n    },\n    \"rating\": {\n      \"type\": \"integer\",\n      \"minimum\": 1,\n      \"maximum\": 5,\n      \"description\": \"A numerical score from 1 to 5 based on the feedback\"\n    }\n  },\n  \"required\": [\"sentiment\", \"rating\"]\n}"
+      },
+      "type": "@n8n/n8n-nodes-langchain.outputParserStructured",
+      "typeVersion": 1.2,
+      "position": [
+        450,
+        220
+      ],
+      "id": "structured-parser",
+      "name": "Structured Output Parser"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=Analyze the following user feedback and provide the sentiment and a rating between 1 and 5:\n\n{{ $json.body.feedback_text }}",
+        "hasOutputParser": true
+      },
+      "type": "@n8n/n8n-nodes-langchain.chainLlm",
+      "typeVersion": 1.4,
+      "position": [
+        280,
+        0
+      ],
+      "id": "llm-chain",
+      "name": "Sentiment Analyzer"
+    },
+    {
+      "parameters": {
+        "operation": "insert",
+        "collection": "user_feedback",
+        "fields": "text,email,sentiment,rating,timestamp",
+        "expressions": {
+          "text": "={{ $('Webhook Trigger').item.json.body.feedback_text }}",
+          "email": "={{ $('Webhook Trigger').item.json.body.user_email || 'anonymous' }}",
+          "sentiment": "={{ $json.output.sentiment }}",
+          "rating": "={{ $json.output.rating }}",
+          "timestamp": "={{ new Date().toISOString() }}"
+        }
+      },
+      "type": "n8n-nodes-base.mongoDb",
+      "typeVersion": 1.1,
+      "position": [
+        600,
+        0
+      ],
+      "id": "mongodb-save",
+      "name": "MongoDB Save"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "string": [
+            {
+              "value1": "={{ $json.sentiment }}",
+              "value2": "Negative"
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 1,
+      "position": [
+        850,
+        0
+      ],
+      "id": "check-negative",
+      "name": "Is Negative?"
+    },
+    {
+      "parameters": {
+        "resource": "chat",
+        "operation": "postMessage",
+        "channelId": "C12345678",
+        "text": "=\ud83d\udea8 *Negative Feedback Alert*\n\n*User:* {{ $('Webhook Trigger').item.json.body.user_email || 'Anonymous' }}\n*Rating:* {{ $json.rating }}/5\n*Feedback:* {{ $('Webhook Trigger').item.json.body.feedback_text }}",
+        "otherOptions": {}
+      },
+      "type": "n8n-nodes-base.slack",
+      "typeVersion": 2.1,
+      "position": [
+        1100,
+        -100
+      ],
+      "id": "slack-alert",
+      "name": "Slack Alert"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1,
+      "position": [
+        1350,
+        60
+      ],
+      "id": "finish-response",
+      "name": "Webhook Response"
+    },
+    {
+      "parameters": {
+        "content": "### 1. Webhook Setup\nExpects `feedback_text` and `user_email` (optional) in POST body.",
+        "color": 4
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -50,
+        -150
+      ],
+      "id": "note1",
+      "name": "Sticky Note1"
+    },
+    {
+      "parameters": {
+        "content": "### 2. AI Analysis\nUses a Chain with a Structured Output Parser to force the AI to return a specific JSON schema (Sentiment & Rating).",
+        "color": 6
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        250,
+        350
+      ],
+      "id": "note2",
+      "name": "Sticky Note2"
+    },
+    {
+      "parameters": {
+        "content": "### 3. Storage & Logic\nRecords are saved to MongoDB. \n\nIf the sentiment is 'Negative', an alert is triggered.",
+        "color": 3
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        650,
+        180
+      ],
+      "id": "note3",
+      "name": "Sticky Note3"
+    }
+  ],
+  "connections": {
+    "Webhook Trigger": {
+      "main": [
+        [
+          {
+            "node": "Sentiment Analyzer",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "openai-model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Sentiment Analyzer",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "structured-parser": {
+      "ai_outputParser": [
+        [
+          {
+            "node": "Sentiment Analyzer",
+            "type": "ai_outputParser",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Sentiment Analyzer": {
+      "main": [
+        [
+          {
+            "node": "MongoDB Save",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "MongoDB Save": {
+      "main": [
+        [
+          {
+            "node": "check-negative",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "check-negative": {
+      "main": [
+        [
+          {
+            "node": "slack-alert",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "finish-response",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "slack-alert": {
+      "main": [
+        [
+          {
+            "node": "finish-response",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1",
+    "saveManualExecutions": true,
+    "saveDataSuccessExecution": "all",
+    "saveExecutionProgress": true,
+    "saveDataErrorExecution": "all",
+    "timezone": "UTC",
+    "callerPolicy": "workflowsFromSameOwner",
+    "availableInMCP": false
+  },
+  "staticData": null,
+  "meta": null,
+  "pinData": null,
+  "versionId": "a0d9f104-1dbc-4195-912c-26fc2b300943",
+  "activeVersionId": null,
+  "triggerCount": 0,
+  "shared": [
+    {
+      "updatedAt": "2026-01-03T16:09:23.499Z",
+      "createdAt": "2026-01-03T16:09:23.499Z",
+      "role": "workflow:owner",
+      "workflowId": "fspxjalJuCCYYMrD",
+      "projectId": "DT8YjHwLZsQjJqVc"
+    }
+  ],
+  "activeVersion": null,
+  "tags": []
+}

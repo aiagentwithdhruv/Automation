@@ -1,0 +1,273 @@
+{
+  "updatedAt": "2025-12-08T17:09:13.000Z",
+  "createdAt": "2025-12-08T16:49:14.615Z",
+  "id": "bgWcIRMz3e5wkckF",
+  "name": "Webhook Test with Postman",
+  "active": true,
+  "isArchived": false,
+  "nodes": [
+    {
+      "parameters": {
+        "content": "# Webhook\n\n## Core meaning\nA webhook is a public URL that receives data in real time from external apps and instantly triggers a workflow.\n\n## Real purpose\nInstead of pulling data on schedule, it simply waits until someone sends information to it and reacts immediately.\n\n## Natural analogy\nLike a doorbell \u2014\nIt doesn\u2019t check every second who\u2019s outside.\nIt just rings when someone presses it.\n\n## Why it exists\nTo let outside apps talk to your automation:\nthey push \u2192 webhook receives \u2192 flow starts.\n\n## Where it is used\nPayment success alerts  \nLead form submissions  \nWhatsApp & Telegram inbound messages  \nCRM status updates  \nE-commerce order confirmations  \nAI chatbot incoming queries\n\n## Key behavior\nWebhook does nothing until a sender posts data to it.\n\n## What we will learn today\nHow webhooks behave  \nWhy external apps use POST  \nHow instant triggers work  \nHow to **test a webhook using Postman**",
+        "height": 928,
+        "width": 448,
+        "color": 5
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        -528,
+        -96
+      ],
+      "typeVersion": 1,
+      "id": "33db9e23-c8ae-45ad-85c6-746c026558e6",
+      "name": "Sticky Note"
+    },
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "a5168d8e-f8a2-41a1-9939-40e01417efd1",
+        "responseMode": "responseNode",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2.1,
+      "position": [
+        0,
+        32
+      ],
+      "id": "d8deac0f-4ee7-4727-bd09-1ba0b259e660",
+      "name": "Webhook",
+      "webhookId": "a5168d8e-f8a2-41a1-9939-40e01417efd1"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.4,
+      "position": [
+        528,
+        32
+      ],
+      "id": "e8b1313d-b6c4-4d7a-be63-bc2f9a2f84da",
+      "name": "Respond to Webhook"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "={{ $json.body.message }}",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 3,
+      "position": [
+        208,
+        32
+      ],
+      "id": "da350b83-8722-40d3-92e7-f0d0f2699657",
+      "name": "AI Agent"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatGoogleGemini",
+      "typeVersion": 1,
+      "position": [
+        80,
+        240
+      ],
+      "id": "571a2dbf-7da2-41ce-87ed-71efc865f19c",
+      "name": "Google Gemini Chat Model",
+      "credentials": {
+        "googlePalmApi": {
+          "id": "1YAglGZ0F8CcWPRL",
+          "name": "Gemini"
+        }
+      }
+    }
+  ],
+  "connections": {
+    "Webhook": {
+      "main": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Gemini Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "AI Agent": {
+      "main": [
+        [
+          {
+            "node": "Respond to Webhook",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "staticData": null,
+  "meta": {
+    "templateCredsSetupCompleted": true
+  },
+  "pinData": {},
+  "versionId": "bc03d1f8-0ffb-4708-8f07-6b099fc6c8b3",
+  "activeVersionId": "bc03d1f8-0ffb-4708-8f07-6b099fc6c8b3",
+  "triggerCount": 1,
+  "shared": [
+    {
+      "updatedAt": "2025-12-08T16:49:14.622Z",
+      "createdAt": "2025-12-08T16:49:14.622Z",
+      "role": "workflow:owner",
+      "workflowId": "bgWcIRMz3e5wkckF",
+      "projectId": "DT8YjHwLZsQjJqVc"
+    }
+  ],
+  "activeVersion": {
+    "updatedAt": "2025-12-08T17:09:13.976Z",
+    "createdAt": "2025-12-08T17:09:13.976Z",
+    "versionId": "bc03d1f8-0ffb-4708-8f07-6b099fc6c8b3",
+    "workflowId": "bgWcIRMz3e5wkckF",
+    "nodes": [
+      {
+        "parameters": {
+          "content": "# Webhook\n\n## Core meaning\nA webhook is a public URL that receives data in real time from external apps and instantly triggers a workflow.\n\n## Real purpose\nInstead of pulling data on schedule, it simply waits until someone sends information to it and reacts immediately.\n\n## Natural analogy\nLike a doorbell \u2014\nIt doesn\u2019t check every second who\u2019s outside.\nIt just rings when someone presses it.\n\n## Why it exists\nTo let outside apps talk to your automation:\nthey push \u2192 webhook receives \u2192 flow starts.\n\n## Where it is used\nPayment success alerts  \nLead form submissions  \nWhatsApp & Telegram inbound messages  \nCRM status updates  \nE-commerce order confirmations  \nAI chatbot incoming queries\n\n## Key behavior\nWebhook does nothing until a sender posts data to it.\n\n## What we will learn today\nHow webhooks behave  \nWhy external apps use POST  \nHow instant triggers work  \nHow to **test a webhook using Postman**",
+          "height": 928,
+          "width": 448,
+          "color": 5
+        },
+        "type": "n8n-nodes-base.stickyNote",
+        "position": [
+          -528,
+          -96
+        ],
+        "typeVersion": 1,
+        "id": "33db9e23-c8ae-45ad-85c6-746c026558e6",
+        "name": "Sticky Note"
+      },
+      {
+        "parameters": {
+          "httpMethod": "POST",
+          "path": "a5168d8e-f8a2-41a1-9939-40e01417efd1",
+          "responseMode": "responseNode",
+          "options": {}
+        },
+        "type": "n8n-nodes-base.webhook",
+        "typeVersion": 2.1,
+        "position": [
+          0,
+          32
+        ],
+        "id": "d8deac0f-4ee7-4727-bd09-1ba0b259e660",
+        "name": "Webhook",
+        "webhookId": "a5168d8e-f8a2-41a1-9939-40e01417efd1"
+      },
+      {
+        "parameters": {
+          "options": {}
+        },
+        "type": "n8n-nodes-base.respondToWebhook",
+        "typeVersion": 1.4,
+        "position": [
+          528,
+          32
+        ],
+        "id": "e8b1313d-b6c4-4d7a-be63-bc2f9a2f84da",
+        "name": "Respond to Webhook"
+      },
+      {
+        "parameters": {
+          "promptType": "define",
+          "text": "={{ $json.body.message }}",
+          "options": {}
+        },
+        "type": "@n8n/n8n-nodes-langchain.agent",
+        "typeVersion": 3,
+        "position": [
+          208,
+          32
+        ],
+        "id": "da350b83-8722-40d3-92e7-f0d0f2699657",
+        "name": "AI Agent"
+      },
+      {
+        "parameters": {
+          "options": {}
+        },
+        "type": "@n8n/n8n-nodes-langchain.lmChatGoogleGemini",
+        "typeVersion": 1,
+        "position": [
+          80,
+          240
+        ],
+        "id": "571a2dbf-7da2-41ce-87ed-71efc865f19c",
+        "name": "Google Gemini Chat Model",
+        "credentials": {
+          "googlePalmApi": {
+            "id": "1YAglGZ0F8CcWPRL",
+            "name": "Gemini"
+          }
+        }
+      }
+    ],
+    "connections": {
+      "Webhook": {
+        "main": [
+          [
+            {
+              "node": "AI Agent",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Google Gemini Chat Model": {
+        "ai_languageModel": [
+          [
+            {
+              "node": "AI Agent",
+              "type": "ai_languageModel",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "AI Agent": {
+        "main": [
+          [
+            {
+              "node": "Respond to Webhook",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      }
+    },
+    "authors": "Dhruv Tomar",
+    "name": null,
+    "description": null,
+    "autosaved": false
+  },
+  "tags": []
+}

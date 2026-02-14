@@ -1,0 +1,1010 @@
+{
+  "updatedAt": "2026-01-25T06:41:42.971Z",
+  "createdAt": "2025-12-30T05:19:51.058Z",
+  "id": "PP7TOiQjtzDT69kS",
+  "name": "Daily AI News Digest to Email and Telegram_Updated",
+  "active": false,
+  "isArchived": false,
+  "nodes": [
+    {
+      "parameters": {
+        "content": "## \ud83d\ude80 Daily AI News Digest Workflow\nThis workflow runs daily to fetch AI news from RSS feeds, uses AI to summarize and select the top 5 most important news stories, then sends them to both your email and Telegram.\n\n**Setup Required:**\n1. Configure Gmail OAuth2 credentials\n2. Configure Telegram Bot credentials\n3. Set your Telegram Chat ID in the Telegram node\n4. Configure OpenRouter API credentials (or replace with your preferred LLM)",
+        "height": 272,
+        "width": 496
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        128,
+        -32
+      ],
+      "id": "a1b2c3d4-e5f6-7890-abcd-ef1234567890",
+      "name": "Sticky Note - Overview"
+    },
+    {
+      "parameters": {
+        "content": "## \u23f0 Schedule Trigger\nThis node triggers the workflow daily at 9:00 AM.\n\nYou can adjust the time by modifying the cron expression.",
+        "height": 208
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -496,
+        272
+      ],
+      "id": "b2c3d4e5-f6a7-8901-bcde-f23456789012",
+      "name": "Sticky Note - Trigger"
+    },
+    {
+      "parameters": {
+        "content": "## \ud83d\udcf0 RSS Feed Reader\nFetches the latest AI news from multiple RSS feeds.\n\nYou can add more RSS feed URLs to get news from different sources.",
+        "height": 240
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -224,
+        32
+      ],
+      "id": "c3d4e5f6-a7b8-9012-cdef-345678901234",
+      "name": "Sticky Note - RSS"
+    },
+    {
+      "parameters": {
+        "content": "## \ud83e\udd16 AI Agent\nThe AI Agent analyzes all fetched news articles and selects the top 5 most relevant and important AI news stories.\n\n**Credentials Required:**\n- OpenRouter API credentials (or your preferred LLM provider)",
+        "height": 240
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        720,
+        176
+      ],
+      "id": "d4e5f6a7-b8c9-0123-defa-456789012345",
+      "name": "Sticky Note - AI Agent"
+    },
+    {
+      "parameters": {
+        "content": "## \ud83d\udce7 Gmail Node\nSends the formatted AI news digest to your email.\n\n**Credentials Required:**\n- Gmail OAuth2 credentials\n- Set your recipient email address",
+        "height": 208
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        1056,
+        128
+      ],
+      "id": "e5f6a7b8-c9d0-1234-efab-567890123456",
+      "name": "Sticky Note - Gmail"
+    },
+    {
+      "parameters": {
+        "content": "## \ud83d\udcf1 Telegram Node\nSends the AI news digest to your Telegram.\n\n**Credentials Required:**\n- Telegram Bot API credentials\n- Your Telegram Chat ID",
+        "height": 192
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        1136,
+        768
+      ],
+      "id": "f6a7b8c9-d0e1-2345-fabc-678901234567",
+      "name": "Sticky Note - Telegram"
+    },
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "field": "hours"
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.2,
+      "position": [
+        -176,
+        304
+      ],
+      "id": "g7b8c9d0-e1f2-3456-abcd-789012345678",
+      "name": "Daily Schedule Trigger",
+      "disabled": true
+    },
+    {
+      "parameters": {
+        "url": "https://news.google.com/rss/search?q=artificial+intelligence&hl=en-US&gl=US&ceid=US:en",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.rssFeedRead",
+      "typeVersion": 1.1,
+      "position": [
+        128,
+        304
+      ],
+      "id": "h8c9d0e1-f2a3-4567-bcde-890123456789",
+      "name": "RSS Feed - AI News Google"
+    },
+    {
+      "parameters": {
+        "url": "https://techcrunch.com/tag/artificial-intelligence/feed/",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.rssFeedRead",
+      "typeVersion": 1.1,
+      "position": [
+        128,
+        480
+      ],
+      "id": "i9d0e1f2-a3b4-5678-cdef-901234567890",
+      "name": "RSS Feed - TechCrunch AI"
+    },
+    {
+      "parameters": {
+        "url": "https://www.artificialintelligence-news.com/feed/",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.rssFeedRead",
+      "typeVersion": 1.1,
+      "position": [
+        128,
+        672
+      ],
+      "id": "j0e1f2a3-b4c5-6789-defa-012345678901",
+      "name": "RSS Feed - AI News"
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.merge",
+      "typeVersion": 3,
+      "position": [
+        416,
+        480
+      ],
+      "id": "k1f2a3b4-c5d6-7890-efab-123456789012",
+      "name": "Merge All News"
+    },
+    {
+      "parameters": {
+        "jsCode": "// Get all items from the input\nconst items = $input.all();\n\n// Flatten if nested and create a clean array of news items\nconst allNews = [];\n\nfor (const item of items) {\n  if (item.json) {\n    allNews.push({\n      title: item.json.title || 'No title',\n      link: item.json.link || '',\n      description: item.json.contentSnippet || item.json.description || item.json.content || 'No description',\n      pubDate: item.json.pubDate || item.json.isoDate || 'Unknown date',\n      source: item.json.creator || item.json.source || 'Unknown source'\n    });\n  }\n}\n\n// Sort by date (newest first) and take latest 20 for AI to process\nconst sortedNews = allNews.sort((a, b) => new Date(b.pubDate) - new Date(a.pubDate)).slice(0, 20);\n\n// Create a formatted string for the AI\nconst newsText = sortedNews.map((news, index) => \n  `${index + 1}. Title: ${news.title}\\n   Link: ${news.link}\\n   Description: ${news.description}\\n   Date: ${news.pubDate}\\n   Source: ${news.source}`\n).join('\\n\\n');\n\nreturn [{\n  json: {\n    newsText: newsText,\n    totalArticles: sortedNews.length,\n    rawNews: sortedNews\n  }\n}];"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        624,
+        480
+      ],
+      "id": "l2a3b4c5-d6e7-8901-fabc-234567890123",
+      "name": "Format News for AI"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "Here are today's AI news articles:\n\n{{ $json.newsText }}\n\nPlease analyze these articles and select the TOP 5 most important and interesting AI news stories. For each selected story, provide:\n1. A catchy headline\n2. A brief 2-3 sentence summary\n3. Why it's important\n4. The source link\n\nFormat the output as a well-structured newsletter that can be sent via email and Telegram.",
+        "hasOutputParser": true,
+        "options": {
+          "systemMessage": "=You are an expert AI news curator and journalist. Your job is to analyze AI-related news articles and select the most important, impactful, and interesting stories of the day. You should:\n\n1. Focus on significant breakthroughs, major company announcements, policy changes, and impactful research\n2. Avoid duplicate or very similar stories\n3. Prioritize news that affects a broad audience\n4. Write engaging summaries that are informative yet concise\n5. Include the source links for each story\n\nFormat your output as a professional daily newsletter with:\n- A brief introduction\n- The top 5 stories with headlines, summaries, and links\n- A brief conclusion\n\nMake it engaging and easy to read!"
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 2,
+      "position": [
+        832,
+        480
+      ],
+      "id": "m3b4c5d6-e7f8-9012-abcd-345678901234",
+      "name": "AI News Curator Agent"
+    },
+    {
+      "parameters": {
+        "model": "google/gemini-3-flash-preview",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenRouter",
+      "typeVersion": 1,
+      "position": [
+        720,
+        704
+      ],
+      "id": "n4c5d6e7-f8a9-0123-bcde-456789012345",
+      "name": "OpenRouter Chat Model",
+      "credentials": {
+        "openRouterApi": {
+          "id": "5NHf7ILbLoMVxKcb",
+          "name": "OpenRouter account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "schemaType": "manual",
+        "inputSchema": "{\n  \"type\": \"object\",\n  \"properties\": {\n    \"emailSubject\": {\n      \"type\": \"string\",\n      \"description\": \"The subject line for the email newsletter\"\n    },\n    \"emailBody\": {\n      \"type\": \"string\",\n      \"description\": \"The full HTML formatted email body with the top 5 AI news stories\"\n    },\n    \"telegramMessage\": {\n      \"type\": \"string\",\n      \"description\": \"A Telegram-friendly formatted version of the newsletter using markdown\"\n    }\n  },\n  \"required\": [\"emailSubject\", \"emailBody\", \"telegramMessage\"]\n}"
+      },
+      "type": "@n8n/n8n-nodes-langchain.outputParserStructured",
+      "typeVersion": 1.2,
+      "position": [
+        928,
+        704
+      ],
+      "id": "o5d6e7f8-a9b0-1234-cdef-567890123456",
+      "name": "Structured Output Parser"
+    },
+    {
+      "parameters": {
+        "sendTo": "aiwithdhruv@gmail.com",
+        "subject": "={{ $json.output.emailSubject }}",
+        "message": "={{ $json.output.emailBody }}",
+        "options": {
+          "appendAttribution": false
+        }
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.1,
+      "position": [
+        1120,
+        384
+      ],
+      "id": "p6e7f8a9-b0c1-2345-defa-678901234567",
+      "name": "Send Email",
+      "webhookId": "78926cf4-effb-4138-bf19-495dd179b87c",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "gPGYzjuIbblOf3E1",
+          "name": "Ai with Dhruv"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "chatId": "YOUR_TELEGRAM_CHAT_ID",
+        "text": "={{ $json.telegramMessage }}",
+        "additionalFields": {
+          "disable_web_page_preview": true,
+          "parse_mode": "Markdown"
+        }
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        1120,
+        592
+      ],
+      "id": "q7f8a9b0-c1d2-3456-efab-789012345678",
+      "name": "Send Telegram Message",
+      "webhookId": "7d381146-af6b-4c14-9651-fc7545304446",
+      "credentials": {
+        "telegramApi": {
+          "id": "YOUR_TELEGRAM_CREDENTIAL_ID",
+          "name": "Telegram Bot API"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "content": "## \u2705 Setup Checklist\n\n**Before running this workflow:**\n\n1. \u2610 Set up Gmail OAuth2 credentials\n2. \u2610 Update recipient email in Gmail node\n3. \u2610 Create a Telegram Bot via @BotFather\n4. \u2610 Get your Telegram Chat ID\n5. \u2610 Set up OpenRouter API credentials\n6. \u2610 Test the workflow manually first\n7. \u2610 Activate the workflow for daily runs\n\n**RSS Feeds included:**\n- Google News AI search\n- TechCrunch AI section\n- AI News website\n\nYou can add more feeds by duplicating the RSS nodes!",
+        "height": 560
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        1344,
+        128
+      ],
+      "id": "r8a9b0c1-d2e3-4567-fabc-890123456789",
+      "name": "Sticky Note - Checklist"
+    },
+    {
+      "parameters": {
+        "url": "https://www.aibusiness.com/rss.xml",
+        "options": {}
+      },
+      "id": "0de39622-2fe8-4967-8174-400b48ae5a17",
+      "name": "RSS Feed - AI Business",
+      "type": "n8n-nodes-base.rssFeedRead",
+      "typeVersion": 1.2,
+      "position": [
+        -464,
+        -1488
+      ]
+    },
+    {
+      "parameters": {
+        "url": "https://techcrunch.com/tag/startups/feed/",
+        "options": {}
+      },
+      "id": "8dd620bd-2960-429b-848c-588c33d95a88",
+      "name": "RSS Feed - AI Startups",
+      "type": "n8n-nodes-base.rssFeedRead",
+      "typeVersion": 1.2,
+      "position": [
+        -464,
+        -1296
+      ]
+    },
+    {
+      "parameters": {
+        "url": "https://www.marktechpost.com/category/automation/feed/",
+        "options": {}
+      },
+      "id": "2ff10784-58d9-45cb-87ba-9badcf85e1a0",
+      "name": "RSS Feed - AI Automation",
+      "type": "n8n-nodes-base.rssFeedRead",
+      "typeVersion": 1.2,
+      "position": [
+        -464,
+        -1104
+      ],
+      "onError": "continueRegularOutput"
+    },
+    {
+      "parameters": {
+        "url": "https://news.google.com/rss/search?q=AGI+artificial+general+intelligence&hl=en-US&gl=US&ceid=US:en",
+        "options": {}
+      },
+      "id": "7d63c776-3159-461d-b1a0-de3b07bfefc8",
+      "name": "RSS Feed - AGI Updates",
+      "type": "n8n-nodes-base.rssFeedRead",
+      "typeVersion": 1.2,
+      "position": [
+        -464,
+        -912
+      ]
+    },
+    {
+      "parameters": {
+        "url": "https://www.anthropic.com/news/rss.xml",
+        "options": {}
+      },
+      "id": "d20f9cd9-6830-45a6-b0b8-36d12d66c5cd",
+      "name": "RSS Feed - Claude Updates",
+      "type": "n8n-nodes-base.rssFeedRead",
+      "typeVersion": 1.2,
+      "position": [
+        -464,
+        -720
+      ],
+      "onError": "continueRegularOutput"
+    },
+    {
+      "parameters": {
+        "url": "https://www.theverge.com/ai-artificial-intelligence/rss/index.xml",
+        "options": {}
+      },
+      "id": "0563db07-15cf-4445-b72e-b5e4458ddf54",
+      "name": "RSS Feed - AI Updates",
+      "type": "n8n-nodes-base.rssFeedRead",
+      "typeVersion": 1.2,
+      "position": [
+        -464,
+        -528
+      ],
+      "onError": "continueRegularOutput"
+    },
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "field": "hours"
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.2,
+      "position": [
+        -688,
+        -1296
+      ],
+      "id": "d7c0949b-86d2-4a26-bf9c-7b27fdb727e3",
+      "name": "Daily Schedule Trigger1"
+    },
+    {
+      "parameters": {
+        "url": "https://news.google.com/rss/search?q=artificial+intelligence&hl=en-US&gl=US&ceid=US:en",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.rssFeedRead",
+      "typeVersion": 1.1,
+      "position": [
+        -464,
+        -2064
+      ],
+      "id": "16e19076-1837-4782-a0d1-b6c7ee37b3d3",
+      "name": "RSS Feed - AI News Google1"
+    },
+    {
+      "parameters": {
+        "url": "https://techcrunch.com/tag/artificial-intelligence/feed/",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.rssFeedRead",
+      "typeVersion": 1.1,
+      "position": [
+        -464,
+        -1872
+      ],
+      "id": "383aa089-6871-4b36-988d-29c3a214a3f9",
+      "name": "RSS Feed - TechCrunch AI1"
+    },
+    {
+      "parameters": {
+        "url": "https://www.artificialintelligence-news.com/feed/",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.rssFeedRead",
+      "typeVersion": 1.1,
+      "position": [
+        -464,
+        -1680
+      ],
+      "id": "a1124326-b62d-467c-860a-283c7ec9973b",
+      "name": "RSS Feed - AI News1"
+    },
+    {
+      "parameters": {
+        "numberInputs": 9
+      },
+      "type": "n8n-nodes-base.merge",
+      "typeVersion": 3,
+      "position": [
+        -240,
+        -1408
+      ],
+      "id": "48ec6987-fba6-4213-8b76-79bb69b5c569",
+      "name": "Merge All News1"
+    },
+    {
+      "parameters": {
+        "jsCode": "// Get all items from the input\nconst items = $input.all();\n\n// Flatten if nested and create a clean array of news items\nconst allNews = [];\n\nfor (const item of items) {\n  if (item.json) {\n    allNews.push({\n      title: item.json.title || 'No title',\n      link: item.json.link || '',\n      description: item.json.contentSnippet || item.json.description || item.json.content || 'No description',\n      pubDate: item.json.pubDate || item.json.isoDate || 'Unknown date',\n      source: item.json.creator || item.json.source || 'Unknown source'\n    });\n  }\n}\n\n// Sort by date (newest first) and take latest 20 for AI to process\nconst sortedNews = allNews.sort((a, b) => new Date(b.pubDate) - new Date(a.pubDate)).slice(0, 20);\n\n// Create a formatted string for the AI\nconst newsText = sortedNews.map((news, index) => \n  `${index + 1}. Title: ${news.title}\\n   Link: ${news.link}\\n   Description: ${news.description}\\n   Date: ${news.pubDate}\\n   Source: ${news.source}`\n).join('\\n\\n');\n\nreturn [{\n  json: {\n    newsText: newsText,\n    totalArticles: sortedNews.length,\n    rawNews: sortedNews\n  }\n}];"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -16,
+        -1296
+      ],
+      "id": "963da242-3e3b-4059-85bf-7a563c43373f",
+      "name": "Format News for AI1"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "Here are today's AI news articles:\n\n{{ $json.newsText }}\n\nPlease analyze these articles and select the TOP 5 most important and interesting AI news stories. For each selected story, provide:\n1. A catchy headline\n2. A brief 2-3 sentence summary\n3. Why it's important\n4. The source link\n\nFormat the output as a well-structured newsletter that can be sent via email and Telegram.",
+        "hasOutputParser": true,
+        "options": {
+          "systemMessage": "=You are an expert AI news curator and journalist. Your job is to analyze AI-related news articles and select the most important, impactful, and interesting stories of the day. You should:\n\n1. Focus on significant breakthroughs, major company announcements, policy changes, and impactful research\n2. Avoid duplicate or very similar stories\n3. Prioritize news that affects a broad audience\n4. Write engaging summaries that are informative yet concise\n5. Include the source links for each story\n\nFormat your output as a professional daily newsletter with:\n- A brief introduction\n- The top 5 stories with headlines, summaries, and links\n- A brief conclusion\n\nMake it engaging and easy to read!"
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 2,
+      "position": [
+        208,
+        -1296
+      ],
+      "id": "19f7cd68-2dbc-4902-a5fa-84597c78b271",
+      "name": "AI News Curator Agent1"
+    },
+    {
+      "parameters": {
+        "model": "google/gemini-3-flash-preview",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenRouter",
+      "typeVersion": 1,
+      "position": [
+        224,
+        -1072
+      ],
+      "id": "0980049c-2d91-4869-99fa-23ddb1b4524e",
+      "name": "OpenRouter Chat Model1",
+      "credentials": {
+        "openRouterApi": {
+          "id": "5NHf7ILbLoMVxKcb",
+          "name": "OpenRouter account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "schemaType": "manual",
+        "inputSchema": "{\n  \"type\": \"object\",\n  \"properties\": {\n    \"emailSubject\": {\n      \"type\": \"string\",\n      \"description\": \"The subject line for the email newsletter\"\n    },\n    \"emailBody\": {\n      \"type\": \"string\",\n      \"description\": \"The full HTML formatted email body with the top 5 AI news stories\"\n    },\n    \"telegramMessage\": {\n      \"type\": \"string\",\n      \"description\": \"A Telegram-friendly formatted version of the newsletter using markdown\"\n    }\n  },\n  \"required\": [\"emailSubject\", \"emailBody\", \"telegramMessage\"]\n}"
+      },
+      "type": "@n8n/n8n-nodes-langchain.outputParserStructured",
+      "typeVersion": 1.2,
+      "position": [
+        352,
+        -1072
+      ],
+      "id": "b37ac923-18cb-430e-9442-406dd1c31f25",
+      "name": "Structured Output Parser1"
+    },
+    {
+      "parameters": {
+        "sendTo": "aiwithdhruv@gmail.com",
+        "subject": "={{ $json.output.emailSubject }}",
+        "message": "={{ $json.output.emailBody }}",
+        "options": {
+          "appendAttribution": false
+        }
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.1,
+      "position": [
+        560,
+        -1392
+      ],
+      "id": "5a529bba-ac89-42f6-bf94-d452e0d24b79",
+      "name": "Send Email1",
+      "webhookId": "78926cf4-effb-4138-bf19-495dd179b87c",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "gPGYzjuIbblOf3E1",
+          "name": "Ai with Dhruv"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "chatId": "YOUR_TELEGRAM_CHAT_ID",
+        "text": "={{ $json.telegramMessage }}",
+        "additionalFields": {
+          "disable_web_page_preview": true,
+          "parse_mode": "Markdown"
+        }
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        560,
+        -1200
+      ],
+      "id": "80dd657b-da2a-48c5-81ad-5a54f15cb80e",
+      "name": "Send Telegram Message1",
+      "webhookId": "7d381146-af6b-4c14-9651-fc7545304446",
+      "credentials": {
+        "telegramApi": {
+          "id": "W6XV6RQORTB3eBDg",
+          "name": "Agent Dhruv"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "content": "\ud83d\udd50 TRIGGER\n\nSchedule: Every hour\nPurpose: Automatically fetch latest AI news from multiple RSS feeds",
+        "height": 180
+      },
+      "id": "bc7ff93c-9669-4bd1-8012-577625f236ed",
+      "name": "Trigger Note",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -1024,
+        -1328
+      ]
+    },
+    {
+      "parameters": {
+        "content": "\ud83d\udcf0 RSS FEEDS\n\n9 AI news sources:\n\u2022 Google News AI\n\u2022 TechCrunch AI\n\u2022 AI News\n\u2022 AI Business\n\u2022 AI Startups\n\u2022 AI Automation\n\u2022 AGI Updates\n\u2022 Claude Updates\n\u2022 The Verge AI",
+        "height": 2024,
+        "width": 312,
+        "color": 5
+      },
+      "id": "cf3acc4c-0c0b-4d7f-94dc-6d94146e1f3f",
+      "name": "RSS Feeds Note",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -576,
+        -2336
+      ]
+    },
+    {
+      "parameters": {
+        "content": "\u2699\ufe0f DATA PROCESSING\n\n1. Merge all RSS feeds\n2. Format and clean data\n3. Sort by date (newest first)\n4. Select top 20 articles\n5. Prepare for AI analysis",
+        "height": 476,
+        "width": 184
+      },
+      "id": "2c101463-e54d-4440-878f-7d21b9000231",
+      "name": "Data Processing Note",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -48,
+        -1568
+      ]
+    },
+    {
+      "parameters": {
+        "content": "\ud83e\udd16 AI ANALYSIS\n\nAI Agent curates top 5 stories:\n\u2022 Analyzes importance\n\u2022 Creates catchy headlines\n\u2022 Writes summaries\n\u2022 Formats for email & Telegram\n\nModel: Google Gemini 3 Flash via OpenRouter",
+        "height": 644,
+        "width": 300,
+        "color": 4
+      },
+      "id": "cebadbeb-f8ac-46d2-997e-f342e9d52a3c",
+      "name": "AI Analysis Note",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        176,
+        -1552
+      ]
+    },
+    {
+      "parameters": {
+        "content": "\ud83d\udce7 DISTRIBUTION\n\nSends curated newsletter to:\n\u2709\ufe0f Email (Gmail)\n\ud83d\udcac Telegram\n\nStructured output ensures proper formatting for both channels",
+        "height": 776,
+        "width": 200
+      },
+      "id": "fb4bb114-ec44-42fb-bc0e-bdd62c74be95",
+      "name": "Distribution Note",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        512,
+        -1712
+      ]
+    }
+  ],
+  "connections": {
+    "Daily Schedule Trigger": {
+      "main": [
+        [
+          {
+            "node": "RSS Feed - AI News Google",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "RSS Feed - TechCrunch AI",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "RSS Feed - AI News",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "RSS Feed - AI News Google": {
+      "main": [
+        [
+          {
+            "node": "Merge All News",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "RSS Feed - TechCrunch AI": {
+      "main": [
+        [
+          {
+            "node": "Merge All News",
+            "type": "main",
+            "index": 1
+          }
+        ]
+      ]
+    },
+    "RSS Feed - AI News": {
+      "main": [
+        [
+          {
+            "node": "Merge All News",
+            "type": "main",
+            "index": 1
+          }
+        ]
+      ]
+    },
+    "Merge All News": {
+      "main": [
+        [
+          {
+            "node": "Format News for AI",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Format News for AI": {
+      "main": [
+        [
+          {
+            "node": "AI News Curator Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "AI News Curator Agent": {
+      "main": [
+        [
+          {
+            "node": "Send Email",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Send Telegram Message",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenRouter Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI News Curator Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Structured Output Parser": {
+      "ai_outputParser": [
+        [
+          {
+            "node": "AI News Curator Agent",
+            "type": "ai_outputParser",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "RSS Feed - AI Business": {
+      "main": [
+        [
+          {
+            "node": "Merge All News1",
+            "type": "main",
+            "index": 3
+          }
+        ]
+      ]
+    },
+    "RSS Feed - AI Startups": {
+      "main": [
+        [
+          {
+            "node": "Merge All News1",
+            "type": "main",
+            "index": 4
+          }
+        ]
+      ]
+    },
+    "RSS Feed - AI Automation": {
+      "main": [
+        [
+          {
+            "node": "Merge All News1",
+            "type": "main",
+            "index": 5
+          }
+        ]
+      ]
+    },
+    "RSS Feed - AGI Updates": {
+      "main": [
+        [
+          {
+            "node": "Merge All News1",
+            "type": "main",
+            "index": 6
+          }
+        ]
+      ]
+    },
+    "RSS Feed - Claude Updates": {
+      "main": [
+        [
+          {
+            "node": "Merge All News1",
+            "type": "main",
+            "index": 7
+          }
+        ]
+      ]
+    },
+    "RSS Feed - AI Updates": {
+      "main": [
+        [
+          {
+            "node": "Merge All News1",
+            "type": "main",
+            "index": 8
+          }
+        ]
+      ]
+    },
+    "Daily Schedule Trigger1": {
+      "main": [
+        [
+          {
+            "node": "RSS Feed - AI News Google1",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "RSS Feed - TechCrunch AI1",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "RSS Feed - AI News1",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "RSS Feed - AI Business",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "RSS Feed - AI Startups",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "RSS Feed - AI Automation",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "RSS Feed - AGI Updates",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "RSS Feed - Claude Updates",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "RSS Feed - AI Updates",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "RSS Feed - AI News Google1": {
+      "main": [
+        [
+          {
+            "node": "Merge All News1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "RSS Feed - TechCrunch AI1": {
+      "main": [
+        [
+          {
+            "node": "Merge All News1",
+            "type": "main",
+            "index": 1
+          }
+        ]
+      ]
+    },
+    "RSS Feed - AI News1": {
+      "main": [
+        [
+          {
+            "node": "Merge All News1",
+            "type": "main",
+            "index": 2
+          }
+        ]
+      ]
+    },
+    "Merge All News1": {
+      "main": [
+        [
+          {
+            "node": "Format News for AI1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Format News for AI1": {
+      "main": [
+        [
+          {
+            "node": "AI News Curator Agent1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "AI News Curator Agent1": {
+      "main": [
+        [
+          {
+            "node": "Send Email1",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Send Telegram Message1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenRouter Chat Model1": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI News Curator Agent1",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Structured Output Parser1": {
+      "ai_outputParser": [
+        [
+          {
+            "node": "AI News Curator Agent1",
+            "type": "ai_outputParser",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1",
+    "saveManualExecutions": true,
+    "saveDataSuccessExecution": "all",
+    "saveExecutionProgress": true,
+    "saveDataErrorExecution": "all",
+    "errorWorkflow": "",
+    "timezone": "Asia/Kolkata",
+    "callerPolicy": "workflowsFromSameOwner",
+    "availableInMCP": false,
+    "timeSavedMode": "fixed"
+  },
+  "staticData": {
+    "node:Daily Schedule Trigger1": {
+      "recurrenceRules": []
+    }
+  },
+  "meta": {
+    "templateCredsSetupCompleted": true
+  },
+  "pinData": {},
+  "versionId": "c26713d9-b4f9-4d55-aaac-2df440f3ad24",
+  "activeVersionId": null,
+  "triggerCount": 1,
+  "shared": [
+    {
+      "updatedAt": "2025-12-30T05:19:51.060Z",
+      "createdAt": "2025-12-30T05:19:51.060Z",
+      "role": "workflow:owner",
+      "workflowId": "PP7TOiQjtzDT69kS",
+      "projectId": "DT8YjHwLZsQjJqVc"
+    }
+  ],
+  "activeVersion": null,
+  "tags": []
+}

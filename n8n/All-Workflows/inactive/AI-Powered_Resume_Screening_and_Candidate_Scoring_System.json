@@ -1,0 +1,533 @@
+{
+  "updatedAt": "2026-01-22T16:18:56.000Z",
+  "createdAt": "2026-01-22T16:18:56.037Z",
+  "id": "idSlTGcAVxLDf2w4",
+  "name": "AI-Powered Resume Screening and Candidate Scoring System",
+  "active": false,
+  "isArchived": false,
+  "nodes": [
+    {
+      "parameters": {
+        "formTitle": "Resume Submission - AI Screening",
+        "formDescription": "Upload your resume for automated screening and evaluation",
+        "formFields": {
+          "values": [
+            {
+              "fieldName": "full_name",
+              "fieldLabel": "Full Name",
+              "requiredField": true
+            },
+            {
+              "fieldName": "email",
+              "fieldLabel": "Email Address",
+              "fieldType": "email",
+              "requiredField": true
+            },
+            {
+              "fieldName": "resume",
+              "fieldLabel": "Upload Resume (PDF)",
+              "fieldType": "file",
+              "multipleFiles": false,
+              "acceptFileTypes": ".pdf",
+              "requiredField": true
+            }
+          ]
+        },
+        "options": {
+          "appendAttribution": false,
+          "respondWithOptions": {
+            "values": {
+              "formSubmittedText": "Thank you! Your resume has been submitted and is being processed."
+            }
+          }
+        }
+      },
+      "id": "d83080bf-04fa-450c-bb0d-56d06f38877d",
+      "name": "Resume Upload Form",
+      "type": "n8n-nodes-base.formTrigger",
+      "typeVersion": 2.4,
+      "position": [
+        0,
+        0
+      ],
+      "webhookId": "e467fc04-7ae5-42c0-ac33-c1248e7b7a4d"
+    },
+    {
+      "parameters": {
+        "content": "\ud83d\udccb STEP 1: Candidate Form Submission\n\nCandidates submit their resume via n8n form with name, email, and PDF file.",
+        "width": 280
+      },
+      "id": "214e375f-b5f7-4b65-9327-fb5e8d5e3868",
+      "name": "Note: Candidate Form Submission",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        0,
+        2048
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "appendOrUpdate",
+        "documentId": {
+          "__rl": true,
+          "mode": "url",
+          "value": "<__PLACEHOLDER_VALUE__Add your Google Sheet URL here__>"
+        },
+        "sheetName": {
+          "__rl": true,
+          "mode": "name",
+          "value": "Raw Form Submissions"
+        },
+        "columns": {
+          "mappingMode": "autoMapInputData",
+          "value": {},
+          "matchingColumns": [
+            "email"
+          ],
+          "schema": []
+        },
+        "options": {}
+      },
+      "id": "60f313f3-87db-4bd6-9509-384e60e97461",
+      "name": "Store Raw Form Data",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        224,
+        0
+      ]
+    },
+    {
+      "parameters": {
+        "content": "\ud83d\udcbe STEP 2: Store Form Responses\n\nRaw form data is saved to Google Sheets for administration and tracking.",
+        "width": 280
+      },
+      "id": "b0b20f20-5ef3-4866-8128-8ced3297871e",
+      "name": "Note: Store Form Responses",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        0,
+        2048
+      ]
+    },
+    {
+      "parameters": {
+        "inputDataFieldName": "resume",
+        "name": "={{ $json.full_name + ' - Resume.pdf' }}",
+        "driveId": {
+          "__rl": true,
+          "mode": "list",
+          "value": "My Drive"
+        },
+        "folderId": {
+          "__rl": true,
+          "mode": "id",
+          "value": "<__PLACEHOLDER_VALUE__Add your Google Drive folder ID here__>"
+        },
+        "options": {}
+      },
+      "id": "ed414bc1-9327-4a7d-8bcb-bbe94fe13369",
+      "name": "Save Resume to Google Drive",
+      "type": "n8n-nodes-base.googleDrive",
+      "typeVersion": 3,
+      "position": [
+        448,
+        0
+      ]
+    },
+    {
+      "parameters": {
+        "content": "\ud83d\udcc1 STEP 3: Archive Resume Files\n\nResume PDFs are uploaded to Google Drive for permanent storage and future reference.",
+        "width": 280
+      },
+      "id": "f477855d-a15e-4515-bcb7-7d916f56eb79",
+      "name": "Note: Archive Resume Files",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        0,
+        2048
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "pdf",
+        "binaryPropertyName": "resume",
+        "options": {
+          "keepSource": "binary"
+        }
+      },
+      "id": "69381282-0282-4c48-b1d5-e733bebb0b7b",
+      "name": "Extract Resume Text",
+      "type": "n8n-nodes-base.extractFromFile",
+      "typeVersion": 1.1,
+      "position": [
+        672,
+        0
+      ]
+    },
+    {
+      "parameters": {
+        "content": "\ud83d\udcc4 STEP 4: Extract Text from Resume\n\nPDF content is extracted as plain text for AI analysis.",
+        "width": 280
+      },
+      "id": "e87af55c-f68d-48a6-a1bf-08b1dcfad4d5",
+      "name": "Note: Extract Text from Resume",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        0,
+        2048
+      ]
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "={{ 'Analyze this resume and provide scoring:\\n\\nCandidate Name: ' + $(\"Resume Upload Form\").item.json.full_name + '\\n\\nResume Content:\\n' + $json.text }}",
+        "hasOutputParser": true,
+        "options": {
+          "systemMessage": "You are an expert HR recruiter analyzing resumes. Review the resume text and provide a relevance score from 0-100 based on technical skills match, years of experience, education background, and overall presentation quality. Also provide a brief 2-3 sentence summary highlighting key strengths and qualifications, and identify the top 3-5 key skills."
+        }
+      },
+      "id": "54ff82c9-87b2-493b-b4c2-72d8e59c671b",
+      "name": "AI Resume Analyzer",
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 3.1,
+      "position": [
+        896,
+        0
+      ]
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "mode": "id",
+          "value": "gpt-4o-mini"
+        },
+        "builtInTools": {},
+        "options": {}
+      },
+      "id": "6d992440-4411-42e2-b7e1-21d7eadaaa66",
+      "name": "OpenAI Chat Model",
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.3,
+      "position": [
+        912,
+        224
+      ]
+    },
+    {
+      "parameters": {
+        "schemaType": "manual",
+        "inputSchema": "{\n\t\"type\": \"object\",\n\t\"properties\": {\n\t\t\"score\": {\n\t\t\t\"type\": \"number\",\n\t\t\t\"description\": \"Relevance score from 0-100\"\n\t\t},\n\t\t\"summary\": {\n\t\t\t\"type\": \"string\",\n\t\t\t\"description\": \"Brief 2-3 sentence summary of candidate strengths\"\n\t\t},\n\t\t\"skills\": {\n\t\t\t\"type\": \"array\",\n\t\t\t\"items\": {\n\t\t\t\t\"type\": \"string\"\n\t\t\t},\n\t\t\t\"description\": \"Top 3-5 key skills identified\"\n\t\t}\n\t},\n\t\"required\": [\"score\", \"summary\", \"skills\"]\n}"
+      },
+      "id": "25d3c14a-c879-4389-be38-4b6dd0ffa048",
+      "name": "Structured Output Parser",
+      "type": "@n8n/n8n-nodes-langchain.outputParserStructured",
+      "typeVersion": 1.3,
+      "position": [
+        1040,
+        224
+      ]
+    },
+    {
+      "parameters": {
+        "content": "\ud83e\udd16 STEP 5: AI Scoring & Analysis\n\nAI analyzes resume content and generates:\n- Relevance score (0-100)\n- Summary of strengths\n- Key skills identified",
+        "height": 180,
+        "width": 280
+      },
+      "id": "064159ef-45db-49b8-809e-a2ea6d5dc413",
+      "name": "Note: AI Scoring & Analysis",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        0,
+        2048
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "appendOrUpdate",
+        "documentId": {
+          "__rl": true,
+          "mode": "url",
+          "value": "<__PLACEHOLDER_VALUE__Add your Google Sheet URL here__>"
+        },
+        "sheetName": {
+          "__rl": true,
+          "mode": "name",
+          "value": "Candidate Results"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "email": "={{ $('Resume Upload Form').item.json.email }}",
+            "name": "={{ $('Resume Upload Form').item.json.full_name }}",
+            "score": "={{ $json.score }}",
+            "summary": "={{ $json.summary }}",
+            "skills": "={{ $json.skills.join(', ') }}",
+            "submission_date": "={{ new Date().toISOString() }}"
+          },
+          "matchingColumns": [
+            "email"
+          ],
+          "schema": [
+            {
+              "id": "email",
+              "displayName": "email",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "name",
+              "displayName": "name",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "score",
+              "displayName": "score",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "summary",
+              "displayName": "summary",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "skills",
+              "displayName": "skills",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "submission_date",
+              "displayName": "submission_date",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "184f4fb5-a732-4e7c-ab4a-bacb6ae8b76d",
+      "name": "Store Candidate Results",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        1248,
+        0
+      ]
+    },
+    {
+      "parameters": {
+        "content": "\ud83d\udcca STEP 6: Save Results to Sheet\n\nCandidate name, email, score, summary, and skills are stored in Google Sheets for review.",
+        "width": 280
+      },
+      "id": "40fde4d7-f8ea-4f0b-a655-e9b80010bb98",
+      "name": "Note: Save Results to Sheet",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        0,
+        2048
+      ]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "id-1",
+              "leftValue": "={{ $json.score }}",
+              "rightValue": 75,
+              "operator": {
+                "type": "number",
+                "operation": "gte"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "fa3a76bb-cef8-4e43-90f4-ae0cde70a0ce",
+      "name": "Check if High Score",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [
+        1472,
+        0
+      ]
+    },
+    {
+      "parameters": {
+        "chatId": "<__PLACEHOLDER_VALUE__Add your Telegram chat ID here__>",
+        "text": "={{ '\ud83c\udf1f High-Scoring Candidate Alert!\\n\\n\ud83d\udc64 Name: ' + $('Resume Upload Form').item.json.full_name + '\\n\ud83d\udce7 Email: ' + $('Resume Upload Form').item.json.email + '\\n\ud83d\udcca Score: ' + $json.score + '/100\\n\\n\ud83d\udcdd Summary:\\n' + $json.summary + '\\n\\n\ud83d\udcbc Key Skills:\\n' + $json.skills.map((s, i) => (i + 1) + '. ' + s).join('\\n') }}",
+        "additionalFields": {}
+      },
+      "id": "f9b75fd9-ac3e-49a4-8fc7-abb97110cd07",
+      "name": "Send Telegram Notification",
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        1696,
+        0
+      ],
+      "webhookId": "8a2be188-ba16-4174-a598-395fd611a5a0"
+    },
+    {
+      "parameters": {
+        "content": "\ud83d\udcf1 STEP 7: Notify for High Scores\n\nCandidates scoring 75+ trigger a Telegram notification with their details and AI analysis.",
+        "width": 280
+      },
+      "id": "17148e17-46f4-4fdc-8061-d746242d4187",
+      "name": "Note: Notify for High Scores",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        0,
+        2048
+      ]
+    }
+  ],
+  "connections": {
+    "Resume Upload Form": {
+      "main": [
+        [
+          {
+            "node": "Store Raw Form Data",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Store Raw Form Data": {
+      "main": [
+        [
+          {
+            "node": "Save Resume to Google Drive",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Save Resume to Google Drive": {
+      "main": [
+        [
+          {
+            "node": "Extract Resume Text",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Extract Resume Text": {
+      "main": [
+        [
+          {
+            "node": "AI Resume Analyzer",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "AI Resume Analyzer": {
+      "main": [
+        [
+          {
+            "node": "Store Candidate Results",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Resume Analyzer",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Structured Output Parser": {
+      "ai_outputParser": [
+        [
+          {
+            "node": "AI Resume Analyzer",
+            "type": "ai_outputParser",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Store Candidate Results": {
+      "main": [
+        [
+          {
+            "node": "Check if High Score",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Check if High Score": {
+      "main": [
+        [
+          {
+            "node": "Send Telegram Notification",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1",
+    "availableInMCP": false
+  },
+  "staticData": null,
+  "meta": null,
+  "pinData": {},
+  "versionId": "c1ea41f9-0e9f-4d75-b103-a70b8c5937b7",
+  "activeVersionId": null,
+  "triggerCount": 0,
+  "shared": [
+    {
+      "updatedAt": "2026-01-22T16:18:56.042Z",
+      "createdAt": "2026-01-22T16:18:56.042Z",
+      "role": "workflow:owner",
+      "workflowId": "idSlTGcAVxLDf2w4",
+      "projectId": "DT8YjHwLZsQjJqVc"
+    }
+  ],
+  "activeVersion": null,
+  "tags": []
+}

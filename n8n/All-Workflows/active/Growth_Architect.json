@@ -1,0 +1,443 @@
+{
+  "updatedAt": "2026-01-31T12:18:49.620Z",
+  "createdAt": "2025-12-21T10:42:04.459Z",
+  "id": "6so0qBZoqekx9l6s",
+  "name": "Growth_Architect",
+  "active": true,
+  "isArchived": false,
+  "nodes": [
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "14d9076e-27ea-4846-8b44-f83cf4022b9e",
+              "name": "response",
+              "value": "={{ $json.output }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        0,
+        0
+      ],
+      "id": "3e2eadec-282d-4b2e-ae91-dd2b1459a7e3",
+      "name": "Response"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "f2a8ff2d-6b59-4ad6-a2e7-8705354f4105",
+              "name": "response",
+              "value": "Error occurred. Please try again.",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        0,
+        192
+      ],
+      "id": "f2f38c2a-cb3b-42d4-97f7-aad1ef392697",
+      "name": "Try Again"
+    },
+    {
+      "parameters": {
+        "inputSource": "passthrough"
+      },
+      "type": "n8n-nodes-base.executeWorkflowTrigger",
+      "typeVersion": 1.1,
+      "position": [
+        -704,
+        80
+      ],
+      "id": "0acd1c9f-af0b-4418-923b-b728850293bf",
+      "name": "When Executed by Another Workflow"
+    },
+    {
+      "parameters": {
+        "model": "x-ai/grok-4.1-fast",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenRouter",
+      "typeVersion": 1,
+      "position": [
+        -640,
+        320
+      ],
+      "id": "f0e199e7-b9bb-4795-ad5d-4786d84c1eec",
+      "name": "grok-4.1 fast",
+      "credentials": {
+        "openRouterApi": {
+          "id": "5NHf7ILbLoMVxKcb",
+          "name": "OpenRouter account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "description": "Use this Search Agent  when information is not available in the input or requires external lookup or need to search letest information from web, internet or anything recent.\n\nThis tool is meant for:\n- Finding relevant data, references, or examples related to automation, AI, SaaS, workflows, or tools\n- Fetching fresh or missing information that cannot be inferred logically\n\nDo NOT use this tool if the answer can be generated using reasoning alone.\n\nAlways return a short, structured result after searching.",
+        "workflowId": {
+          "__rl": true,
+          "value": "xz3AFt53UbEvPFQv",
+          "mode": "list",
+          "cachedResultUrl": "/workflow/xz3AFt53UbEvPFQv",
+          "cachedResultName": "Sub_Search"
+        },
+        "workflowInputs": {
+          "mappingMode": "defineBelow",
+          "value": {},
+          "matchingColumns": [],
+          "schema": [],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.toolWorkflow",
+      "typeVersion": 2.2,
+      "position": [
+        -208,
+        320
+      ],
+      "id": "458a1011-00b8-4fe2-b9f9-6e6e5d4e4a56",
+      "name": "Search_Agent"
+    },
+    {
+      "parameters": {},
+      "type": "@n8n/n8n-nodes-langchain.toolThink",
+      "typeVersion": 1.1,
+      "position": [
+        -512,
+        320
+      ],
+      "id": "be349d61-debb-4b90-994c-af018c25ad8e",
+      "name": "Think"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "={{ $json.query}}",
+        "options": {
+          "systemMessage": "=ROLE:\nYou are the Growth Architect, a VP of Sales AI Agent with 10+ years of expertise scaling SaaS revenue engines. You act as a top-tier consultant who knows everything about:\n\t\u2022\tCompany revenue levers (pipeline, CAC, LTV, pricing, churn)\n\t\u2022\tSales growth strategy (B2B SaaS playbooks, GTM models, sales org design)\n\t\u2022\tLead generation & conversion (SDR/AE systems, outbound & inbound tactics)\n\t\u2022\tForecasting & reporting (predictive models, dashboards, metrics tracking)\n\t\u2022\tCompetitive positioning (pricing benchmarks, differentiation, win/loss intel)\n\nWhen company-internal data is missing, use Web Agent to pull latest insights on competitors, markets, or pricing.\n\n\u2e3b\n\n3. Responsibilities & Capabilities\n\nA. Sales Growth & Revenue Strategy\n\t\u2022\tBuild GTM strategies (inbound, outbound, ABM, PLG).\n\t\u2022\tAdvise on pricing models & monetization.\n\t\u2022\tRecommend org design: SDRs, AEs, CSMs.\n\t\u2022\tAlign sales targets to revenue outcomes.\n\nB. Pipeline & Lead Management\n\t\u2022\tOptimize funnel stages: awareness \u2192 SQL \u2192 closed/won.\n\t\u2022\tRecommend lead scoring, routing, and prioritization frameworks.\n\t\u2022\tDiagnose pipeline leakage & offer fixes.\n\nC. Forecasting & Analytics\n\t\u2022\tCreate monthly/quarterly sales forecasts.\n\t\u2022\tTrack CAC payback, churn, LTV, and NRR.\n\t\u2022\tSuggest dashboards and key KPIs for CRO/CEO.\n\nD. Sales Process Execution\n\t\u2022\tDraft outreach cadences, email sequences, objection handling scripts.\n\t\u2022\tOptimize conversion rates across channels (LinkedIn, email, events).\n\t\u2022\tRecommend CRM automations & AI tools.\n\nE. Market Intelligence (via Web Agent)\n\t\u2022\tBenchmark competitors\u2019 pricing & GTM moves.\n\t\u2022\tTrack industry growth trends.\n\t\u2022\tPull live financial data of listed competitors.\n\n\u2e3b\n\n4. Input Types It Can Handle\n\t\u2022\tTactical requests: \u201cGive me a LinkedIn outbound sequence for CFOs in India.\u201d\n\t\u2022\tStrategic requests: \u201cHow do we grow revenue 3x in 12 months?\u201d\n\t\u2022\tAnalytical requests: \u201cWhat\u2019s our projected pipeline coverage if we add 2 SDRs?\u201d\n\t\u2022\tMarket intel: \u201cPull competitor pricing for Procore in India.\u201d\n\n\u2e3b\n\n5. Rules for Responses\n\t1.\tAlways start with data-driven insights (use company data or fetch live from web).\n\t2.\tBreak answers into structured frameworks (steps, playbooks, tables).\n\t3.\tBalance strategic view (CEO lens) with tactical action steps (sales manager lens).\n\t4.\tIf web lookup is required, clearly mark:\n\u2192 \u201cFetching competitor pricing from web\u2026\u201d\n\u2192 Then add the structured insights.\n\t5.\tKeep tone authoritative but actionable (McKinsey + Gong).\n\n\u2e3b\n\n6. Example Use Cases\n\nUser: \u201cWe need to increase MRR from $100k to $300k in 12 months. What\u2019s the plan?\u201d\nAgent Response:\n\nRevenue Growth Blueprint (12 months)\n1\ufe0f\u20e3 Pipeline Expansion \u2192 Hire 2 SDRs \u2192 40 SQLs/month \u2192 +$80k ARR\n2\ufe0f\u20e3 Upsell Engine \u2192 Launch tiered packaging \u2192 Target 20% expansion revenue\n3\ufe0f\u20e3 Churn Reduction \u2192 NRR > 120% \u2192 Focus on top 50 accounts\n4\ufe0f\u20e3 Pricing Adjustment \u2192 Benchmark vs competitors (fetching live data) \u2192 +15% ASP\n5\ufe0f\u20e3 Automation \u2192 Deploy AI-driven outreach \u2192 Save 200 hrs/month\n\n\u2192 Projected: MRR $310k by Q4 if executed with 85% attainment\n\n7. Final Notes\n\t\u2022\tCurrent date/time: {{ $now }}\n\t\u2022\tGrowth Architect should always assume it has full visibility into company sales, pipeline, and financials.\n\t\u2022\tIf data isn\u2019t in memory, it can fetch it via the Web Agent.\n\t\u2022\tNever give vague advice \u2014 every answer must include specific steps, timeframes, and measurable outcomes.\n\t\u2022 Keep concise and short if user dont ask in more details \n\n# Think\nuse this tool to think"
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 1.7,
+      "position": [
+        -448,
+        80
+      ],
+      "id": "d6cfde12-72c1-4fb5-8518-caf81fb4d318",
+      "name": "Growth_Architect",
+      "onError": "continueErrorOutput"
+    }
+  ],
+  "connections": {
+    "When Executed by Another Workflow": {
+      "main": [
+        [
+          {
+            "node": "Growth_Architect",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "grok-4.1 fast": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Growth_Architect",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Search_Agent": {
+      "ai_tool": [
+        [
+          {
+            "node": "Growth_Architect",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Think": {
+      "ai_tool": [
+        [
+          {
+            "node": "Growth_Architect",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Growth_Architect": {
+      "main": [
+        [
+          {
+            "node": "Response",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Try Again",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "staticData": null,
+  "meta": {
+    "templateCredsSetupCompleted": true
+  },
+  "pinData": {},
+  "versionId": "085cd04b-82dc-4649-8f51-8f65fe11bc26",
+  "activeVersionId": "7c176717-c892-4610-a789-16e597c672d1",
+  "triggerCount": 0,
+  "shared": [
+    {
+      "updatedAt": "2025-12-21T10:42:04.461Z",
+      "createdAt": "2025-12-21T10:42:04.461Z",
+      "role": "workflow:owner",
+      "workflowId": "6so0qBZoqekx9l6s",
+      "projectId": "DT8YjHwLZsQjJqVc"
+    }
+  ],
+  "activeVersion": {
+    "updatedAt": "2025-12-21T10:44:18.000Z",
+    "createdAt": "2025-12-21T10:43:54.024Z",
+    "versionId": "7c176717-c892-4610-a789-16e597c672d1",
+    "workflowId": "6so0qBZoqekx9l6s",
+    "nodes": [
+      {
+        "parameters": {
+          "assignments": {
+            "assignments": [
+              {
+                "id": "14d9076e-27ea-4846-8b44-f83cf4022b9e",
+                "name": "response",
+                "value": "={{ $json.output }}",
+                "type": "string"
+              }
+            ]
+          },
+          "options": {}
+        },
+        "type": "n8n-nodes-base.set",
+        "typeVersion": 3.4,
+        "position": [
+          0,
+          0
+        ],
+        "id": "3e2eadec-282d-4b2e-ae91-dd2b1459a7e3",
+        "name": "Response"
+      },
+      {
+        "parameters": {
+          "assignments": {
+            "assignments": [
+              {
+                "id": "f2a8ff2d-6b59-4ad6-a2e7-8705354f4105",
+                "name": "response",
+                "value": "Error occurred. Please try again.",
+                "type": "string"
+              }
+            ]
+          },
+          "options": {}
+        },
+        "type": "n8n-nodes-base.set",
+        "typeVersion": 3.4,
+        "position": [
+          0,
+          192
+        ],
+        "id": "f2f38c2a-cb3b-42d4-97f7-aad1ef392697",
+        "name": "Try Again"
+      },
+      {
+        "parameters": {
+          "inputSource": "passthrough"
+        },
+        "type": "n8n-nodes-base.executeWorkflowTrigger",
+        "typeVersion": 1.1,
+        "position": [
+          -704,
+          80
+        ],
+        "id": "0acd1c9f-af0b-4418-923b-b728850293bf",
+        "name": "When Executed by Another Workflow"
+      },
+      {
+        "parameters": {
+          "model": "x-ai/grok-4.1-fast",
+          "options": {}
+        },
+        "type": "@n8n/n8n-nodes-langchain.lmChatOpenRouter",
+        "typeVersion": 1,
+        "position": [
+          -640,
+          320
+        ],
+        "id": "f0e199e7-b9bb-4795-ad5d-4786d84c1eec",
+        "name": "grok-4.1 fast",
+        "credentials": {
+          "openRouterApi": {
+            "id": "5NHf7ILbLoMVxKcb",
+            "name": "OpenRouter account"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "description": "Use this Search Agent  when information is not available in the input or requires external lookup or need to search letest information from web, internet or anything recent.\n\nThis tool is meant for:\n- Finding relevant data, references, or examples related to automation, AI, SaaS, workflows, or tools\n- Fetching fresh or missing information that cannot be inferred logically\n\nDo NOT use this tool if the answer can be generated using reasoning alone.\n\nAlways return a short, structured result after searching.",
+          "workflowId": {
+            "__rl": true,
+            "value": "xz3AFt53UbEvPFQv",
+            "mode": "list",
+            "cachedResultUrl": "/workflow/xz3AFt53UbEvPFQv",
+            "cachedResultName": "Sub_Search"
+          },
+          "workflowInputs": {
+            "mappingMode": "defineBelow",
+            "value": {},
+            "matchingColumns": [],
+            "schema": [],
+            "attemptToConvertTypes": false,
+            "convertFieldsToString": false
+          }
+        },
+        "type": "@n8n/n8n-nodes-langchain.toolWorkflow",
+        "typeVersion": 2.2,
+        "position": [
+          -208,
+          320
+        ],
+        "id": "458a1011-00b8-4fe2-b9f9-6e6e5d4e4a56",
+        "name": "Search_Agent"
+      },
+      {
+        "parameters": {},
+        "type": "@n8n/n8n-nodes-langchain.toolThink",
+        "typeVersion": 1.1,
+        "position": [
+          -528,
+          320
+        ],
+        "id": "be349d61-debb-4b90-994c-af018c25ad8e",
+        "name": "Think"
+      },
+      {
+        "parameters": {
+          "promptType": "define",
+          "text": "={{ $json.query}}",
+          "options": {
+            "systemMessage": "=ROLE:\nYou are the Growth Architect, a VP of Sales AI Agent with 10+ years of expertise scaling SaaS revenue engines. You act as a top-tier consultant who knows everything about:\n\t\u2022\tCompany revenue levers (pipeline, CAC, LTV, pricing, churn)\n\t\u2022\tSales growth strategy (B2B SaaS playbooks, GTM models, sales org design)\n\t\u2022\tLead generation & conversion (SDR/AE systems, outbound & inbound tactics)\n\t\u2022\tForecasting & reporting (predictive models, dashboards, metrics tracking)\n\t\u2022\tCompetitive positioning (pricing benchmarks, differentiation, win/loss intel)\n\nWhen company-internal data is missing, use Web Agent to pull latest insights on competitors, markets, or pricing.\n\n\u2e3b\n\n3. Responsibilities & Capabilities\n\nA. Sales Growth & Revenue Strategy\n\t\u2022\tBuild GTM strategies (inbound, outbound, ABM, PLG).\n\t\u2022\tAdvise on pricing models & monetization.\n\t\u2022\tRecommend org design: SDRs, AEs, CSMs.\n\t\u2022\tAlign sales targets to revenue outcomes.\n\nB. Pipeline & Lead Management\n\t\u2022\tOptimize funnel stages: awareness \u2192 SQL \u2192 closed/won.\n\t\u2022\tRecommend lead scoring, routing, and prioritization frameworks.\n\t\u2022\tDiagnose pipeline leakage & offer fixes.\n\nC. Forecasting & Analytics\n\t\u2022\tCreate monthly/quarterly sales forecasts.\n\t\u2022\tTrack CAC payback, churn, LTV, and NRR.\n\t\u2022\tSuggest dashboards and key KPIs for CRO/CEO.\n\nD. Sales Process Execution\n\t\u2022\tDraft outreach cadences, email sequences, objection handling scripts.\n\t\u2022\tOptimize conversion rates across channels (LinkedIn, email, events).\n\t\u2022\tRecommend CRM automations & AI tools.\n\nE. Market Intelligence (via Web Agent)\n\t\u2022\tBenchmark competitors\u2019 pricing & GTM moves.\n\t\u2022\tTrack industry growth trends.\n\t\u2022\tPull live financial data of listed competitors.\n\n\u2e3b\n\n4. Input Types It Can Handle\n\t\u2022\tTactical requests: \u201cGive me a LinkedIn outbound sequence for CFOs in India.\u201d\n\t\u2022\tStrategic requests: \u201cHow do we grow revenue 3x in 12 months?\u201d\n\t\u2022\tAnalytical requests: \u201cWhat\u2019s our projected pipeline coverage if we add 2 SDRs?\u201d\n\t\u2022\tMarket intel: \u201cPull competitor pricing for Procore in India.\u201d\n\n\u2e3b\n\n5. Rules for Responses\n\t1.\tAlways start with data-driven insights (use company data or fetch live from web).\n\t2.\tBreak answers into structured frameworks (steps, playbooks, tables).\n\t3.\tBalance strategic view (CEO lens) with tactical action steps (sales manager lens).\n\t4.\tIf web lookup is required, clearly mark:\n\u2192 \u201cFetching competitor pricing from web\u2026\u201d\n\u2192 Then add the structured insights.\n\t5.\tKeep tone authoritative but actionable (McKinsey + Gong).\n\n\u2e3b\n\n6. Example Use Cases\n\nUser: \u201cWe need to increase MRR from $100k to $300k in 12 months. What\u2019s the plan?\u201d\nAgent Response:\n\nRevenue Growth Blueprint (12 months)\n1\ufe0f\u20e3 Pipeline Expansion \u2192 Hire 2 SDRs \u2192 40 SQLs/month \u2192 +$80k ARR\n2\ufe0f\u20e3 Upsell Engine \u2192 Launch tiered packaging \u2192 Target 20% expansion revenue\n3\ufe0f\u20e3 Churn Reduction \u2192 NRR > 120% \u2192 Focus on top 50 accounts\n4\ufe0f\u20e3 Pricing Adjustment \u2192 Benchmark vs competitors (fetching live data) \u2192 +15% ASP\n5\ufe0f\u20e3 Automation \u2192 Deploy AI-driven outreach \u2192 Save 200 hrs/month\n\n\u2192 Projected: MRR $310k by Q4 if executed with 85% attainment\n\n7. Final Notes\n\t\u2022\tCurrent date/time: {{ $now }}\n\t\u2022\tGrowth Architect should always assume it has full visibility into company sales, pipeline, and financials.\n\t\u2022\tIf data isn\u2019t in memory, it can fetch it via the Web Agent.\n\t\u2022\tNever give vague advice \u2014 every answer must include specific steps, timeframes, and measurable outcomes.\n\t\u2022 Keep concise and short if user dont ask in more details \n\n# Think\nuse this tool to think"
+          }
+        },
+        "type": "@n8n/n8n-nodes-langchain.agent",
+        "typeVersion": 1.7,
+        "position": [
+          -448,
+          80
+        ],
+        "id": "d6cfde12-72c1-4fb5-8518-caf81fb4d318",
+        "name": "Growth_Architect",
+        "onError": "continueErrorOutput"
+      }
+    ],
+    "connections": {
+      "When Executed by Another Workflow": {
+        "main": [
+          [
+            {
+              "node": "Growth_Architect",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "grok-4.1 fast": {
+        "ai_languageModel": [
+          [
+            {
+              "node": "Growth_Architect",
+              "type": "ai_languageModel",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Search_Agent": {
+        "ai_tool": [
+          [
+            {
+              "node": "Growth_Architect",
+              "type": "ai_tool",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Think": {
+        "ai_tool": [
+          [
+            {
+              "node": "Growth_Architect",
+              "type": "ai_tool",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Growth_Architect": {
+        "main": [
+          [
+            {
+              "node": "Response",
+              "type": "main",
+              "index": 0
+            }
+          ],
+          [
+            {
+              "node": "Try Again",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      }
+    },
+    "authors": "Dhruv Tomar",
+    "name": "Version 7c176717",
+    "description": "",
+    "autosaved": false
+  },
+  "tags": []
+}

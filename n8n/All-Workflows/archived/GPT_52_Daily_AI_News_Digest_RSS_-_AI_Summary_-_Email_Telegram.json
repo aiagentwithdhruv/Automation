@@ -1,0 +1,470 @@
+{
+  "updatedAt": "2025-12-30T13:34:19.000Z",
+  "createdAt": "2025-12-30T05:24:11.822Z",
+  "id": "dCSpnSUuGUj9QkXw",
+  "name": "GPT 5.2 Daily AI News Digest (RSS -> AI Summary -> Email + Telegram)",
+  "active": false,
+  "isArchived": true,
+  "nodes": [
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.cron",
+      "typeVersion": 1,
+      "position": [
+        -848,
+        -64
+      ],
+      "id": "c4c6f7f9-f12d-4e3b-a8d7-2f4b3b1fd10a",
+      "name": "Daily Schedule (8:00)"
+    },
+    {
+      "parameters": {
+        "url": "https://venturebeat.com/category/ai/feed/",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.rssFeedRead",
+      "typeVersion": 1,
+      "position": [
+        -624,
+        -224
+      ],
+      "id": "7cc3bc89-6c7f-4a71-9b52-c1b3a02b7d69",
+      "name": "AI RSS Feed - VentureBeat"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3,
+      "position": [
+        -400,
+        -224
+      ],
+      "id": "f7d5e2c3-6a4f-4f2a-978f-efb7d5c27152",
+      "name": "Set Source - VentureBeat"
+    },
+    {
+      "parameters": {
+        "url": "https://www.technologyreview.com/feed/",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.rssFeedRead",
+      "typeVersion": 1,
+      "position": [
+        -624,
+        -64
+      ],
+      "id": "6d71c00f-71e6-4a0a-bbb5-0d4a2ddccf3a",
+      "name": "AI RSS Feed - MIT Tech Review"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3,
+      "position": [
+        -400,
+        -64
+      ],
+      "id": "4d5a4b0e-0bb1-4ad1-9cdd-640fdc3b0fe9",
+      "name": "Set Source - MIT"
+    },
+    {
+      "parameters": {
+        "url": "https://www.artificialintelligence-news.com/feed/",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.rssFeedRead",
+      "typeVersion": 1,
+      "position": [
+        -624,
+        112
+      ],
+      "id": "b0dc3bb1-0bf0-43d2-85b9-79b3da45218d",
+      "name": "AI RSS Feed - AI News"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3,
+      "position": [
+        -400,
+        112
+      ],
+      "id": "718a2c2b-938b-48d6-9c2a-88802d7e5e97",
+      "name": "Set Source - AI News"
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.merge",
+      "typeVersion": 2,
+      "position": [
+        -144,
+        -144
+      ],
+      "id": "70b92bb5-0a4b-4d85-a0ae-0b8e5d7b32f8",
+      "name": "Merge Feed 1 + 2"
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.merge",
+      "typeVersion": 2,
+      "position": [
+        80,
+        -16
+      ],
+      "id": "9a0a6c30-4f61-4a68-bb2f-2f66d899fdae",
+      "name": "Merge + Feed 3"
+    },
+    {
+      "parameters": {
+        "jsCode": "const items = $input.all();\n\nfunction parseDate(i) {\n  const raw = i.json.isoDate || i.json.pubDate || i.json.published || i.json.date || '';\n  const t = Date.parse(raw);\n  return Number.isFinite(t) ? t : 0;\n}\n\nconst normalized = items\n  .map(i => {\n    const title = (i.json.title || '').toString().trim();\n    const link = (i.json.link || '').toString().trim();\n    const snippet = (i.json.contentSnippet || i.json.content || i.json.summary || '').toString().trim();\n    const source = (i.json.source || '').toString().trim();\n    const published = (i.json.isoDate || i.json.pubDate || '').toString().trim();\n    return {\n      title,\n      link,\n      snippet,\n      source,\n      published,\n      dateMs: parseDate(i)\n    };\n  })\n  .filter(a => a.title && a.link);\n\n// De-duplicate by link\nconst seen = new Set();\nconst deduped = [];\nfor (const a of normalized) {\n  const key = a.link;\n  if (seen.has(key)) continue;\n  seen.add(key);\n  deduped.push(a);\n}\n\n// Sort by date desc (fallback: keep as-is)\ndeduped.sort((a, b) => (b.dateMs || 0) - (a.dateMs || 0));\n\nconst top5 = deduped.slice(0, 5);\nconst date = new Date().toISOString().slice(0, 10);\n\nconst bullets = top5.map((a, idx) => {\n  const snip = a.snippet ? a.snippet.replace(/\\s+/g, ' ').slice(0, 280) : '';\n  return [\n    `${idx + 1}. ${a.title}`,\n    `Source: ${a.source || 'RSS'}`,\n    a.published ? `Published: ${a.published}` : null,\n    snip ? `Snippet: ${snip}` : null,\n    `URL: ${a.link}`\n  ].filter(Boolean).join('\\n');\n}).join('\\n\\n');\n\nconst prompt = `Create a daily AI news digest for ${date} using ONLY the articles below.\\n\\nARTICLES (top 5):\\n\\n${bullets}\\n\\nOutput must follow the provided JSON schema. Do not invent facts, numbers, or extra news. If snippets are missing, summarize only from the title and keep it conservative.`;\n\nreturn [{\n  json: {\n    date,\n    articles: top5,\n    prompt\n  }\n}];\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        320,
+        -16
+      ],
+      "id": "c4c0c8f8-d7d2-4b0e-a82c-6c391dd2b3b3",
+      "name": "Pick Top 5 & Build Prompt"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "={{$json.prompt}}",
+        "hasOutputParser": true,
+        "options": {
+          "systemMessage": "You are an AI news editor. Create a concise, high-signal daily AI news digest from the provided RSS items only.\n\nRules:\n- Use only the provided articles; do not add any extra news.\n- For each article: write a 1\u20132 sentence summary + a short \u201cWhy it matters\u201d line.\n- Keep the whole email readable and professional.\n- Telegram message must be short and scannable.\n- Always include links.\n- If a snippet is weak/missing: be conservative and say so.\n\nReturn strictly valid JSON matching the schema."
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 2,
+      "position": [
+        720,
+        -16
+      ],
+      "id": "9d4b52d0-680b-4d75-a9c8-9bf8e5f9d5fb",
+      "name": "AI Agent - Write Digest"
+    },
+    {
+      "parameters": {
+        "model": "openai/gpt-4o-mini",
+        "options": {
+          "temperature": 0.3
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenRouter",
+      "typeVersion": 1,
+      "position": [
+        560,
+        208
+      ],
+      "id": "6d9c8f71-a775-4dd4-a6f3-37c9ce76dc6d",
+      "name": "OpenRouter Chat Model",
+      "credentials": {
+        "openRouterApi": {
+          "id": "5NHf7ILbLoMVxKcb",
+          "name": "OpenRouter account"
+        }
+      }
+    },
+    {
+      "parameters": {},
+      "type": "@n8n/n8n-nodes-langchain.outputParserStructured",
+      "typeVersion": 1,
+      "position": [
+        928,
+        208
+      ],
+      "id": "5a3db7e6-5f5e-4d71-bf98-6944e0e0fb4a",
+      "name": "Structured Output Parser"
+    },
+    {
+      "parameters": {
+        "subject": "={{$json.subject}}",
+        "message": "={{$json.email_html}}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2,
+      "position": [
+        992,
+        -144
+      ],
+      "id": "7a6b6a93-10f6-46d8-a4b2-8f4f6d4b91de",
+      "name": "Send Email (Gmail)",
+      "webhookId": "bbc1f49c-5516-4f20-aef1-abb07a5408f3",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "REPLACE_WITH_YOUR_CREDENTIAL_ID",
+          "name": "Gmail OAuth2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "chatId": "REPLACE_WITH_YOUR_CHAT_ID",
+        "text": "={{$json.telegram_text}}",
+        "additionalFields": {
+          "parse_mode": "Markdown"
+        }
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1,
+      "position": [
+        992,
+        80
+      ],
+      "id": "74e68239-83f2-4818-b126-54207ba2a8a5",
+      "name": "Send Telegram Message",
+      "webhookId": "3b10961b-3ffa-4842-a822-eba3e0d40092",
+      "credentials": {
+        "telegramApi": {
+          "id": "REPLACE_WITH_YOUR_CREDENTIAL_ID",
+          "name": "Telegram Bot API"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "content": "## Daily trigger + RSS sources\n- Runs every day at 08:00\n- Edit RSS URLs inside the 3 RSS nodes (or duplicate them to add more sources)\n- Each RSS item gets a `source` label via the Set nodes",
+        "height": 180,
+        "width": 420,
+        "color": 4
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -864,
+        -368
+      ],
+      "id": "9d7d9c8b-54aa-4cd9-8b8f-0f9c46cfb1aa",
+      "name": "Sticky Note - RSS Setup"
+    },
+    {
+      "parameters": {
+        "content": "## AI summary step (OpenRouter)\n- Configure OpenRouter credentials in **OpenRouter Chat Model**\n- The Code node builds a prompt from the top 5 newest RSS items\n- The AI Agent returns STRICT JSON (subject, email_html, telegram_text) via the Structured Output Parser",
+        "height": 200,
+        "width": 460,
+        "color": 6
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        464,
+        -320
+      ],
+      "id": "b996c5f4-0b04-4b69-8a0b-26825f0a5511",
+      "name": "Sticky Note - AI Digest"
+    },
+    {
+      "parameters": {
+        "content": "## Delivery (Email + Telegram)\n- Set Gmail OAuth2 credential in **Send Email (Gmail)** and change `toList`\n- Set Telegram Bot credential + your `chatId` in **Send Telegram Message**\n- Both are sent once per day with the same top-5 digest",
+        "height": 180,
+        "width": 460,
+        "color": 3
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        992,
+        -336
+      ],
+      "id": "2d175d8f-3dba-4865-8a6c-0600e847d4a4",
+      "name": "Sticky Note - Credentials"
+    }
+  ],
+  "connections": {
+    "Daily Schedule (8:00)": {
+      "main": [
+        [
+          {
+            "node": "AI RSS Feed - VentureBeat",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "AI RSS Feed - MIT Tech Review",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "AI RSS Feed - AI News",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "AI RSS Feed - VentureBeat": {
+      "main": [
+        [
+          {
+            "node": "Set Source - VentureBeat",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Set Source - VentureBeat": {
+      "main": [
+        [
+          {
+            "node": "Merge Feed 1 + 2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "AI RSS Feed - MIT Tech Review": {
+      "main": [
+        [
+          {
+            "node": "Set Source - MIT",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Set Source - MIT": {
+      "main": [
+        [
+          {
+            "node": "Merge Feed 1 + 2",
+            "type": "main",
+            "index": 1
+          }
+        ]
+      ]
+    },
+    "Merge Feed 1 + 2": {
+      "main": [
+        [
+          {
+            "node": "Merge + Feed 3",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "AI RSS Feed - AI News": {
+      "main": [
+        [
+          {
+            "node": "Set Source - AI News",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Set Source - AI News": {
+      "main": [
+        [
+          {
+            "node": "Merge + Feed 3",
+            "type": "main",
+            "index": 1
+          }
+        ]
+      ]
+    },
+    "Merge + Feed 3": {
+      "main": [
+        [
+          {
+            "node": "Pick Top 5 & Build Prompt",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Pick Top 5 & Build Prompt": {
+      "main": [
+        [
+          {
+            "node": "AI Agent - Write Digest",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "AI Agent - Write Digest": {
+      "main": [
+        [
+          {
+            "node": "Send Email (Gmail)",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Send Telegram Message",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenRouter Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent - Write Digest",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Structured Output Parser": {
+      "ai_outputParser": [
+        [
+          {
+            "node": "AI Agent - Write Digest",
+            "type": "ai_outputParser",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1",
+    "saveManualExecutions": true,
+    "saveDataSuccessExecution": "all",
+    "saveExecutionProgress": true,
+    "saveDataErrorExecution": "all",
+    "errorWorkflow": "",
+    "timezone": "Etc/UTC",
+    "callerPolicy": "workflowsFromSameOwner",
+    "availableInMCP": false
+  },
+  "staticData": null,
+  "meta": null,
+  "pinData": {},
+  "versionId": "df253037-fcbe-4795-b3f8-cb3406fec5a1",
+  "activeVersionId": null,
+  "triggerCount": 0,
+  "shared": [
+    {
+      "updatedAt": "2025-12-30T05:24:11.825Z",
+      "createdAt": "2025-12-30T05:24:11.825Z",
+      "role": "workflow:owner",
+      "workflowId": "dCSpnSUuGUj9QkXw",
+      "projectId": "DT8YjHwLZsQjJqVc"
+    }
+  ],
+  "activeVersion": null,
+  "tags": []
+}

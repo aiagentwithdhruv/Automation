@@ -1,0 +1,137 @@
+{
+  "updatedAt": "2026-02-04T08:30:30.000Z",
+  "createdAt": "2026-02-04T08:28:09.501Z",
+  "id": "XEPhPQRexNuncWDY",
+  "name": "Simple AI News Daily (Claude Created)",
+  "active": false,
+  "isArchived": true,
+  "nodes": [
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "field": "hours",
+              "hoursInterval": 24
+            }
+          ]
+        }
+      },
+      "id": "schedule-trigger",
+      "name": "Daily 9 AM Trigger",
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.2,
+      "position": [
+        0,
+        0
+      ]
+    },
+    {
+      "parameters": {
+        "url": "https://www.artificialintelligence-news.com/feed/",
+        "options": {}
+      },
+      "id": "rss-ai-news",
+      "name": "RSS - AI News",
+      "type": "n8n-nodes-base.rssFeedRead",
+      "typeVersion": 1.1,
+      "position": [
+        224,
+        0
+      ]
+    },
+    {
+      "parameters": {
+        "functionCode": "// Get top 3 latest AI news items\nconst items = $input.all().slice(0, 3);\n\nconst newsItems = items.map((item, index) => {\n  const data = item.json;\n  return {\n    title: data.title || 'No title',\n    link: data.link || '#',\n    description: (data.contentSnippet || data.description || 'No description').substring(0, 200) + '...',\n    pubDate: data.pubDate || data.isoDate || 'Unknown date'\n  };\n});\n\n// Build HTML email\nconst today = new Date().toLocaleDateString('en-US', { \n  weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' \n});\n\nlet emailHtml = `\n<div style=\"font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;\">\n  <h1 style=\"color: #2563eb; border-bottom: 2px solid #2563eb; padding-bottom: 10px;\">\n    \ud83e\udd16 Daily AI News\n  </h1>\n  <p style=\"color: #666; font-size: 14px;\">${today}</p>\n`;\n\nnewsItems.forEach((news, i) => {\n  emailHtml += `\n  <div style=\"margin: 20px 0; padding: 15px; background: #f8fafc; border-radius: 8px; border-left: 4px solid #2563eb;\">\n    <h2 style=\"margin: 0 0 10px 0; font-size: 16px;\">\n      <a href=\"${news.link}\" style=\"color: #1e40af; text-decoration: none;\">${i + 1}. ${news.title}</a>\n    </h2>\n    <p style=\"margin: 0; color: #475569; font-size: 14px; line-height: 1.5;\">${news.description}</p>\n    <p style=\"margin: 10px 0 0 0; font-size: 12px; color: #94a3b8;\">${news.pubDate}</p>\n  </div>\n  `;\n});\n\nemailHtml += `\n  <p style=\"margin-top: 30px; padding-top: 20px; border-top: 1px solid #e2e8f0; color: #94a3b8; font-size: 12px;\">\n    Sent via n8n workflow \u2022 Created by Claude\n  </p>\n</div>\n`;\n\nreturn [{\n  json: {\n    emailSubject: `\ud83e\udd16 AI News Digest - ${today}`,\n    emailHtml: emailHtml,\n    newsCount: newsItems.length\n  }\n}];"
+      },
+      "id": "format-news",
+      "name": "Format Top 3 News",
+      "type": "n8n-nodes-base.function",
+      "typeVersion": 1,
+      "position": [
+        448,
+        0
+      ]
+    },
+    {
+      "parameters": {
+        "sendTo": "aiwithdhruv@gmail.com",
+        "subject": "={{ $json.emailSubject }}",
+        "message": "={{ $json.emailHtml }}",
+        "options": {}
+      },
+      "id": "send-gmail",
+      "name": "Send Email (Gmail)",
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.1,
+      "position": [
+        672,
+        0
+      ],
+      "webhookId": "f4736902-5442-43af-926b-905c3185a531",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "gPGYzjuIbblOf3E1",
+          "name": "Ai with Dhruv"
+        }
+      }
+    }
+  ],
+  "connections": {
+    "Daily 9 AM Trigger": {
+      "main": [
+        [
+          {
+            "node": "RSS - AI News",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "RSS - AI News": {
+      "main": [
+        [
+          {
+            "node": "Format Top 3 News",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Format Top 3 News": {
+      "main": [
+        [
+          {
+            "node": "Send Email (Gmail)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1",
+    "callerPolicy": "workflowsFromSameOwner",
+    "availableInMCP": false
+  },
+  "staticData": null,
+  "meta": null,
+  "pinData": {},
+  "versionId": "c6602898-3f9b-45a1-b148-69e809bdfe96",
+  "activeVersionId": null,
+  "triggerCount": 0,
+  "shared": [
+    {
+      "updatedAt": "2026-02-04T08:28:09.507Z",
+      "createdAt": "2026-02-04T08:28:09.507Z",
+      "role": "workflow:owner",
+      "workflowId": "XEPhPQRexNuncWDY",
+      "projectId": "DT8YjHwLZsQjJqVc"
+    }
+  ],
+  "activeVersion": null,
+  "tags": []
+}

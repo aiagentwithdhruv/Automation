@@ -1,0 +1,299 @@
+{
+  "updatedAt": "2025-12-24T09:08:38.090Z",
+  "createdAt": "2025-12-19T08:10:37.700Z",
+  "id": "mLJ7qfVo4X82eZmI",
+  "name": "Slack & Discord",
+  "active": true,
+  "isArchived": false,
+  "nodes": [
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 3,
+      "position": [
+        -144,
+        -64
+      ],
+      "id": "9b5f706a-2d64-4e24-babb-0c2d6615587e",
+      "name": "AI Agent"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenRouter",
+      "typeVersion": 1,
+      "position": [
+        -288,
+        128
+      ],
+      "id": "79c7547b-2dfa-4f58-9db1-678d5e0102b8",
+      "name": "OpenRouter Chat Model",
+      "credentials": {
+        "openRouterApi": {
+          "id": "5NHf7ILbLoMVxKcb",
+          "name": "OpenRouter account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "select": "channel",
+        "channelId": {
+          "__rl": true,
+          "value": "C0A5RUUSF17",
+          "mode": "list",
+          "cachedResultName": "24_dec_n8n"
+        },
+        "text": "ok greate test",
+        "otherOptions": {
+          "includeLinkToWorkflow": false
+        }
+      },
+      "type": "n8n-nodes-base.slack",
+      "typeVersion": 2.4,
+      "position": [
+        240,
+        -64
+      ],
+      "id": "24da8807-daaa-4ed0-aabf-4c2f62bd74ac",
+      "name": "Send a message",
+      "webhookId": "aae802ce-4cf3-49fc-a2b3-e57aa9282e4b",
+      "credentials": {
+        "slackApi": {
+          "id": "qBH8376FAM7dV3UF",
+          "name": "Slack_24dec2025"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "trigger": [
+          "app_mention",
+          "any_event",
+          "message"
+        ],
+        "channelId": {
+          "__rl": true,
+          "value": "C0A4PUZGPE0",
+          "mode": "list",
+          "cachedResultName": "all-aiwithdhruv"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.slackTrigger",
+      "typeVersion": 1,
+      "position": [
+        -432,
+        -64
+      ],
+      "id": "97bcb374-db6e-465c-9106-0897d18a1bf6",
+      "name": "Slack Trigger",
+      "webhookId": "af61a37f-14ca-49e9-b19c-d797e1021d64",
+      "credentials": {
+        "slackApi": {
+          "id": "qBH8376FAM7dV3UF",
+          "name": "Slack_24dec2025"
+        }
+      }
+    }
+  ],
+  "connections": {
+    "OpenRouter Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "AI Agent": {
+      "main": [
+        [
+          {
+            "node": "Send a message",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Slack Trigger": {
+      "main": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "staticData": null,
+  "meta": {
+    "templateCredsSetupCompleted": true
+  },
+  "pinData": {},
+  "versionId": "f5bdc88e-9838-4d75-afc0-9f30e1858c28",
+  "activeVersionId": "f5bdc88e-9838-4d75-afc0-9f30e1858c28",
+  "triggerCount": 1,
+  "shared": [
+    {
+      "updatedAt": "2025-12-19T08:10:37.713Z",
+      "createdAt": "2025-12-19T08:10:37.713Z",
+      "role": "workflow:owner",
+      "workflowId": "mLJ7qfVo4X82eZmI",
+      "projectId": "DT8YjHwLZsQjJqVc"
+    }
+  ],
+  "activeVersion": {
+    "updatedAt": "2025-12-24T09:08:57.000Z",
+    "createdAt": "2025-12-24T09:08:38.090Z",
+    "versionId": "f5bdc88e-9838-4d75-afc0-9f30e1858c28",
+    "workflowId": "mLJ7qfVo4X82eZmI",
+    "nodes": [
+      {
+        "parameters": {
+          "options": {}
+        },
+        "type": "@n8n/n8n-nodes-langchain.agent",
+        "typeVersion": 3,
+        "position": [
+          -144,
+          -64
+        ],
+        "id": "9b5f706a-2d64-4e24-babb-0c2d6615587e",
+        "name": "AI Agent"
+      },
+      {
+        "parameters": {
+          "options": {}
+        },
+        "type": "@n8n/n8n-nodes-langchain.lmChatOpenRouter",
+        "typeVersion": 1,
+        "position": [
+          -288,
+          128
+        ],
+        "id": "79c7547b-2dfa-4f58-9db1-678d5e0102b8",
+        "name": "OpenRouter Chat Model",
+        "credentials": {
+          "openRouterApi": {
+            "id": "5NHf7ILbLoMVxKcb",
+            "name": "OpenRouter account"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "select": "channel",
+          "channelId": {
+            "__rl": true,
+            "value": "C0A5RUUSF17",
+            "mode": "list",
+            "cachedResultName": "24_dec_n8n"
+          },
+          "text": "ok greate test",
+          "otherOptions": {
+            "includeLinkToWorkflow": false
+          }
+        },
+        "type": "n8n-nodes-base.slack",
+        "typeVersion": 2.4,
+        "position": [
+          240,
+          -64
+        ],
+        "id": "24da8807-daaa-4ed0-aabf-4c2f62bd74ac",
+        "name": "Send a message",
+        "webhookId": "aae802ce-4cf3-49fc-a2b3-e57aa9282e4b",
+        "credentials": {
+          "slackApi": {
+            "id": "qBH8376FAM7dV3UF",
+            "name": "Slack_24dec2025"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "trigger": [
+            "app_mention",
+            "any_event",
+            "message"
+          ],
+          "channelId": {
+            "__rl": true,
+            "value": "C0A4PUZGPE0",
+            "mode": "list",
+            "cachedResultName": "all-aiwithdhruv"
+          },
+          "options": {}
+        },
+        "type": "n8n-nodes-base.slackTrigger",
+        "typeVersion": 1,
+        "position": [
+          -432,
+          -64
+        ],
+        "id": "97bcb374-db6e-465c-9106-0897d18a1bf6",
+        "name": "Slack Trigger",
+        "webhookId": "af61a37f-14ca-49e9-b19c-d797e1021d64",
+        "credentials": {
+          "slackApi": {
+            "id": "qBH8376FAM7dV3UF",
+            "name": "Slack_24dec2025"
+          }
+        }
+      }
+    ],
+    "connections": {
+      "OpenRouter Chat Model": {
+        "ai_languageModel": [
+          [
+            {
+              "node": "AI Agent",
+              "type": "ai_languageModel",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "AI Agent": {
+        "main": [
+          [
+            {
+              "node": "Send a message",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Slack Trigger": {
+        "main": [
+          [
+            {
+              "node": "AI Agent",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      }
+    },
+    "authors": "Dhruv Tomar",
+    "name": "Version f5bdc88e",
+    "description": "",
+    "autosaved": false
+  },
+  "tags": []
+}

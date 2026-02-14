@@ -1,0 +1,1096 @@
+{
+  "updatedAt": "2026-01-07T19:32:25.062Z",
+  "createdAt": "2026-01-07T19:11:20.358Z",
+  "id": "wn0qA91MZiK3BE23",
+  "name": "Photo to Accounts - Snap Bill, Done",
+  "active": false,
+  "isArchived": false,
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "4af41003-66e0-4a36-aefe-12eb6ba4b8c4",
+        "responseMode": "responseNode",
+        "options": {}
+      },
+      "id": "9791f85b-3504-44f8-82f0-374656ae6160",
+      "name": "WhatsApp/Telegram Webhook",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2.1,
+      "position": [
+        -8320,
+        1504
+      ],
+      "webhookId": "4af41003-66e0-4a36-aefe-12eb6ba4b8c4"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "id-1",
+              "name": "imageUrl",
+              "value": "={{ $json.body.message.image_url || $json.body.message.photo }}",
+              "type": "string"
+            },
+            {
+              "id": "id-2",
+              "name": "userId",
+              "value": "={{ $json.body.message.from.id }}",
+              "type": "string"
+            },
+            {
+              "id": "id-3",
+              "name": "userName",
+              "value": "={{ $json.body.message.from.name }}",
+              "type": "string"
+            },
+            {
+              "id": "id-4",
+              "name": "timestamp",
+              "value": "={{ new Date().toISOString() }}",
+              "type": "string"
+            }
+          ]
+        },
+        "includeOtherFields": true,
+        "options": {}
+      },
+      "id": "f7d60ec9-5102-411e-ae6f-35fc32b42baf",
+      "name": "Workflow Configuration",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        -8096,
+        1504
+      ]
+    },
+    {
+      "parameters": {
+        "url": "={{ $json.imageUrl }}",
+        "options": {
+          "response": {
+            "response": {
+              "responseFormat": "file",
+              "outputPropertyName": "receiptImage"
+            }
+          }
+        }
+      },
+      "id": "ae914f3f-4179-41a2-80e3-9c23eb25558a",
+      "name": "Download Image from URL",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.3,
+      "position": [
+        -7872,
+        1504
+      ]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.ocr.space/parse/image",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Content-Type",
+              "value": "multipart/form-data"
+            }
+          ]
+        },
+        "sendBody": true,
+        "contentType": "multipart-form-data",
+        "bodyParameters": {
+          "parameters": [
+            {
+              "parameterType": "formBinaryData",
+              "name": "file",
+              "inputDataFieldName": "={{ $binary.receiptImage }}"
+            },
+            {
+              "name": "apikey",
+              "value": "<__PLACEHOLDER_VALUE__OCR_API_KEY__>"
+            },
+            {
+              "name": "language",
+              "value": "eng"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "cd1754ee-1d0c-489d-98b7-d7aa679befe7",
+      "name": "OCR API Request",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.3,
+      "position": [
+        -7648,
+        1504
+      ]
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "mode": "list",
+          "value": "gpt-4.1-mini"
+        },
+        "builtInTools": {},
+        "options": {}
+      },
+      "id": "a2eaa7f5-f2b8-45e8-ab22-133df1e94b88",
+      "name": "OpenAI GPT-4V Model",
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.3,
+      "position": [
+        -7408,
+        1728
+      ]
+    },
+    {
+      "parameters": {
+        "jsonSchemaExample": "{\n\t\"merchant\": \"Store Name\",\n\t\"amount\": 99.99,\n\t\"currency\": \"USD\",\n\t\"date\": \"2024-01-15\",\n\t\"category\": \"Food\",\n\t\"items\": [\n\t\t{\n\t\t\t\"name\": \"Item\",\n\t\t\t\"price\": 10.00\n\t\t}\n\t],\n\t\"confidence\": 0.95,\n\t\"paymentMethod\": \"Credit Card\"\n}"
+      },
+      "id": "596e7e06-7aff-4eaa-8f6a-b5e5a03d4b77",
+      "name": "Expense Data Schema Parser",
+      "type": "@n8n/n8n-nodes-langchain.outputParserStructured",
+      "typeVersion": 1.3,
+      "position": [
+        -7280,
+        1728
+      ]
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=Analyze this receipt/expense image and extract structured expense data. OCR Text: {{ $('OCR API Request').item.json.ParsedResults[0].ParsedText }}. Extract: merchant name, total amount, currency, date, category (Food, Transport, Shopping, Entertainment, Bills, Other), individual items with prices, payment method, and your confidence score (0-1). User context: {{ $('Workflow Configuration').item.json.userName }} at {{ $('Workflow Configuration').item.json.timestamp }}",
+        "hasOutputParser": true,
+        "options": {
+          "systemMessage": "You are an expert expense tracking assistant. Extract accurate financial data from receipts. Always provide a confidence score based on text clarity and completeness."
+        }
+      },
+      "id": "4d3a86c9-1eae-41b5-aeff-f4389e97b547",
+      "name": "Expense Analyzer AI",
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 3.1,
+      "position": [
+        -7424,
+        1504
+      ]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": false,
+            "leftValue": "",
+            "typeValidation": "strict"
+          },
+          "conditions": [
+            {
+              "id": "id-1",
+              "leftValue": "={{ $json.confidence }}",
+              "rightValue": "0.8",
+              "operator": {
+                "type": "number",
+                "operation": "gt"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "37663be0-dcf6-4921-89b1-c5ea6b59cf22",
+      "name": "Check Confidence > 0.8",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [
+        -7072,
+        1504
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "append",
+        "documentId": {
+          "__rl": true,
+          "mode": "id",
+          "value": "<__PLACEHOLDER_VALUE__GOOGLE_SHEET_ID__>"
+        },
+        "sheetName": {
+          "__rl": true,
+          "mode": "name",
+          "value": "Expenses"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Date": "={{ $json.date }}",
+            "Merchant": "={{ $json.merchant }}",
+            "Amount": "={{ $json.amount }}",
+            "Currency": "={{ $json.currency }}",
+            "Category": "={{ $json.category }}",
+            "Payment Method": "={{ $json.paymentMethod }}",
+            "User": "={{ $('Workflow Configuration').item.json.userName }}",
+            "Timestamp": "={{ $('Workflow Configuration').item.json.timestamp }}"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "Date",
+              "displayName": "Date",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Merchant",
+              "displayName": "Merchant",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Amount",
+              "displayName": "Amount",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Currency",
+              "displayName": "Currency",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Category",
+              "displayName": "Category",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Payment Method",
+              "displayName": "Payment Method",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "User",
+              "displayName": "User",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Timestamp",
+              "displayName": "Timestamp",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "88599edc-12e1-4be8-ab3a-0ef890da0d07",
+      "name": "Add to Expense Tracker Sheet",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        -6848,
+        1408
+      ]
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "id": "2c88033c-572e-42ba-b9f8-14baf0cf5a13",
+      "name": "Store Full Expense Record",
+      "type": "n8n-nodes-base.mongoDb",
+      "typeVersion": 1.2,
+      "position": [
+        -6624,
+        1408
+      ]
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "id": "c682c543-5cda-4428-9039-5e6d9172ff80",
+      "name": "Fetch User Category Patterns",
+      "type": "n8n-nodes-base.mongoDb",
+      "typeVersion": 1.2,
+      "position": [
+        -6400,
+        1408
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "// Apply learned category patterns\nconst expense = $input.first().json;\nconst patterns = $('Fetch User Category Patterns').all().map(item => item.json);\n\n// Find matching pattern based on merchant\nconst matchingPattern = patterns.find(p => \n  p.merchant && expense.merchant && \n  expense.merchant.toLowerCase().includes(p.merchant.toLowerCase())\n);\n\nif (matchingPattern && matchingPattern.preferredCategory) {\n  expense.suggestedCategory = matchingPattern.preferredCategory;\n  expense.patternMatched = true;\n} else {\n  expense.suggestedCategory = expense.category;\n  expense.patternMatched = false;\n}\n\nreturn { json: expense };"
+      },
+      "id": "0a316e40-3c3c-4acc-abff-9ec09a684276",
+      "name": "Apply Learned Patterns",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -6176,
+        1408
+      ]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": false,
+            "leftValue": "",
+            "typeValidation": "strict"
+          },
+          "conditions": [
+            {
+              "id": "id-1",
+              "leftValue": "={{ $json.amount }}",
+              "rightValue": "100",
+              "operator": {
+                "type": "number",
+                "operation": "gt"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "4d5602c8-13a7-42bc-95e5-98fa58c3a885",
+      "name": "Check Amount > Threshold",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [
+        -5952,
+        1408
+      ]
+    },
+    {
+      "parameters": {
+        "select": "channel",
+        "channelId": {
+          "__rl": true,
+          "mode": "id",
+          "value": "<__PLACEHOLDER_VALUE__SLACK_CHANNEL__>"
+        },
+        "text": "=\ud83d\udea8 *Large Expense Alert*\n\n*Merchant:* {{ $json.merchant }}\n*Amount:* {{ $json.currency }} {{ $json.amount }}\n*Category:* {{ $json.category }}\n*Date:* {{ $json.date }}\n*User:* {{ $('Workflow Configuration').item.json.userName }}\n\nThis expense exceeds the threshold of $100.",
+        "otherOptions": {}
+      },
+      "id": "6426afd7-3b82-4369-8547-66812d7919db",
+      "name": "Send Large Expense Alert",
+      "type": "n8n-nodes-base.slack",
+      "typeVersion": 2.4,
+      "position": [
+        -5728,
+        1328
+      ],
+      "webhookId": "4fcd04a2-966a-4860-aa56-74601ee5cdf6"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "id-1",
+              "name": "confirmationMessage",
+              "value": "={{ '\u2705 Expense Recorded!\\n\\nMerchant: ' + $json.merchant + '\\nAmount: ' + $json.currency + ' ' + $json.amount + '\\nCategory: ' + $json.category + '\\nDate: ' + $json.date + '\\n\\nYour expense has been saved successfully.' }}",
+              "type": "string"
+            }
+          ]
+        },
+        "includeOtherFields": true,
+        "options": {}
+      },
+      "id": "a3ba8c48-4e92-4861-aeca-8cf0199115bf",
+      "name": "Format Confirmation Message",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        -5504,
+        1408
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "send",
+        "phoneNumberId": "<__PLACEHOLDER_VALUE__WHATSAPP_PHONE_ID__>",
+        "recipientPhoneNumber": "={{ $('Workflow Configuration').item.json.userId }}",
+        "textBody": "={{ $json.confirmationMessage }}",
+        "additionalFields": {}
+      },
+      "id": "46318822-99c5-40f3-a9ea-c911de8a42a2",
+      "name": "Send WhatsApp Confirmation",
+      "type": "n8n-nodes-base.whatsApp",
+      "typeVersion": 1.1,
+      "position": [
+        -5280,
+        1408
+      ],
+      "webhookId": "198bd101-123e-46a9-b415-78d70feba0cd"
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={{ { status: 'success', message: 'Expense processed', data: $json } }}",
+        "options": {}
+      },
+      "id": "646e50d4-ae38-428e-a89c-8fef51ac98cc",
+      "name": "Respond to Webhook",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.5,
+      "position": [
+        -5056,
+        1408
+      ]
+    },
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "field": "cronExpression",
+              "expression": "0 9 1 * *"
+            }
+          ]
+        }
+      },
+      "id": "0d3e1364-d2ab-43b6-9fca-ad71620274f6",
+      "name": "Monthly Report Trigger",
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.3,
+      "position": [
+        -8320,
+        1936
+      ]
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "id": "929c1535-93ed-4360-8b9f-0f4bac0ae77f",
+      "name": "Aggregate Last Month Expenses",
+      "type": "n8n-nodes-base.mongoDb",
+      "typeVersion": 1.2,
+      "position": [
+        -8096,
+        1936
+      ]
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "mode": "list",
+          "value": "gpt-4.1-mini"
+        },
+        "builtInTools": {},
+        "options": {}
+      },
+      "id": "e92502fa-9476-4a1a-82dc-ddbb9792e393",
+      "name": "OpenAI Report Model",
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.3,
+      "position": [
+        -7792,
+        2160
+      ]
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=Generate a comprehensive monthly expense report with insights. Data: {{ JSON.stringify($('Aggregate Last Month Expenses').all()) }}. Provide: 1) Total spending summary, 2) Category breakdown with percentages, 3) Top 5 largest expenses, 4) Spending trends and patterns, 5) Budget recommendations, 6) Unusual spending alerts.",
+        "options": {
+          "systemMessage": "You are a financial analyst assistant. Create clear, actionable monthly expense reports with insights and recommendations."
+        }
+      },
+      "id": "30b0d352-4bcd-4675-bdce-1dca6ed381e4",
+      "name": "Generate Spending Insights",
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 3.1,
+      "position": [
+        -7872,
+        1936
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "append",
+        "documentId": {
+          "__rl": true,
+          "mode": "id",
+          "value": "<__PLACEHOLDER_VALUE__GOOGLE_SHEET_ID__>"
+        },
+        "sheetName": {
+          "__rl": true,
+          "mode": "name",
+          "value": "Monthly Reports"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Month": "={{ new Date().toLocaleDateString('en-US', { year: 'numeric', month: 'long' }) }}",
+            "Total Spending": "={{ $('Aggregate Last Month Expenses').all().reduce((sum, item) => sum + item.json.totalAmount, 0) }}",
+            "Report": "={{ $json.output }}",
+            "Generated At": "={{ new Date().toISOString() }}"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "Month",
+              "displayName": "Month",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Total Spending",
+              "displayName": "Total Spending",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Report",
+              "displayName": "Report",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Generated At",
+              "displayName": "Generated At",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "1cacd447-af0d-4fb3-bf03-88bd350a57fd",
+      "name": "Create Monthly Summary Sheet",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        -7520,
+        1936
+      ]
+    },
+    {
+      "parameters": {
+        "fromEmail": "<__PLACEHOLDER_VALUE__FROM_EMAIL__>",
+        "toEmail": "<__PLACEHOLDER_VALUE__USER_EMAIL__>",
+        "subject": "=Monthly Expense Report - {{ new Date().toLocaleDateString('en-US', { year: 'numeric', month: 'long' }) }}",
+        "html": "=<h2>\ud83d\udcca Your Monthly Expense Report</h2><p>{{ $('Generate Spending Insights').item.json.output }}</p><p><strong>Total Spending:</strong> ${{ $('Aggregate Last Month Expenses').all().reduce((sum, item) => sum + item.json.totalAmount, 0).toFixed(2) }}</p><p>View detailed breakdown in your <a href='https://docs.google.com/spreadsheets/d/<__PLACEHOLDER_VALUE__GOOGLE_SHEET_ID__>'>Expense Tracker</a></p>",
+        "options": {}
+      },
+      "id": "fe8d2624-cc12-407a-8cb9-b2b713d175d2",
+      "name": "Email Monthly Report",
+      "type": "n8n-nodes-base.emailSend",
+      "typeVersion": 2.1,
+      "position": [
+        -7296,
+        1936
+      ],
+      "webhookId": "8e626b54-51e7-435c-8432-b9c5c5a5852e"
+    },
+    {
+      "parameters": {
+        "operation": "send",
+        "phoneNumberId": "<__PLACEHOLDER_VALUE__WHATSAPP_PHONE_ID__>",
+        "recipientPhoneNumber": "<__PLACEHOLDER_VALUE__USER_PHONE__>",
+        "textBody": "=\ud83d\udcca *Monthly Expense Report*\n\n{{ $('Generate Spending Insights').item.json.output.substring(0, 1000) }}\n\nFull report sent to your email!",
+        "additionalFields": {}
+      },
+      "id": "f495f77c-e3f8-47c9-aa6c-5e0b0e930eb7",
+      "name": "Send Report via WhatsApp",
+      "type": "n8n-nodes-base.whatsApp",
+      "typeVersion": 1.1,
+      "position": [
+        -7072,
+        1936
+      ],
+      "webhookId": "e53b49f2-fec9-487c-9b7b-ccd35dbb931c"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "id-1",
+              "name": "reviewStatus",
+              "value": "pending_manual_review",
+              "type": "string"
+            },
+            {
+              "id": "id-2",
+              "name": "reviewReason",
+              "value": "Low confidence score - requires verification",
+              "type": "string"
+            },
+            {
+              "id": "id-3",
+              "name": "reviewMessage",
+              "value": "={{ '\u26a0\ufe0f Your expense needs manual review.\\n\\nMerchant: ' + $json.merchant + '\\nAmount: ' + $json.currency + ' ' + $json.amount + '\\nConfidence: ' + ($json.confidence * 100).toFixed(0) + '%\\n\\nPlease verify the details.' }}",
+              "type": "string"
+            }
+          ]
+        },
+        "includeOtherFields": true,
+        "options": {}
+      },
+      "id": "767fcdca-9f6a-4d5e-8f40-8a7390d12276",
+      "name": "Flag for Manual Review",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        -6848,
+        1600
+      ]
+    },
+    {
+      "parameters": {
+        "content": "## \ud83d\udce5 Webhook Entry Point\n\nReceives expense photos from WhatsApp/Telegram. The webhook captures:\n- Image URL from the message\n- User ID and name for tracking\n- Timestamp for record keeping\n\nThis is the starting point for real-time expense processing.",
+        "height": 220,
+        "width": 340
+      },
+      "id": "3582679f-ec40-4689-bab3-d09c3cfa6e9a",
+      "name": "\ud83d\udce5 Webhook Entry Point",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -6768,
+        2304
+      ]
+    },
+    {
+      "parameters": {
+        "content": "## \ud83d\uddbc\ufe0f Image Processing\n\n**Download Image**: Fetches the receipt/bill image from the URL\n\n**OCR Extraction**: Uses OCR.space API to extract text from the image\n\nThis converts visual receipt data into machine-readable text for AI analysis.",
+        "height": 240,
+        "width": 340
+      },
+      "id": "635f41ba-8cad-4c87-841f-e064d5a843e7",
+      "name": "\ud83d\uddbc\ufe0f Image Processing",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -7744,
+        1216
+      ]
+    },
+    {
+      "parameters": {
+        "content": "## \ud83e\udd16 AI Expense Analysis\n\n**GPT-4 Vision Model**: Analyzes the OCR text to extract structured data\n\n**Structured Parser**: Ensures consistent JSON output with:\n- Merchant name\n- Amount & currency\n- Date & category\n- Line items\n- Confidence score (0-1)\n\nThe AI understands context and handles various receipt formats.",
+        "height": 300,
+        "width": 400
+      },
+      "id": "88b3b4dc-8a30-4dd3-8f3e-2cdac055a58e",
+      "name": "\ud83e\udd16 AI Expense Analysis",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -6928,
+        1824
+      ]
+    },
+    {
+      "parameters": {
+        "content": "## \u2705 High Confidence Path\n\nWhen AI confidence > 80%, the expense is automatically:\n- Added to Google Sheets tracker\n- Stored in MongoDB for analytics\n- Processed through pattern learning\n\nNo manual review needed!",
+        "height": 200,
+        "width": 340
+      },
+      "id": "91e6fefe-96c2-4b3d-acab-8edbeeba5bd8",
+      "name": "\u2705 High Confidence Path",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -8352,
+        1280
+      ]
+    },
+    {
+      "parameters": {
+        "content": "## \ud83d\udcbe Data Storage & Pattern Learning\n\n**MongoDB Storage**: Saves complete expense records with all metadata\n\n**Pattern Learning**: Fetches user's historical categorization patterns\n\n**Smart Categorization**: Applies learned patterns (e.g., \"Starbucks\" \u2192 \"Food\")\n\nThe system gets smarter over time!",
+        "height": 280,
+        "width": 380
+      },
+      "id": "1575207f-5398-4544-8236-958d212283a0",
+      "name": "\ud83d\udcbe Data Storage & Pattern Learning",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -7152,
+        2544
+      ]
+    },
+    {
+      "parameters": {
+        "content": "## \ud83d\udea8 Large Expense Alert\n\nWhen amount > $100:\n- Sends Slack notification to team/admin\n- Includes merchant, amount, category, date\n- Enables quick oversight of significant spending\n\nThreshold can be customized.",
+        "height": 220,
+        "width": 340
+      },
+      "id": "bf758c66-8c33-41f6-a459-47fcb3be6343",
+      "name": "\ud83d\udea8 Large Expense Alert",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -6336,
+        2064
+      ]
+    },
+    {
+      "parameters": {
+        "content": "## \ud83d\udcac User Confirmation\n\n**Format Message**: Creates a friendly confirmation with all expense details\n\n**WhatsApp Response**: Sends confirmation back to the user\n\n**Webhook Response**: Returns success status\n\nUser gets instant feedback that their expense was recorded!",
+        "height": 260,
+        "width": 340
+      },
+      "id": "8728fc0d-67ca-4010-830e-0209b1c9a091",
+      "name": "\ud83d\udcac User Confirmation",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -8112,
+        2512
+      ]
+    },
+    {
+      "parameters": {
+        "content": "## \u26a0\ufe0f Low Confidence - Manual Review\n\nWhen AI confidence \u2264 80%, the expense is flagged for manual verification.\n\nUser receives a message with:\n- Extracted details\n- Confidence percentage\n- Request to verify\n\nPrevents incorrect data entry.",
+        "height": 220,
+        "width": 340
+      },
+      "id": "7eca18cd-88be-44c5-9a38-932f68362a9d",
+      "name": "\u26a0\ufe0f Low Confidence - Manual Review",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -6112,
+        1728
+      ]
+    },
+    {
+      "parameters": {
+        "content": "## \ud83d\udcca Monthly Report Generation\n\n**Schedule**: Runs 1st of each month at 9 AM\n\n**Aggregation**: Fetches all last month's expenses from MongoDB\n\n**AI Insights**: GPT-4 generates comprehensive analysis:\n- Total spending & category breakdown\n- Top 5 expenses\n- Trends & patterns\n- Budget recommendations",
+        "height": 300,
+        "width": 400
+      },
+      "id": "ededbee1-28c4-4a68-be6b-678122301e09",
+      "name": "\ud83d\udcca Monthly Report Generation",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -8608,
+        2208
+      ]
+    },
+    {
+      "parameters": {
+        "content": "## \ud83d\udce7 Report Distribution\n\n**Google Sheets**: Saves monthly summary for historical tracking\n\n**Email**: Sends detailed HTML report with insights and spreadsheet link\n\n**WhatsApp**: Sends summary notification (first 1000 chars)\n\nMulti-channel delivery ensures you never miss your financial insights!",
+        "height": 280,
+        "width": 360
+      },
+      "id": "9f990efd-8e00-4948-9c1d-7b947da36cec",
+      "name": "\ud83d\udce7 Report Distribution",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -7680,
+        2528
+      ]
+    }
+  ],
+  "connections": {
+    "WhatsApp/Telegram Webhook": {
+      "main": [
+        [
+          {
+            "node": "Workflow Configuration",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Workflow Configuration": {
+      "main": [
+        [
+          {
+            "node": "Download Image from URL",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Download Image from URL": {
+      "main": [
+        [
+          {
+            "node": "OCR API Request",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OCR API Request": {
+      "main": [
+        [
+          {
+            "node": "Expense Analyzer AI",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI GPT-4V Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Expense Analyzer AI",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Expense Data Schema Parser": {
+      "ai_outputParser": [
+        [
+          {
+            "node": "Expense Analyzer AI",
+            "type": "ai_outputParser",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Expense Analyzer AI": {
+      "main": [
+        [
+          {
+            "node": "Check Confidence > 0.8",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Check Confidence > 0.8": {
+      "main": [
+        [
+          {
+            "node": "Add to Expense Tracker Sheet",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Flag for Manual Review",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Add to Expense Tracker Sheet": {
+      "main": [
+        [
+          {
+            "node": "Store Full Expense Record",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Store Full Expense Record": {
+      "main": [
+        [
+          {
+            "node": "Fetch User Category Patterns",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Fetch User Category Patterns": {
+      "main": [
+        [
+          {
+            "node": "Apply Learned Patterns",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Apply Learned Patterns": {
+      "main": [
+        [
+          {
+            "node": "Check Amount > Threshold",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Check Amount > Threshold": {
+      "main": [
+        [
+          {
+            "node": "Send Large Expense Alert",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Format Confirmation Message",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Send Large Expense Alert": {
+      "main": [
+        [
+          {
+            "node": "Format Confirmation Message",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Format Confirmation Message": {
+      "main": [
+        [
+          {
+            "node": "Send WhatsApp Confirmation",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Send WhatsApp Confirmation": {
+      "main": [
+        [
+          {
+            "node": "Respond to Webhook",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Monthly Report Trigger": {
+      "main": [
+        [
+          {
+            "node": "Aggregate Last Month Expenses",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Aggregate Last Month Expenses": {
+      "main": [
+        [
+          {
+            "node": "Generate Spending Insights",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI Report Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Generate Spending Insights",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Generate Spending Insights": {
+      "main": [
+        [
+          {
+            "node": "Create Monthly Summary Sheet",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Create Monthly Summary Sheet": {
+      "main": [
+        [
+          {
+            "node": "Email Monthly Report",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Email Monthly Report": {
+      "main": [
+        [
+          {
+            "node": "Send Report via WhatsApp",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1",
+    "availableInMCP": false
+  },
+  "staticData": null,
+  "meta": {
+    "templateCredsSetupCompleted": true
+  },
+  "pinData": {},
+  "versionId": "c0af88d7-1ecc-4112-be0d-60ccf80428ad",
+  "activeVersionId": null,
+  "triggerCount": 0,
+  "shared": [
+    {
+      "updatedAt": "2026-01-07T19:11:20.364Z",
+      "createdAt": "2026-01-07T19:11:20.364Z",
+      "role": "workflow:owner",
+      "workflowId": "wn0qA91MZiK3BE23",
+      "projectId": "DT8YjHwLZsQjJqVc"
+    }
+  ],
+  "activeVersion": null,
+  "tags": []
+}

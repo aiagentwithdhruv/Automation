@@ -1,0 +1,1254 @@
+{
+  "updatedAt": "2026-01-07T19:32:26.960Z",
+  "createdAt": "2025-12-31T16:33:26.906Z",
+  "id": "crSjUOdL9urhX3ga",
+  "name": "Automated Job Application and Recruiter Outreach System",
+  "active": false,
+  "isArchived": false,
+  "nodes": [
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "triggerAtHour": 9
+            }
+          ]
+        }
+      },
+      "id": "8d68f62d-770c-45ea-b484-32ce71e57ae0",
+      "name": "Daily Job Search Trigger",
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.3,
+      "position": [
+        -4064,
+        224
+      ]
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "id-1",
+              "name": "targetRole",
+              "value": "Software Engineer",
+              "type": "string"
+            },
+            {
+              "id": "id-2",
+              "name": "targetSkills",
+              "value": "Python, JavaScript, React, Node.js, AWS",
+              "type": "string"
+            },
+            {
+              "id": "id-3",
+              "name": "targetLocation",
+              "value": "Remote, Bangalore, Mumbai",
+              "type": "string"
+            },
+            {
+              "id": "id-4",
+              "name": "relevanceThreshold",
+              "value": 70,
+              "type": "number"
+            },
+            {
+              "id": "id-5",
+              "name": "baseResumeFileId",
+              "value": "YOUR_GOOGLE_DRIVE_FILE_ID",
+              "type": "string"
+            },
+            {
+              "id": "id-6",
+              "name": "jobLeadsSheetId",
+              "value": "YOUR_SHEET_ID",
+              "type": "string"
+            },
+            {
+              "id": "id-7",
+              "name": "applicationsSheetId",
+              "value": "YOUR_SHEET_ID",
+              "type": "string"
+            },
+            {
+              "id": "id-8",
+              "name": "candidateEmail",
+              "value": "your.email@example.com",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "be4bfd7a-f3e0-4080-a887-4f40d8dfdecb",
+      "name": "Workflow Configuration",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        -3840,
+        224
+      ]
+    },
+    {
+      "parameters": {
+        "url": "https://api.rapidapi.com/jobs/search",
+        "sendQuery": true,
+        "queryParameters": {
+          "parameters": [
+            {
+              "name": "query",
+              "value": "={{ $('Workflow Configuration').item.json.targetRole }}"
+            },
+            {
+              "name": "location",
+              "value": "={{ $('Workflow Configuration').item.json.targetLocation }}"
+            },
+            {
+              "name": "num_pages",
+              "value": "1"
+            }
+          ]
+        },
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "X-RapidAPI-Key",
+              "value": "YOUR_RAPIDAPI_KEY"
+            },
+            {
+              "name": "X-RapidAPI-Host",
+              "value": "jobs-api.rapidapi.com"
+            }
+          ]
+        },
+        "options": {
+          "response": {
+            "response": {
+              "responseFormat": "json"
+            }
+          }
+        }
+      },
+      "id": "9303b935-8aa0-4074-bd17-6fd074d8121d",
+      "name": "Search Jobs via API",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.3,
+      "position": [
+        -3616,
+        224
+      ]
+    },
+    {
+      "parameters": {
+        "fieldToSplitOut": "data",
+        "options": {}
+      },
+      "id": "2084e7b3-e683-4b40-812f-f90b4aa8c838",
+      "name": "Split Job Listings",
+      "type": "n8n-nodes-base.splitOut",
+      "typeVersion": 1,
+      "position": [
+        -3392,
+        224
+      ]
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "id-1",
+              "name": "jobTitle",
+              "value": "={{ $json.job_title || $json.title }}",
+              "type": "string"
+            },
+            {
+              "id": "id-2",
+              "name": "company",
+              "value": "={{ $json.company_name || $json.company }}",
+              "type": "string"
+            },
+            {
+              "id": "id-3",
+              "name": "jobDescription",
+              "value": "={{ $json.job_description || $json.description }}",
+              "type": "string"
+            },
+            {
+              "id": "id-4",
+              "name": "jobUrl",
+              "value": "={{ $json.job_url || $json.url }}",
+              "type": "string"
+            },
+            {
+              "id": "id-5",
+              "name": "recruiterName",
+              "value": "={{ $json.recruiter_name || '' }}",
+              "type": "string"
+            },
+            {
+              "id": "id-6",
+              "name": "recruiterEmail",
+              "value": "={{ $json.recruiter_email || '' }}",
+              "type": "string"
+            },
+            {
+              "id": "id-7",
+              "name": "location",
+              "value": "={{ $json.location || '' }}",
+              "type": "string"
+            },
+            {
+              "id": "id-8",
+              "name": "dateFound",
+              "value": "={{ $now.toISO() }}",
+              "type": "string"
+            },
+            {
+              "id": "id-9",
+              "name": "jobId",
+              "value": "={{ $json.job_id || $json.id || $json.jobUrl }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "7fd72bf4-444c-4de0-9147-9e08fc54a33e",
+      "name": "Extract Job Details",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        -3168,
+        224
+      ]
+    },
+    {
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "mode": "id",
+          "value": "={{ $('Workflow Configuration').item.json.applicationsSheetId }}"
+        },
+        "sheetName": {
+          "__rl": true,
+          "mode": "name",
+          "value": "Applications Sent"
+        },
+        "filtersUI": {
+          "values": []
+        },
+        "options": {
+          "returnFirstMatch": false
+        }
+      },
+      "id": "a7d046f2-4555-4408-be72-023d5769555e",
+      "name": "Load Existing Applications",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        -2720,
+        224
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "const currentJob = $input.first().json;\nconst applications = $('Load Existing Applications').all().map(item => item.json);\n\nconst isDuplicate = applications.some(app => \n  app['Job ID'] === currentJob.jobId || \n  app['Job URL'] === currentJob.jobUrl\n);\n\nreturn { json: { ...currentJob, isDuplicate } };"
+      },
+      "id": "8fea2f8b-7242-41b5-b4c6-547118449260",
+      "name": "Check for Duplicates",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -2496,
+        224
+      ]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": false,
+            "leftValue": "",
+            "typeValidation": "loose"
+          },
+          "conditions": [
+            {
+              "id": "id-1",
+              "leftValue": "={{ $json.isDuplicate }}",
+              "operator": {
+                "type": "boolean",
+                "operation": "true"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "280ebf3a-6ea1-4ba4-9e50-9164e96078ce",
+      "name": "Is Duplicate?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [
+        -2272,
+        224
+      ]
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "mode": "id",
+          "value": "gpt-4o-mini"
+        },
+        "builtInTools": {},
+        "options": {
+          "temperature": 0.3
+        }
+      },
+      "id": "3f7be3dd-0ce6-422f-a7e2-002e34e77017",
+      "name": "OpenAI Chat Model",
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.3,
+      "position": [
+        -216,
+        80
+      ]
+    },
+    {
+      "parameters": {
+        "jsonSchemaExample": "{\n\t\"relevanceScore\": 85,\n\t\"reasoning\": \"Strong match with required skills and experience\",\n\t\"keyMatches\": \"Python, Machine Learning, API development, 5+ years experience\",\n\t\"missingSkills\": \"Kubernetes, GraphQL\"\n}"
+      },
+      "id": "4c3daabc-3c93-43fc-8ccd-d05a2ab53d23",
+      "name": "Job Relevance Output Parser",
+      "type": "@n8n/n8n-nodes-langchain.outputParserStructured",
+      "typeVersion": 1.3,
+      "position": [
+        -1976,
+        196
+      ]
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=Analyze this job opportunity for relevance:\n\nCandidate Profile:\n- Target Role: {{ $('Workflow Configuration').item.json.targetRole }}\n- Skills: {{ $('Workflow Configuration').item.json.targetSkills }}\n- Preferred Location: {{ $('Workflow Configuration').item.json.targetLocation }}\n\nJob Details:\n- Title: {{ $json.jobTitle }}\n- Company: {{ $json.company }}\n- Location: {{ $json.location }}\n- Description: {{ $json.jobDescription }}\n\nScore this job from 0-100 based on:\n1. Role alignment with target position\n2. Required skills match\n3. Location preference\n4. Seniority level appropriateness\n5. Company reputation and growth potential\n\nProvide a relevance score, reasoning, key matches, and any missing skills.",
+        "hasOutputParser": true,
+        "options": {
+          "systemMessage": "You are an expert job matching AI. Analyze job descriptions and score their relevance to a candidate's profile."
+        }
+      },
+      "id": "6ee16694-438c-4dd7-b6a0-e1b129cd678d",
+      "name": "Score Job Relevance",
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 3.1,
+      "position": [
+        -2048,
+        -28
+      ]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": false,
+            "leftValue": "",
+            "typeValidation": "loose"
+          },
+          "conditions": [
+            {
+              "id": "id-1",
+              "leftValue": "={{ $json.relevanceScore }}",
+              "rightValue": "={{ $('Workflow Configuration').item.json.relevanceThreshold }}",
+              "operator": {
+                "type": "number",
+                "operation": "gte"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "a53438b1-3d2a-44ed-be2e-9e3c138b8ae0",
+      "name": "Relevance Score >= 70?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [
+        -1696,
+        76
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "download",
+        "fileId": {
+          "__rl": true,
+          "mode": "id",
+          "value": "={{ $('Workflow Configuration').item.json.baseResumeFileId }}"
+        },
+        "options": {
+          "googleFileConversion": {
+            "conversion": {
+              "docsToFormat": "text/plain"
+            }
+          }
+        }
+      },
+      "id": "24749b6b-8f3b-4053-8633-a49b5b9a8409",
+      "name": "Get Base Resume",
+      "type": "n8n-nodes-base.googleDrive",
+      "typeVersion": 3,
+      "position": [
+        -1472,
+        -20
+      ]
+    },
+    {
+      "parameters": {
+        "schemaType": "manual",
+        "inputSchema": "{\n\t\"type\": \"object\",\n\t\"properties\": {\n\t\t\"resumeContent\": {\n\t\t\t\"type\": \"string\",\n\t\t\t\"description\": \"Complete ATS-optimized resume content in markdown format\"\n\t\t},\n\t\t\"keyChanges\": {\n\t\t\t\"type\": \"string\",\n\t\t\t\"description\": \"Summary of key customizations made\"\n\t\t},\n\t\t\"atsKeywords\": {\n\t\t\t\"type\": \"string\",\n\t\t\t\"description\": \"Critical ATS keywords incorporated\"\n\t\t}\n\t}\n}"
+      },
+      "id": "b5263e84-216c-4d51-9fa0-e3aa7f39f3f3",
+      "name": "Resume Customization Output Parser",
+      "type": "@n8n/n8n-nodes-langchain.outputParserStructured",
+      "typeVersion": 1.3,
+      "position": [
+        -1176,
+        204
+      ]
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=Customize this resume for the following job opportunity:\n\nBase Resume:\n{{ $('Get Base Resume').item.json.text }}\n\nJob Details:\n- Title: {{ $('Extract Job Details').item.json.jobTitle }}\n- Company: {{ $('Extract Job Details').item.json.company }}\n- Description: {{ $('Extract Job Details').item.json.jobDescription }}\n\nJob Relevance Analysis:\n- Score: {{ $('Score Job Relevance').item.json.relevanceScore }}\n- Key Matches: {{ $('Score Job Relevance').item.json.keyMatches }}\n- Missing Skills: {{ $('Score Job Relevance').item.json.missingSkills }}\n\nInstructions:\n1. Rewrite resume to emphasize relevant experience and skills\n2. Incorporate ATS keywords from job description naturally\n3. Highlight achievements that match job requirements\n4. Keep format professional and ATS-friendly\n5. Maintain 1-2 page length\n6. DO NOT fabricate experience or skills\n7. Use action verbs and quantifiable results\n8. Return complete resume in markdown format\n\nProvide the customized resume content, key changes made, and ATS keywords incorporated.",
+        "hasOutputParser": true,
+        "options": {
+          "systemMessage": "You are an expert resume writer specializing in ATS optimization. Customize resumes to match job descriptions while maintaining authenticity."
+        }
+      },
+      "id": "a49259f4-637f-4aa2-9deb-ff2116da487c",
+      "name": "Customize Resume for Job",
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 3.1,
+      "position": [
+        -1248,
+        -20
+      ]
+    },
+    {
+      "parameters": {
+        "title": "={{ $('Extract Job Details').item.json.company }} - {{ $('Extract Job Details').item.json.jobTitle }} Resume"
+      },
+      "id": "a5d8da85-ea92-4c6b-9258-d0110ade74a3",
+      "name": "Create Resume Document",
+      "type": "n8n-nodes-base.googleDocs",
+      "typeVersion": 2,
+      "position": [
+        -896,
+        -20
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "download",
+        "fileId": {
+          "__rl": true,
+          "mode": "id",
+          "value": "={{ $('Create Resume Document').item.json.documentId }}"
+        },
+        "options": {
+          "googleFileConversion": {
+            "conversion": {
+              "docsToFormat": "application/pdf"
+            }
+          },
+          "fileName": "={{ $('Extract Job Details').item.json.company }}_{{ $('Extract Job Details').item.json.jobTitle }}_Resume.pdf"
+        }
+      },
+      "id": "bde3835e-f6f1-42b1-bf46-5643caf0b48c",
+      "name": "Export Resume as PDF",
+      "type": "n8n-nodes-base.googleDrive",
+      "typeVersion": 3,
+      "position": [
+        -672,
+        -20
+      ]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": false,
+            "leftValue": "",
+            "typeValidation": "loose"
+          },
+          "conditions": [
+            {
+              "id": "id-1",
+              "leftValue": "={{ $('Extract Job Details').item.json.recruiterEmail }}",
+              "operator": {
+                "type": "string",
+                "operation": "notEmpty"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "ef0a1640-b2f6-4e54-8820-51b78c1b7428",
+      "name": "Has Recruiter Email?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [
+        -448,
+        -20
+      ]
+    },
+    {
+      "parameters": {
+        "jsonSchemaExample": "{\n\t\"subject\": \"Application for Software Engineer Position\",\n\t\"emailBody\": \"<p>Dear Hiring Manager,</p><p>I am writing to express my interest in the Software Engineer position...</p>\",\n\t\"tone\": \"professional\"\n}"
+      },
+      "id": "00afe6b7-be5e-49a1-805e-ea35fd85b515",
+      "name": "Email Generation Output Parser",
+      "type": "@n8n/n8n-nodes-langchain.outputParserStructured",
+      "typeVersion": 1.3,
+      "position": [
+        -88,
+        80
+      ]
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=Write a personalized recruiter outreach email for this job opportunity:\n\nJob Details:\n- Title: {{ $('Extract Job Details').item.json.jobTitle }}\n- Company: {{ $('Extract Job Details').item.json.company }}\n- Recruiter Name: {{ $('Extract Job Details').item.json.recruiterName || 'Hiring Manager' }}\n\nCandidate Info:\n- Target Role: {{ $('Workflow Configuration').item.json.targetRole }}\n- Key Skills: {{ $('Workflow Configuration').item.json.targetSkills }}\n\nJob Relevance:\n- Score: {{ $('Score Job Relevance').item.json.relevanceScore }}\n- Key Matches: {{ $('Score Job Relevance').item.json.keyMatches }}\n\nInstructions:\n1. Address recruiter by name if available, otherwise use 'Hiring Manager'\n2. Express genuine interest in the specific role and company\n3. Highlight 2-3 relevant achievements or skills\n4. Keep email concise (150-200 words)\n5. Include clear call-to-action\n6. Professional yet personable tone\n7. Mention resume is attached\n8. Return subject line and HTML-formatted email body\n\nProvide the email subject, body in HTML format, and tone used.",
+        "hasOutputParser": true,
+        "options": {
+          "systemMessage": "You are an expert at writing personalized recruiter outreach emails that get responses. Write professional, concise, and engaging emails."
+        }
+      },
+      "id": "b5e60b04-35d0-4c8c-ba20-1c0940d4e5b7",
+      "name": "Generate Recruiter Email",
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 3.1,
+      "position": [
+        -224,
+        -144
+      ]
+    },
+    {
+      "parameters": {
+        "sendTo": "={{ $('Extract Job Details').item.json.recruiterEmail }}",
+        "subject": "={{ $json.subject }}",
+        "message": "={{ $json.emailBody }}",
+        "options": {
+          "attachmentsUi": {
+            "attachmentsBinary": [
+              {}
+            ]
+          }
+        }
+      },
+      "id": "09c259c8-7c32-4ba7-b057-a78326883a10",
+      "name": "Send Recruiter Email",
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.2,
+      "position": [
+        128,
+        -144
+      ],
+      "webhookId": "0b8624e6-1b46-47cb-8080-464eac924b3d"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "id-1",
+              "name": "applicationStatus",
+              "value": "Email Sent",
+              "type": "string"
+            },
+            {
+              "id": "id-2",
+              "name": "applicationMethod",
+              "value": "Recruiter Email",
+              "type": "string"
+            },
+            {
+              "id": "id-3",
+              "name": "emailSentDate",
+              "value": "={{ $now.toISO() }}",
+              "type": "string"
+            },
+            {
+              "id": "id-4",
+              "name": "resumeDocId",
+              "value": "={{ $('Create Resume Document').item.json.documentId }}",
+              "type": "string"
+            }
+          ]
+        },
+        "includeOtherFields": true,
+        "options": {}
+      },
+      "id": "69d8dd15-4ab6-4078-94d4-b14f32095078",
+      "name": "Mark as Email Sent",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        352,
+        -144
+      ]
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "id-1",
+              "name": "applicationStatus",
+              "value": "Manual Apply Required",
+              "type": "string"
+            },
+            {
+              "id": "id-2",
+              "name": "applicationMethod",
+              "value": "Job Platform",
+              "type": "string"
+            },
+            {
+              "id": "id-3",
+              "name": "resumeDocId",
+              "value": "={{ $('Create Resume Document').item.json.documentId }}",
+              "type": "string"
+            }
+          ]
+        },
+        "includeOtherFields": true,
+        "options": {}
+      },
+      "id": "247bd672-910c-4b00-933c-bceded5c073b",
+      "name": "Mark as Manual Apply",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        352,
+        104
+      ]
+    },
+    {
+      "parameters": {},
+      "id": "936944ac-65c6-48fd-9a01-a1f37c9d8192",
+      "name": "Merge Application Paths",
+      "type": "n8n-nodes-base.merge",
+      "typeVersion": 3.2,
+      "position": [
+        576,
+        -20
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "append",
+        "documentId": {
+          "__rl": true,
+          "mode": "id",
+          "value": "={{ $('Workflow Configuration').item.json.applicationsSheetId }}"
+        },
+        "sheetName": {
+          "__rl": true,
+          "mode": "name",
+          "value": "Applications Sent"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Job ID": "={{ $('Extract Job Details').item.json.jobId }}",
+            "Job Title": "={{ $('Extract Job Details').item.json.jobTitle }}",
+            "Company": "={{ $('Extract Job Details').item.json.company }}",
+            "Job URL": "={{ $('Extract Job Details').item.json.jobUrl }}",
+            "Relevance Score": "={{ $('Score Job Relevance').item.json.relevanceScore }}",
+            "Application Status": "={{ $json.applicationStatus }}",
+            "Application Method": "={{ $json.applicationMethod }}",
+            "Resume Doc ID": "={{ $json.resumeDocId }}",
+            "Date Applied": "={{ $now.toISO() }}",
+            "Recruiter Email": "={{ $('Extract Job Details').item.json.recruiterEmail }}"
+          },
+          "matchingColumns": [],
+          "schema": []
+        },
+        "options": {}
+      },
+      "id": "cf6923fb-4364-4255-90c5-681b62607d4f",
+      "name": "Log to Applications Sheet",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        800,
+        -20
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "appendOrUpdate",
+        "documentId": {
+          "__rl": true,
+          "mode": "id",
+          "value": "={{ $('Workflow Configuration').item.json.jobLeadsSheetId }}"
+        },
+        "sheetName": {
+          "__rl": true,
+          "mode": "name",
+          "value": "Job Leads"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Job ID": "={{ $json.jobId }}",
+            "Job Title": "={{ $json.jobTitle }}",
+            "Company": "={{ $json.company }}",
+            "Location": "={{ $json.location }}",
+            "Job URL": "={{ $json.jobUrl }}",
+            "Recruiter Name": "={{ $json.recruiterName }}",
+            "Recruiter Email": "={{ $json.recruiterEmail }}",
+            "Date Found": "={{ $json.dateFound }}"
+          },
+          "matchingColumns": [
+            "Job ID"
+          ],
+          "schema": [
+            {
+              "id": "Job ID",
+              "displayName": "Job ID",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Job Title",
+              "displayName": "Job Title",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Company",
+              "displayName": "Company",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Location",
+              "displayName": "Location",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Job URL",
+              "displayName": "Job URL",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Recruiter Name",
+              "displayName": "Recruiter Name",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Recruiter Email",
+              "displayName": "Recruiter Email",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Date Found",
+              "displayName": "Date Found",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "8c03c282-479d-42bc-b4d8-300b29ed6518",
+      "name": "Save to Job Leads Sheet",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        -2944,
+        224
+      ]
+    },
+    {
+      "parameters": {
+        "fieldsToAggregate": {
+          "fieldToAggregate": [
+            {
+              "fieldToAggregate": "totalApplications"
+            },
+            {
+              "fieldToAggregate": "applicationStatus",
+              "renameField": true,
+              "outputFieldName": "emailsSent"
+            },
+            {
+              "fieldToAggregate": "applicationStatus",
+              "renameField": true,
+              "outputFieldName": "manualApplies"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "ec177b5c-a1ea-4ee3-9498-5b99bb1c5eda",
+      "name": "Aggregate Daily Results",
+      "type": "n8n-nodes-base.aggregate",
+      "typeVersion": 1,
+      "position": [
+        1024,
+        -20
+      ]
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "id-1",
+              "name": "summarySubject",
+              "value": "=Daily Job Application Summary - {{ $now.format('MMM dd, yyyy') }}",
+              "type": "string"
+            },
+            {
+              "id": "id-2",
+              "name": "summaryBody",
+              "value": "=<h2>Daily Job Application Automation Report</h2><p><strong>Date:</strong> {{ $now.format('MMMM dd, yyyy') }}</p><h3>Summary Statistics:</h3><ul><li><strong>Total Applications Processed:</strong> {{ $json.totalApplications || 0 }}</li><li><strong>Recruiter Emails Sent:</strong> {{ $json.emailsSent || 0 }}</li><li><strong>Manual Applications Required:</strong> {{ $json.manualApplies || 0 }}</li></ul><p>Check your Google Sheets for detailed application tracking.</p><p><em>This is an automated report from your Job Application System.</em></p>",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "c9093136-7531-42fa-b53b-31fa020ee24c",
+      "name": "Format Summary Report",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        1248,
+        -20
+      ]
+    },
+    {
+      "parameters": {
+        "sendTo": "={{ $('Workflow Configuration').item.json.candidateEmail }}",
+        "subject": "={{ $json.summarySubject }}",
+        "message": "={{ $json.summaryBody }}",
+        "options": {}
+      },
+      "id": "9a677969-2a82-4ee9-a283-317e0ea0a713",
+      "name": "Send Daily Summary Email",
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.2,
+      "position": [
+        1472,
+        -20
+      ],
+      "webhookId": "5532f728-9cf4-4262-a022-4b508ba07149"
+    },
+    {
+      "parameters": {},
+      "id": "a3963ac5-3f8b-4401-90dd-3f1aec37cf85",
+      "name": "Skip Duplicate",
+      "type": "n8n-nodes-base.noOp",
+      "typeVersion": 1,
+      "position": [
+        -1984,
+        372
+      ]
+    },
+    {
+      "parameters": {},
+      "id": "67566c41-988f-4a0c-98b4-e6642d3c8fd8",
+      "name": "Skip Low Relevance",
+      "type": "n8n-nodes-base.noOp",
+      "typeVersion": 1,
+      "position": [
+        -1472,
+        172
+      ]
+    }
+  ],
+  "connections": {
+    "Daily Job Search Trigger": {
+      "main": [
+        [
+          {
+            "node": "Workflow Configuration",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Workflow Configuration": {
+      "main": [
+        [
+          {
+            "node": "Search Jobs via API",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Search Jobs via API": {
+      "main": [
+        [
+          {
+            "node": "Split Job Listings",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Split Job Listings": {
+      "main": [
+        [
+          {
+            "node": "Extract Job Details",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Extract Job Details": {
+      "main": [
+        [
+          {
+            "node": "Save to Job Leads Sheet",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Load Existing Applications": {
+      "main": [
+        [
+          {
+            "node": "Check for Duplicates",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Check for Duplicates": {
+      "main": [
+        [
+          {
+            "node": "Is Duplicate?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Is Duplicate?": {
+      "main": [
+        [
+          {
+            "node": "Skip Duplicate",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Score Job Relevance",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Score Job Relevance",
+            "type": "ai_languageModel",
+            "index": 0
+          },
+          {
+            "node": "Customize Resume for Job",
+            "type": "ai_languageModel",
+            "index": 0
+          },
+          {
+            "node": "Generate Recruiter Email",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Job Relevance Output Parser": {
+      "ai_outputParser": [
+        [
+          {
+            "node": "Score Job Relevance",
+            "type": "ai_outputParser",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Score Job Relevance": {
+      "main": [
+        [
+          {
+            "node": "Relevance Score >= 70?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Relevance Score >= 70?": {
+      "main": [
+        [
+          {
+            "node": "Get Base Resume",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Skip Low Relevance",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get Base Resume": {
+      "main": [
+        [
+          {
+            "node": "Customize Resume for Job",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Resume Customization Output Parser": {
+      "ai_outputParser": [
+        [
+          {
+            "node": "Customize Resume for Job",
+            "type": "ai_outputParser",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Customize Resume for Job": {
+      "main": [
+        [
+          {
+            "node": "Create Resume Document",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Create Resume Document": {
+      "main": [
+        [
+          {
+            "node": "Export Resume as PDF",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Export Resume as PDF": {
+      "main": [
+        [
+          {
+            "node": "Has Recruiter Email?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Has Recruiter Email?": {
+      "main": [
+        [
+          {
+            "node": "Generate Recruiter Email",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Mark as Manual Apply",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Email Generation Output Parser": {
+      "ai_outputParser": [
+        [
+          {
+            "node": "Generate Recruiter Email",
+            "type": "ai_outputParser",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Generate Recruiter Email": {
+      "main": [
+        [
+          {
+            "node": "Send Recruiter Email",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Send Recruiter Email": {
+      "main": [
+        [
+          {
+            "node": "Mark as Email Sent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Mark as Email Sent": {
+      "main": [
+        [
+          {
+            "node": "Merge Application Paths",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Mark as Manual Apply": {
+      "main": [
+        [
+          {
+            "node": "Merge Application Paths",
+            "type": "main",
+            "index": 1
+          }
+        ]
+      ]
+    },
+    "Merge Application Paths": {
+      "main": [
+        [
+          {
+            "node": "Log to Applications Sheet",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Log to Applications Sheet": {
+      "main": [
+        [
+          {
+            "node": "Aggregate Daily Results",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Save to Job Leads Sheet": {
+      "main": [
+        [
+          {
+            "node": "Load Existing Applications",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Aggregate Daily Results": {
+      "main": [
+        [
+          {
+            "node": "Format Summary Report",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Format Summary Report": {
+      "main": [
+        [
+          {
+            "node": "Send Daily Summary Email",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1",
+    "availableInMCP": false
+  },
+  "staticData": null,
+  "meta": null,
+  "pinData": {},
+  "versionId": "02b69939-c4d8-48c7-8bde-bfa329bebd44",
+  "activeVersionId": null,
+  "triggerCount": 0,
+  "shared": [
+    {
+      "updatedAt": "2025-12-31T16:33:26.911Z",
+      "createdAt": "2025-12-31T16:33:26.911Z",
+      "role": "workflow:owner",
+      "workflowId": "crSjUOdL9urhX3ga",
+      "projectId": "DT8YjHwLZsQjJqVc"
+    }
+  ],
+  "activeVersion": null,
+  "tags": []
+}

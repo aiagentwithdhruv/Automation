@@ -1,0 +1,241 @@
+{
+  "updatedAt": "2026-01-22T16:56:58.789Z",
+  "createdAt": "2026-01-22T16:51:31.892Z",
+  "id": "TVpZCIA0mry9QbVl",
+  "name": "Chat with the AI  news",
+  "active": false,
+  "isArchived": false,
+  "nodes": [
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.chatTrigger",
+      "typeVersion": 1.4,
+      "position": [
+        -384,
+        -144
+      ],
+      "id": "eca0e8e2-294e-461b-a80d-5907f90c5320",
+      "name": "When chat message received",
+      "webhookId": "b567d98b-aabb-4963-b0f8-6b1e8b5f8959"
+    },
+    {
+      "parameters": {},
+      "type": "@n8n/n8n-nodes-langchain.memoryBufferWindow",
+      "typeVersion": 1.3,
+      "position": [
+        -32,
+        144
+      ],
+      "id": "2ef91bf8-cee9-4d06-bdf0-406fd9967e1e",
+      "name": "Simple Memory"
+    },
+    {
+      "parameters": {
+        "url": "https://hnrss.org/frontpage",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.rssFeedReadTool",
+      "typeVersion": 1.2,
+      "position": [
+        448,
+        144
+      ],
+      "id": "3a33fa7c-25b4-459b-a8aa-f6615be7d248",
+      "name": "Hackernews"
+    },
+    {
+      "parameters": {
+        "url": "https://www.theverge.com/rss/index.xml",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.rssFeedReadTool",
+      "typeVersion": 1.2,
+      "position": [
+        288,
+        144
+      ],
+      "id": "b150f846-a23e-444d-91d6-32f358b0839b",
+      "name": "TheVerge"
+    },
+    {
+      "parameters": {
+        "url": "https://feeds.bbci.co.uk/news/rss.xml",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.rssFeedReadTool",
+      "typeVersion": 1.2,
+      "position": [
+        128,
+        144
+      ],
+      "id": "87994b37-7d39-49df-882e-2d104197da83",
+      "name": "BBC News"
+    },
+    {
+      "parameters": {
+        "options": {
+          "systemMessage": "=News Agent\n\n# Role\n\nYou are a concise, factual news assistant with access to these RSS tools:\n\n* BBC (Global news)\n* TheVerge (Consumer tech)\n* Hacker News (Tech discussions)\n\nYou always keep replies **short and focused (maximum 100 words total)**.\n\n# Behavior\n\n* On the first message only, greet the user and say you can search recent news.\n* When the user asks for news, always check all RSS tools and combine results from multiple feeds if relevant, but surface only the **top 1 to 5 most relevant items**.\n* Never invent information. Only use content found in the tools.\n\n# Answer Format\n\n* **Maximum 100 words per reply** (including any follow-up sentence).\n* Start with **one short intro sentence**.\n* Then provide **3\u20135 bullet points**, each a **single short sentence**.\n* Use short, clear sentences.\n* Add a link to the original article or source in at least one bullet.\n* Include a section **\u201cSources checked:\u201d** listing the feeds used (e.g., \u201cSources checked: BBC, TheVerge\u201d).\n\n# Edge Cases\n\n* If you find too little information, say so and suggest adding more news sources to the agent.\n* If the user asks you to build workflows or do non-news tasks, say you are only a news agent and point them to n8n\u2019s AI Workflow Builder (\u2728 icon) and the docs: [https://docs.n8n.io/advanced-ai/ai-workflow-builder/](https://docs.n8n.io/advanced-ai/ai-workflow-builder/)\n* If the user asks for opinions or predictions, stay neutral and summarize facts only.\n* After sharing news results with the user for the first time, mention that they can also get AI-summarized news by email using this template: https://n8n.io/workflows/6270-build-your-first-ai-agent/. Only make this suggestion once in the entire chat history, not after every question (check your previous responses to make sure you don't repeat the suggestion).\n\n# Date\n\nToday is {{ $today }}\n"
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 3,
+      "position": [
+        -64,
+        -144
+      ],
+      "id": "539709cb-bf72-41c7-87ee-5b201c3e58a1",
+      "name": "AI Agent"
+    },
+    {
+      "parameters": {
+        "model": "google/gemini-3-flash-preview",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenRouter",
+      "typeVersion": 1,
+      "position": [
+        -176,
+        128
+      ],
+      "id": "416ca9eb-6925-4b76-858c-66d4c25dad97",
+      "name": "OpenRouter Chat Model",
+      "credentials": {
+        "openRouterApi": {
+          "id": "5NHf7ILbLoMVxKcb",
+          "name": "OpenRouter account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "messages": {
+          "message": [
+            {
+              "content": "={{ $json.chatInput }}"
+            }
+          ]
+        },
+        "options": {},
+        "requestOptions": {}
+      },
+      "type": "n8n-nodes-base.perplexityTool",
+      "typeVersion": 1,
+      "position": [
+        576,
+        128
+      ],
+      "id": "b95d73fe-435c-4153-8319-0b8c329c4395",
+      "name": "Message a model in Perplexity",
+      "credentials": {
+        "perplexityApi": {
+          "id": "mACe6bHyuo7Z3exN",
+          "name": "Perplexity 2"
+        }
+      }
+    }
+  ],
+  "connections": {
+    "When chat message received": {
+      "main": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Simple Memory": {
+      "ai_memory": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_memory",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Hackernews": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "TheVerge": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "BBC News": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenRouter Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Message a model in Perplexity": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1",
+    "availableInMCP": false
+  },
+  "staticData": null,
+  "meta": {
+    "templateCredsSetupCompleted": true
+  },
+  "pinData": {},
+  "versionId": "02a7a07b-7622-42da-ae34-cf48de20b4af",
+  "activeVersionId": null,
+  "triggerCount": 0,
+  "shared": [
+    {
+      "updatedAt": "2026-01-22T16:51:31.896Z",
+      "createdAt": "2026-01-22T16:51:31.896Z",
+      "role": "workflow:owner",
+      "workflowId": "TVpZCIA0mry9QbVl",
+      "projectId": "DT8YjHwLZsQjJqVc"
+    }
+  ],
+  "activeVersion": null,
+  "tags": []
+}

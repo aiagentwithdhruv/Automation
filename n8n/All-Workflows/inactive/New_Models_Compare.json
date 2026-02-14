@@ -1,0 +1,174 @@
+{
+  "updatedAt": "2025-12-18T18:54:02.583Z",
+  "createdAt": "2025-12-18T17:27:07.964Z",
+  "id": "CMSIwCeLfUqRpta8",
+  "name": "New Models Compare",
+  "active": false,
+  "isArchived": false,
+  "nodes": [
+    {
+      "parameters": {
+        "model": "google/gemini-3-flash-preview",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenRouter",
+      "typeVersion": 1,
+      "position": [
+        -880,
+        -16
+      ],
+      "id": "6d9458bf-45af-48ac-9e71-5cce9b6ec2be",
+      "name": "gemini-3-flash",
+      "credentials": {
+        "openRouterApi": {
+          "id": "5NHf7ILbLoMVxKcb",
+          "name": "OpenRouter account"
+        }
+      }
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [
+        -1360,
+        -432
+      ],
+      "id": "d745591d-5116-407f-940f-4179394c9aa1",
+      "name": "When clicking \u2018Execute workflow\u2019"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "103d1d6e-9338-4f0f-a0e2-5888729baed2",
+              "name": "AI Sales / Lead Outbound Copy",
+              "value": "Generate a concise outbound sales message for a B2B SaaS product targeting mid-size companies. The copy should:  \t\u2022\tClearly state the problem \t\u2022\tHighlight business impact (time, cost, revenue) \t\u2022\tEnd with a soft CTA (reply / book demo)",
+              "type": "string"
+            },
+            {
+              "id": "db59492a-cf86-42d4-b7d5-e166542d25f5",
+              "name": "AI-Generated HTML Landing Page",
+              "value": "Create a simple but professional HTML landing page for an AI automation product. The page should include:  \t\u2022\tHero section with headline & sub-headline \t\u2022\t3 key benefits (AI, speed, ROI) \t\u2022\tA short use-case section \t\u2022\tCall-to-action button (Book Demo / Get Started)  Constraints \t\u2022\tPure HTML + inline CSS \t\u2022\tClean, modern, minimal design \t\u2022\tNo external libraries",
+              "type": "string"
+            },
+            {
+              "id": "4658f181-905f-4e52-8238-72df0536b437",
+              "name": "Small HTML Game (Logic Test)",
+              "value": "Build a small HTML game (Snake or Clicker). Requirements:  \t\u2022\tHTML + CSS + JS in one file \t\u2022\tBasic game logic (score, reset, interaction) \t\u2022\tClean and readable code \t\u2022\tWorks in browser without setup",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        -1200,
+        -432
+      ],
+      "id": "8ade4867-e794-4b3a-8388-40e086444ff9",
+      "name": "Edit Fields"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 3,
+      "position": [
+        -800,
+        -224
+      ],
+      "id": "bddfa1de-8f0c-47e1-908f-e318f415bf0f",
+      "name": "AI Model Test"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.chatTrigger",
+      "typeVersion": 1.4,
+      "position": [
+        -1008,
+        -224
+      ],
+      "id": "51fa4e5a-0d5c-453d-88eb-bd3d1e18658a",
+      "name": "When chat message received",
+      "webhookId": "412b5c77-36e1-4feb-a1bf-ff9e836174cc"
+    }
+  ],
+  "connections": {
+    "gemini-3-flash": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Model Test",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "When clicking \u2018Execute workflow\u2019": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields": {
+      "main": [
+        []
+      ]
+    },
+    "AI Model Test": {
+      "main": [
+        []
+      ]
+    },
+    "When chat message received": {
+      "main": [
+        [
+          {
+            "node": "AI Model Test",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1",
+    "timeSavedMode": "fixed",
+    "timezone": "Asia/Kolkata",
+    "callerPolicy": "workflowsFromSameOwner",
+    "availableInMCP": false
+  },
+  "staticData": null,
+  "meta": {
+    "templateCredsSetupCompleted": true
+  },
+  "pinData": {},
+  "versionId": "5d423564-6d4f-483f-a3b5-7fdfca44932d",
+  "activeVersionId": null,
+  "triggerCount": 0,
+  "shared": [
+    {
+      "updatedAt": "2025-12-18T17:27:07.976Z",
+      "createdAt": "2025-12-18T17:27:07.976Z",
+      "role": "workflow:owner",
+      "workflowId": "CMSIwCeLfUqRpta8",
+      "projectId": "DT8YjHwLZsQjJqVc"
+    }
+  ],
+  "activeVersion": null,
+  "tags": []
+}

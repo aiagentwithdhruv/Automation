@@ -1,0 +1,851 @@
+{
+  "updatedAt": "2026-01-26T15:35:06.000Z",
+  "createdAt": "2026-01-22T16:41:31.142Z",
+  "id": "naVdgcXy9iVFbf3o",
+  "name": "AI-Powered Multi-Platform Social Media Scheduler with Analytics and Alerts",
+  "active": false,
+  "isArchived": true,
+  "nodes": [
+    {
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "mode": "id",
+          "value": "={{ $('Workflow Configuration1').item.json.sheetId }}"
+        },
+        "sheetName": {
+          "__rl": true,
+          "mode": "name",
+          "value": "Post Ideas"
+        },
+        "filtersUI": {
+          "values": []
+        },
+        "options": {
+          "dataLocationOnSheet": {
+            "values": {
+              "rangeDefinition": "specifyRangeA1",
+              "range": "A:F"
+            }
+          },
+          "outputFormatting": {
+            "values": {
+              "general": "UNFORMATTED_VALUE",
+              "date": "SERIAL_NUMBER"
+            }
+          }
+        }
+      },
+      "id": "6c6caf9e-56e1-462b-a03b-25e0fefcd9b5",
+      "name": "Read Post Ideas from Google Sheets",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        -1312,
+        144
+      ]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": false,
+            "leftValue": "",
+            "typeValidation": "loose"
+          },
+          "conditions": [
+            {
+              "id": "id-1",
+              "leftValue": "={{ $json.Status }}",
+              "rightValue": "Posted",
+              "operator": {
+                "type": "string",
+                "operation": "notEquals"
+              }
+            },
+            {
+              "id": "id-2",
+              "leftValue": "={{ $json['Post Idea'] }}",
+              "operator": {
+                "type": "string",
+                "operation": "notEmpty"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "1db63ce7-aec2-468b-9ebb-c2d583cc7db1",
+      "name": "Check if Posts Available",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [
+        -1088,
+        144
+      ]
+    },
+    {
+      "parameters": {
+        "modelId": {
+          "__rl": true,
+          "mode": "id",
+          "value": "gpt-4o-mini"
+        },
+        "responses": {
+          "values": [
+            {
+              "content": "=You are a social media expert. Based on this post idea: {{ $json['Post Idea'] }}, create an engaging caption optimized for social media. Include relevant hashtags. Keep it concise and compelling. Target platform: {{ $json.Platform || 'general' }}. Return only the caption with hashtags."
+            }
+          ]
+        },
+        "builtInTools": {},
+        "options": {
+          "maxTokens": 300
+        }
+      },
+      "id": "3780c046-aa48-403f-a33f-566121b0f7e1",
+      "name": "Generate AI Captions and Hashtags",
+      "type": "@n8n/n8n-nodes-langchain.openAi",
+      "typeVersion": 2.1,
+      "position": [
+        -864,
+        144
+      ]
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "id-1",
+              "name": "postIdea",
+              "value": "={{ $('Read Post Ideas from Google Sheets').item.json['Post Idea'] }}",
+              "type": "string"
+            },
+            {
+              "id": "id-2",
+              "name": "aiCaption",
+              "value": "={{ $json.message.content }}",
+              "type": "string"
+            },
+            {
+              "id": "id-3",
+              "name": "scheduledTime",
+              "value": "={{ $('Read Post Ideas from Google Sheets').item.json['Scheduled Time'] || new Date().toISOString() }}",
+              "type": "string"
+            },
+            {
+              "id": "id-4",
+              "name": "platforms",
+              "value": "={{ $('Read Post Ideas from Google Sheets').item.json.Platforms || 'LinkedIn,Twitter,Facebook' }}",
+              "type": "string"
+            },
+            {
+              "id": "id-5",
+              "name": "rowNumber",
+              "value": "={{ $('Read Post Ideas from Google Sheets').item.json.row_number }}",
+              "type": "number"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "99500e38-912d-4a85-bfbd-a5447cb7f224",
+      "name": "Format Post Data",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        -512,
+        144
+      ]
+    },
+    {
+      "parameters": {
+        "httpRequestMethod": "POST",
+        "node": "YOUR_FACEBOOK_PAGE_ID",
+        "edge": "feed",
+        "options": {
+          "queryParameters": {
+            "parameter": [
+              {
+                "name": "message",
+                "value": "={{ $json.aiCaption }}"
+              }
+            ]
+          }
+        }
+      },
+      "id": "cb79f8b0-40a3-4e48-877f-28230350b262",
+      "name": "Post to Facebook & Instagram",
+      "type": "n8n-nodes-base.facebookGraphApi",
+      "typeVersion": 1,
+      "position": [
+        -288,
+        336
+      ]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "id-1",
+              "leftValue": "={{ $json.id }}",
+              "operator": {
+                "type": "string",
+                "operation": "notEmpty"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "a43dfb89-86db-49f9-9bae-ae9ad55cf735",
+      "name": "Check LinkedIn Success",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [
+        -64,
+        -48
+      ]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": false,
+            "leftValue": "",
+            "typeValidation": "loose"
+          },
+          "conditions": [
+            {
+              "id": "id-1",
+              "leftValue": "={{ $json.id }}",
+              "operator": {
+                "type": "string",
+                "operation": "notEmpty"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "36e07a02-22ce-4294-a507-5f0391e5b9d2",
+      "name": "Check Twitter Success",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [
+        -64,
+        144
+      ]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": false,
+            "leftValue": "",
+            "typeValidation": "loose"
+          },
+          "conditions": [
+            {
+              "id": "id-1",
+              "leftValue": "={{ $json.id }}",
+              "operator": {
+                "type": "string",
+                "operation": "notEmpty"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "5490c7fe-f250-4413-9822-4e82ecc96909",
+      "name": "Check Facebook Success",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [
+        -64,
+        336
+      ]
+    },
+    {
+      "parameters": {
+        "numberInputs": 3
+      },
+      "id": "e17ac5ba-228b-48a2-97b8-027d1c45411f",
+      "name": "Merge All Platform Results",
+      "type": "n8n-nodes-base.merge",
+      "typeVersion": 3.2,
+      "position": [
+        160,
+        128
+      ]
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "id-1",
+              "name": "Platform",
+              "value": "={{ $json.platform }}",
+              "type": "string"
+            },
+            {
+              "id": "id-2",
+              "name": "Post ID",
+              "value": "={{ $json.postId }}",
+              "type": "string"
+            },
+            {
+              "id": "id-3",
+              "name": "Success",
+              "value": "={{ $json.success }}",
+              "type": "boolean"
+            },
+            {
+              "id": "id-4",
+              "name": "Timestamp",
+              "value": "={{ $json.timestamp }}",
+              "type": "string"
+            },
+            {
+              "id": "id-5",
+              "name": "Caption",
+              "value": "={{ $json.originalData.aiCaption }}",
+              "type": "string"
+            },
+            {
+              "id": "id-6",
+              "name": "Original Idea",
+              "value": "={{ $json.originalData.postIdea }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "89482a99-01ce-44bd-9f8f-f4abb2c980c5",
+      "name": "Prepare Analytics Data",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        384,
+        144
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "appendOrUpdate",
+        "documentId": {
+          "__rl": true,
+          "mode": "id",
+          "value": "={{ $('Workflow Configuration1').item.json.analyticsSheetId }}"
+        },
+        "sheetName": {
+          "__rl": true,
+          "mode": "name",
+          "value": "Analytics"
+        },
+        "columns": {
+          "mappingMode": "autoMapInputData",
+          "value": {}
+        },
+        "options": {}
+      },
+      "id": "590778b6-e55d-456c-b00a-9c9139712e35",
+      "name": "Log Analytics to Google Sheets",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        608,
+        144
+      ]
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "id-1",
+              "name": "message",
+              "value": "={{ '\ud83d\ude80 Social Media Posting Summary\\n\\n' + $('Merge All Platform Results').all().map(item => `\u2705 ${item.json.platform}: ${item.json.success ? 'Success' : 'Failed'}\\nPost ID: ${item.json.postId}\\nTime: ${new Date(item.json.timestamp).toLocaleString()}`).join('\\n\\n') + '\\n\\nTotal posts: ' + $('Merge All Platform Results').all().length }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "41dfe6ca-bc72-49ab-ba55-6d015eca68a3",
+      "name": "Format Telegram Summary",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        832,
+        144
+      ]
+    },
+    {
+      "parameters": {
+        "chatId": "={{ $('Workflow Configuration1').item.json.telegramChatId }}",
+        "text": "={{ $json.message }}",
+        "additionalFields": {}
+      },
+      "id": "93285e0a-5ef9-4a84-a9c0-4698ca93fdac",
+      "name": "Send Team Alert via Telegram",
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        1056,
+        144
+      ],
+      "webhookId": "078658eb-f052-4d7b-b124-31626f529756"
+    },
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "field": "weeks",
+              "triggerAtDay": [
+                1,
+                2,
+                3,
+                4,
+                5
+              ],
+              "triggerAtHour": 9
+            }
+          ]
+        }
+      },
+      "id": "3d603107-1f30-4061-9575-cdf828fa9f93",
+      "name": "Schedule Trigger1",
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.3,
+      "position": [
+        -1760,
+        144
+      ]
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "id-1",
+              "name": "sheetId",
+              "value": "YOUR_GOOGLE_SHEET_ID",
+              "type": "string"
+            },
+            {
+              "id": "id-2",
+              "name": "analyticsSheetId",
+              "value": "YOUR_ANALYTICS_SHEET_ID",
+              "type": "string"
+            },
+            {
+              "id": "id-3",
+              "name": "telegramChatId",
+              "value": "YOUR_TELEGRAM_CHAT_ID",
+              "type": "string"
+            },
+            {
+              "id": "id-4",
+              "name": "maxPostsPerRun",
+              "value": 5,
+              "type": "number"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "21552bcf-a366-412c-ba1e-71292078d93c",
+      "name": "Workflow Configuration1",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        -1536,
+        144
+      ]
+    },
+    {
+      "parameters": {
+        "text": "={{ $json.aiCaption }}",
+        "additionalFields": {
+          "visibility": "PUBLIC"
+        }
+      },
+      "id": "dbfa4f0e-7123-4fdc-b3d3-85669e0f8991",
+      "name": "Post to LinkedIn1",
+      "type": "n8n-nodes-base.linkedIn",
+      "typeVersion": 1,
+      "position": [
+        -288,
+        -48
+      ]
+    },
+    {
+      "parameters": {
+        "text": "={{ $json.aiCaption.substring(0, 280) }}",
+        "additionalFields": {}
+      },
+      "id": "a54b6c63-ce88-4761-9da4-df29c9b6125d",
+      "name": "Post to Twitter1",
+      "type": "n8n-nodes-base.twitter",
+      "typeVersion": 2,
+      "position": [
+        -288,
+        144
+      ]
+    },
+    {
+      "parameters": {
+        "content": "## \ud83d\udccb Workflow Overview\n\nThis workflow automates social media posting across multiple platforms:\n\n\u2705 Reads post ideas from Google Sheets\n\u2705 Generates AI-powered captions\n\u2705 Posts to LinkedIn, Twitter & Facebook\n\u2705 Tracks analytics\n\u2705 Sends team notifications\n\n**Runs:** Weekdays at 9:00 AM",
+        "height": 280,
+        "width": 380,
+        "color": 4
+      },
+      "id": "4980c776-61c9-468e-9b36-90d5f77a0713",
+      "name": "Workflow Overview",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -784,
+        688
+      ]
+    },
+    {
+      "parameters": {
+        "content": "## \u2699\ufe0f Configuration Setup\n\n**What it does:**\nStores all workflow settings in one place\n\n**Key Settings:**\n\u2022 Google Sheet ID for post ideas\n\u2022 Analytics Sheet ID for tracking\n\u2022 Telegram Chat ID for alerts\n\u2022 Max posts per run (default: 5)\n\n**Action Required:**\nUpdate these IDs with your actual values!",
+        "height": 300,
+        "width": 340,
+        "color": 5
+      },
+      "id": "ad13cee0-78aa-4a49-b802-54c776bfc001",
+      "name": "Configuration Setup",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -880,
+        -256
+      ]
+    },
+    {
+      "parameters": {
+        "content": "## \ud83d\udce5 Data Retrieval & Validation\n\n**Step 1:** Read post ideas from Google Sheets\n\u2022 Looks for rows in \"Post Ideas\" sheet\n\u2022 Reads columns A through F\n\n**Step 2:** Filter valid posts\n\u2022 Status \u2260 \"Posted\"\n\u2022 Post Idea is not empty\n\n**Result:** Only unposted ideas move forward",
+        "height": 300,
+        "width": 340,
+        "color": 3
+      },
+      "id": "6c2c41fe-60c8-46b0-93d5-091eeec575f3",
+      "name": "Data Retrieval & Validation",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -1344,
+        -272
+      ]
+    },
+    {
+      "parameters": {
+        "content": "## \ud83e\udd16 AI Content Generation\n\n**Uses:** OpenAI GPT-4o-mini\n\n**Process:**\n1. Takes your post idea\n2. Creates engaging caption\n3. Adds relevant hashtags\n4. Optimizes for target platform\n\n**Output:** Ready-to-post content with max 300 tokens\n\n**Credential needed:** OpenAI API key",
+        "height": 300,
+        "width": 340,
+        "color": 6
+      },
+      "id": "3dd6cbe7-c831-4835-a987-f098aad90b9a",
+      "name": "AI Content Generation",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -1840,
+        656
+      ]
+    },
+    {
+      "parameters": {
+        "content": "## \ud83d\ude80 Multi-Platform Posting\n\n**Simultaneous posting to:**\n\n\ud83d\udcd8 **LinkedIn** - Full caption, public visibility\n\ud83d\udc26 **Twitter** - Truncated to 280 chars\n\ud83d\udcf1 **Facebook** - Full caption to page feed\n\n**All posts run in parallel** for speed\n\n**Credentials needed:**\n\u2022 LinkedIn OAuth2\n\u2022 Twitter OAuth2\n\u2022 Facebook Graph API",
+        "height": 320,
+        "width": 340,
+        "color": 2
+      },
+      "id": "41491212-cf5c-444f-846f-2415164aa5fc",
+      "name": "Multi-Platform Posting",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -1248,
+        672
+      ]
+    },
+    {
+      "parameters": {
+        "content": "## \u2714\ufe0f Error Handling & Validation\n\n**Success Check for Each Platform:**\n\n\u2022 LinkedIn: Validates post ID exists\n\u2022 Twitter: Validates post ID exists\n\u2022 Facebook: Validates post ID exists\n\n**Why:** Ensures posts actually published before marking as successful\n\n**Next:** Results merge for analytics",
+        "height": 300,
+        "width": 292,
+        "color": 7
+      },
+      "id": "f7cdda14-f678-4800-b447-f5553f775b97",
+      "name": "Error Handling & Validation",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -1744,
+        -272
+      ]
+    },
+    {
+      "parameters": {
+        "content": "## \ud83d\udcca Analytics & Reporting\n\n**Step 1:** Merge all platform results\n\n**Step 2:** Prepare analytics data\n\u2022 Platform name\n\u2022 Post ID\n\u2022 Success status\n\u2022 Timestamp\n\u2022 Caption & original idea\n\n**Step 3:** Log to Google Sheets\n\u2022 Auto-appends to \"Analytics\" sheet\n\u2022 Creates permanent record",
+        "height": 320,
+        "width": 340,
+        "color": 4
+      },
+      "id": "a794441e-4717-47e3-ada2-8492714054a6",
+      "name": "Analytics & Reporting",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -1248,
+        672
+      ]
+    },
+    {
+      "parameters": {
+        "content": "## \ud83d\udce2 Team Notifications\n\n**Telegram Summary includes:**\n\n\u2705 Success/failure per platform\n\ud83d\udcdd Post IDs for each platform\n\u23f0 Timestamp of each post\n\ud83d\udcca Total posts count\n\n**Sent to:** Team Telegram chat\n\n**Credential needed:** Telegram Bot API\n\n**Perfect for:** Quick status checks!",
+        "height": 320,
+        "width": 340,
+        "color": 5
+      },
+      "id": "29f61bf1-41ed-4db9-8b22-41a06c450fe3",
+      "name": "Team Notifications",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -1248,
+        672
+      ]
+    }
+  ],
+  "connections": {
+    "Read Post Ideas from Google Sheets": {
+      "main": [
+        [
+          {
+            "node": "Check if Posts Available",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Check if Posts Available": {
+      "main": [
+        [
+          {
+            "node": "Generate AI Captions and Hashtags",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Generate AI Captions and Hashtags": {
+      "main": [
+        [
+          {
+            "node": "Format Post Data",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Format Post Data": {
+      "main": [
+        [
+          {
+            "node": "Post to LinkedIn1",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Post to Twitter1",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Post to Facebook & Instagram",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Post to Facebook & Instagram": {
+      "main": [
+        [
+          {
+            "node": "Check Facebook Success",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Check LinkedIn Success": {
+      "main": [
+        [
+          {
+            "node": "Merge All Platform Results",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Check Twitter Success": {
+      "main": [
+        [
+          {
+            "node": "Merge All Platform Results",
+            "type": "main",
+            "index": 1
+          }
+        ]
+      ]
+    },
+    "Check Facebook Success": {
+      "main": [
+        [
+          {
+            "node": "Merge All Platform Results",
+            "type": "main",
+            "index": 2
+          }
+        ]
+      ]
+    },
+    "Merge All Platform Results": {
+      "main": [
+        [
+          {
+            "node": "Prepare Analytics Data",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Prepare Analytics Data": {
+      "main": [
+        [
+          {
+            "node": "Log Analytics to Google Sheets",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Log Analytics to Google Sheets": {
+      "main": [
+        [
+          {
+            "node": "Format Telegram Summary",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Format Telegram Summary": {
+      "main": [
+        [
+          {
+            "node": "Send Team Alert via Telegram",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Schedule Trigger1": {
+      "main": [
+        [
+          {
+            "node": "Workflow Configuration1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Workflow Configuration1": {
+      "main": [
+        [
+          {
+            "node": "Read Post Ideas from Google Sheets",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Post to LinkedIn1": {
+      "main": [
+        [
+          {
+            "node": "Check LinkedIn Success",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Post to Twitter1": {
+      "main": [
+        [
+          {
+            "node": "Check Twitter Success",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1",
+    "availableInMCP": false
+  },
+  "staticData": null,
+  "meta": null,
+  "pinData": {},
+  "versionId": "cba8b328-87f0-4a51-89b7-60e01340bb98",
+  "activeVersionId": null,
+  "triggerCount": 0,
+  "shared": [
+    {
+      "updatedAt": "2026-01-22T16:41:31.147Z",
+      "createdAt": "2026-01-22T16:41:31.147Z",
+      "role": "workflow:owner",
+      "workflowId": "naVdgcXy9iVFbf3o",
+      "projectId": "DT8YjHwLZsQjJqVc"
+    }
+  ],
+  "activeVersion": null,
+  "tags": []
+}

@@ -1,0 +1,1893 @@
+{
+  "updatedAt": "2025-09-30T15:19:15.000Z",
+  "createdAt": "2025-09-30T15:19:15.273Z",
+  "id": "vyXcA8MSEA75tiaJ",
+  "name": "Dhruv Linkedin Post",
+  "active": false,
+  "isArchived": false,
+  "nodes": [
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=Topic - {{ $json.Topic }} \n\nDo not exceed more then 3000 Character aas linkedin having limits so keep under that",
+        "options": {
+          "systemMessage": "=# Overview\nYou are an AI agent specialized in creating professional, educational, and engaging LinkedIn posts based on any topic provided by the user.\n## Objectives:\nAlways begin by conducting a real-time search using the Tavily tool to gather the most accurate, up-to-date information on the topic. The post should be written to appeal to the provided target audience.\nBased on your research, generate a well-structured LinkedIn post that:\n- Starts with an engaging hook\n- Professional in tone\n-\nClear and easy to read\nEducational and insightful\n- Light on emojis (use only when highly relevant and minimal)\n-\nIncludes proper source attribution (e.g., \"according to [source]\")\n- Contains relevant hashtags to improve visibility\n- Ends with a clear call to action (e.g., asking for thoughts, feedback, or shares)\n## Output Instructions:\n- Your ONLY output should be the final LinkedIn post text.\n- Do not include explanations, notes, or anything beyond the post itself.\n## Example Workflow:\n1) Receive a topic (e.g., \"The ROI of warehouse automation\")\n2) Use Perplexity Web Search to search and gather recent information or case studies\n3) Draft a LinkedIn post using that research\n4) Format it with source citations, clean structure, optional hashtags, and a call to action\n\nDo not exceed more then 3000 Character aas linkedin having limits so keep under that\n\nalso you will see some time hook inside the topic use that to make it more realistic and actionable"
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 2,
+      "position": [
+        -1200,
+        288
+      ],
+      "id": "4b2421dd-a63f-44ee-9843-a828694e393e",
+      "name": "Perosonal Linkedin Post Creator2"
+    },
+    {
+      "parameters": {
+        "person": "3WMM5wjeJH",
+        "text": "={{ $('Perosonal Linkedin Post Creator2').item.json.output }}",
+        "shareMediaCategory": "IMAGE",
+        "additionalFields": {}
+      },
+      "type": "n8n-nodes-base.linkedIn",
+      "typeVersion": 1,
+      "position": [
+        0,
+        0
+      ],
+      "id": "0962576f-442e-414c-be14-62181c075cc2",
+      "name": "Create a post2"
+    },
+    {
+      "parameters": {
+        "toolDescription": "=use to Search web for topics when getting instruction from Ai node and return output ",
+        "method": "POST",
+        "url": "https://api.perplexity.ai/chat/completions",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"model\": \"sonar\",\n  \"messages\": [\n    {\n      \"role\": \"user\",\n      \"content\": \"{{ $('On form submission').item.json.Topic }}\"\n    }\n  ]\n} ",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequestTool",
+      "typeVersion": 4.2,
+      "position": [
+        -1024,
+        544
+      ],
+      "id": "0f5fc62d-b663-4416-b1aa-29f3a4ef7fc0",
+      "name": "Perplexity Web Search2",
+      "onError": "continueRegularOutput"
+    },
+    {
+      "parameters": {
+        "sendTo": "aiwithdhruv@gmail.com",
+        "subject": "={{ $('Get row(s) in sheet1').item.json.Topic }}",
+        "emailType": "text",
+        "message": "={{ $('Perosonal Linkedin Post Creator2').item.json.output }}\n\nImage file - {{ $('Upload file1').item.json.webContentLink }}",
+        "options": {
+          "appendAttribution": false
+        }
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.1,
+      "position": [
+        448,
+        192
+      ],
+      "id": "74aeb5d8-c9fc-4b0c-9aec-62094c0da724",
+      "name": "Send a message2",
+      "webhookId": "2e100a77-94da-4655-9bfc-77f527354461"
+    },
+    {
+      "parameters": {
+        "operation": "addLabels",
+        "messageId": "={{ $json.id }}",
+        "labelIds": [
+          "Label_6241297891020307836"
+        ]
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.1,
+      "position": [
+        608,
+        192
+      ],
+      "id": "5ec25147-b844-46ae-b4c5-3a058a39702e",
+      "name": "Add label to message2",
+      "webhookId": "73adc501-1ec4-414f-9cff-be305da06a48"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "23c0d1fa-897f-4a1a-b201-8103e473adea",
+              "name": "data",
+              "value": "={{ $json.choices[0].message.images[0].image_url.url }}",
+              "type": "string"
+            },
+            {
+              "id": "bcf338f7-575f-492b-ab68-535263d65a17",
+              "name": "base",
+              "value": "={{ $json.choices[0].message.images[0].image_url.url.split(\",\")[1] }}",
+              "type": "string"
+            },
+            {
+              "id": "6fff18a2-acc9-42b9-bf7c-6662ddb18ab3",
+              "name": "mime",
+              "value": "image/png",
+              "type": "string"
+            },
+            {
+              "id": "cb656296-3407-40cd-9271-88ee33710e12",
+              "name": "fileName",
+              "value": ".png",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        -400,
+        288
+      ],
+      "id": "2bd1d747-5e56-4ab4-800c-e66c09a52174",
+      "name": "Edit Fields"
+    },
+    {
+      "parameters": {
+        "modelId": {
+          "__rl": true,
+          "value": "gpt-5-nano",
+          "mode": "list",
+          "cachedResultName": "GPT-5-NANO"
+        },
+        "messages": {
+          "values": [
+            {
+              "content": "=\u201cWhen you get topic {{ $('Get row(s) in sheet1').item.json.Topic }}, your task is to create an image prompt for an AI image generator. The image prompt must always follow these rules:\n\t\u2022\tStyle: Minimalist poster on a pure black background\n\t\u2022\tSymbols: Represent the given topic using 2\u20135 emoji-style icons that best match the topic\n\t\u2022\tEmoji Rules: All emojis must be black-and-white, drawn in clean white outlines with a subtle glowing effect (no colors)\n\t\u2022\tArrangement: Icons should be evenly spaced, centered, and modern in style\n\t\u2022\tOptional Text: If text is used, it must be under 5 words, bold, white, and glowing (e.g., \u2018Resilience = Recovery\u2019)\n\t\u2022\tOutput Format: High-definition PNG with transparent background\n\nHere is the emoji reference list you can draw from depending on the topic:\n\nAI / Technology: \ud83e\udd16 \ud83d\udcbb \ud83d\udd0d \ud83e\udde0 \u2699\ufe0f \ud83d\udd10 \ud83d\udce1\nSales / Growth / Money: \ud83d\udcc8 \ud83d\udcb0 \ud83d\udcbc \ud83e\udd1d \ud83c\udfc6 \ud83d\udd11 \ud83d\uded2\nMindset / Productivity / Self-Help: \ud83c\udf31 \ud83e\uddd8 \ud83d\ude42 \u23f0 \ud83d\udd04 \ud83d\udd4a\ufe0f \ud83d\udcd6\nAmbition / Energy / Future: \ud83d\ude80 \ud83e\uddd7 \ud83d\udd25 \ud83c\udf0d \u2728\n\nYour output should always be only the final image prompt which expecteby google banan image as a json text so it not get confused or worry, automatically customized to the topic I provide.\u201d"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.openAi",
+      "typeVersion": 1.8,
+      "position": [
+        -896,
+        288
+      ],
+      "id": "b9441f18-8ebe-4bff-8f85-85e93837694d",
+      "name": "IMAGE PROMPT"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://openrouter.ai/api/v1/chat/completions",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"model\": \"google/gemini-2.5-flash-image-preview\",\n  \"messages\": [\n    {\n      \"role\": \"user\",\n      \"content\": [\n        {\n          \"type\": \"text\",\n          \"text\": \"{{ $json.message.content }}\"\n        }\n      ]\n    }\n  ]\n}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        -592,
+        288
+      ],
+      "id": "76b35208-f88d-4c39-a8e2-a0ca364e626a",
+      "name": "NANO BANANA",
+      "notesInFlow": true,
+      "alwaysOutputData": false,
+      "onError": "continueErrorOutput"
+    },
+    {
+      "parameters": {
+        "operation": "toBinary",
+        "sourceProperty": "base",
+        "options": {
+          "fileName": "={{ $json.fileName }}",
+          "mimeType": "={{ $json.mime }}"
+        }
+      },
+      "type": "n8n-nodes-base.convertToFile",
+      "typeVersion": 1.1,
+      "position": [
+        -224,
+        288
+      ],
+      "id": "9b55209d-d79f-4aa9-b917-aa2102c8b35a",
+      "name": "Image"
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "documentId": {
+          "__rl": true,
+          "value": "1YZk12lNR7ZpjtJ6pOB2ugIgVIyF15-oAGPhuzCg2KE4",
+          "mode": "list",
+          "cachedResultName": "LInkedin Ai Autmation",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1YZk12lNR7ZpjtJ6pOB2ugIgVIyF15-oAGPhuzCg2KE4/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 1811610359,
+          "mode": "list",
+          "cachedResultName": "2Pm Dhruv Auto Linkedin Post",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1YZk12lNR7ZpjtJ6pOB2ugIgVIyF15-oAGPhuzCg2KE4/edit#gid=1811610359"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Status": "Posted",
+            "Drive Image Link": "={{ $json.webContentLink }}",
+            "Content": "={{ $('Perosonal Linkedin Post Creator2').item.json.output }}",
+            "Topic": "={{ $('Get row(s) in sheet1').item.json.Topic }}"
+          },
+          "matchingColumns": [
+            "Topic"
+          ],
+          "schema": [
+            {
+              "id": "Topic",
+              "displayName": "Topic",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Status",
+              "displayName": "Status",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Content",
+              "displayName": "Content",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Drive Image Link",
+              "displayName": "Drive Image Link",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "row_number",
+              "displayName": "row_number",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "number",
+              "canBeUsedToMatch": true,
+              "readOnly": true,
+              "removed": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        288,
+        192
+      ],
+      "id": "3645b516-458a-4f55-9907-6dc958e934f4",
+      "name": "Update row in sheet1"
+    },
+    {
+      "parameters": {
+        "name": "={{ $('Get row(s) in sheet1').item.json.Topic }}",
+        "driveId": {
+          "__rl": true,
+          "value": "My Drive",
+          "mode": "list",
+          "cachedResultName": "My Drive",
+          "cachedResultUrl": "https://drive.google.com/drive/my-drive"
+        },
+        "folderId": {
+          "__rl": true,
+          "value": "1ap5I9i-hL00aQ62EwXW2TUGCpAP3p_Gq",
+          "mode": "list",
+          "cachedResultName": "Linkedin N8n Drhuv Auto Posting ",
+          "cachedResultUrl": "https://drive.google.com/drive/folders/1ap5I9i-hL00aQ62EwXW2TUGCpAP3p_Gq"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleDrive",
+      "typeVersion": 3,
+      "position": [
+        112,
+        192
+      ],
+      "id": "3dd929dd-9556-440e-9223-870ba5c25561",
+      "name": "Upload file1"
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.noOp",
+      "typeVersion": 1,
+      "position": [
+        768,
+        192
+      ],
+      "id": "60413090-7d51-4fbd-a48e-dbfa0030311f",
+      "name": "No Operation, do nothing3"
+    },
+    {
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "value": "1YZk12lNR7ZpjtJ6pOB2ugIgVIyF15-oAGPhuzCg2KE4",
+          "mode": "list",
+          "cachedResultName": "LInkedin Ai Autmation",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1YZk12lNR7ZpjtJ6pOB2ugIgVIyF15-oAGPhuzCg2KE4/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 1811610359,
+          "mode": "list",
+          "cachedResultName": "2Pm Dhruv Auto Linkedin Post",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1YZk12lNR7ZpjtJ6pOB2ugIgVIyF15-oAGPhuzCg2KE4/edit#gid=1811610359"
+        },
+        "filtersUI": {
+          "values": [
+            {
+              "lookupColumn": "Status",
+              "lookupValue": "To Do"
+            }
+          ]
+        },
+        "options": {
+          "returnFirstMatch": true
+        }
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        -1376,
+        288
+      ],
+      "id": "419957f3-f6ca-4a65-ab33-e0e972c7197b",
+      "name": "Get row(s) in sheet1"
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.noOp",
+      "typeVersion": 1,
+      "position": [
+        208,
+        0
+      ],
+      "id": "7a4ce232-a558-4507-9ade-4cad0f45eadc",
+      "name": "No Operation, do nothing2"
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "value": "gpt-5",
+          "mode": "list",
+          "cachedResultName": "gpt-5"
+        },
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.2,
+      "position": [
+        -1264,
+        544
+      ],
+      "id": "bf5de430-cb06-40d4-9bd4-83dd82e49d36",
+      "name": "GPT-5"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=Topic - {{ $json.Topic }} \n\nDo not exceed more then 3000 Character aas linkedin having limits so keep under that",
+        "options": {
+          "systemMessage": "=# Overview\nYou are an AI agent specialized in creating professional, educational, and engaging LinkedIn posts based on any topic provided by the user.\n## Objectives:\nAlways begin by conducting a real-time search using the Tavily tool to gather the most accurate, up-to-date information on the topic. The post should be written to appeal to the provided target audience.\nBased on your research, generate a well-structured LinkedIn post that:\n- Starts with an engaging hook\n- Professional in tone\n-\nClear and easy to read\nEducational and insightful\n- Light on emojis (use only when highly relevant and minimal)\n-\nIncludes proper source attribution (e.g., \"according to [source]\")\n- Contains relevant hashtags to improve visibility\n- Ends with a clear call to action (e.g., asking for thoughts, feedback, or shares)\n## Output Instructions:\n- Your ONLY output should be the final LinkedIn post text.\n- Do not include explanations, notes, or anything beyond the post itself.\n## Example Workflow:\n1) Receive a topic (e.g., \"The ROI of warehouse automation\")\n2) Use Perplexity Web Search to search and gather recent information or case studies\n3) Draft a LinkedIn post using that research\n4) Format it with source citations, clean structure, optional hashtags, and a call to action\n\nDo not exceed more then 3000 Character aas linkedin having limits so keep under that\n\nalso you will see some time hook inside the topic use that to make it more realistic and actionable"
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 2,
+      "position": [
+        -1168,
+        1024
+      ],
+      "id": "668b8977-2924-472d-b2ac-97dec8aa5894",
+      "name": "Perosonal Linkedin Post Creator"
+    },
+    {
+      "parameters": {
+        "person": "3WMM5wjeJH",
+        "text": "={{ $('Perosonal Linkedin Post Creator').item.json.output }}",
+        "shareMediaCategory": "IMAGE",
+        "additionalFields": {}
+      },
+      "type": "n8n-nodes-base.linkedIn",
+      "typeVersion": 1,
+      "position": [
+        -1360,
+        1440
+      ],
+      "id": "207be988-7601-4380-832f-cd914142b823",
+      "name": "Create a post"
+    },
+    {
+      "parameters": {
+        "toolDescription": "=use to Search web for topics when getting instruction from Ai node and return output ",
+        "method": "POST",
+        "url": "https://api.perplexity.ai/chat/completions",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"model\": \"sonar\",\n  \"messages\": [\n    {\n      \"role\": \"user\",\n      \"content\": \"{{ $('On form submission').item.json.Topic }}\"\n    }\n  ]\n} ",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequestTool",
+      "typeVersion": 4.2,
+      "position": [
+        -1040,
+        1248
+      ],
+      "id": "cd124159-6cb5-474a-937c-354fcdcd5c2d",
+      "name": "Perplexity Web Search",
+      "onError": "continueRegularOutput"
+    },
+    {
+      "parameters": {
+        "sendTo": "aiwithdhruv@gmail.com",
+        "subject": "={{ $('Get row(s) in sheet').item.json.Topic }}",
+        "emailType": "text",
+        "message": "={{ $('Perosonal Linkedin Post Creator').item.json.output }}\n\nImage file - {{ $('Upload file').item.json.webContentLink }}",
+        "options": {
+          "appendAttribution": false
+        }
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.1,
+      "position": [
+        -384,
+        1248
+      ],
+      "id": "553915e7-3889-4603-8647-6eaef4461233",
+      "name": "Send a message",
+      "webhookId": "2e100a77-94da-4655-9bfc-77f527354461"
+    },
+    {
+      "parameters": {
+        "operation": "addLabels",
+        "messageId": "={{ $json.id }}",
+        "labelIds": [
+          "Label_6241297891020307836"
+        ]
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.1,
+      "position": [
+        -224,
+        1248
+      ],
+      "id": "fd5068af-75d7-44ca-9c77-2d09f88494ab",
+      "name": "Add label to message",
+      "webhookId": "73adc501-1ec4-414f-9cff-be305da06a48"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "23c0d1fa-897f-4a1a-b201-8103e473adea",
+              "name": "data",
+              "value": "={{ $json.choices[0].message.images[0].image_url.url }}",
+              "type": "string"
+            },
+            {
+              "id": "bcf338f7-575f-492b-ab68-535263d65a17",
+              "name": "base",
+              "value": "={{ $json.choices[0].message.images[0].image_url.url.split(\",\")[1] }}",
+              "type": "string"
+            },
+            {
+              "id": "6fff18a2-acc9-42b9-bf7c-6662ddb18ab3",
+              "name": "mime",
+              "value": "image/png",
+              "type": "string"
+            },
+            {
+              "id": "cb656296-3407-40cd-9271-88ee33710e12",
+              "name": "fileName",
+              "value": ".png",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        -368,
+        1024
+      ],
+      "id": "62b6fea3-057a-468d-a73c-0386938002ee",
+      "name": "Edit Fields1"
+    },
+    {
+      "parameters": {
+        "modelId": {
+          "__rl": true,
+          "value": "gpt-5-nano",
+          "mode": "list",
+          "cachedResultName": "GPT-5-NANO"
+        },
+        "messages": {
+          "values": [
+            {
+              "content": "=Write a high quality image prompt for an AI image generator to generate a super high-quality image, super realistic according to this description: {{ $('Get row(s) in sheet').item.json.Topic }}\nMake it super detailed, vibrant and beautiful.\n\nMake it suited for JSON string, so without any symbols or newlines. Just one plain text. \n\nand this image we will be posting in linkedin so you can make in that way "
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.openAi",
+      "typeVersion": 1.8,
+      "position": [
+        -864,
+        1024
+      ],
+      "id": "8adf0be2-2cdb-4e28-b546-27f0b274d80c",
+      "name": "IMAGE PROMPT1"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://openrouter.ai/api/v1/chat/completions",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"model\": \"google/gemini-2.5-flash-image-preview\",\n  \"messages\": [\n    {\n      \"role\": \"user\",\n      \"content\": [\n        {\n          \"type\": \"text\",\n          \"text\": \"{{ $('Get row(s) in sheet').item.json.Topic }}\"\n        }\n      ]\n    }\n  ]\n}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        -560,
+        1024
+      ],
+      "id": "04bba544-e936-43c1-983c-7626e7eaeac3",
+      "name": "NANO BANANA1"
+    },
+    {
+      "parameters": {
+        "operation": "toBinary",
+        "sourceProperty": "base",
+        "options": {
+          "fileName": "={{ $json.fileName }}",
+          "mimeType": "={{ $json.mime }}"
+        }
+      },
+      "type": "n8n-nodes-base.convertToFile",
+      "typeVersion": 1.1,
+      "position": [
+        -192,
+        1024
+      ],
+      "id": "7e949bd3-0384-4e31-b087-43baeeb159bd",
+      "name": "Image1"
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "documentId": {
+          "__rl": true,
+          "value": "1YZk12lNR7ZpjtJ6pOB2ugIgVIyF15-oAGPhuzCg2KE4",
+          "mode": "list",
+          "cachedResultName": "LInkedin Ai Autmation",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1YZk12lNR7ZpjtJ6pOB2ugIgVIyF15-oAGPhuzCg2KE4/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 2092557412,
+          "mode": "list",
+          "cachedResultName": "Dhruv Auto Linkedin Post",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1YZk12lNR7ZpjtJ6pOB2ugIgVIyF15-oAGPhuzCg2KE4/edit#gid=2092557412"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Status": "Posted",
+            "Drive Image Link": "={{ $json.webContentLink }}",
+            "Content": "={{ $('Perosonal Linkedin Post Creator').item.json.output }}",
+            "Topic": "={{ $('Get row(s) in sheet').item.json.Topic }}"
+          },
+          "matchingColumns": [
+            "Topic"
+          ],
+          "schema": [
+            {
+              "id": "Topic",
+              "displayName": "Topic",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Status",
+              "displayName": "Status",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Content",
+              "displayName": "Content",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Drive Image Link",
+              "displayName": "Drive Image Link",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "row_number",
+              "displayName": "row_number",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "number",
+              "canBeUsedToMatch": true,
+              "readOnly": true,
+              "removed": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        -560,
+        1248
+      ],
+      "id": "0af291e1-6196-44d6-ac8b-d58afac4b619",
+      "name": "Update row in sheet"
+    },
+    {
+      "parameters": {
+        "name": "={{ $('Get row(s) in sheet').item.json.Topic }}",
+        "driveId": {
+          "__rl": true,
+          "value": "My Drive",
+          "mode": "list",
+          "cachedResultName": "My Drive",
+          "cachedResultUrl": "https://drive.google.com/drive/my-drive"
+        },
+        "folderId": {
+          "__rl": true,
+          "value": "1ap5I9i-hL00aQ62EwXW2TUGCpAP3p_Gq",
+          "mode": "list",
+          "cachedResultName": "Linkedin N8n Drhuv Auto Posting ",
+          "cachedResultUrl": "https://drive.google.com/drive/folders/1ap5I9i-hL00aQ62EwXW2TUGCpAP3p_Gq"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleDrive",
+      "typeVersion": 3,
+      "position": [
+        -720,
+        1248
+      ],
+      "id": "3f58a1b9-4c6f-478c-986f-94ad30226c54",
+      "name": "Upload file"
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.noOp",
+      "typeVersion": 1,
+      "position": [
+        -64,
+        1248
+      ],
+      "id": "b60c9cdc-8087-4f53-ba46-d6e0a5d87089",
+      "name": "No Operation, do nothing"
+    },
+    {
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "value": "1YZk12lNR7ZpjtJ6pOB2ugIgVIyF15-oAGPhuzCg2KE4",
+          "mode": "list",
+          "cachedResultName": "LInkedin Ai Autmation",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1YZk12lNR7ZpjtJ6pOB2ugIgVIyF15-oAGPhuzCg2KE4/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 2092557412,
+          "mode": "list",
+          "cachedResultName": "Dhruv Auto Linkedin Post",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1YZk12lNR7ZpjtJ6pOB2ugIgVIyF15-oAGPhuzCg2KE4/edit#gid=2092557412"
+        },
+        "filtersUI": {
+          "values": [
+            {
+              "lookupColumn": "Status",
+              "lookupValue": "To Do"
+            }
+          ]
+        },
+        "options": {
+          "returnFirstMatch": true
+        }
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        -1344,
+        1024
+      ],
+      "id": "f71069e0-2a16-43d8-8cb4-0ccc880eaeef",
+      "name": "Get row(s) in sheet"
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.noOp",
+      "typeVersion": 1,
+      "position": [
+        -1152,
+        1440
+      ],
+      "id": "4f088d61-1e65-4c7a-b42f-d9d45cd05699",
+      "name": "No Operation, do nothing4"
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "value": "gpt-5",
+          "mode": "list",
+          "cachedResultName": "gpt-5"
+        },
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.2,
+      "position": [
+        -1216,
+        1264
+      ],
+      "id": "06cbd5bb-6a89-405f-8d13-82334ba90984",
+      "name": "GPT-"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=Topic - {{ $json.Topic }} \n\nDo not exceed more then 3000 Character aas linkedin having limits so keep under that",
+        "options": {
+          "systemMessage": "=# Overview\nYou are an AI agent specialized in creating professional, educational, and engaging LinkedIn posts based on any topic provided by the user.\n## Objectives:\nAlways begin by conducting a real-time search using the Tavily tool to gather the most accurate, up-to-date information on the topic. The post should be written to appeal to the provided target audience.\nBased on your research, generate a well-structured LinkedIn post that:\n- Starts with an engaging hook\n- Professional in tone\n-\nClear and easy to read\nEducational and insightful\n- Light on emojis (use only when highly relevant and minimal)\n-\nIncludes proper source attribution (e.g., \"according to [source]\")\n- Contains relevant hashtags to improve visibility\n- Ends with a clear call to action (e.g., asking for thoughts, feedback, or shares)\n## Output Instructions:\n- Your ONLY output should be the final LinkedIn post text.\n- Do not include explanations, notes, or anything beyond the post itself.\n## Example Workflow:\n1) Receive a topic (e.g., \"The ROI of warehouse automation\")\n2) Use Perplexity Web Search to search and gather recent information or case studies\n3) Draft a LinkedIn post using that research\n4) Format it with source citations, clean structure, optional hashtags, and a call to action\n\nDo not exceed more then 3000 Character aas linkedin having limits so keep under that\n\nalso you will see some time hook inside the topic use that to make it more realistic and actionable"
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 2,
+      "position": [
+        -1152,
+        2288
+      ],
+      "id": "9c5c0922-aee8-4f53-86a4-4ed467122642",
+      "name": "Perosonal Linkedin Post Creator3"
+    },
+    {
+      "parameters": {
+        "person": "3WMM5wjeJH",
+        "text": "={{ $('Perosonal Linkedin Post Creator3').item.json.output }}",
+        "shareMediaCategory": "IMAGE",
+        "additionalFields": {}
+      },
+      "type": "n8n-nodes-base.linkedIn",
+      "typeVersion": 1,
+      "position": [
+        -800,
+        1760
+      ],
+      "id": "1a8eca43-18c7-454d-bda5-ffe163fbd17f",
+      "name": "Create a post3"
+    },
+    {
+      "parameters": {
+        "toolDescription": "=use to Search web for topics when getting instruction from Ai node and return output ",
+        "method": "POST",
+        "url": "https://api.perplexity.ai/chat/completions",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"model\": \"sonar\",\n  \"messages\": [\n    {\n      \"role\": \"user\",\n      \"content\": \"{{ $('On form submission').item.json.Topic }}\"\n    }\n  ]\n} ",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequestTool",
+      "typeVersion": 4.2,
+      "position": [
+        -1024,
+        2512
+      ],
+      "id": "c3019031-c587-41cc-be5c-d85b1fdd7c54",
+      "name": "Perplexity Web Search3",
+      "onError": "continueRegularOutput"
+    },
+    {
+      "parameters": {
+        "sendTo": "aiwithdhruv@gmail.com",
+        "subject": "={{ $('Get row(s) in sheet2').item.json.Topic }}",
+        "emailType": "text",
+        "message": "={{ $('Perosonal Linkedin Post Creator3').item.json.output }}",
+        "options": {
+          "appendAttribution": false
+        }
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.1,
+      "position": [
+        -656,
+        2288
+      ],
+      "id": "9b511252-ffec-41b6-aa49-c7033f0f7a70",
+      "name": "Send a message3",
+      "webhookId": "2e100a77-94da-4655-9bfc-77f527354461"
+    },
+    {
+      "parameters": {
+        "operation": "addLabels",
+        "messageId": "={{ $json.id }}",
+        "labelIds": [
+          "Label_6241297891020307836"
+        ]
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.1,
+      "position": [
+        -496,
+        2288
+      ],
+      "id": "ccd95199-346d-45cc-9d79-a583b08e2c55",
+      "name": "Add label to message3",
+      "webhookId": "73adc501-1ec4-414f-9cff-be305da06a48"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "23c0d1fa-897f-4a1a-b201-8103e473adea",
+              "name": "data",
+              "value": "={{ $json.choices[0].message.images[0].image_url.url }}",
+              "type": "string"
+            },
+            {
+              "id": "bcf338f7-575f-492b-ab68-535263d65a17",
+              "name": "base",
+              "value": "={{ $json.choices[0].message.images[0].image_url.url.split(\",\")[1] }}",
+              "type": "string"
+            },
+            {
+              "id": "6fff18a2-acc9-42b9-bf7c-6662ddb18ab3",
+              "name": "mime",
+              "value": "image/png",
+              "type": "string"
+            },
+            {
+              "id": "cb656296-3407-40cd-9271-88ee33710e12",
+              "name": "fileName",
+              "value": ".png",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        -960,
+        1984
+      ],
+      "id": "e5a50845-4447-48c6-8de8-56a7e09abe1a",
+      "name": "Edit Fields2"
+    },
+    {
+      "parameters": {
+        "modelId": {
+          "__rl": true,
+          "value": "gpt-5-nano",
+          "mode": "list",
+          "cachedResultName": "GPT-5-NANO"
+        },
+        "messages": {
+          "values": [
+            {
+              "content": "=Write a high quality image prompt for an AI image generator to generate a super high-quality image, super realistic according to this description: {{ $('Get row(s) in sheet2').item.json.Topic }}\nMake it super detailed, vibrant and beautiful.\n\nMake it suited for JSON string, so without any symbols or newlines. Just one plain text. \n\nand this image we will be posting in linkedin so you can make in that way "
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.openAi",
+      "typeVersion": 1.8,
+      "position": [
+        -1456,
+        1984
+      ],
+      "id": "75d4f3f3-e284-4b65-bbc2-c6ac4bef2a4e",
+      "name": "IMAGE PROMPT2"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://openrouter.ai/api/v1/chat/completions",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"model\": \"google/gemini-2.5-flash-image-preview\",\n  \"messages\": [\n    {\n      \"role\": \"user\",\n      \"content\": [\n        {\n          \"type\": \"text\",\n          \"text\": \"{{ $json.message.content }}\"\n        }\n      ]\n    }\n  ]\n}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        -1152,
+        1984
+      ],
+      "id": "53fe9f82-768f-453b-81c9-ab9aea744af1",
+      "name": "NANO BANANA2"
+    },
+    {
+      "parameters": {
+        "operation": "toBinary",
+        "sourceProperty": "base",
+        "options": {
+          "fileName": "={{ $json.fileName }}",
+          "mimeType": "={{ $json.mime }}"
+        }
+      },
+      "type": "n8n-nodes-base.convertToFile",
+      "typeVersion": 1.1,
+      "position": [
+        -784,
+        1984
+      ],
+      "id": "bc89cc3a-9ba8-4f74-ba4c-39b26247e568",
+      "name": "Image2"
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "documentId": {
+          "__rl": true,
+          "value": "1YZk12lNR7ZpjtJ6pOB2ugIgVIyF15-oAGPhuzCg2KE4",
+          "mode": "list",
+          "cachedResultName": "LInkedin Ai Autmation",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1YZk12lNR7ZpjtJ6pOB2ugIgVIyF15-oAGPhuzCg2KE4/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 1811610359,
+          "mode": "list",
+          "cachedResultName": "2Pm Dhruv Auto Linkedin Post",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1YZk12lNR7ZpjtJ6pOB2ugIgVIyF15-oAGPhuzCg2KE4/edit#gid=1811610359"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Topic": "={{ $('Get row(s) in sheet2').item.json.Topic }}",
+            "Status": "Posted",
+            "Content": "={{ $json.output }}"
+          },
+          "matchingColumns": [
+            "Topic"
+          ],
+          "schema": [
+            {
+              "id": "Topic",
+              "displayName": "Topic",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Status",
+              "displayName": "Status",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Content",
+              "displayName": "Content",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Drive Image Link",
+              "displayName": "Drive Image Link",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "row_number",
+              "displayName": "row_number",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "number",
+              "canBeUsedToMatch": true,
+              "readOnly": true,
+              "removed": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        -832,
+        2288
+      ],
+      "id": "50a02a68-f498-4c49-93e6-5290955ea644",
+      "name": "Update row in sheet2"
+    },
+    {
+      "parameters": {
+        "name": "={{ $('Get row(s) in sheet2').item.json.Topic }}",
+        "driveId": {
+          "__rl": true,
+          "value": "My Drive",
+          "mode": "list",
+          "cachedResultName": "My Drive",
+          "cachedResultUrl": "https://drive.google.com/drive/my-drive"
+        },
+        "folderId": {
+          "__rl": true,
+          "value": "1ap5I9i-hL00aQ62EwXW2TUGCpAP3p_Gq",
+          "mode": "list",
+          "cachedResultName": "Linkedin N8n Drhuv Auto Posting ",
+          "cachedResultUrl": "https://drive.google.com/drive/folders/1ap5I9i-hL00aQ62EwXW2TUGCpAP3p_Gq"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleDrive",
+      "typeVersion": 3,
+      "position": [
+        -592,
+        1984
+      ],
+      "id": "063b4a79-25c3-4a9a-be88-28b94b918253",
+      "name": "Upload file2"
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.noOp",
+      "typeVersion": 1,
+      "position": [
+        -336,
+        2288
+      ],
+      "id": "ddb468f8-d87d-46c5-844d-1d7449ff4ade",
+      "name": "No Operation, do nothing5"
+    },
+    {
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "value": "1YZk12lNR7ZpjtJ6pOB2ugIgVIyF15-oAGPhuzCg2KE4",
+          "mode": "list",
+          "cachedResultName": "LInkedin Ai Autmation",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1YZk12lNR7ZpjtJ6pOB2ugIgVIyF15-oAGPhuzCg2KE4/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 1811610359,
+          "mode": "list",
+          "cachedResultName": "2Pm Dhruv Auto Linkedin Post",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1YZk12lNR7ZpjtJ6pOB2ugIgVIyF15-oAGPhuzCg2KE4/edit#gid=1811610359"
+        },
+        "filtersUI": {
+          "values": [
+            {
+              "lookupColumn": "Status",
+              "lookupValue": "To Do"
+            }
+          ]
+        },
+        "options": {
+          "returnFirstMatch": true
+        }
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        -1328,
+        2288
+      ],
+      "id": "5495dae3-2f43-463f-9ad1-da028d02b0f4",
+      "name": "Get row(s) in sheet2"
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.noOp",
+      "typeVersion": 1,
+      "position": [
+        -592,
+        1760
+      ],
+      "id": "8eefc5f0-6927-4af1-a166-d5e8e5a33772",
+      "name": "No Operation, do nothing6"
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "value": "gpt-5",
+          "mode": "list",
+          "cachedResultName": "gpt-5"
+        },
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.2,
+      "position": [
+        -1200,
+        2528
+      ],
+      "id": "5121615e-2c63-4f21-8991-54cab041c347",
+      "name": "GPT-6"
+    },
+    {
+      "parameters": {
+        "person": "0acXkbkIhL",
+        "text": "={{ $('Perosonal Linkedin Post Creator2').item.json.output }}",
+        "additionalFields": {}
+      },
+      "type": "n8n-nodes-base.linkedIn",
+      "typeVersion": 1,
+      "position": [
+        -528,
+        544
+      ],
+      "id": "dc13ebd0-cdf8-4e0f-b7a4-5b7e98297754",
+      "name": "Create a post4"
+    },
+    {
+      "parameters": {
+        "sendTo": "aiwithdhruv@gmail.com",
+        "subject": "={{ $('Get row(s) in sheet1').item.json.Topic }}",
+        "emailType": "text",
+        "message": "={{ $('Perosonal Linkedin Post Creator2').item.json.output }}",
+        "options": {
+          "appendAttribution": false
+        }
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.1,
+      "position": [
+        -192,
+        544
+      ],
+      "id": "2cc84abe-b802-4208-9f74-83e4e7bbc52a",
+      "name": "Send a message4",
+      "webhookId": "2e100a77-94da-4655-9bfc-77f527354461"
+    },
+    {
+      "parameters": {
+        "operation": "addLabels",
+        "messageId": "={{ $json.id }}",
+        "labelIds": [
+          "Label_6241297891020307836"
+        ]
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.1,
+      "position": [
+        -32,
+        544
+      ],
+      "id": "ead48480-b34e-4c7e-a313-49f041e1f3c4",
+      "name": "Add label to message4",
+      "webhookId": "73adc501-1ec4-414f-9cff-be305da06a48"
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "documentId": {
+          "__rl": true,
+          "value": "1YZk12lNR7ZpjtJ6pOB2ugIgVIyF15-oAGPhuzCg2KE4",
+          "mode": "list",
+          "cachedResultName": "LInkedin Ai Autmation",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1YZk12lNR7ZpjtJ6pOB2ugIgVIyF15-oAGPhuzCg2KE4/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 1811610359,
+          "mode": "list",
+          "cachedResultName": "2Pm Dhruv Auto Linkedin Post",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1YZk12lNR7ZpjtJ6pOB2ugIgVIyF15-oAGPhuzCg2KE4/edit#gid=1811610359"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Status": "Posted",
+            "Drive Image Link": "=Image Not Generated",
+            "Content": "={{ $('Perosonal Linkedin Post Creator2').item.json.output }}",
+            "Topic": "={{ $('Get row(s) in sheet1').item.json.Topic }}"
+          },
+          "matchingColumns": [
+            "Topic"
+          ],
+          "schema": [
+            {
+              "id": "Topic",
+              "displayName": "Topic",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Status",
+              "displayName": "Status",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Content",
+              "displayName": "Content",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Drive Image Link",
+              "displayName": "Drive Image Link",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "row_number",
+              "displayName": "row_number",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "number",
+              "canBeUsedToMatch": true,
+              "readOnly": true,
+              "removed": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        -352,
+        544
+      ],
+      "id": "390f0630-56f0-4c50-9163-8d6e3c6564a0",
+      "name": "Update row in sheet3"
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.noOp",
+      "typeVersion": 1,
+      "position": [
+        128,
+        544
+      ],
+      "id": "761455e1-06d9-4fbe-998d-93a81cc64b5e",
+      "name": "No Operation, do nothing8"
+    },
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "triggerAtHour": 14
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.2,
+      "position": [
+        -1584,
+        288
+      ],
+      "id": "299a02ab-5178-4b5c-bb66-fbc254d4dc81",
+      "name": "2 Pm"
+    }
+  ],
+  "connections": {
+    "Perosonal Linkedin Post Creator2": {
+      "main": [
+        [
+          {
+            "node": "IMAGE PROMPT",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Create a post2": {
+      "main": [
+        [
+          {
+            "node": "No Operation, do nothing2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Perplexity Web Search2": {
+      "ai_tool": [
+        [
+          {
+            "node": "Perosonal Linkedin Post Creator2",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Send a message2": {
+      "main": [
+        [
+          {
+            "node": "Add label to message2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Add label to message2": {
+      "main": [
+        [
+          {
+            "node": "No Operation, do nothing3",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields": {
+      "main": [
+        [
+          {
+            "node": "Image",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "IMAGE PROMPT": {
+      "main": [
+        [
+          {
+            "node": "NANO BANANA",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "NANO BANANA": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Create a post4",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Image": {
+      "main": [
+        [
+          {
+            "node": "Create a post2",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Upload file1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Upload file1": {
+      "main": [
+        [
+          {
+            "node": "Update row in sheet1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Update row in sheet1": {
+      "main": [
+        [
+          {
+            "node": "Send a message2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get row(s) in sheet1": {
+      "main": [
+        [
+          {
+            "node": "Perosonal Linkedin Post Creator2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "GPT-5": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Perosonal Linkedin Post Creator2",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Perosonal Linkedin Post Creator": {
+      "main": [
+        [
+          {
+            "node": "IMAGE PROMPT1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Create a post": {
+      "main": [
+        [
+          {
+            "node": "No Operation, do nothing4",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Perplexity Web Search": {
+      "ai_tool": [
+        [
+          {
+            "node": "Perosonal Linkedin Post Creator",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Send a message": {
+      "main": [
+        [
+          {
+            "node": "Add label to message",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Add label to message": {
+      "main": [
+        [
+          {
+            "node": "No Operation, do nothing",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields1": {
+      "main": [
+        [
+          {
+            "node": "Image1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "IMAGE PROMPT1": {
+      "main": [
+        [
+          {
+            "node": "NANO BANANA1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "NANO BANANA1": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Image1": {
+      "main": [
+        [
+          {
+            "node": "Create a post",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Upload file",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Update row in sheet": {
+      "main": [
+        [
+          {
+            "node": "Send a message",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Upload file": {
+      "main": [
+        [
+          {
+            "node": "Update row in sheet",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get row(s) in sheet": {
+      "main": [
+        [
+          {
+            "node": "Perosonal Linkedin Post Creator",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "GPT-": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Perosonal Linkedin Post Creator",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Perosonal Linkedin Post Creator3": {
+      "main": [
+        [
+          {
+            "node": "Update row in sheet2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Create a post3": {
+      "main": [
+        [
+          {
+            "node": "No Operation, do nothing6",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Perplexity Web Search3": {
+      "ai_tool": [
+        [
+          {
+            "node": "Perosonal Linkedin Post Creator3",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Send a message3": {
+      "main": [
+        [
+          {
+            "node": "Add label to message3",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Add label to message3": {
+      "main": [
+        [
+          {
+            "node": "No Operation, do nothing5",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields2": {
+      "main": [
+        [
+          {
+            "node": "Image2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "IMAGE PROMPT2": {
+      "main": [
+        [
+          {
+            "node": "NANO BANANA2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "NANO BANANA2": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Image2": {
+      "main": [
+        [
+          {
+            "node": "Create a post3",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Upload file2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Update row in sheet2": {
+      "main": [
+        [
+          {
+            "node": "Send a message3",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get row(s) in sheet2": {
+      "main": [
+        [
+          {
+            "node": "Perosonal Linkedin Post Creator3",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "GPT-6": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Perosonal Linkedin Post Creator3",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Create a post4": {
+      "main": [
+        [
+          {
+            "node": "Update row in sheet3",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Send a message4": {
+      "main": [
+        [
+          {
+            "node": "Add label to message4",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Add label to message4": {
+      "main": [
+        [
+          {
+            "node": "No Operation, do nothing8",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Update row in sheet3": {
+      "main": [
+        [
+          {
+            "node": "Send a message4",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "2 Pm": {
+      "main": [
+        [
+          {
+            "node": "Get row(s) in sheet1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "staticData": null,
+  "meta": null,
+  "pinData": {},
+  "versionId": "b22f6362-0c2f-4d9e-b126-c683a802ac63",
+  "activeVersionId": null,
+  "triggerCount": 0,
+  "shared": [
+    {
+      "updatedAt": "2025-09-30T15:19:15.277Z",
+      "createdAt": "2025-09-30T15:19:15.277Z",
+      "role": "workflow:owner",
+      "workflowId": "vyXcA8MSEA75tiaJ",
+      "projectId": "DT8YjHwLZsQjJqVc"
+    }
+  ],
+  "activeVersion": null,
+  "tags": []
+}

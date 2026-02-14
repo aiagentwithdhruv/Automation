@@ -1,0 +1,195 @@
+{
+  "updatedAt": "2026-02-03T12:32:23.463Z",
+  "createdAt": "2026-02-03T12:27:43.789Z",
+  "id": "VTugt3WuzNbwwjhO",
+  "name": "ClickUp - Push Tasks to Angelina",
+  "active": true,
+  "isArchived": false,
+  "nodes": [
+    {
+      "parameters": {
+        "jsCode": "return [\n  { json: { name: 'Build: Ramesh workflow', description: 'Job automation \u2013 payment, build, handover' } },\n  { json: { name: 'Build: n8n + ClickUp sync', description: 'Auto-create tasks from AI' } },\n  { json: { name: 'Learn: RapidAPI limits', description: 'Research for Ramesh' } },\n  { json: { name: 'Backlog: Waalaxy campaigns', description: 'Start 3 campaigns (Automation, OpenClaw, Full Stack)' } },\n  { json: { name: 'Backlog: YouTube live', description: 'Plan first live stream for Feb end' } }\n];"
+      },
+      "id": "tasks",
+      "name": "Tasks to Push",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -384,
+        0
+      ]
+    },
+    {
+      "parameters": {
+        "team": "90161464007",
+        "space": "90166202270",
+        "folder": "90168365781",
+        "list": "901613344354",
+        "name": "={{ $json.name }}",
+        "additionalFields": {}
+      },
+      "id": "clickup",
+      "name": "Create Task in ClickUp",
+      "type": "n8n-nodes-base.clickUp",
+      "typeVersion": 1,
+      "position": [
+        -208,
+        0
+      ],
+      "credentials": {
+        "clickUpApi": {
+          "id": "OQFYtlbfr1sDEzmd",
+          "name": "ClickUp_Dhruv"
+        }
+      }
+    },
+    {
+      "parameters": {},
+      "id": "manual",
+      "name": "Manual Trigger",
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [
+        -608,
+        0
+      ]
+    }
+  ],
+  "connections": {
+    "Tasks to Push": {
+      "main": [
+        [
+          {
+            "node": "Create Task in ClickUp",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Manual Trigger": {
+      "main": [
+        [
+          {
+            "node": "Tasks to Push",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1",
+    "saveDataErrorExecution": "all",
+    "saveDataSuccessExecution": "all",
+    "saveManualExecutions": true,
+    "saveExecutionProgress": true,
+    "callerPolicy": "workflowsFromSameOwner",
+    "availableInMCP": false
+  },
+  "staticData": null,
+  "meta": {
+    "templateCredsSetupCompleted": true
+  },
+  "pinData": {},
+  "versionId": "b0630de0-ee7a-45f2-b482-38b505904dfe",
+  "activeVersionId": "8bef6599-8ae9-4e75-b1d6-7e751c3aa4e7",
+  "triggerCount": 1,
+  "shared": [
+    {
+      "updatedAt": "2026-02-03T12:27:43.794Z",
+      "createdAt": "2026-02-03T12:27:43.794Z",
+      "role": "workflow:owner",
+      "workflowId": "VTugt3WuzNbwwjhO",
+      "projectId": "DT8YjHwLZsQjJqVc"
+    }
+  ],
+  "activeVersion": {
+    "updatedAt": "2026-02-03T12:31:26.312Z",
+    "createdAt": "2026-02-03T12:31:26.312Z",
+    "versionId": "8bef6599-8ae9-4e75-b1d6-7e751c3aa4e7",
+    "workflowId": "VTugt3WuzNbwwjhO",
+    "nodes": [
+      {
+        "parameters": {
+          "jsCode": "return [\n  { json: { name: 'Build: Ramesh workflow', description: 'Job automation \u2013 payment, build, handover' } },\n  { json: { name: 'Build: n8n + ClickUp sync', description: 'Auto-create tasks from AI' } },\n  { json: { name: 'Learn: RapidAPI limits', description: 'Research for Ramesh' } },\n  { json: { name: 'Backlog: Waalaxy campaigns', description: 'Start 3 campaigns (Automation, OpenClaw, Full Stack)' } },\n  { json: { name: 'Backlog: YouTube live', description: 'Plan first live stream for Feb end' } }\n];"
+        },
+        "id": "tasks",
+        "name": "Tasks to Push",
+        "type": "n8n-nodes-base.code",
+        "typeVersion": 2,
+        "position": [
+          -208,
+          0
+        ]
+      },
+      {
+        "parameters": {
+          "team": "90161464007",
+          "space": "90166202270",
+          "folder": "90168365781",
+          "list": "90161334354",
+          "name": "={{ $json.name }}",
+          "additionalFields": {
+            "description": "={{ $json.description }}"
+          }
+        },
+        "id": "clickup",
+        "name": "Create Task in ClickUp",
+        "type": "n8n-nodes-base.clickUp",
+        "typeVersion": 1,
+        "position": [
+          0,
+          0
+        ],
+        "credentials": {
+          "clickUpApi": {
+            "id": "OQFYtlbfr1sDEzmd",
+            "name": "ClickUp_Dhruv"
+          }
+        }
+      },
+      {
+        "id": "manual",
+        "name": "Manual Trigger",
+        "type": "n8n-nodes-base.manualTrigger",
+        "typeVersion": 1,
+        "position": [
+          -600,
+          0
+        ],
+        "parameters": {}
+      }
+    ],
+    "connections": {
+      "Tasks to Push": {
+        "main": [
+          [
+            {
+              "node": "Create Task in ClickUp",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Manual Trigger": {
+        "main": [
+          [
+            {
+              "node": "Tasks to Push",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      }
+    },
+    "authors": "Dhruv Tomar",
+    "name": null,
+    "description": null,
+    "autosaved": false
+  },
+  "tags": []
+}

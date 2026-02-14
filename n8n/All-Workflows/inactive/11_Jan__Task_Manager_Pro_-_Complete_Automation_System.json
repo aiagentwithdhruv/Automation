@@ -1,0 +1,1617 @@
+{
+  "updatedAt": "2026-01-11T15:52:37.687Z",
+  "createdAt": "2026-01-10T16:22:18.730Z",
+  "id": "o9I1NEZ4clv3mKZF",
+  "name": "11_Jan_ Task Manager Pro - Complete Automation System",
+  "active": false,
+  "isArchived": false,
+  "nodes": [
+    {
+      "parameters": {
+        "content": "# \ud83c\udfaf TASK MANAGER PRO\n## Complete Task Management & Reminder System\n\n**Author:** Dhruv (AIwithDhruv)\n**Version:** 1.0\n\n### FEATURES:\n\u2705 Multi-input (Manual, Form, Telegram)\n\u2705 Google Sheets as database\n\u2705 Smart reminder engine (3h + 4h cycles)\n\u2705 Telegram alerts with urgency levels\n\u2705 Daily morning summary\n\u2705 \"DONE\" command to complete tasks\n\u2705 Duplicate prevention\n\u2705 Escalating urgency\n\u2705 Email fallback\n\u2705 Weekly productivity report\n\n### SETUP REQUIRED:\n1. Create Google Sheet \"Task Manager\"\n2. Add headers (see sticky note)\n3. Configure Telegram Bot\n4. Replace credential IDs\n5. Set your Chat ID",
+        "height": 520,
+        "width": 380,
+        "color": 5
+      },
+      "id": "af266e19-6bdd-401e-b35e-7393d346733c",
+      "name": "Sticky Note - Header",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -1776,
+        -144
+      ]
+    },
+    {
+      "parameters": {
+        "content": "## \ud83d\udccb GOOGLE SHEET SETUP\n\n**Sheet Name:** Task Manager\n**Tab Name:** Tasks\n\n### HEADERS (Row 1):\n```\ntask_id | title | description | priority | due_date | status | owner | created_at | last_reminder | reminder_count | completed_at | notes\n```\n\n### COLUMN DETAILS:\n- **task_id:** TASK-YYYYMMDD-XXXX\n- **priority:** High / Medium / Low\n- **status:** Pending / In Progress / Completed\n- **due_date:** YYYY-MM-DD HH:MM\n- **owner:** Default \"Dhruv\"\n- **reminder_count:** Starts at 0\n\n### SECOND TAB: \"Reminder_Log\"\n```\nlog_id | task_id | reminder_type | sent_at | urgency_level | channel\n```",
+        "height": 640,
+        "width": 340,
+        "color": 4
+      },
+      "id": "5f60a233-3964-4cec-b7b2-24cfee901e4a",
+      "name": "Sticky Note - Sheet Setup",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -1760,
+        448
+      ]
+    },
+    {
+      "parameters": {
+        "content": "## \ud83d\udd14 REMINDER LOGIC\n\n### Urgency Levels:\n| Count | Level | Emoji |\n|-------|-------|-------|\n| 0-2 | Normal | \ud83d\udccb |\n| 3-4 | Warning | \u26a0\ufe0f |\n| 5+ | Critical | \ud83d\udea8 |\n| Overdue | URGENT | \ud83d\udd25 |\n\n### Priority Emojis:\n- \ud83d\udd34 High\n- \ud83d\udfe0 Medium  \n- \ud83d\udfe2 Low\n\n### Duplicate Prevention:\n- Check `last_reminder` timestamp\n- Skip if < 3 hours ago\n- Exception: Overdue tasks always alert\n\n### Escalation:\n- After 4 reminders \u2192 CC email\n- Overdue \u2192 Every cycle + email",
+        "height": 548,
+        "width": 300,
+        "color": 6
+      },
+      "id": "8af427b0-9d47-4e84-bf60-f38d7553c916",
+      "name": "Sticky Note - Reminder Logic",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -1312,
+        -160
+      ]
+    },
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "field": "hours",
+              "hoursInterval": 3
+            }
+          ]
+        }
+      },
+      "id": "8aa3ce58-15a9-4df5-9bb8-dccfff0d6f52",
+      "name": "Every 3 Hours",
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.2,
+      "position": [
+        -304,
+        1168
+      ]
+    },
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "field": "hours",
+              "hoursInterval": 4
+            }
+          ]
+        }
+      },
+      "id": "76a1f127-441a-435e-99d9-4fedcd15928b",
+      "name": "Every 4 Hours",
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.2,
+      "position": [
+        -304,
+        1312
+      ]
+    },
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "field": "cronExpression",
+              "expression": "0 8 * * *"
+            }
+          ]
+        }
+      },
+      "id": "128a3b8a-9715-4acc-b834-91f49a1217e3",
+      "name": "Daily 8 AM Summary",
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.2,
+      "position": [
+        -256,
+        1600
+      ]
+    },
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "field": "cronExpression",
+              "expression": "0 18 * * 0"
+            }
+          ]
+        }
+      },
+      "id": "340e2243-8f56-4dbd-abe8-c9d744a255e0",
+      "name": "Weekly Sunday 6 PM",
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.2,
+      "position": [
+        -256,
+        2000
+      ]
+    },
+    {
+      "parameters": {
+        "updates": [
+          "message"
+        ],
+        "additionalFields": {}
+      },
+      "id": "ecec352d-51e5-48dd-83a3-27c80eb6499d",
+      "name": "Telegram Trigger",
+      "type": "n8n-nodes-base.telegramTrigger",
+      "typeVersion": 1.2,
+      "position": [
+        -256,
+        400
+      ],
+      "webhookId": "task-manager-telegram",
+      "credentials": {
+        "telegramApi": {
+          "id": "3vuB03L5tD6mBjxm",
+          "name": "Erron Test"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "formTitle": "Add New Task",
+        "formDescription": "Submit a new task to your task manager",
+        "formFields": {
+          "values": [
+            {
+              "fieldLabel": "Task Title",
+              "requiredField": true
+            },
+            {
+              "fieldLabel": "Description",
+              "fieldType": "textarea"
+            },
+            {
+              "fieldLabel": "Priority",
+              "fieldType": "dropdown",
+              "fieldOptions": {
+                "values": [
+                  {
+                    "option": "High"
+                  },
+                  {
+                    "option": "Medium"
+                  },
+                  {
+                    "option": "Low"
+                  }
+                ]
+              }
+            },
+            {
+              "fieldLabel": "Due Date",
+              "fieldType": "date"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "47150c5c-0dd9-4468-bda5-403759d21fb6",
+      "name": "Task Form",
+      "type": "n8n-nodes-base.formTrigger",
+      "typeVersion": 2.2,
+      "position": [
+        -272,
+        64
+      ],
+      "webhookId": "task-form-submit"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "manual-1",
+              "name": "title",
+              "value": "Sample Task - Update Me",
+              "type": "string"
+            },
+            {
+              "id": "manual-2",
+              "name": "description",
+              "value": "This is a test task",
+              "type": "string"
+            },
+            {
+              "id": "manual-3",
+              "name": "priority",
+              "value": "Medium",
+              "type": "string"
+            },
+            {
+              "id": "manual-4",
+              "name": "due_date",
+              "value": "={{ $now.plus(1, 'day').toFormat('yyyy-MM-dd HH:mm') }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "666ef3f4-9eb6-4069-8637-0a23118eed32",
+      "name": "Manual Task Data",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        128,
+        -144
+      ]
+    },
+    {
+      "parameters": {},
+      "id": "54f1022c-c961-4a09-8438-46a9139e2419",
+      "name": "Manual Trigger",
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [
+        -272,
+        -144
+      ]
+    },
+    {
+      "parameters": {
+        "mode": "runOnceForEachItem",
+        "jsCode": "// Parse Telegram message for commands or new task\n\nconst message = $json.message;\nconst text = message?.text || '';\nconst chatId = message?.chat?.id || '';\nconst username =\n  message?.from?.username ||\n  message?.from?.first_name ||\n  'User';\n\nlet action = 'unknown';\nlet taskData = {};\n\n// DONE command: \"done TASK-123\"\nconst doneMatch = text.match(/^\\s*done\\s+([\\w-]+)/i);\nif (doneMatch) {\n  action = 'complete_task';\n  taskData = {\n    task_id: doneMatch[1].toUpperCase(),\n    chat_id: chatId\n  };\n}\n\n// STATUS command\nelse if (text.toLowerCase().startsWith('/status') || text.toLowerCase() === 'status') {\n  action = 'get_status';\n  taskData = { chat_id: chatId };\n}\n\n// LIST command\nelse if (text.toLowerCase().startsWith('/tasks') || text.toLowerCase().startsWith('/list')) {\n  action = 'list_tasks';\n  taskData = { chat_id: chatId };\n}\n\n// ADD command: \"/add Buy groceries | High | 2024-01-20\"\nelse if (text.toLowerCase().startsWith('/add') || text.toLowerCase().startsWith('add task')) {\n  action = 'add_task';\n\n  const taskText = text.replace(/^\\/?(add task|add)\\s*/i, '').trim();\n  const parts = taskText.split('|').map(p => p.trim());\n\n  taskData = {\n    title: parts[0] || 'Untitled Task',\n    description: '',\n    priority: ['high', 'medium', 'low'].includes(parts[1]?.toLowerCase())\n      ? parts[1]\n      : 'Medium',\n    due_date:\n      parts[2] ||\n      new Date(Date.now() + 24 * 60 * 60 * 1000)\n        .toISOString()\n        .split('T')[0] + ' 18:00',\n    chat_id: chatId,\n    owner: username\n  };\n}\n\n// HELP command\nelse if (text.toLowerCase().startsWith('/help') || text.toLowerCase() === 'help') {\n  action = 'show_help';\n  taskData = { chat_id: chatId };\n}\n\n// Default: treat as new task\nelse if (text.length > 3 && !text.startsWith('/')) {\n  action = 'add_task';\n  taskData = {\n    title: text.substring(0, 100),\n    description: text.length > 100 ? text : '',\n    priority: 'Medium',\n    due_date:\n      new Date(Date.now() + 24 * 60 * 60 * 1000)\n        .toISOString()\n        .split('T')[0] + ' 18:00',\n    chat_id: chatId,\n    owner: username\n  };\n}\n\n// Fallback\nelse {\n  action = 'show_help';\n  taskData = { chat_id: chatId };\n}\n\nreturn {\n  json: {\n    action,\n    ...taskData,\n    raw_message: text,\n    source: 'telegram'\n  }\n};"
+      },
+      "id": "2fd017af-90c7-4a3e-87b6-3c6d04b19d19",
+      "name": "Parse Telegram Command",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        0,
+        400
+      ]
+    },
+    {
+      "parameters": {
+        "rules": {
+          "values": [
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "id": "add",
+                    "leftValue": "={{ $json.action }}",
+                    "rightValue": "add_task",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "Add Task"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "id": "done",
+                    "leftValue": "={{ $json.action }}",
+                    "rightValue": "complete_task",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "Complete Task"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "id": "list",
+                    "leftValue": "={{ $json.action }}",
+                    "rightValue": "list_tasks",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "List Tasks"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "id": "status",
+                    "leftValue": "={{ $json.action }}",
+                    "rightValue": "get_status",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "Get Status"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "id": "help",
+                    "leftValue": "={{ $json.action }}",
+                    "rightValue": "show_help",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "Show Help"
+            }
+          ]
+        },
+        "options": {
+          "fallbackOutput": "extra"
+        }
+      },
+      "id": "d255dc56-5828-4de1-b3ed-842d7060a66c",
+      "name": "Route Telegram Action",
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3.2,
+      "position": [
+        224,
+        400
+      ]
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "form-1",
+              "name": "title",
+              "value": "={{ $json['Task Title'] }}",
+              "type": "string"
+            },
+            {
+              "id": "form-2",
+              "name": "description",
+              "value": "={{ $json.Description || '' }}",
+              "type": "string"
+            },
+            {
+              "id": "form-3",
+              "name": "priority",
+              "value": "={{ $json.Priority || 'Medium' }}",
+              "type": "string"
+            },
+            {
+              "id": "form-4",
+              "name": "due_date",
+              "value": "={{ $json['Due Date'] ? $json['Due Date'] + ' 18:00' : $now.plus(1, 'day').toFormat('yyyy-MM-dd') + ' 18:00' }}",
+              "type": "string"
+            },
+            {
+              "id": "form-5",
+              "name": "source",
+              "value": "form",
+              "type": "string"
+            },
+            {
+              "id": "form-6",
+              "name": "owner",
+              "value": "Dhruv",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "7e26665d-6038-4447-ba87-cb5cab4df696",
+      "name": "Format Form Input",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        0,
+        64
+      ]
+    },
+    {
+      "parameters": {
+        "mode": "runOnceForEachItem",
+        "jsCode": "// Generate task ID and prepare for Google Sheets insert\nconst input = $input.first().json;\nconst now = new Date();\n\n// Generate unique task ID: TASK-YYYYMMDD-XXXX\nconst dateStr = now.toISOString().split('T')[0].replace(/-/g, '');\nconst randomNum = Math.floor(Math.random() * 10000).toString().padStart(4, '0');\nconst taskId = `TASK-${dateStr}-${randomNum}`;\n\n// Format created timestamp\nconst createdAt = now.toISOString();\n\n// Parse and validate due date\nlet dueDate = input.due_date || '';\nif (dueDate && !dueDate.includes(':')) {\n  dueDate += ' 18:00';\n}\n\n// Normalize priority\nlet priority = (input.priority || 'Medium').toLowerCase();\npriority = priority.charAt(0).toUpperCase() + priority.slice(1);\nif (!['High', 'Medium', 'Low'].includes(priority)) {\n  priority = 'Medium';\n}\n\nreturn {\n  json: {\n    task_id: taskId,\n    title: input.title || 'Untitled Task',\n    description: input.description || '',\n    priority: priority,\n    due_date: dueDate,\n    status: 'Pending',\n    owner: input.owner || 'Dhruv',\n    created_at: createdAt,\n    last_reminder: '',\n    reminder_count: 0,\n    completed_at: '',\n    notes: '',\n    source: input.source || 'manual',\n    chat_id: input.chat_id || 'YOUR_DEFAULT_CHAT_ID'\n  }\n};"
+      },
+      "id": "d2969210-01eb-40c4-9c27-74f05bf2dac1",
+      "name": "Prepare New Task",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        432,
+        64
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "append",
+        "documentId": {
+          "__rl": true,
+          "value": "YOUR_GOOGLE_SHEET_ID",
+          "mode": "id"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "Tasks",
+          "mode": "name"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "task_id": "={{ $json.task_id }}",
+            "title": "={{ $json.title }}",
+            "description": "={{ $json.description }}",
+            "priority": "={{ $json.priority }}",
+            "due_date": "={{ $json.due_date }}",
+            "status": "={{ $json.status }}",
+            "owner": "={{ $json.owner }}",
+            "created_at": "={{ $json.created_at }}",
+            "last_reminder": "={{ $json.last_reminder }}",
+            "reminder_count": "={{ $json.reminder_count }}",
+            "completed_at": "={{ $json.completed_at }}",
+            "notes": "={{ $json.notes }}"
+          }
+        },
+        "options": {}
+      },
+      "id": "1060da33-22a8-484b-ad9b-d8dcd1ec1b5c",
+      "name": "Insert Task to Sheet",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.5,
+      "position": [
+        656,
+        64
+      ]
+    },
+    {
+      "parameters": {
+        "mode": "runOnceForEachItem",
+        "jsCode": "// Format new task confirmation message\nconst task = $('Prepare New Task').first().json;\n\nconst priorityEmoji = {\n  'High': '\ud83d\udd34',\n  'Medium': '\ud83d\udfe0',\n  'Low': '\ud83d\udfe2'\n};\n\nconst emoji = priorityEmoji[task.priority] || '\ud83d\udccb';\n\n// Calculate time until due\nconst dueDate = new Date(task.due_date.replace(' ', 'T'));\nconst now = new Date();\nconst hoursUntil = Math.round((dueDate - now) / (1000 * 60 * 60));\n\nlet timeText = '';\nif (hoursUntil > 24) {\n  const days = Math.floor(hoursUntil / 24);\n  timeText = `${days} day${days > 1 ? 's' : ''}`;\n} else if (hoursUntil > 0) {\n  timeText = `${hoursUntil} hour${hoursUntil > 1 ? 's' : ''}`;\n} else {\n  timeText = 'Due soon!';\n}\n\nconst message = `\u2705 *NEW TASK CREATED*\\n\\n` +\n  `\ud83d\udccc *ID:* \\`${task.task_id}\\`\\n` +\n  `\ud83d\udcdd *Title:* ${task.title}\\n` +\n  `${emoji} *Priority:* ${task.priority}\\n` +\n  `\ud83d\udcc5 *Due:* ${task.due_date}\\n` +\n  `\u23f0 *Time Left:* ${timeText}\\n` +\n  `\ud83d\udc64 *Owner:* ${task.owner}\\n\\n` +\n  `_Reply \\`DONE ${task.task_id}\\` when completed_`;\n\nreturn {\n  json: {\n    message: message,\n    chat_id: task.chat_id,\n    task_id: task.task_id,\n    parse_mode: 'Markdown'\n  }\n};"
+      },
+      "id": "73d532d6-c150-486c-a834-02299796ef6b",
+      "name": "Format New Task Message",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        880,
+        64
+      ]
+    },
+    {
+      "parameters": {
+        "chatId": "={{ $json.chat_id }}",
+        "text": "={{ $json.message }}",
+        "additionalFields": {
+          "parse_mode": "Markdown"
+        }
+      },
+      "id": "f39acb20-ad5e-45ff-a6ae-5ca98b8a17fd",
+      "name": "Send New Task Confirmation",
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        1088,
+        64
+      ],
+      "webhookId": "23a2aa7b-263d-4d46-a3cf-5ee2188569e5",
+      "credentials": {
+        "telegramApi": {
+          "id": "W6XV6RQORTB3eBDg",
+          "name": "Agent Dhruv"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "merge-1",
+              "name": "trigger_source",
+              "value": "reminder_cycle",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "048d385e-8c0d-4964-aa9a-8d3c217aa752",
+      "name": "Tag Reminder Source",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        -32,
+        1232
+      ]
+    },
+    {
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "value": "YOUR_GOOGLE_SHEET_ID",
+          "mode": "id"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "Tasks",
+          "mode": "name"
+        },
+        "options": {}
+      },
+      "id": "dd45cb07-3db8-4a83-a25d-11d798ae5814",
+      "name": "Fetch All Tasks",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.5,
+      "position": [
+        176,
+        1232
+      ]
+    },
+    {
+      "parameters": {
+        "mode": "runOnceForEachItem",
+        "jsCode": "// Filter and process tasks that need reminders\nconst allTasks = $input.all();\nconst now = new Date();\nconst tasksToRemind = [];\n\nfor (const item of allTasks) {\n  const task = item.json;\n  \n  // Skip completed tasks\n  if (task.status === 'Completed') continue;\n  \n  // Skip if no due date\n  if (!task.due_date) continue;\n  \n  // Parse due date\n  const dueDate = new Date(task.due_date.replace(' ', 'T'));\n  const lastReminder = task.last_reminder ? new Date(task.last_reminder) : null;\n  const reminderCount = parseInt(task.reminder_count) || 0;\n  \n  // Calculate hours until due / overdue\n  const hoursUntilDue = (dueDate - now) / (1000 * 60 * 60);\n  const isOverdue = hoursUntilDue < 0;\n  \n  // Check if we should send reminder (duplicate prevention)\n  let shouldRemind = false;\n  let urgencyLevel = 'normal';\n  \n  // If overdue, always remind\n  if (isOverdue) {\n    shouldRemind = true;\n    urgencyLevel = 'critical';\n  }\n  // If no last reminder, send first one\n  else if (!lastReminder) {\n    shouldRemind = true;\n    urgencyLevel = 'normal';\n  }\n  // Check 3-hour window for non-overdue\n  else {\n    const hoursSinceLastReminder = (now - lastReminder) / (1000 * 60 * 60);\n    \n    // For high priority, remind more often\n    const minInterval = task.priority === 'High' ? 2 : 3;\n    \n    if (hoursSinceLastReminder >= minInterval) {\n      shouldRemind = true;\n      \n      // Set urgency based on reminder count\n      if (reminderCount >= 5) urgencyLevel = 'critical';\n      else if (reminderCount >= 3) urgencyLevel = 'warning';\n      else urgencyLevel = 'normal';\n    }\n  }\n  \n  // Add to remind list\n  if (shouldRemind) {\n    tasksToRemind.push({\n      ...task,\n      hours_until_due: Math.round(hoursUntilDue * 10) / 10,\n      is_overdue: isOverdue,\n      urgency_level: urgencyLevel,\n      new_reminder_count: reminderCount + 1\n    });\n  }\n}\n\n// Return tasks to remind, or empty signal\nif (tasksToRemind.length === 0) {\n  return { json: { no_reminders: true, count: 0 } };\n}\n\nreturn tasksToRemind.map(t => ({ json: t }));"
+      },
+      "id": "5323b181-4f35-4f3c-9205-080d0d636b9f",
+      "name": "Filter Tasks Needing Reminder",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        400,
+        1232
+      ]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "has-reminders",
+              "leftValue": "={{ $json.no_reminders }}",
+              "rightValue": true,
+              "operator": {
+                "type": "boolean",
+                "operation": "notEquals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "c7faa000-9cbc-4bc2-93f7-9640091a0e40",
+      "name": "Has Tasks to Remind?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        624,
+        1232
+      ]
+    },
+    {
+      "parameters": {
+        "mode": "runOnceForEachItem",
+        "jsCode": "// Format reminder message with urgency\nconst task = $input.first().json;\nconst now = new Date();\n\n// Priority emoji\nconst priorityEmoji = {\n  'High': '\ud83d\udd34',\n  'Medium': '\ud83d\udfe0',\n  'Low': '\ud83d\udfe2'\n};\n\n// Urgency formatting\nconst urgencyFormat = {\n  'normal': { prefix: '\ud83d\udccb', header: 'TASK REMINDER' },\n  'warning': { prefix: '\u26a0\ufe0f', header: 'TASK REMINDER - ATTENTION NEEDED' },\n  'critical': { prefix: '\ud83d\udea8', header: 'URGENT REMINDER' }\n};\n\nconst urgency = urgencyFormat[task.urgency_level] || urgencyFormat.normal;\nconst pEmoji = priorityEmoji[task.priority] || '\ud83d\udccb';\n\n// Time calculation\nlet timeStatus = '';\nif (task.is_overdue) {\n  const overdueHours = Math.abs(task.hours_until_due);\n  if (overdueHours > 24) {\n    const days = Math.floor(overdueHours / 24);\n    timeStatus = `\ud83d\udd25 OVERDUE by ${days} day${days > 1 ? 's' : ''}`;\n  } else {\n    timeStatus = `\ud83d\udd25 OVERDUE by ${Math.round(overdueHours)} hour${overdueHours > 1 ? 's' : ''}`;\n  }\n} else {\n  if (task.hours_until_due > 24) {\n    const days = Math.floor(task.hours_until_due / 24);\n    timeStatus = `\u23f0 ${days} day${days > 1 ? 's' : ''} remaining`;\n  } else {\n    timeStatus = `\u23f0 ${Math.round(task.hours_until_due)} hour${task.hours_until_due > 1 ? 's' : ''} remaining`;\n  }\n}\n\n// Build message\nconst message = `${urgency.prefix} *${urgency.header}*\\n\\n` +\n  `\ud83d\udccc *ID:* \\`${task.task_id}\\`\\n` +\n  `\ud83d\udcdd *Task:* ${task.title}\\n` +\n  `${pEmoji} *Priority:* ${task.priority}\\n` +\n  `\ud83d\udcc5 *Due:* ${task.due_date}\\n` +\n  `${timeStatus}\\n` +\n  `\ud83d\udcca *Status:* ${task.status}\\n` +\n  `\ud83d\udd14 *Reminder #${task.new_reminder_count}*\\n\\n` +\n  (task.is_overdue ? `_\u26a1 This task requires immediate attention!_\\n\\n` : '') +\n  `_Reply \\`DONE ${task.task_id}\\` to mark complete_`;\n\nreturn {\n  json: {\n    message: message,\n    task_id: task.task_id,\n    chat_id: 'YOUR_DEFAULT_CHAT_ID',\n    new_reminder_count: task.new_reminder_count,\n    urgency_level: task.urgency_level,\n    is_overdue: task.is_overdue,\n    should_email: task.new_reminder_count >= 4 || task.is_overdue\n  }\n};"
+      },
+      "id": "5a68275b-e4a8-42b2-a679-23c2d78e1ec4",
+      "name": "Format Reminder Message",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        848,
+        1168
+      ]
+    },
+    {
+      "parameters": {
+        "chatId": "={{ $json.chat_id }}",
+        "text": "={{ $json.message }}",
+        "additionalFields": {
+          "parse_mode": "Markdown"
+        }
+      },
+      "id": "d88352d4-bf5f-4957-b1af-903264e29e66",
+      "name": "Send Reminder Telegram",
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        1056,
+        1168
+      ],
+      "webhookId": "61b110a3-ca36-4e59-af74-00f5cdefccca",
+      "credentials": {
+        "telegramApi": {
+          "id": "YkS7zOFTxs7H0uW9",
+          "name": "Shaurya_Task_Aim"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "documentId": {
+          "__rl": true,
+          "value": "YOUR_GOOGLE_SHEET_ID",
+          "mode": "id"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "Tasks",
+          "mode": "name"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "task_id": "={{ $json.task_id }}",
+            "last_reminder": "={{ $now.toISO() }}",
+            "reminder_count": "={{ $json.new_reminder_count }}"
+          },
+          "matchingColumns": [
+            "task_id"
+          ]
+        },
+        "options": {}
+      },
+      "id": "148678f1-6b94-409c-b13b-a2ce62567784",
+      "name": "Update Reminder Count",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.5,
+      "position": [
+        1280,
+        1168
+      ]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "should-email",
+              "leftValue": "={{ $('Format Reminder Message').item.json.should_email }}",
+              "rightValue": true,
+              "operator": {
+                "type": "boolean",
+                "operation": "equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "126254ef-d2b5-44ed-a9ca-e5d71d1fd1a5",
+      "name": "Need Email Fallback?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        1504,
+        1168
+      ]
+    },
+    {
+      "parameters": {
+        "sendTo": "YOUR_EMAIL@gmail.com",
+        "subject": "=\ud83d\udea8 URGENT: Task Reminder - {{ $('Format Reminder Message').item.json.task_id }}",
+        "emailType": "text",
+        "message": "=Task: {{ $('Format Reminder Message').item.json.task_id }}\n\nThis task has had {{ $('Format Reminder Message').item.json.new_reminder_count }} reminders and requires your attention.\n\nPlease check your Telegram for details or update the task status in your Task Manager sheet.",
+        "options": {}
+      },
+      "id": "964aecc8-65f7-4234-8435-0fddf16fd932",
+      "name": "Send Email Fallback",
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.1,
+      "position": [
+        1728,
+        1120
+      ],
+      "webhookId": "c8ca58aa-4695-4005-bb47-6e128b5efe27"
+    },
+    {
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "value": "YOUR_GOOGLE_SHEET_ID",
+          "mode": "id"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "Tasks",
+          "mode": "name"
+        },
+        "options": {}
+      },
+      "id": "8954d1e8-f8f7-487b-9a89-f9df424cd69d",
+      "name": "Fetch Tasks for Complete",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.5,
+      "position": [
+        480,
+        432
+      ]
+    },
+    {
+      "parameters": {
+        "mode": "runOnceForEachItem",
+        "jsCode": "// Find and validate task to complete\nconst commandData = $('Parse Telegram Command').first().json;\nconst allTasks = $input.all();\nconst taskIdToComplete = commandData.task_id;\nconst chatId = commandData.chat_id;\n\nlet foundTask = null;\n\nfor (const item of allTasks) {\n  if (item.json.task_id === taskIdToComplete) {\n    foundTask = item.json;\n    break;\n  }\n}\n\nif (!foundTask) {\n  return {\n    json: {\n      success: false,\n      message: `\u274c *Task Not Found*\\n\\nNo task with ID \\`${taskIdToComplete}\\` found.\\n\\nUse /tasks to see all your tasks.`,\n      chat_id: chatId\n    }\n  };\n}\n\nif (foundTask.status === 'Completed') {\n  return {\n    json: {\n      success: false,\n      message: `\u2139\ufe0f *Already Completed*\\n\\nTask \\`${taskIdToComplete}\\` was already marked as completed.`,\n      chat_id: chatId\n    }\n  };\n}\n\nreturn {\n  json: {\n    success: true,\n    task_id: foundTask.task_id,\n    title: foundTask.title,\n    priority: foundTask.priority,\n    chat_id: chatId,\n    completed_at: new Date().toISOString()\n  }\n};"
+      },
+      "id": "f0b3ce5c-e0a4-455b-afe7-7e53bb84bbd0",
+      "name": "Find Task to Complete",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        720,
+        432
+      ]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "found",
+              "leftValue": "={{ $json.success }}",
+              "rightValue": true,
+              "operator": {
+                "type": "boolean",
+                "operation": "equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "59df173d-819a-4252-bd78-30b86efa8edc",
+      "name": "Task Found?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        960,
+        432
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "documentId": {
+          "__rl": true,
+          "value": "YOUR_GOOGLE_SHEET_ID",
+          "mode": "id"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "Tasks",
+          "mode": "name"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "task_id": "={{ $json.task_id }}",
+            "status": "Completed",
+            "completed_at": "={{ $json.completed_at }}"
+          },
+          "matchingColumns": [
+            "task_id"
+          ]
+        },
+        "options": {}
+      },
+      "id": "2c2f53fd-7624-485c-add7-2b090e2d9df4",
+      "name": "Mark Task Complete",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.5,
+      "position": [
+        1184,
+        432
+      ]
+    },
+    {
+      "parameters": {
+        "mode": "runOnceForEachItem",
+        "jsCode": "// Format completion message\nconst task = $input.first().json;\n\nconst priorityEmoji = {\n  'High': '\ud83d\udd34',\n  'Medium': '\ud83d\udfe0',\n  'Low': '\ud83d\udfe2'\n};\n\nconst emoji = priorityEmoji[task.priority] || '\ud83d\udccb';\n\nconst message = `\u2705 *TASK COMPLETED!*\\n\\n` +\n  `\ud83d\udccc *ID:* \\`${task.task_id}\\`\\n` +\n  `\ud83d\udcdd *Task:* ${task.title}\\n` +\n  `${emoji} *Priority:* ${task.priority}\\n` +\n  `\ud83c\udf89 *Status:* Completed\\n\\n` +\n  `_Great job! No more reminders for this task._`;\n\nreturn {\n  json: {\n    message: message,\n    chat_id: task.chat_id,\n    parse_mode: 'Markdown'\n  }\n};"
+      },
+      "id": "61a29a27-03bf-4030-b34c-9fa16a1fb418",
+      "name": "Format Complete Message",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1408,
+        432
+      ]
+    },
+    {
+      "parameters": {
+        "chatId": "={{ $json.chat_id }}",
+        "text": "={{ $json.message }}",
+        "additionalFields": {
+          "parse_mode": "Markdown"
+        }
+      },
+      "id": "604f4e9b-00d7-4812-b324-75fa3ba2cb32",
+      "name": "Send Complete Confirmation",
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        1632,
+        432
+      ],
+      "webhookId": "a2c6f2cd-155d-44fc-b180-dbe3649242ee",
+      "credentials": {
+        "telegramApi": {
+          "id": "YkS7zOFTxs7H0uW9",
+          "name": "Shaurya_Task_Aim"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "chatId": "={{ $json.chat_id }}",
+        "text": "={{ $json.message }}",
+        "additionalFields": {
+          "parse_mode": "Markdown"
+        }
+      },
+      "id": "701061c8-99ee-4b99-ab90-7b220e2d620f",
+      "name": "Send Not Found Message",
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        1136,
+        640
+      ],
+      "webhookId": "be17974d-626b-47d9-8aa9-5ac4b7de7d5b",
+      "credentials": {
+        "telegramApi": {
+          "id": "YkS7zOFTxs7H0uW9",
+          "name": "Shaurya_Task_Aim"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "value": "YOUR_GOOGLE_SHEET_ID",
+          "mode": "id"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "Tasks",
+          "mode": "name"
+        },
+        "options": {}
+      },
+      "id": "5f9d182b-8aa9-4dbf-ba2a-c33c04d454d1",
+      "name": "Fetch Tasks for List",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.5,
+      "position": [
+        448,
+        608
+      ]
+    },
+    {
+      "parameters": {
+        "mode": "runOnceForEachItem",
+        "jsCode": "// Format task list\nconst allTasks = $input.all();\nconst chatId = $('Parse Telegram Command').first().json.chat_id;\n\nconst priorityEmoji = { 'High': '\ud83d\udd34', 'Medium': '\ud83d\udfe0', 'Low': '\ud83d\udfe2' };\nconst statusEmoji = { 'Pending': '\u23f3', 'In Progress': '\ud83d\udd04', 'Completed': '\u2705' };\n\n// Filter non-completed tasks\nconst pendingTasks = allTasks.filter(t => t.json.status !== 'Completed');\n\nif (pendingTasks.length === 0) {\n  return {\n    json: {\n      message: `\ud83d\udccb *YOUR TASKS*\\n\\n\ud83c\udf89 No pending tasks! You're all caught up.`,\n      chat_id: chatId\n    }\n  };\n}\n\nlet taskLines = pendingTasks.slice(0, 10).map((t, i) => {\n  const task = t.json;\n  const pEmoji = priorityEmoji[task.priority] || '\ud83d\udccb';\n  const sEmoji = statusEmoji[task.status] || '\u23f3';\n  return `${i + 1}. ${pEmoji} *${task.title}*\\n   \\`${task.task_id}\\` | Due: ${task.due_date} | ${sEmoji} ${task.status}`;\n}).join('\\n\\n');\n\nconst message = `\ud83d\udccb *YOUR TASKS* (${pendingTasks.length} pending)\\n\\n${taskLines}\\n\\n` +\n  (pendingTasks.length > 10 ? `_...and ${pendingTasks.length - 10} more_\\n\\n` : '') +\n  `_Reply \\`DONE <task_id>\\` to complete_`;\n\nreturn {\n  json: {\n    message: message,\n    chat_id: chatId\n  }\n};"
+      },
+      "id": "abe73d6b-7cc7-4126-86b4-7ae46f2bc511",
+      "name": "Format Task List",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        672,
+        608
+      ]
+    },
+    {
+      "parameters": {
+        "chatId": "={{ $json.chat_id }}",
+        "text": "={{ $json.message }}",
+        "additionalFields": {
+          "parse_mode": "Markdown"
+        }
+      },
+      "id": "f59cbfc5-df24-4f14-985a-02c7536fbbf6",
+      "name": "Send Task List",
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        896,
+        608
+      ],
+      "webhookId": "d781e635-8c09-4ec8-b4ee-9e92630ab39e",
+      "credentials": {
+        "telegramApi": {
+          "id": "YkS7zOFTxs7H0uW9",
+          "name": "Shaurya_Task_Aim"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "mode": "runOnceForEachItem",
+        "jsCode": "// Generate help message\nconst chatId = $input.first().json.chat_id;\n\nconst message = `\ud83e\udd16 *TASK MANAGER HELP*\\n\\n` +\n  `*\ud83d\udcdd ADD TASKS:*\\n` +\n  `\u2022 \\`/add Buy groceries | High | 2024-01-20\\`\\n` +\n  `\u2022 Just type any task description\\n` +\n  `\u2022 Use the web form\\n\\n` +\n  `*\u2705 COMPLETE TASKS:*\\n` +\n  `\u2022 \\`DONE TASK-20240115-0001\\`\\n` +\n  `\u2022 \\`done <task_id>\\`\\n\\n` +\n  `*\ud83d\udccb VIEW TASKS:*\\n` +\n  `\u2022 \\`/tasks\\` - List all pending\\n` +\n  `\u2022 \\`/status\\` - Quick summary\\n\\n` +\n  `*\ud83d\udcca FORMAT:*\\n` +\n  `\\`/add Title | Priority | Due Date\\`\\n\\n` +\n  `*PRIORITIES:* High \ud83d\udd34 | Medium \ud83d\udfe0 | Low \ud83d\udfe2\\n\\n` +\n  `_Reminders sent every 3-4 hours until complete!_`;\n\nreturn {\n  json: {\n    message: message,\n    chat_id: chatId\n  }\n};"
+      },
+      "id": "484fde8c-942a-4ff1-a5fa-5b2d529bc351",
+      "name": "Format Help Message",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        448,
+        768
+      ]
+    },
+    {
+      "parameters": {
+        "chatId": "={{ $json.chat_id }}",
+        "text": "={{ $json.message }}",
+        "additionalFields": {
+          "parse_mode": "Markdown"
+        }
+      },
+      "id": "5f0f7fb1-f097-4763-98ba-4c18901a4a7e",
+      "name": "Send Help Message",
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        672,
+        768
+      ],
+      "webhookId": "3a07d4b0-48b3-4451-a533-a1302953801b",
+      "credentials": {
+        "telegramApi": {
+          "id": "YkS7zOFTxs7H0uW9",
+          "name": "Shaurya_Task_Aim"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "value": "YOUR_GOOGLE_SHEET_ID",
+          "mode": "id"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "Tasks",
+          "mode": "name"
+        },
+        "options": {}
+      },
+      "id": "6ec83232-93a3-4fff-97be-467352667ce8",
+      "name": "Fetch Tasks for Daily",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.5,
+      "position": [
+        16,
+        1600
+      ]
+    },
+    {
+      "parameters": {
+        "mode": "runOnceForEachItem",
+        "jsCode": "// Generate daily summary\nconst allTasks = $input.all();\nconst now = new Date();\n\nlet total = allTasks.length;\nlet pending = 0;\nlet inProgress = 0;\nlet completed = 0;\nlet overdue = 0;\nlet highPriority = 0;\nlet dueToday = 0;\n\nconst today = now.toISOString().split('T')[0];\n\nfor (const item of allTasks) {\n  const task = item.json;\n  \n  if (task.status === 'Completed') {\n    completed++;\n  } else if (task.status === 'In Progress') {\n    inProgress++;\n  } else {\n    pending++;\n  }\n  \n  if (task.status !== 'Completed' && task.priority === 'High') {\n    highPriority++;\n  }\n  \n  if (task.due_date) {\n    const dueDate = new Date(task.due_date.replace(' ', 'T'));\n    if (task.status !== 'Completed' && dueDate < now) {\n      overdue++;\n    }\n    if (task.due_date.startsWith(today)) {\n      dueToday++;\n    }\n  }\n}\n\n// Calculate completion rate\nconst completionRate = total > 0 ? Math.round((completed / total) * 100) : 0;\n\nconst message = `\u2600\ufe0f *GOOD MORNING, DHRUV!*\\n\\n` +\n  `\ud83d\udcca *DAILY TASK SUMMARY*\\n` +\n  `\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\\n\\n` +\n  `\ud83d\udccb *Total Tasks:* ${total}\\n` +\n  `\u23f3 *Pending:* ${pending}\\n` +\n  `\ud83d\udd04 *In Progress:* ${inProgress}\\n` +\n  `\u2705 *Completed:* ${completed}\\n\\n` +\n  `\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\\n\\n` +\n  `\ud83d\udd25 *NEEDS ATTENTION:*\\n` +\n  `\u2022 \ud83d\udd34 High Priority: ${highPriority}\\n` +\n  `\u2022 \u26a0\ufe0f Overdue: ${overdue}\\n` +\n  `\u2022 \ud83d\udcc5 Due Today: ${dueToday}\\n\\n` +\n  `\ud83d\udcc8 *Completion Rate:* ${completionRate}%\\n\\n` +\n  (overdue > 0 ? `_\u26a1 You have ${overdue} overdue task${overdue > 1 ? 's' : ''}!_\\n\\n` : '') +\n  `_Reply /tasks to see all pending tasks_`;\n\nreturn {\n  json: {\n    message: message,\n    chat_id: 'YOUR_DEFAULT_CHAT_ID',\n    stats: {\n      total, pending, inProgress, completed, overdue, highPriority, dueToday, completionRate\n    }\n  }\n};"
+      },
+      "id": "e6a2e84e-e859-4c1c-a606-0df2d41b18a4",
+      "name": "Generate Daily Summary",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        224,
+        1600
+      ]
+    },
+    {
+      "parameters": {
+        "chatId": "={{ $json.chat_id }}",
+        "text": "={{ $json.message }}",
+        "additionalFields": {
+          "parse_mode": "Markdown"
+        }
+      },
+      "id": "aa9426bb-cc84-4201-9150-0f8026e817f6",
+      "name": "Send Daily Summary",
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        448,
+        1600
+      ],
+      "webhookId": "1c1bdef2-4317-4789-a2f1-d1f3be2f4bc8",
+      "credentials": {
+        "telegramApi": {
+          "id": "YkS7zOFTxs7H0uW9",
+          "name": "Shaurya_Task_Aim"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "value": "YOUR_GOOGLE_SHEET_ID",
+          "mode": "id"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "Tasks",
+          "mode": "name"
+        },
+        "options": {}
+      },
+      "id": "14fb653d-8f58-4350-9fd3-4b921af5f158",
+      "name": "Fetch Tasks for Weekly",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.5,
+      "position": [
+        16,
+        2000
+      ]
+    },
+    {
+      "parameters": {
+        "mode": "runOnceForEachItem",
+        "jsCode": "// Generate weekly productivity report\nconst allTasks = $input.all();\nconst now = new Date();\nconst weekAgo = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000);\n\nlet completedThisWeek = 0;\nlet createdThisWeek = 0;\nlet totalReminders = 0;\nlet avgCompletionTime = 0;\nlet completionTimes = [];\n\nfor (const item of allTasks) {\n  const task = item.json;\n  \n  // Check if created this week\n  if (task.created_at) {\n    const created = new Date(task.created_at);\n    if (created >= weekAgo) {\n      createdThisWeek++;\n    }\n  }\n  \n  // Check if completed this week\n  if (task.completed_at && task.status === 'Completed') {\n    const completed = new Date(task.completed_at);\n    if (completed >= weekAgo) {\n      completedThisWeek++;\n      \n      // Calculate completion time\n      if (task.created_at) {\n        const created = new Date(task.created_at);\n        const hours = (completed - created) / (1000 * 60 * 60);\n        completionTimes.push(hours);\n      }\n    }\n  }\n  \n  totalReminders += parseInt(task.reminder_count) || 0;\n}\n\n// Calculate average completion time\nif (completionTimes.length > 0) {\n  avgCompletionTime = completionTimes.reduce((a, b) => a + b, 0) / completionTimes.length;\n}\n\n// Format average time\nlet avgTimeStr = '';\nif (avgCompletionTime > 24) {\n  avgTimeStr = Math.round(avgCompletionTime / 24) + ' days';\n} else {\n  avgTimeStr = Math.round(avgCompletionTime) + ' hours';\n}\n\n// Calculate productivity score (simple formula)\nconst productivityScore = createdThisWeek > 0 \n  ? Math.min(100, Math.round((completedThisWeek / createdThisWeek) * 100))\n  : 0;\n\nconst scoreEmoji = productivityScore >= 80 ? '\ud83c\udfc6' : productivityScore >= 60 ? '\ud83d\udc4d' : productivityScore >= 40 ? '\ud83d\udcc8' : '\ud83d\udcaa';\n\nconst message = `\ud83d\udcca *WEEKLY PRODUCTIVITY REPORT*\\n` +\n  `\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\\n` +\n  `*Week ending:* ${now.toLocaleDateString('en-IN')}\\n\\n` +\n  `\ud83d\udcdd *Tasks Created:* ${createdThisWeek}\\n` +\n  `\u2705 *Tasks Completed:* ${completedThisWeek}\\n` +\n  `\ud83d\udd14 *Total Reminders Sent:* ${totalReminders}\\n` +\n  `\u23f1\ufe0f *Avg Completion Time:* ${avgTimeStr || 'N/A'}\\n\\n` +\n  `${scoreEmoji} *Productivity Score:* ${productivityScore}%\\n\\n` +\n  `\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\\n\\n` +\n  (productivityScore >= 80 ? `\ud83c\udf89 _Excellent work this week!_` : \n   productivityScore >= 60 ? `\ud83d\udc4d _Good progress! Keep it up!_` :\n   productivityScore >= 40 ? `\ud83d\udcc8 _Room for improvement. You got this!_` :\n   `\ud83d\udcaa _Let's crush it next week!_`);\n\nreturn {\n  json: {\n    message: message,\n    chat_id: 'YOUR_DEFAULT_CHAT_ID',\n    stats: {\n      createdThisWeek, completedThisWeek, totalReminders, avgCompletionTime, productivityScore\n    }\n  }\n};"
+      },
+      "id": "4a512531-c3db-4abb-90c2-c18d38f5b2a6",
+      "name": "Generate Weekly Report",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        224,
+        2000
+      ]
+    },
+    {
+      "parameters": {
+        "chatId": "={{ $json.chat_id }}",
+        "text": "={{ $json.message }}",
+        "additionalFields": {
+          "parse_mode": "Markdown"
+        }
+      },
+      "id": "d0bc4b27-58d6-4f26-ac77-c996b7713826",
+      "name": "Send Weekly Report",
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        448,
+        2000
+      ],
+      "webhookId": "89c3d2cc-1b98-4059-941b-ec11e30474a5",
+      "credentials": {
+        "telegramApi": {
+          "id": "YkS7zOFTxs7H0uW9",
+          "name": "Shaurya_Task_Aim"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "content": "## \u2699\ufe0f CONFIGURATION CHECKLIST\n\n**REPLACE THESE VALUES:**\n\n\u2610 `YOUR_GOOGLE_SHEET_ID`\n   \u2192 Get from Sheet URL\n\n\u2610 `YOUR_CREDENTIAL_ID`\n   \u2192 Google Sheets OAuth\n\n\u2610 `YOUR_TELEGRAM_CREDENTIAL_ID`\n   \u2192 Telegram Bot API\n\n\u2610 `YOUR_DEFAULT_CHAT_ID`\n   \u2192 Your Telegram Chat ID\n\n\u2610 `YOUR_GMAIL_CREDENTIAL_ID`\n   \u2192 Gmail OAuth (optional)\n\n\u2610 `YOUR_EMAIL@gmail.com`\n   \u2192 Fallback email address",
+        "height": 524,
+        "width": 300,
+        "color": 7
+      },
+      "id": "376e14d5-c835-4497-bb5b-6f5f562c050c",
+      "name": "Sticky Note - Config",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -1328,
+        448
+      ]
+    },
+    {
+      "parameters": {
+        "content": "## \ud83d\udcf1 TELEGRAM COMMANDS\n\n**ADD TASK:**\n```\n/add Buy groceries | High | 2024-01-20\n```\n\n**COMPLETE TASK:**\n```\nDONE TASK-20240115-0001\ndone task-20240115-0001\n```\n\n**VIEW TASKS:**\n```\n/tasks\n/list\n```\n\n**GET STATUS:**\n```\n/status\n```\n\n**HELP:**\n```\n/help\n```",
+        "height": 688,
+        "width": 300,
+        "color": 2
+      },
+      "id": "9dc5d937-95a2-4190-8904-6dc5377021f1",
+      "name": "Sticky Note - Commands",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        1824,
+        208
+      ]
+    },
+    {
+      "parameters": {
+        "content": "## \ud83d\udd04 WORKFLOW FLOW\n\n**INPUT PATHS:**\n1. \ud83d\udcdd Form \u2192 Add Task\n2. \ud83d\udcac Telegram \u2192 Parse Command\n3. \u23f0 Manual \u2192 Test Task\n\n**REMINDER ENGINE:**\n- Every 3h + Every 4h\n- Fetch all tasks\n- Filter non-completed\n- Check duplicate window\n- Send reminders\n- Update counts\n- Email fallback if critical\n\n**DAILY/WEEKLY:**\n- 8 AM Daily Summary\n- Sunday 6 PM Weekly Report",
+        "height": 476,
+        "width": 280,
+        "color": 3
+      },
+      "id": "7bfd1c46-c721-41d7-b055-c61872040575",
+      "name": "Sticky Note - Flow",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        2144,
+        208
+      ]
+    }
+  ],
+  "connections": {
+    "Manual Trigger": {
+      "main": [
+        [
+          {
+            "node": "Manual Task Data",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Manual Task Data": {
+      "main": [
+        [
+          {
+            "node": "Prepare New Task",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Task Form": {
+      "main": [
+        [
+          {
+            "node": "Format Form Input",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Format Form Input": {
+      "main": [
+        [
+          {
+            "node": "Prepare New Task",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Telegram Trigger": {
+      "main": [
+        [
+          {
+            "node": "Parse Telegram Command",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Parse Telegram Command": {
+      "main": [
+        [
+          {
+            "node": "Route Telegram Action",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Route Telegram Action": {
+      "main": [
+        [
+          {
+            "node": "Prepare New Task",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Fetch Tasks for Complete",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Fetch Tasks for List",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Fetch Tasks for List",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Format Help Message",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Prepare New Task": {
+      "main": [
+        [
+          {
+            "node": "Insert Task to Sheet",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Insert Task to Sheet": {
+      "main": [
+        [
+          {
+            "node": "Format New Task Message",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Format New Task Message": {
+      "main": [
+        [
+          {
+            "node": "Send New Task Confirmation",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Fetch Tasks for Complete": {
+      "main": [
+        [
+          {
+            "node": "Find Task to Complete",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Mark Task Complete": {
+      "main": [
+        [
+          {
+            "node": "Format Complete Message",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Format Complete Message": {
+      "main": [
+        [
+          {
+            "node": "Send Complete Confirmation",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Fetch Tasks for List": {
+      "main": [
+        [
+          {
+            "node": "Format Task List",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Format Task List": {
+      "main": [
+        [
+          {
+            "node": "Send Task List",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Format Help Message": {
+      "main": [
+        [
+          {
+            "node": "Send Help Message",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Every 3 Hours": {
+      "main": [
+        [
+          {
+            "node": "Tag Reminder Source",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Every 4 Hours": {
+      "main": [
+        [
+          {
+            "node": "Tag Reminder Source",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Tag Reminder Source": {
+      "main": [
+        [
+          {
+            "node": "Fetch All Tasks",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Fetch All Tasks": {
+      "main": [
+        [
+          {
+            "node": "Filter Tasks Needing Reminder",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Filter Tasks Needing Reminder": {
+      "main": [
+        [
+          {
+            "node": "Has Tasks to Remind?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Has Tasks to Remind?": {
+      "main": [
+        [
+          {
+            "node": "Format Reminder Message",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Format Reminder Message": {
+      "main": [
+        [
+          {
+            "node": "Send Reminder Telegram",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Send Reminder Telegram": {
+      "main": [
+        [
+          {
+            "node": "Update Reminder Count",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Update Reminder Count": {
+      "main": [
+        [
+          {
+            "node": "Need Email Fallback?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Need Email Fallback?": {
+      "main": [
+        [
+          {
+            "node": "Send Email Fallback",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Daily 8 AM Summary": {
+      "main": [
+        [
+          {
+            "node": "Fetch Tasks for Daily",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Fetch Tasks for Daily": {
+      "main": [
+        [
+          {
+            "node": "Generate Daily Summary",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Generate Daily Summary": {
+      "main": [
+        [
+          {
+            "node": "Send Daily Summary",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Weekly Sunday 6 PM": {
+      "main": [
+        [
+          {
+            "node": "Fetch Tasks for Weekly",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Fetch Tasks for Weekly": {
+      "main": [
+        [
+          {
+            "node": "Generate Weekly Report",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Generate Weekly Report": {
+      "main": [
+        [
+          {
+            "node": "Send Weekly Report",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1",
+    "availableInMCP": false
+  },
+  "staticData": null,
+  "meta": null,
+  "pinData": {},
+  "versionId": "e1695978-822e-4704-8b2e-39f627e76865",
+  "activeVersionId": null,
+  "triggerCount": 0,
+  "shared": [
+    {
+      "updatedAt": "2026-01-10T16:22:18.739Z",
+      "createdAt": "2026-01-10T16:22:18.739Z",
+      "role": "workflow:owner",
+      "workflowId": "o9I1NEZ4clv3mKZF",
+      "projectId": "DT8YjHwLZsQjJqVc"
+    }
+  ],
+  "activeVersion": null,
+  "tags": []
+}

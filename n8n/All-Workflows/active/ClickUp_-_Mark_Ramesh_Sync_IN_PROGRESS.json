@@ -1,0 +1,245 @@
+{
+  "updatedAt": "2026-02-03T12:40:55.902Z",
+  "createdAt": "2026-02-03T12:37:51.094Z",
+  "id": "2BLDg2txnM07LeVx",
+  "name": "ClickUp - Mark Ramesh + Sync IN PROGRESS",
+  "active": true,
+  "isArchived": false,
+  "nodes": [
+    {
+      "id": "getTasks",
+      "name": "Get Tasks",
+      "type": "n8n-nodes-base.clickUp",
+      "typeVersion": 1,
+      "position": [
+        -200,
+        0
+      ],
+      "parameters": {
+        "resource": "task",
+        "operation": "getAll",
+        "list": {
+          "__rl": true,
+          "mode": "id",
+          "value": "90161334354"
+        },
+        "returnAll": true
+      }
+    },
+    {
+      "id": "filter",
+      "name": "Tasks to Move",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        0,
+        0
+      ],
+      "parameters": {
+        "jsCode": "const tasks = $input.all();\nconst toMove = ['Build: Ramesh workflow', 'Build: n8n + ClickUp sync'];\nreturn tasks\n  .filter(t => toMove.includes(t.json.name))\n  .map(t => ({ json: { taskId: t.json.id, newStatus: 'IN PROGRESS' } }));"
+      }
+    },
+    {
+      "id": "update",
+      "name": "Update Status",
+      "type": "n8n-nodes-base.clickUp",
+      "typeVersion": 1,
+      "position": [
+        200,
+        0
+      ],
+      "parameters": {
+        "resource": "task",
+        "operation": "update",
+        "id": "={{ $json.taskId }}",
+        "updateFields": {
+          "status": "={{ $json.newStatus }}"
+        }
+      }
+    },
+    {
+      "id": "execTrigger",
+      "name": "Execute Workflow Trigger",
+      "type": "n8n-nodes-base.executeWorkflowTrigger",
+      "typeVersion": 1.1,
+      "position": [
+        -400,
+        0
+      ],
+      "parameters": {
+        "inputSource": "passthrough"
+      }
+    }
+  ],
+  "connections": {
+    "Get Tasks": {
+      "main": [
+        [
+          {
+            "node": "Tasks to Move",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Tasks to Move": {
+      "main": [
+        [
+          {
+            "node": "Update Status",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Execute Workflow Trigger": {
+      "main": [
+        [
+          {
+            "node": "Get Tasks",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1",
+    "saveDataErrorExecution": "all",
+    "saveDataSuccessExecution": "all",
+    "saveManualExecutions": true,
+    "saveExecutionProgress": true,
+    "callerPolicy": "workflowsFromSameOwner",
+    "availableInMCP": false
+  },
+  "staticData": null,
+  "meta": null,
+  "pinData": null,
+  "versionId": "066de9bc-b204-4be2-be40-23e7c0eace87",
+  "activeVersionId": "066de9bc-b204-4be2-be40-23e7c0eace87",
+  "triggerCount": 0,
+  "shared": [
+    {
+      "updatedAt": "2026-02-03T12:37:51.098Z",
+      "createdAt": "2026-02-03T12:37:51.098Z",
+      "role": "workflow:owner",
+      "workflowId": "2BLDg2txnM07LeVx",
+      "projectId": "DT8YjHwLZsQjJqVc"
+    }
+  ],
+  "activeVersion": {
+    "updatedAt": "2026-02-03T12:40:55.904Z",
+    "createdAt": "2026-02-03T12:40:55.904Z",
+    "versionId": "066de9bc-b204-4be2-be40-23e7c0eace87",
+    "workflowId": "2BLDg2txnM07LeVx",
+    "nodes": [
+      {
+        "id": "getTasks",
+        "name": "Get Tasks",
+        "type": "n8n-nodes-base.clickUp",
+        "typeVersion": 1,
+        "position": [
+          -200,
+          0
+        ],
+        "parameters": {
+          "resource": "task",
+          "operation": "getAll",
+          "list": {
+            "__rl": true,
+            "mode": "id",
+            "value": "90161334354"
+          },
+          "returnAll": true
+        }
+      },
+      {
+        "id": "filter",
+        "name": "Tasks to Move",
+        "type": "n8n-nodes-base.code",
+        "typeVersion": 2,
+        "position": [
+          0,
+          0
+        ],
+        "parameters": {
+          "jsCode": "const tasks = $input.all();\nconst toMove = ['Build: Ramesh workflow', 'Build: n8n + ClickUp sync'];\nreturn tasks\n  .filter(t => toMove.includes(t.json.name))\n  .map(t => ({ json: { taskId: t.json.id, newStatus: 'IN PROGRESS' } }));"
+        }
+      },
+      {
+        "id": "update",
+        "name": "Update Status",
+        "type": "n8n-nodes-base.clickUp",
+        "typeVersion": 1,
+        "position": [
+          200,
+          0
+        ],
+        "parameters": {
+          "resource": "task",
+          "operation": "update",
+          "id": "={{ $json.taskId }}",
+          "updateFields": {
+            "status": "={{ $json.newStatus }}"
+          }
+        }
+      },
+      {
+        "id": "execTrigger",
+        "name": "Execute Workflow Trigger",
+        "type": "n8n-nodes-base.executeWorkflowTrigger",
+        "typeVersion": 1.1,
+        "position": [
+          -400,
+          0
+        ],
+        "parameters": {
+          "inputSource": "passthrough"
+        }
+      }
+    ],
+    "connections": {
+      "Get Tasks": {
+        "main": [
+          [
+            {
+              "node": "Tasks to Move",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Tasks to Move": {
+        "main": [
+          [
+            {
+              "node": "Update Status",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Execute Workflow Trigger": {
+        "main": [
+          [
+            {
+              "node": "Get Tasks",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      }
+    },
+    "authors": "Dhruv Tomar",
+    "name": null,
+    "description": null,
+    "autosaved": false
+  },
+  "tags": []
+}

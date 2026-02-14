@@ -1,0 +1,94 @@
+{
+  "updatedAt": "2025-09-30T15:20:01.000Z",
+  "createdAt": "2025-09-30T15:20:01.738Z",
+  "id": "Qwuopz6J2M0QVeuR",
+  "name": "Linkedin Lead Engine",
+  "active": false,
+  "isArchived": false,
+  "nodes": [
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [
+        0,
+        0
+      ],
+      "id": "bde5283f-f0e1-4642-8201-4fbd9a81b316",
+      "name": "When clicking \u2018Execute workflow\u2019"
+    },
+    {
+      "parameters": {
+        "tool": "sendLinkedinInvitation",
+        "profile": "https://www.linkedin.com/search/results/people/?keywords=saas+founder&origin=FACETED_SEARCH&network=%5B%22S%22%5D",
+        "message": "Hi ",
+        "additionalOptions": {}
+      },
+      "type": "n8n-nodes-base.uproc",
+      "typeVersion": 1,
+      "position": [
+        208,
+        0
+      ],
+      "id": "8ed45932-9abb-46d9-9c9b-0c307137e868",
+      "name": "uProc"
+    },
+    {
+      "parameters": {
+        "additionalFields": {}
+      },
+      "type": "n8n-nodes-base.linkedIn",
+      "typeVersion": 1,
+      "position": [
+        416,
+        0
+      ],
+      "id": "bae42024-1947-4b13-9190-16265cba72fa",
+      "name": "Create a post"
+    }
+  ],
+  "connections": {
+    "When clicking \u2018Execute workflow\u2019": {
+      "main": [
+        [
+          {
+            "node": "uProc",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "uProc": {
+      "main": [
+        [
+          {
+            "node": "Create a post",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "staticData": null,
+  "meta": null,
+  "pinData": {},
+  "versionId": "99f26ad6-7ea1-496f-a44a-4f2a0ca01383",
+  "activeVersionId": null,
+  "triggerCount": 0,
+  "shared": [
+    {
+      "updatedAt": "2025-09-30T15:20:01.743Z",
+      "createdAt": "2025-09-30T15:20:01.743Z",
+      "role": "workflow:owner",
+      "workflowId": "Qwuopz6J2M0QVeuR",
+      "projectId": "DT8YjHwLZsQjJqVc"
+    }
+  ],
+  "activeVersion": null,
+  "tags": []
+}

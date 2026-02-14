@@ -1,0 +1,503 @@
+{
+  "updatedAt": "2026-01-07T19:32:29.159Z",
+  "createdAt": "2025-12-30T12:50:17.419Z",
+  "id": "kEhSnpf6zIvTVVnw",
+  "name": "Smart Inbox \u2192 Action Assistant",
+  "active": false,
+  "isArchived": false,
+  "nodes": [
+    {
+      "parameters": {
+        "pollTimes": {
+          "item": [
+            {
+              "mode": "everyMinute"
+            }
+          ]
+        },
+        "filters": {
+          "labelIds": [
+            "INBOX"
+          ]
+        },
+        "downloadAttachments": false
+      },
+      "id": "1",
+      "name": "Gmail Trigger",
+      "type": "n8n-nodes-base.gmailTrigger",
+      "typeVersion": 1,
+      "position": [
+        0,
+        0
+      ],
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "placeholder_creds",
+          "name": "Gmail Account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "sender",
+              "name": "sender",
+              "value": "={{ $json.from.value[0].address }}",
+              "type": "string"
+            },
+            {
+              "id": "subject",
+              "name": "subject",
+              "value": "={{ $json.subject }}",
+              "type": "string"
+            },
+            {
+              "id": "cleanBody",
+              "name": "cleanBody",
+              "value": "={{ $json.text.split(/--\\s*|From:|________________________________|Sent from my/).shift().trim() }}",
+              "type": "string"
+            },
+            {
+              "id": "timestamp",
+              "name": "timestamp",
+              "value": "={{ $json.date }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "2",
+      "name": "Email Pre-processing",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        220,
+        0
+      ]
+    },
+    {
+      "parameters": {
+        "modelId": "gpt-4o-mini",
+        "messages": {
+          "values": [
+            {
+              "content": "=Classify this email:\nSubject: {{ $json.subject }}\nBody: {{ $json.cleanBody }}\n\nCategories:\n1. Lead / Sales Inquiry\n2. Follow-up Required\n3. Invoice / Payment\n4. Meeting / Scheduling\n5. Support / Issue\n6. FYI / No Action"
+            }
+          ]
+        },
+        "jsonFormatting": true,
+        "options": {
+          "systemMessage": "You are an inbox assistant. Return JSON with keys: \n- intent_category (string)\n- urgency_level (High, Medium, or Low)\n- action_required (Yes or No)\n- suggested_reply (string - short professional draft)"
+        }
+      },
+      "id": "3",
+      "name": "AI Intent Classification",
+      "type": "@n8n/n8n-nodes-langchain.chainLlm",
+      "typeVersion": 1.4,
+      "position": [
+        440,
+        0
+      ],
+      "credentials": {
+        "openAiApi": {
+          "id": "placeholder_openai",
+          "name": "OpenAI"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "rules": {
+          "values": [
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": false,
+                  "leftValue": "",
+                  "type": "and"
+                },
+                "conditions": [
+                  {
+                    "id": "8782079f-0c9f-431e-841f-825f75e6d07e",
+                    "leftValue": "={{ $json.intent_category }}",
+                    "operator": "regex",
+                    "rightValue": "Lead|Follow-up|Invoice|Support",
+                    "negate": false
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameNextTarget": "Important"
+            }
+          ]
+        },
+        "fallbackOutput": 1
+      },
+      "id": "4",
+      "name": "Decision Logic",
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3.1,
+      "position": [
+        700,
+        0
+      ]
+    },
+    {
+      "parameters": {
+        "resource": "message",
+        "operation": "addLabels",
+        "messageId": "={{ $('Gmail Trigger').item.json.id }}",
+        "labelIds": [
+          "AI_Action_Required"
+        ]
+      },
+      "id": "5",
+      "name": "Label Important",
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.1,
+      "position": [
+        950,
+        -100
+      ],
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "placeholder_creds",
+          "name": "Gmail Account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "resource": "draft",
+        "subject": "=Re: {{ $('Email Pre-processing').item.json.subject }}",
+        "emailBody": "={{ $('AI Intent Classification').item.json.suggested_reply }}",
+        "threadId": "={{ $('Gmail Trigger').item.json.threadId }}",
+        "toAddresses": [
+          "={{ $('Email Pre-processing').item.json.sender }}"
+        ]
+      },
+      "id": "6",
+      "name": "Create Draft Reply",
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.1,
+      "position": [
+        1150,
+        -100
+      ],
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "placeholder_creds",
+          "name": "Gmail Account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "resource": "message",
+        "operation": "addLabels",
+        "messageId": "={{ $('Gmail Trigger').item.json.id }}",
+        "labelIds": [
+          "AI_FYI"
+        ]
+      },
+      "id": "7",
+      "name": "Label FYI",
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.1,
+      "position": [
+        950,
+        150
+      ],
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "placeholder_creds",
+          "name": "Gmail Account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "type": "and"
+          },
+          "conditions": [
+            {
+              "id": "action_check",
+              "leftValue": "={{ $('AI Intent Classification').item.json.action_required }}",
+              "operator": "equals",
+              "rightValue": "Yes"
+            }
+          ],
+          "combinator": "and"
+        }
+      },
+      "id": "8",
+      "name": "Action Required?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2,
+      "position": [
+        1400,
+        0
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "append",
+        "documentId": {
+          "__rl": true,
+          "value": "PLACEHOLDER_SHEET_ID",
+          "mode": "id"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "Sheet1",
+          "mode": "name"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Sender": "={{ $('Email Pre-processing').item.json.sender }}",
+            "Subject": "={{ $('Email Pre-processing').item.json.subject }}",
+            "Intent Category": "={{ $('AI Intent Classification').item.json.intent_category }}",
+            "Urgency": "={{ $('AI Intent Classification').item.json.urgency_level }}",
+            "Suggested Action": "={{ $('AI Intent Classification').item.json.suggested_reply }}",
+            "Date": "={{ $('Email Pre-processing').item.json.timestamp }}"
+          },
+          "matchingColumns": []
+        },
+        "options": {}
+      },
+      "id": "9",
+      "name": "Log Task to Sheets",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.5,
+      "position": [
+        1650,
+        -50
+      ],
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "placeholder_creds",
+          "name": "Google Sheets"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "type": "and"
+          },
+          "conditions": [
+            {
+              "id": "urgency_check",
+              "leftValue": "={{ $('AI Intent Classification').item.json.urgency_level }}",
+              "operator": "equals",
+              "rightValue": "High"
+            }
+          ],
+          "combinator": "and"
+        }
+      },
+      "id": "10",
+      "name": "Is High Priority?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2,
+      "position": [
+        1900,
+        0
+      ]
+    },
+    {
+      "parameters": {
+        "channel": "#important-alerts",
+        "text": "=\u26a0\ufe0f High-priority email detected from {{ $('Email Pre-processing').item.json.sender }} regarding {{ $('AI Intent Classification').item.json.intent_category }}",
+        "otherOptions": {}
+      },
+      "id": "11",
+      "name": "Notify Slack",
+      "type": "n8n-nodes-base.slack",
+      "typeVersion": 2.2,
+      "position": [
+        2150,
+        -50
+      ],
+      "credentials": {
+        "slackApi": {
+          "id": "placeholder_creds",
+          "name": "Slack"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "content": "### \ud83d\udee0 Setup Required\n- Configure Gmail OAuth2\n- Create Labels: `AI_Action_Required` & `AI_FYI` in Gmail\n- Provide OpenAI API Key for the LLM node\n- Set the Spreadsheet ID for task logging\n- Configure Slack webhook/app for alerts\n\nThis workflow processes new emails, drafts replies, logs tasks to Sheets, and alerts Slack for High urgency items.",
+        "height": 284,
+        "width": 384,
+        "color": 6
+      },
+      "id": "note1",
+      "name": "Sticky Note",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        0,
+        -350
+      ]
+    }
+  ],
+  "connections": {
+    "Gmail Trigger": {
+      "main": [
+        [
+          {
+            "node": "Email Pre-processing",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Email Pre-processing": {
+      "main": [
+        [
+          {
+            "node": "AI Intent Classification",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "AI Intent Classification": {
+      "main": [
+        [
+          {
+            "node": "Decision Logic",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Decision Logic": {
+      "main": [
+        [
+          {
+            "node": "Label Important",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Label FYI",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Label Important": {
+      "main": [
+        [
+          {
+            "node": "Create Draft Reply",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Create Draft Reply": {
+      "main": [
+        [
+          {
+            "node": "Action Required?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Label FYI": {
+      "main": [
+        [
+          {
+            "node": "Action Required?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Action Required?": {
+      "main": [
+        [
+          {
+            "node": "Log Task to Sheets",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Log Task to Sheets": {
+      "main": [
+        [
+          {
+            "node": "Is High Priority?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Is High Priority?": {
+      "main": [
+        [
+          {
+            "node": "Notify Slack",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1",
+    "saveManualExecutions": true,
+    "saveDataSuccessExecution": "all",
+    "saveExecutionProgress": true,
+    "saveDataErrorExecution": "all",
+    "timezone": "America/New_York",
+    "callerPolicy": "workflowsFromSameOwner",
+    "availableInMCP": false
+  },
+  "staticData": null,
+  "meta": null,
+  "pinData": null,
+  "versionId": "5c9ec737-aca0-443a-98c7-f380afec60f6",
+  "activeVersionId": null,
+  "triggerCount": 0,
+  "shared": [
+    {
+      "updatedAt": "2025-12-30T12:50:17.423Z",
+      "createdAt": "2025-12-30T12:50:17.423Z",
+      "role": "workflow:owner",
+      "workflowId": "kEhSnpf6zIvTVVnw",
+      "projectId": "DT8YjHwLZsQjJqVc"
+    }
+  ],
+  "activeVersion": null,
+  "tags": []
+}

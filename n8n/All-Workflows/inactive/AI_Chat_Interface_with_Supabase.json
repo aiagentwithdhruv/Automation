@@ -1,0 +1,251 @@
+{
+  "updatedAt": "2026-01-10T15:42:30.616Z",
+  "createdAt": "2026-01-10T15:36:53.112Z",
+  "id": "gAQU3DZk9jIFDZP6",
+  "name": "AI Chat Interface with Supabase",
+  "active": false,
+  "isArchived": false,
+  "nodes": [
+    {
+      "parameters": {
+        "options": {}
+      },
+      "id": "d1a2b3c4-5678-90ab-cdef-111111111111",
+      "name": "When chat message received",
+      "type": "@n8n/n8n-nodes-langchain.chatTrigger",
+      "typeVersion": 1.1,
+      "position": [
+        432,
+        304
+      ],
+      "webhookId": "chat-trigger-webhook"
+    },
+    {
+      "parameters": {
+        "options": {
+          "systemMessage": "You are a helpful AI assistant. Be concise, friendly, and informative in your responses. Help users with their questions and tasks."
+        }
+      },
+      "id": "d1a2b3c4-5678-90ab-cdef-222222222222",
+      "name": "AI Agent",
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 1.7,
+      "position": [
+        688,
+        304
+      ]
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "id": "d1a2b3c4-5678-90ab-cdef-333333333333",
+      "name": "OpenAI Chat Model",
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1,
+      "position": [
+        528,
+        528
+      ],
+      "credentials": {
+        "openAiApi": {
+          "id": "openai-credentials",
+          "name": "OpenAI API"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "sessionIdType": "customKey",
+        "sessionKey": "={{ $('When chat message received').item.json.sessionId }}",
+        "contextWindowLength": 10
+      },
+      "id": "d1a2b3c4-5678-90ab-cdef-444444444444",
+      "name": "Supabase Chat Memory",
+      "type": "@n8n/n8n-nodes-langchain.memoryPostgresChat",
+      "typeVersion": 1.3,
+      "position": [
+        720,
+        528
+      ],
+      "credentials": {
+        "postgres": {
+          "id": "supabase-postgres",
+          "name": "Supabase Postgres"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "insert"
+      },
+      "id": "d1a2b3c4-5678-90ab-cdef-555555555555",
+      "name": "Log to Supabase",
+      "type": "n8n-nodes-base.supabase",
+      "typeVersion": 1,
+      "position": [
+        960,
+        304
+      ],
+      "credentials": {
+        "supabaseApi": {
+          "id": "supabase-api",
+          "name": "Supabase API"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "content": "## \ud83d\ude80 AI Chat Interface with Supabase\n\nThis workflow creates a simple chat interface powered by an AI agent with conversation memory stored in Supabase.\n\n### How it works:\n1. **Chat Trigger**: Receives messages from the n8n chat widget\n2. **AI Agent**: Processes the message using OpenAI\n3. **Supabase Memory**: Stores conversation history for context\n4. **Chat Logging**: Saves all interactions to Supabase for analytics",
+        "height": 408,
+        "width": 320,
+        "color": 4
+      },
+      "id": "d1a2b3c4-5678-90ab-cdef-666666666666",
+      "name": "Sticky Note - Overview",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -144,
+        64
+      ]
+    },
+    {
+      "parameters": {
+        "content": "## \u2699\ufe0f Setup Required\n\n### 1. OpenAI Credentials\n- Add your OpenAI API key in credentials\n\n### 2. Supabase Setup\n- Create a Supabase project\n- Add Supabase API credentials\n- Add Postgres credentials (connection string from Supabase)\n\n### 3. Database Tables\nCreate these tables in Supabase:\n\n```sql\n-- Chat histories table (for memory)\nCREATE TABLE n8n_chat_histories (\n  id SERIAL PRIMARY KEY,\n  session_id TEXT NOT NULL,\n  message JSONB NOT NULL,\n  created_at TIMESTAMP DEFAULT NOW()\n);\n\n-- Chat logs table (for analytics)\nCREATE TABLE chat_logs (\n  id SERIAL PRIMARY KEY,\n  session_id TEXT,\n  user_message TEXT,\n  ai_response TEXT,\n  created_at TIMESTAMP DEFAULT NOW()\n);\n```",
+        "height": 480,
+        "width": 380,
+        "color": 6
+      },
+      "id": "d1a2b3c4-5678-90ab-cdef-777777777777",
+      "name": "Sticky Note - Setup",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        1152,
+        128
+      ]
+    },
+    {
+      "parameters": {
+        "content": "## \ud83d\udcac Chat Trigger\n\nThis node creates a chat widget that can be embedded in your application or accessed directly via the n8n interface.\n\nThe sessionId is automatically generated to maintain conversation context.",
+        "width": 260,
+        "color": 3
+      },
+      "id": "d1a2b3c4-5678-90ab-cdef-888888888888",
+      "name": "Sticky Note - Trigger",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        192,
+        480
+      ]
+    },
+    {
+      "parameters": {
+        "content": "## \ud83e\udd16 AI Agent\n\nThe AI Agent processes user messages using:\n- **OpenAI GPT-4o-mini**: For generating responses\n- **Supabase Memory**: To remember conversation context\n\nYou can customize the system message to change the AI's personality.",
+        "height": 180,
+        "width": 260,
+        "color": 5
+      },
+      "id": "d1a2b3c4-5678-90ab-cdef-999999999999",
+      "name": "Sticky Note - Agent",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        464,
+        80
+      ]
+    },
+    {
+      "parameters": {
+        "content": "## \ud83d\udcca Chat Logging\n\nAll conversations are logged to Supabase for:\n- Analytics and insights\n- Conversation history review\n- Debugging and improvement\n\n**Note**: Configure your Supabase API credentials to enable this feature.",
+        "height": 180,
+        "width": 260,
+        "color": 7
+      },
+      "id": "d1a2b3c4-5678-90ab-cdef-aaaaaaaaaaaa",
+      "name": "Sticky Note - Logging",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        912,
+        480
+      ]
+    }
+  ],
+  "connections": {
+    "When chat message received": {
+      "main": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "AI Agent": {
+      "main": [
+        [
+          {
+            "node": "Log to Supabase",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Supabase Chat Memory": {
+      "ai_memory": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_memory",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1",
+    "saveManualExecutions": true,
+    "saveDataSuccessExecution": "all",
+    "saveExecutionProgress": true,
+    "saveDataErrorExecution": "all",
+    "errorWorkflow": "",
+    "timezone": "America/New_York",
+    "callerPolicy": "workflowsFromSameOwner",
+    "availableInMCP": false
+  },
+  "staticData": null,
+  "meta": null,
+  "pinData": {},
+  "versionId": "f39c75cf-3349-4e77-897b-1fb256a1db28",
+  "activeVersionId": null,
+  "triggerCount": 0,
+  "shared": [
+    {
+      "updatedAt": "2026-01-10T15:36:53.115Z",
+      "createdAt": "2026-01-10T15:36:53.115Z",
+      "role": "workflow:owner",
+      "workflowId": "gAQU3DZk9jIFDZP6",
+      "projectId": "DT8YjHwLZsQjJqVc"
+    }
+  ],
+  "activeVersion": null,
+  "tags": []
+}

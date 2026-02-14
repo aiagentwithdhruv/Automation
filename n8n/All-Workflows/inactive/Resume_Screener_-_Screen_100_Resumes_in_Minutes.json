@@ -1,0 +1,898 @@
+{
+  "updatedAt": "2026-01-07T20:05:48.301Z",
+  "createdAt": "2026-01-07T20:05:33.904Z",
+  "id": "vTn7TYjIA9Up04Se",
+  "name": "Resume Screener - Screen 100 Resumes in Minutes",
+  "active": false,
+  "isArchived": false,
+  "nodes": [
+    {
+      "parameters": {
+        "content": "## MULTI-SOURCE INPUT\n\n**Flexibility is key** - Accept resumes from:\n- ATS webhook submissions\n- Email attachments\n- Google Drive folder uploads\n\nAll sources funnel into one standardized process."
+      },
+      "id": "e0eca0f1-a26a-490b-8394-e97efa06850f",
+      "name": "MULTI-SOURCE: ATS webhook, email, Drive folder. All roads lead here.",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -1536,
+        560
+      ]
+    },
+    {
+      "parameters": {
+        "content": "## STRUCTURE DATA\n\n**AI extracts better than regex** - Handles any resume format:\n- PDF, DOCX, TXT\n- Different layouts and styles\n- Structured extraction of key info\n\nNo manual parsing needed."
+      },
+      "id": "5f9d1090-16f4-40d7-8d93-49f2d8bfc82e",
+      "name": "STRUCTURE DATA: AI extracts better than regex. Handles any format.",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -2112,
+        496
+      ]
+    },
+    {
+      "parameters": {
+        "content": "## OBJECTIVE SCORING\n\n**Score against requirements** - Reduce unconscious bias:\n- Match skills to job requirements\n- Quantifiable scoring criteria\n- Consistent evaluation process\n\nFair and transparent screening."
+      },
+      "id": "17e867f8-e029-4453-8fe8-7c127429ef75",
+      "name": "OBJECTIVE FIRST: Score against requirements. Reduce unconscious bias.",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -2080,
+        -320
+      ]
+    },
+    {
+      "parameters": {
+        "content": "## THREE BUCKETS\n\n**Yes, Maybe, No** - Clear categorization:\n- **Shortlist**: Strong match, proceed to interview\n- **Maybe**: Borderline, needs human review\n- **Reject**: Not a fit for this role\n\nMaybe = human decision needed."
+      },
+      "id": "3e552bbd-2b40-4ae3-99f5-08ee776afe29",
+      "name": "THREE BUCKETS: Yes, Maybe, No. Maybe = human decision needed.",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -2592,
+        480
+      ]
+    },
+    {
+      "parameters": {
+        "content": "## DELAY REJECTION\n\n**Wait 24-48 hours** before sending rejection:\n- Instant rejection feels cold and automated\n- Shows respect for candidate effort\n- Allows time for human override if needed\n\nBetter candidate experience."
+      },
+      "id": "caad2b33-6e62-4444-8161-2bd1131a082d",
+      "name": "DELAY REJECTION: Wait 24-48 hrs. Instant rejection feels cold.",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -1584,
+        -240
+      ]
+    },
+    {
+      "parameters": {
+        "content": "## TALENT POOL\n\n**Rejected today \u2260 rejected forever**\n- Store all candidate data\n- Build searchable talent database\n- Re-engage for future roles\n\nToday's \"no\" could be tomorrow's perfect fit."
+      },
+      "id": "974b8bef-6377-4eee-b7d3-c3cfc0912eaa",
+      "name": "TALENT POOL: Rejected today \u2260 rejected forever. Store for future roles.",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -2608,
+        -320
+      ]
+    },
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "a2f4096c-4e23-4e88-a7e7-a228d703b9c7",
+        "options": {}
+      },
+      "id": "6ac0c3c5-4903-48ed-af24-faaef0a69d55",
+      "name": "Webhook - ATS Application",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2.1,
+      "position": [
+        -2448,
+        96
+      ],
+      "webhookId": "a2f4096c-4e23-4e88-a7e7-a228d703b9c7"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "id-1",
+              "name": "job_id",
+              "value": "={{ $json.body.job_id }}",
+              "type": "string"
+            },
+            {
+              "id": "id-2",
+              "name": "candidate_name",
+              "value": "={{ $json.body.candidate_name }}",
+              "type": "string"
+            },
+            {
+              "id": "id-3",
+              "name": "candidate_email",
+              "value": "={{ $json.body.candidate_email }}",
+              "type": "string"
+            },
+            {
+              "id": "id-4",
+              "name": "resume_url",
+              "value": "={{ $json.body.resume_url }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "c8a8de9b-e2ed-47ad-b74f-42b912233064",
+      "name": "Workflow Configuration",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        -2224,
+        96
+      ]
+    },
+    {
+      "parameters": {
+        "url": "={{ $json.resume_url }}",
+        "options": {
+          "response": {
+            "response": {
+              "responseFormat": "file"
+            }
+          }
+        }
+      },
+      "id": "620c4f12-da69-417b-9331-a5f034f6ab04",
+      "name": "Download Resume File",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.3,
+      "position": [
+        -2000,
+        96
+      ]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": false,
+            "leftValue": "",
+            "typeValidation": "loose"
+          },
+          "conditions": [
+            {
+              "id": "id-1",
+              "leftValue": "={{ $json.headers['content-type'] }}",
+              "rightValue": "application/pdf",
+              "operator": {
+                "type": "string",
+                "operation": "contains"
+              }
+            },
+            {
+              "id": "id-2",
+              "leftValue": "={{ $json.headers['content-type'] }}",
+              "rightValue": "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+              "operator": {
+                "type": "string",
+                "operation": "contains"
+              }
+            }
+          ],
+          "combinator": "or"
+        },
+        "options": {}
+      },
+      "id": "3079e618-8d2f-4427-bd20-fad2d0f3a1ec",
+      "name": "Check File Type",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [
+        -1776,
+        96
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "text",
+        "options": {}
+      },
+      "id": "bf9cf225-3c7f-4c6f-8247-30d30ec72bdd",
+      "name": "Extract Resume Text",
+      "type": "n8n-nodes-base.extractFromFile",
+      "typeVersion": 1.1,
+      "position": [
+        -1552,
+        96
+      ]
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "id": "f62b4aee-cd22-48f4-81d4-87062abc5e52",
+      "name": "Fetch Job Requirements",
+      "type": "n8n-nodes-base.mongoDb",
+      "typeVersion": 1.2,
+      "position": [
+        -1328,
+        32
+      ]
+    },
+    {
+      "parameters": {},
+      "id": "97080f96-d680-4c85-8f8d-9415a3ef81cf",
+      "name": "Combine Resume + Job Requirements",
+      "type": "n8n-nodes-base.merge",
+      "typeVersion": 3.2,
+      "position": [
+        -1104,
+        96
+      ]
+    },
+    {
+      "parameters": {
+        "jsonSchemaExample": "{\n  \"recommendation\": \"shortlist\",\n  \"overall_score\": 85,\n  \"skills_match\": 90,\n  \"experience_match\": 80,\n  \"education_match\": 85,\n  \"key_strengths\": [\"5+ years Python\", \"ML experience\", \"Team leadership\"],\n  \"concerns\": [\"No AWS certification\"],\n  \"summary\": \"Strong candidate with relevant experience\"\n}",
+        "autoFix": true
+      },
+      "id": "1ba21f82-d2bc-4979-b21b-c0b26d870776",
+      "name": "Structured Output Parser",
+      "type": "@n8n/n8n-nodes-langchain.outputParserStructured",
+      "typeVersion": 1.3,
+      "position": [
+        -880,
+        320
+      ]
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "mode": "list",
+          "value": "gpt-4.1-mini"
+        },
+        "builtInTools": {},
+        "options": {}
+      },
+      "id": "03d9b363-273f-4534-b6bd-c6e7065ceb6e",
+      "name": "OpenAI GPT-4",
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.3,
+      "position": [
+        -720,
+        528
+      ]
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=Resume Text:\n{{ $('Extract Resume Text').item.json.text }}\n\nJob Requirements:\n{{ $('Fetch Job Requirements').item.json.requirements }}\n\nPlease evaluate this candidate.",
+        "hasOutputParser": true,
+        "options": {
+          "systemMessage": "You are an expert resume screening agent. Analyze the candidate's resume against the job requirements and provide a structured evaluation.\n\nEvaluate the candidate on:\n1. Skills match (0-100)\n2. Experience match (0-100)\n3. Education match (0-100)\n4. Overall fit (0-100)\n\nProvide:\n- recommendation: \"shortlist\", \"maybe\", or \"reject\"\n- overall_score: numeric score\n- skills_match, experience_match, education_match: numeric scores\n- key_strengths: array of strengths\n- concerns: array of concerns\n- summary: brief evaluation summary\n\nBe objective and focus on job-relevant qualifications."
+        }
+      },
+      "id": "0a466da2-2a4b-4270-bb70-e793217d071b",
+      "name": "AI Screening Agent",
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 3.1,
+      "position": [
+        -784,
+        96
+      ]
+    },
+    {
+      "parameters": {
+        "rules": {
+          "values": [
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict"
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $json.recommendation }}",
+                    "rightValue": "shortlist",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "Shortlist"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict"
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $json.recommendation }}",
+                    "rightValue": "maybe",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "Maybe"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict"
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $json.recommendation }}",
+                    "rightValue": "reject",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "Reject"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "0fba5cfe-3eeb-4b24-af2e-57ee2591451b",
+      "name": "Route by Recommendation",
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3.4,
+      "position": [
+        -432,
+        80
+      ]
+    },
+    {
+      "parameters": {
+        "select": "channel",
+        "channelId": {
+          "__rl": true,
+          "mode": "name",
+          "value": "#hiring-alerts"
+        },
+        "text": "=\ud83c\udf1f *Strong Candidate Alert!*\n\n*Candidate:* {{ $('Workflow Configuration').item.json.candidate_name }}\n*Position:* {{ $('Fetch Job Requirements').item.json.job_title }}\n*Overall Score:* {{ $json.overall_score }}/100\n\n*Key Strengths:*\n{{ $json.key_strengths.join(\"\\n\u2022 \") }}\n\n*Summary:* {{ $json.summary }}\n\n\u2705 Recommended for interview",
+        "otherOptions": {}
+      },
+      "id": "201c5da2-4c0a-4164-b43d-fa679463359e",
+      "name": "Alert Hiring Manager",
+      "type": "n8n-nodes-base.slack",
+      "typeVersion": 2.4,
+      "position": [
+        -208,
+        -96
+      ],
+      "webhookId": "6b6a3f1f-e731-4225-af19-a7fefd3ffe9c"
+    },
+    {
+      "parameters": {
+        "sendTo": "={{ $('Workflow Configuration').item.json.candidate_email }}",
+        "subject": "Great News About Your Application!",
+        "message": "=<p>Dear {{ $('Workflow Configuration').item.json.candidate_name }},</p>\n\n<p>Thank you for applying to our {{ $('Fetch Job Requirements').item.json.job_title }} position. We're impressed with your background and would like to move forward with the interview process.</p>\n\n<p><strong>Next Steps:</strong></p>\n<p>We'll be sending you a calendar invite with available interview slots shortly. Please select a time that works best for you.</p>\n\n<p><strong>What to Expect:</strong></p>\n<ul>\n<li>30-45 minute initial conversation</li>\n<li>Discussion of your experience and the role</li>\n<li>Opportunity to ask questions</li>\n</ul>\n\n<p>We look forward to speaking with you!</p>\n\n<p>Best regards,<br>Hiring Team</p>",
+        "options": {}
+      },
+      "id": "31c32af8-8538-4268-b2fa-de69643bfe05",
+      "name": "Send Acknowledgment Email",
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.2,
+      "position": [
+        16,
+        -96
+      ],
+      "webhookId": "0f0d7a7e-129f-44a7-a4e4-de5cc6587ed9"
+    },
+    {
+      "parameters": {
+        "calendar": {
+          "__rl": true,
+          "mode": "list",
+          "value": ""
+        },
+        "start": "={{ $now.plus(2, 'days').set({ hour: 10, minute: 0 }) }}",
+        "end": "={{ $now.plus(2, 'days').set({ hour: 10, minute: 45 }) }}",
+        "additionalFields": {
+          "attendees": "={{ $('Workflow Configuration').item.json.candidate_email }}",
+          "description": "=Initial screening interview for {{ $('Fetch Job Requirements').item.json.job_title }} position",
+          "summary": "=Interview - {{ $('Workflow Configuration').item.json.candidate_name }}"
+        }
+      },
+      "id": "b16f6a55-37b2-426d-94bc-a9bfa85e542b",
+      "name": "Suggest Interview Slots",
+      "type": "n8n-nodes-base.googleCalendar",
+      "typeVersion": 1.3,
+      "position": [
+        240,
+        -96
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "append",
+        "documentId": {
+          "__rl": true,
+          "mode": "list",
+          "value": ""
+        },
+        "sheetName": {
+          "__rl": true,
+          "mode": "list",
+          "value": ""
+        }
+      },
+      "id": "47ccf1e7-dc59-4dcc-a6f1-b78096595ece",
+      "name": "Add to Review Queue",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        -208,
+        96
+      ]
+    },
+    {
+      "parameters": {
+        "sendTo": "={{ $('Workflow Configuration').item.json.candidate_email }}",
+        "subject": "Application Received - Under Review",
+        "message": "=<p>Dear {{ $('Workflow Configuration').item.json.candidate_name }},</p>\n\n<p>Thank you for your interest in the {{ $('Fetch Job Requirements').item.json.job_title }} position at our company.</p>\n\n<p>We have received your application and our hiring team is currently reviewing all submissions. Your background shows potential, and we want to give your application the thorough consideration it deserves.</p>\n\n<p><strong>What happens next:</strong></p>\n<ul>\n<li>Our team will review your application within 5-7 business days</li>\n<li>We'll reach out if your qualifications match our current needs</li>\n<li>All candidates will receive a status update</li>\n</ul>\n\n<p>We appreciate your patience during this process.</p>\n\n<p>Best regards,<br>Hiring Team</p>",
+        "options": {}
+      },
+      "id": "50d64f86-66a5-4ab3-8591-461766b66240",
+      "name": "Send Application Received Email",
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.2,
+      "position": [
+        16,
+        96
+      ],
+      "webhookId": "60954e70-eefd-4ccc-a752-a50452503d38"
+    },
+    {
+      "parameters": {
+        "amount": 36,
+        "unit": "hours"
+      },
+      "id": "f87c5110-65b6-4fe7-ab10-75fc292101dc",
+      "name": "Wait 24-48 Hours",
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1.1,
+      "position": [
+        -208,
+        288
+      ],
+      "webhookId": "c75617ab-7fd6-462f-ac00-aefe2f1bdb61"
+    },
+    {
+      "parameters": {
+        "sendTo": "={{ $('Workflow Configuration').item.json.candidate_email }}",
+        "subject": "Update on Your Application",
+        "message": "=<p>Dear {{ $('Workflow Configuration').item.json.candidate_name }},</p>\n\n<p>Thank you for taking the time to apply for the {{ $('Fetch Job Requirements').item.json.job_title }} position with us. We truly appreciate your interest in joining our team.</p>\n\n<p>After careful consideration of all applications, we have decided to move forward with other candidates whose experience more closely aligns with our current needs for this specific role.</p>\n\n<p><strong>This is not the end:</strong></p>\n<ul>\n<li>We've added your profile to our talent pool</li>\n<li>We'll keep you in mind for future opportunities</li>\n<li>Feel free to apply for other positions that match your skills</li>\n</ul>\n\n<p>We wish you the very best in your job search and future career endeavors.</p>\n\n<p>Best regards,<br>Hiring Team</p>",
+        "options": {}
+      },
+      "id": "cae7acbd-5ab5-4b47-a83c-8babab4438d2",
+      "name": "Send Rejection Email",
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.2,
+      "position": [
+        16,
+        288
+      ],
+      "webhookId": "a4f209c2-53bc-464a-a619-cf56ea23da70"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "id": "b4906fe5-a72b-4521-8cc9-98b8f4c69abf",
+      "name": "Store Candidate Record - Shortlist",
+      "type": "n8n-nodes-base.mongoDb",
+      "typeVersion": 1.2,
+      "position": [
+        464,
+        -96
+      ]
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "id": "cc66129c-c8a7-4c0c-a8f4-4d164d56189e",
+      "name": "Store Candidate Record - Maybe",
+      "type": "n8n-nodes-base.mongoDb",
+      "typeVersion": 1.2,
+      "position": [
+        240,
+        96
+      ]
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "id": "6db02ebc-e5ab-4664-899f-1bc6f89566ad",
+      "name": "Store Candidate Record - Reject",
+      "type": "n8n-nodes-base.mongoDb",
+      "typeVersion": 1.2,
+      "position": [
+        240,
+        288
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "append",
+        "documentId": {
+          "__rl": true,
+          "mode": "list",
+          "value": ""
+        },
+        "sheetName": {
+          "__rl": true,
+          "mode": "list",
+          "value": ""
+        }
+      },
+      "id": "bb2edfb5-ebe9-4b93-803c-2cbc126d22ee",
+      "name": "Add to Hiring Tracker - Shortlist",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        688,
+        -96
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "append",
+        "documentId": {
+          "__rl": true,
+          "mode": "list",
+          "value": ""
+        },
+        "sheetName": {
+          "__rl": true,
+          "mode": "list",
+          "value": ""
+        }
+      },
+      "id": "c8df628b-6f93-4a2f-964f-02349b7a7fde",
+      "name": "Add to Hiring Tracker - Maybe",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        464,
+        96
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "append",
+        "documentId": {
+          "__rl": true,
+          "mode": "list",
+          "value": ""
+        },
+        "sheetName": {
+          "__rl": true,
+          "mode": "list",
+          "value": ""
+        }
+      },
+      "id": "d72af2dc-873a-407e-97e0-8f7095fbd110",
+      "name": "Add to Hiring Tracker - Reject",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        464,
+        288
+      ]
+    }
+  ],
+  "connections": {
+    "Webhook - ATS Application": {
+      "main": [
+        [
+          {
+            "node": "Workflow Configuration",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Workflow Configuration": {
+      "main": [
+        [
+          {
+            "node": "Download Resume File",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Download Resume File": {
+      "main": [
+        [
+          {
+            "node": "Check File Type",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Check File Type": {
+      "main": [
+        [
+          {
+            "node": "Extract Resume Text",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Extract Resume Text": {
+      "main": [
+        [
+          {
+            "node": "Combine Resume + Job Requirements",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Fetch Job Requirements",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Fetch Job Requirements": {
+      "main": [
+        [
+          {
+            "node": "Combine Resume + Job Requirements",
+            "type": "main",
+            "index": 1
+          }
+        ]
+      ]
+    },
+    "Combine Resume + Job Requirements": {
+      "main": [
+        [
+          {
+            "node": "AI Screening Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Structured Output Parser": {
+      "ai_outputParser": [
+        [
+          {
+            "node": "AI Screening Agent",
+            "type": "ai_outputParser",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI GPT-4": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Screening Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          },
+          {
+            "node": "Structured Output Parser",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "AI Screening Agent": {
+      "main": [
+        [
+          {
+            "node": "Route by Recommendation",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Route by Recommendation": {
+      "main": [
+        [
+          {
+            "node": "Alert Hiring Manager",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Add to Review Queue",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Wait 24-48 Hours",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Alert Hiring Manager": {
+      "main": [
+        [
+          {
+            "node": "Send Acknowledgment Email",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Send Acknowledgment Email": {
+      "main": [
+        [
+          {
+            "node": "Suggest Interview Slots",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Suggest Interview Slots": {
+      "main": [
+        [
+          {
+            "node": "Store Candidate Record - Shortlist",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Add to Review Queue": {
+      "main": [
+        [
+          {
+            "node": "Send Application Received Email",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Send Application Received Email": {
+      "main": [
+        [
+          {
+            "node": "Store Candidate Record - Maybe",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Wait 24-48 Hours": {
+      "main": [
+        [
+          {
+            "node": "Send Rejection Email",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Send Rejection Email": {
+      "main": [
+        [
+          {
+            "node": "Store Candidate Record - Reject",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Store Candidate Record - Shortlist": {
+      "main": [
+        [
+          {
+            "node": "Add to Hiring Tracker - Shortlist",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Store Candidate Record - Maybe": {
+      "main": [
+        [
+          {
+            "node": "Add to Hiring Tracker - Maybe",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Store Candidate Record - Reject": {
+      "main": [
+        [
+          {
+            "node": "Add to Hiring Tracker - Reject",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1",
+    "availableInMCP": false
+  },
+  "staticData": null,
+  "meta": null,
+  "pinData": {},
+  "versionId": "bae07c57-4e6b-4135-8320-78c4f173ff53",
+  "activeVersionId": null,
+  "triggerCount": 0,
+  "shared": [
+    {
+      "updatedAt": "2026-01-07T20:05:33.909Z",
+      "createdAt": "2026-01-07T20:05:33.909Z",
+      "role": "workflow:owner",
+      "workflowId": "vTn7TYjIA9Up04Se",
+      "projectId": "DT8YjHwLZsQjJqVc"
+    }
+  ],
+  "activeVersion": null,
+  "tags": []
+}

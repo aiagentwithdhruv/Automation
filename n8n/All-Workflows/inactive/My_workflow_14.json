@@ -1,0 +1,188 @@
+{
+  "updatedAt": "2026-01-02T17:30:46.021Z",
+  "createdAt": "2026-01-01T20:40:03.692Z",
+  "id": "zslfcSCXXFYNZUfv",
+  "name": "My workflow 14",
+  "active": false,
+  "isArchived": false,
+  "nodes": [
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.chatTrigger",
+      "typeVersion": 1.4,
+      "position": [
+        -336,
+        -96
+      ],
+      "id": "e02c4cb5-4aea-4b31-8539-0b2cbaefa6ed",
+      "name": "When chat message received",
+      "webhookId": "824ae884-d63b-4489-a557-9842d0d33b10"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 3.1,
+      "position": [
+        -128,
+        -96
+      ],
+      "id": "d9f5ea68-7925-453d-be71-09d9008b8ab6",
+      "name": "AI Agent"
+    },
+    {
+      "parameters": {
+        "model": "google/gemini-3-flash-preview",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenRouter",
+      "typeVersion": 1,
+      "position": [
+        -272,
+        112
+      ],
+      "id": "b0b04504-02ff-4fb1-81b8-f010cad99d27",
+      "name": "OpenRouter Chat Model",
+      "credentials": {
+        "openRouterApi": {
+          "id": "5NHf7ILbLoMVxKcb",
+          "name": "OpenRouter account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "collection": "movies",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.mongoDb",
+      "typeVersion": 1.2,
+      "position": [
+        368,
+        -64
+      ],
+      "id": "e1a687a0-5745-4bd2-b341-e0a7e2d02397",
+      "name": "Find documents",
+      "credentials": {
+        "mongoDb": {
+          "id": "zNnv2Os5LY0RRZEP",
+          "name": "MongoDB account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "schema": {
+          "__rl": true,
+          "value": "N8N",
+          "mode": "list",
+          "cachedResultName": "N8N"
+        },
+        "table": {
+          "__rl": true,
+          "value": "Dhruv",
+          "mode": "list",
+          "cachedResultName": "Dhruv"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "id": 1234
+          },
+          "matchingColumns": [
+            "id"
+          ],
+          "schema": [
+            {
+              "id": "id",
+              "displayName": "id",
+              "required": false,
+              "defaultMatch": true,
+              "display": true,
+              "type": "number",
+              "canBeUsedToMatch": true,
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.6,
+      "position": [
+        656,
+        -112
+      ],
+      "id": "0e716b6c-1c9d-4de4-bf97-8787b9e7e957",
+      "name": "Insert rows in a table",
+      "credentials": {
+        "postgres": {
+          "id": "615Oq63vxM1BDmBi",
+          "name": "Postgres neon"
+        }
+      }
+    }
+  ],
+  "connections": {
+    "When chat message received": {
+      "main": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenRouter Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "AI Agent": {
+      "main": [
+        []
+      ]
+    },
+    "Find documents": {
+      "main": [
+        []
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1",
+    "availableInMCP": false
+  },
+  "staticData": null,
+  "meta": {
+    "templateCredsSetupCompleted": true
+  },
+  "pinData": {},
+  "versionId": "59889a5b-6d86-449a-b915-42fb3046d47e",
+  "activeVersionId": null,
+  "triggerCount": 0,
+  "shared": [
+    {
+      "updatedAt": "2026-01-01T20:40:03.704Z",
+      "createdAt": "2026-01-01T20:40:03.704Z",
+      "role": "workflow:owner",
+      "workflowId": "zslfcSCXXFYNZUfv",
+      "projectId": "DT8YjHwLZsQjJqVc"
+    }
+  ],
+  "activeVersion": null,
+  "tags": []
+}

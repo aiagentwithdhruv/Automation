@@ -1,0 +1,231 @@
+{
+  "updatedAt": "2026-02-03T12:57:18.219Z",
+  "createdAt": "2026-02-03T12:31:52.868Z",
+  "id": "S56Hbzfrh228aGs9",
+  "name": "ClickUp Push Tasks - Manual Only",
+  "active": true,
+  "isArchived": false,
+  "nodes": [
+    {
+      "id": "manual",
+      "name": "Manual Trigger",
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [
+        -300,
+        0
+      ],
+      "parameters": {}
+    },
+    {
+      "id": "tasks",
+      "name": "Tasks to Push",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -100,
+        0
+      ],
+      "parameters": {
+        "jsCode": "return [\n  { json: { name: 'Build: Angelina AI System', description: 'Jarvis-like AI assistant \u2013 voice, memory, task execution, code generation. Full system with n8n + custom code.' } },\n  { json: { name: 'Client: Ramesh - Job Automation', description: 'Payment pending \u20b910k. Build after payment: job scraping, filtering, Google Sheet, email alerts.' } },\n  { json: { name: 'Client: Omkar - Sales Automation', description: 'Zoho CRM + AI sales system. Large scope \u20b95-8L. Consider Phase 1 MVP \u20b92-2.5L.' } },\n  { json: { name: 'Outreach: Waalaxy Campaigns', description: '3 campaigns: Automation, OpenClaw, Full Stack. Use templates from Waalaxy-Templates.md.' } },\n  { json: { name: 'Outreach: LinkedIn Posts', description: 'Krish repost, engagement, build authority.' } },\n  { json: { name: 'Content: YouTube Live', description: 'Plan first live for Feb end. Target: 1k subs, \u20b95k revenue.' } },\n  { json: { name: 'Job: Gartner Call', description: 'Call with Bableen Kaur. Target \u20b940-45 LPA. Prepare proof points.' } },\n  { json: { name: 'Learn: RapidAPI Limits', description: 'Research API limits for Ramesh job automation.' } }\n];"
+      }
+    },
+    {
+      "id": "clickup",
+      "name": "Create Task in ClickUp",
+      "type": "n8n-nodes-base.clickUp",
+      "typeVersion": 1,
+      "position": [
+        100,
+        0
+      ],
+      "parameters": {
+        "resource": "task",
+        "operation": "create",
+        "listId": "90161334354",
+        "name": "={{ $json.name }}",
+        "additionalFields": {
+          "description": "={{ $json.description }}"
+        }
+      }
+    },
+    {
+      "id": "webhook",
+      "name": "Webhook",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [
+        -500,
+        0
+      ],
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "push-new-tasks"
+      }
+    }
+  ],
+  "connections": {
+    "Manual Trigger": {
+      "main": [
+        [
+          {
+            "node": "Tasks to Push",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Tasks to Push": {
+      "main": [
+        [
+          {
+            "node": "Create Task in ClickUp",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Webhook": {
+      "main": [
+        [
+          {
+            "node": "Tasks to Push",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1",
+    "saveDataErrorExecution": "all",
+    "saveDataSuccessExecution": "all",
+    "saveManualExecutions": true,
+    "saveExecutionProgress": true,
+    "callerPolicy": "workflowsFromSameOwner",
+    "availableInMCP": false
+  },
+  "staticData": null,
+  "meta": null,
+  "pinData": null,
+  "versionId": "b32e2cb6-ccbf-4f91-88fa-b4b446f7824c",
+  "activeVersionId": "b32e2cb6-ccbf-4f91-88fa-b4b446f7824c",
+  "triggerCount": 1,
+  "shared": [
+    {
+      "updatedAt": "2026-02-03T12:31:52.871Z",
+      "createdAt": "2026-02-03T12:31:52.871Z",
+      "role": "workflow:owner",
+      "workflowId": "S56Hbzfrh228aGs9",
+      "projectId": "DT8YjHwLZsQjJqVc"
+    }
+  ],
+  "activeVersion": {
+    "updatedAt": "2026-02-03T12:57:13.257Z",
+    "createdAt": "2026-02-03T12:57:13.257Z",
+    "versionId": "b32e2cb6-ccbf-4f91-88fa-b4b446f7824c",
+    "workflowId": "S56Hbzfrh228aGs9",
+    "nodes": [
+      {
+        "id": "manual",
+        "name": "Manual Trigger",
+        "type": "n8n-nodes-base.manualTrigger",
+        "typeVersion": 1,
+        "position": [
+          -300,
+          0
+        ],
+        "parameters": {}
+      },
+      {
+        "id": "tasks",
+        "name": "Tasks to Push",
+        "type": "n8n-nodes-base.code",
+        "typeVersion": 2,
+        "position": [
+          -100,
+          0
+        ],
+        "parameters": {
+          "jsCode": "return [\n  { json: { name: 'Build: Angelina AI System', description: 'Jarvis-like AI assistant \u2013 voice, memory, task execution, code generation. Full system with n8n + custom code.' } },\n  { json: { name: 'Client: Ramesh - Job Automation', description: 'Payment pending \u20b910k. Build after payment: job scraping, filtering, Google Sheet, email alerts.' } },\n  { json: { name: 'Client: Omkar - Sales Automation', description: 'Zoho CRM + AI sales system. Large scope \u20b95-8L. Consider Phase 1 MVP \u20b92-2.5L.' } },\n  { json: { name: 'Outreach: Waalaxy Campaigns', description: '3 campaigns: Automation, OpenClaw, Full Stack. Use templates from Waalaxy-Templates.md.' } },\n  { json: { name: 'Outreach: LinkedIn Posts', description: 'Krish repost, engagement, build authority.' } },\n  { json: { name: 'Content: YouTube Live', description: 'Plan first live for Feb end. Target: 1k subs, \u20b95k revenue.' } },\n  { json: { name: 'Job: Gartner Call', description: 'Call with Bableen Kaur. Target \u20b940-45 LPA. Prepare proof points.' } },\n  { json: { name: 'Learn: RapidAPI Limits', description: 'Research API limits for Ramesh job automation.' } }\n];"
+        }
+      },
+      {
+        "id": "clickup",
+        "name": "Create Task in ClickUp",
+        "type": "n8n-nodes-base.clickUp",
+        "typeVersion": 1,
+        "position": [
+          100,
+          0
+        ],
+        "parameters": {
+          "resource": "task",
+          "operation": "create",
+          "listId": "90161334354",
+          "name": "={{ $json.name }}",
+          "additionalFields": {
+            "description": "={{ $json.description }}"
+          }
+        }
+      },
+      {
+        "id": "webhook",
+        "name": "Webhook",
+        "type": "n8n-nodes-base.webhook",
+        "typeVersion": 2,
+        "position": [
+          -500,
+          0
+        ],
+        "parameters": {
+          "httpMethod": "POST",
+          "path": "push-new-tasks"
+        }
+      }
+    ],
+    "connections": {
+      "Manual Trigger": {
+        "main": [
+          [
+            {
+              "node": "Tasks to Push",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Tasks to Push": {
+        "main": [
+          [
+            {
+              "node": "Create Task in ClickUp",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Webhook": {
+        "main": [
+          [
+            {
+              "node": "Tasks to Push",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      }
+    },
+    "authors": "Dhruv Tomar",
+    "name": null,
+    "description": null,
+    "autosaved": false
+  },
+  "tags": []
+}

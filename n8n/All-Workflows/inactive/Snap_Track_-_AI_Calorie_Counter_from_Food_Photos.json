@@ -1,0 +1,793 @@
+{
+  "updatedAt": "2026-01-07T19:32:24.381Z",
+  "createdAt": "2026-01-07T19:22:17.721Z",
+  "id": "dU7Kho7jaDsAyEjl",
+  "name": "Snap & Track - AI Calorie Counter from Food Photos",
+  "active": false,
+  "isArchived": false,
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "snap-track",
+        "responseMode": "lastNode",
+        "options": {}
+      },
+      "id": "e8d24997-dfa5-4309-81e5-bfbc3e589246",
+      "name": "Webhook - Food Photo Input",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2.1,
+      "position": [
+        -2592,
+        192
+      ],
+      "webhookId": "4a3639c4-7e95-450e-8337-13cd3aad39c9"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "id-1",
+              "name": "image_url",
+              "value": "={{ $json.body.image_url }}",
+              "type": "string"
+            },
+            {
+              "id": "id-2",
+              "name": "user_id",
+              "value": "={{ $json.body.user_id }}",
+              "type": "string"
+            },
+            {
+              "id": "id-3",
+              "name": "meal_type",
+              "value": "={{ $json.body.meal_type }}",
+              "type": "string"
+            },
+            {
+              "id": "id-4",
+              "name": "notes",
+              "value": "={{ $json.body.notes || '' }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "b26abf81-e50d-4fe1-ac99-dca46802c492",
+      "name": "Workflow Configuration",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        -2368,
+        192
+      ]
+    },
+    {
+      "parameters": {
+        "url": "={{ $('Workflow Configuration').item.json.image_url }}",
+        "options": {
+          "response": {
+            "response": {
+              "responseFormat": "file",
+              "outputPropertyName": "food_image"
+            }
+          }
+        }
+      },
+      "id": "a23ba0d4-2484-4f8c-aced-f7df16193134",
+      "name": "Download Food Image",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.3,
+      "position": [
+        -2144,
+        96
+      ]
+    },
+    {
+      "parameters": {
+        "resource": "image",
+        "operation": "analyze",
+        "modelId": {
+          "__rl": true,
+          "mode": "id",
+          "value": "gpt-4o"
+        },
+        "text": "You are a nutritionist AI. Identify all food items in the image with estimated portions. Return a JSON object with: foods_detected (array of objects with item, portion/quantity, confidence), cuisine_type, and meal_completeness. Be specific about portion sizes using cups, bowls, pieces, etc.",
+        "inputType": "base64",
+        "binaryPropertyName": "food_image",
+        "options": {}
+      },
+      "id": "df27949a-9d42-4fc9-a165-be239440648d",
+      "name": "Food Identifier - GPT-4V",
+      "type": "@n8n/n8n-nodes-langchain.openAi",
+      "typeVersion": 2.1,
+      "position": [
+        -1920,
+        96
+      ]
+    },
+    {
+      "parameters": {
+        "fieldToSplitOut": "foods_detected",
+        "include": "allOtherFields",
+        "options": {}
+      },
+      "id": "abcf83e2-5846-4fed-bc53-a75bcb35924b",
+      "name": "Split Detected Foods",
+      "type": "n8n-nodes-base.splitOut",
+      "typeVersion": 1,
+      "position": [
+        -1696,
+        96
+      ]
+    },
+    {
+      "parameters": {
+        "url": "=https://api.calorieninjas.com/v1/nutrition?query={{ $json.item }} {{ $json.portion || $json.quantity }}",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "X-Api-Key",
+              "value": "={{ $credentials.calorieNinjasApi.apiKey }}"
+            }
+          ]
+        },
+        "options": {
+          "response": {
+            "response": {
+              "responseFormat": "json"
+            }
+          }
+        }
+      },
+      "id": "a768ae9f-ae3a-4004-8a19-a0d25289ea61",
+      "name": "Query Nutrition API",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.3,
+      "position": [
+        -1472,
+        96
+      ]
+    },
+    {
+      "parameters": {
+        "aggregate": "aggregateAllItemData",
+        "destinationFieldName": "items",
+        "options": {}
+      },
+      "id": "97a1ce15-2a4a-48e6-83fa-38a93f5284ba",
+      "name": "Aggregate Nutrition Data",
+      "type": "n8n-nodes-base.aggregate",
+      "typeVersion": 1,
+      "position": [
+        -1248,
+        96
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "const nutritionData = $input.item.json.items;\n\nlet totalCalories = 0;\nlet totalProtein = 0;\nlet totalCarbs = 0;\nlet totalFat = 0;\nlet totalFiber = 0;\nconst breakdown = [];\n\nfor (const item of nutritionData) {\n  if (item.items && item.items.length > 0) {\n    const nutrient = item.items[0];\n    totalCalories += nutrient.calories || 0;\n    totalProtein += nutrient.protein_g || 0;\n    totalCarbs += nutrient.carbohydrates_total_g || 0;\n    totalFat += nutrient.fat_total_g || 0;\n    totalFiber += nutrient.fiber_g || 0;\n    \n    breakdown.push({\n      item: nutrient.name,\n      calories: nutrient.calories,\n      protein_g: nutrient.protein_g,\n      carbs_g: nutrient.carbohydrates_total_g,\n      fat_g: nutrient.fat_total_g\n    });\n  }\n}\n\nreturn [{\n  json: {\n    total_calories: Math.round(totalCalories),\n    protein_g: Math.round(totalProtein * 10) / 10,\n    carbs_g: Math.round(totalCarbs * 10) / 10,\n    fat_g: Math.round(totalFat * 10) / 10,\n    fiber_g: Math.round(totalFiber * 10) / 10,\n    breakdown: breakdown\n  }\n}];"
+      },
+      "id": "844076ff-cc2b-4ce2-80df-ae8a4de3438a",
+      "name": "Calculate Total Nutrition",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -1024,
+        96
+      ]
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "id": "6cab0cba-0542-464b-ad3c-59a83b2b022e",
+      "name": "Fetch User Profile",
+      "type": "n8n-nodes-base.mongoDb",
+      "typeVersion": 1.2,
+      "position": [
+        -1024,
+        288
+      ]
+    },
+    {
+      "parameters": {
+        "mode": "combine",
+        "combineBy": "combineByPosition",
+        "options": {}
+      },
+      "id": "39c4707b-ddde-44d1-b551-c72be382bc52",
+      "name": "Merge Nutrition with User Profile",
+      "type": "n8n-nodes-base.merge",
+      "typeVersion": 3.2,
+      "position": [
+        -800,
+        192
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "const nutrition = $input.item.json;\nconst userProfile = nutrition;\n\nconst dailyGoal = userProfile.daily_calorie_goal || 2000;\nconst consumedToday = userProfile.consumed_today || 0;\nconst thisMeal = nutrition.total_calories;\nconst newTotal = consumedToday + thisMeal;\nconst remaining = dailyGoal - newTotal;\n\nlet status = 'on_track';\nif (remaining < 0) {\n  status = 'slightly_over';\n} else if (remaining < 200) {\n  status = 'almost_full';\n} else if (remaining > dailyGoal * 0.7) {\n  status = 'plenty_remaining';\n}\n\nreturn [{\n  json: {\n    ...nutrition,\n    user_id: userProfile.user_id,\n    daily_goal: dailyGoal,\n    consumed_today: newTotal,\n    this_meal: thisMeal,\n    remaining: remaining,\n    status: status,\n    meal_type: $('Workflow Configuration').item.json.meal_type,\n    image_url: $('Workflow Configuration').item.json.image_url\n  }\n}];"
+      },
+      "id": "c165bdec-8ea4-44ca-90d8-74ce63e8963b",
+      "name": "Calculate Remaining Allowance",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -576,
+        192
+      ]
+    },
+    {
+      "parameters": {
+        "modelId": {
+          "__rl": true,
+          "mode": "id",
+          "value": "gpt-4o-mini"
+        },
+        "responses": {
+          "values": [
+            {
+              "content": "=You are an encouraging nutrition coach. Based on this meal data, provide brief, positive feedback and suggestions. Never shame or judge. Data: {{ JSON.stringify($json) }}. Provide: 1) Brief feedback (1 sentence), 2) One healthier swap suggestion, 3) Next meal suggestion. Return as JSON with keys: feedback, healthier_swap, next_meal_suggestion"
+            }
+          ]
+        },
+        "builtInTools": {},
+        "options": {}
+      },
+      "id": "056e93d2-f1d8-434c-92ed-c9eb2068efba",
+      "name": "Nutrition Coach - AI Insights",
+      "type": "@n8n/n8n-nodes-langchain.openAi",
+      "typeVersion": 2.1,
+      "position": [
+        -352,
+        192
+      ]
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "id": "5e5d24bd-4ed8-471b-8274-17ee6b87520b",
+      "name": "Store Meal Log",
+      "type": "n8n-nodes-base.mongoDb",
+      "typeVersion": 1.2,
+      "position": [
+        0,
+        0
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "appendOrUpdate",
+        "documentId": {
+          "__rl": true,
+          "mode": "list",
+          "value": ""
+        },
+        "sheetName": {
+          "__rl": true,
+          "mode": "name",
+          "value": "Food Diary"
+        },
+        "columns": {
+          "mappingMode": "autoMapInputData",
+          "value": null
+        },
+        "options": {}
+      },
+      "id": "7b1fe547-c61d-4cd4-af55-e6796477639d",
+      "name": "Add to Food Diary",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        0,
+        192
+      ]
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "id-1",
+              "name": "message",
+              "value": "=\ud83c\udf7d\ufe0f {{ $json.meal_type.charAt(0).toUpperCase() + $json.meal_type.slice(1) }} logged: {{ $json.this_meal }} cal\n\ud83d\udcca Today: {{ $json.consumed_today }}/{{ $json.daily_goal }} cal\n{{ $json.remaining >= 0 ? \"\u2705 Remaining: \" + $json.remaining + \" cal\" : \"\u26a0\ufe0f Over by: \" + Math.abs($json.remaining) + \" cal\" }}\n\ud83d\udca1 Tip: {{ $('Nutrition Coach - AI Insights').item.json.next_meal_suggestion }}",
+              "type": "string"
+            },
+            {
+              "id": "id-2",
+              "name": "user_id",
+              "value": "={{ $('Calculate Remaining Allowance').item.json.user_id }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "7e5a97b8-af4e-4c6c-aea9-cdb294de29f3",
+      "name": "Format WhatsApp Response",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        0,
+        384
+      ]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.whatsapp.com/send",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Authorization",
+              "value": "=Bearer {{ $credentials.whatsappApi.token }}"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"to\": \"{{ $json.user_id }}\",\n  \"message\": \"{{ $json.message }}\"\n}",
+        "options": {
+          "response": {
+            "response": {
+              "responseFormat": "json"
+            }
+          }
+        }
+      },
+      "id": "5b3bfe05-4172-45cc-98ee-e541c40b2583",
+      "name": "Send WhatsApp Response",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.3,
+      "position": [
+        224,
+        384
+      ]
+    },
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "field": "weeks",
+              "triggerAtHour": 9
+            }
+          ]
+        }
+      },
+      "id": "34f949fd-2597-4b32-b82a-c3cd100f2880",
+      "name": "Weekly Report - Every Sunday",
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.3,
+      "position": [
+        -2592,
+        608
+      ]
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "id": "0d5d9925-da0f-408d-8992-2bebf4a7ba09",
+      "name": "Aggregate Week's Meals",
+      "type": "n8n-nodes-base.mongoDb",
+      "typeVersion": 1.2,
+      "position": [
+        -2368,
+        608
+      ]
+    },
+    {
+      "parameters": {
+        "modelId": {
+          "__rl": true,
+          "mode": "id",
+          "value": "gpt-4o"
+        },
+        "responses": {
+          "values": [
+            {
+              "content": "=Analyze this week of eating data and provide insights on patterns, trends, and recommendations. Data: {{ JSON.stringify($input.all()) }}. Provide: 1) Overall eating pattern summary, 2) Calorie trend analysis, 3) Macro balance assessment, 4) Top 3 recommendations for next week. Return as JSON."
+            }
+          ]
+        },
+        "builtInTools": {},
+        "options": {}
+      },
+      "id": "b4fa208e-de7c-4e3c-9561-baec8dc8b484",
+      "name": "Generate Eating Pattern Insights",
+      "type": "@n8n/n8n-nodes-langchain.openAi",
+      "typeVersion": 2.1,
+      "position": [
+        -2144,
+        608
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "const meals = $('Aggregate Week\\'s Meals').all();\n\nconst dailyCalories = {};\nconst macroTotals = { protein: 0, carbs: 0, fat: 0 };\nlet totalMeals = 0;\n\nfor (const meal of meals) {\n  const date = new Date(meal.json.timestamp).toISOString().split('T')[0];\n  \n  if (!dailyCalories[date]) {\n    dailyCalories[date] = 0;\n  }\n  \n  dailyCalories[date] += meal.json.nutrition.calories;\n  macroTotals.protein += meal.json.nutrition.protein_g;\n  macroTotals.carbs += meal.json.nutrition.carbs_g;\n  macroTotals.fat += meal.json.nutrition.fat_g;\n  totalMeals++;\n}\n\nconst calorieChartData = Object.entries(dailyCalories).map(([date, calories]) => ({\n  date,\n  calories\n}));\n\nconst avgCaloriesPerDay = Object.values(dailyCalories).reduce((a, b) => a + b, 0) / Object.keys(dailyCalories).length;\n\nreturn [{\n  json: {\n    calorie_trend: calorieChartData,\n    macro_balance: macroTotals,\n    avg_calories_per_day: Math.round(avgCaloriesPerDay),\n    total_meals_logged: totalMeals,\n    insights: $('Generate Eating Pattern Insights').item.json\n  }\n}];"
+      },
+      "id": "a0668ff2-87bf-4df0-9eb0-674bc82d6d48",
+      "name": "Generate Charts Data",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -1792,
+        608
+      ]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.whatsapp.com/send",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ {\n  \"to\": $('Workflow Configuration').item.json.userPhone,\n  \"type\": \"text\",\n  \"text\": {\n    \"body\": \"\ud83d\udcca *Weekly Nutrition Report*\\n\\n\" + $('Generate Eating Pattern Insights').item.json.insights + \"\\n\\n\ud83d\udcc8 *Charts & Trends*\\n\" + JSON.stringify($('Generate Charts Data').item.json.charts, null, 2)\n  }\n} }}",
+        "options": {
+          "response": {
+            "response": {
+              "responseFormat": "json"
+            }
+          }
+        }
+      },
+      "id": "89ff0b12-2d5d-4945-8213-7ebafa1ddef9",
+      "name": "Send Weekly Report",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.3,
+      "position": [
+        -1568,
+        608
+      ]
+    },
+    {
+      "parameters": {
+        "content": "\ud83d\udcf8 STAGE 1: Food Photo Input & Image Analysis\n\nWebhook receives food photo \u2192 Downloads image \u2192 GPT-4V identifies food items with portions \u2192 Splits into individual items for nutrition lookup",
+        "height": 280,
+        "width": 520
+      },
+      "id": "7f0a6d25-07aa-4570-a64d-b44e0ec328e8",
+      "name": "\ud83d\udcf8 STAGE 1: Food Photo Input & Image Analysis",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -624,
+        -320
+      ]
+    },
+    {
+      "parameters": {
+        "content": "\ud83d\udd0d STAGE 2: Nutrition API Lookup\n\nEach detected food item \u2192 CalorieNinjas API query \u2192 Aggregate all nutrition data \u2192 Calculate total calories, protein, carbs, fat, and fiber",
+        "height": 280,
+        "width": 480
+      },
+      "id": "637273ca-6146-4783-8376-3009d4a22e10",
+      "name": "\ud83d\udd0d STAGE 2: Nutrition API Lookup",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -528,
+        544
+      ]
+    },
+    {
+      "parameters": {
+        "content": "\ud83e\uddee STAGE 3: Calculate & Merge User Data\n\nFetch user profile from MongoDB \u2192 Merge with nutrition data \u2192 Calculate remaining daily allowance \u2192 Determine status (on_track, over, etc.)",
+        "height": 280,
+        "width": 480
+      },
+      "id": "a271cedd-245c-42d3-990a-8b98e02af2a1",
+      "name": "\ud83e\uddee STAGE 3: Calculate & Merge User Data",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -1248,
+        -336
+      ]
+    },
+    {
+      "parameters": {
+        "content": "\ud83d\udca1 STAGE 4: AI Coaching & Response\n\nGPT-4o-mini generates personalized feedback \u2192 Healthier swap suggestions \u2192 Next meal recommendations \u2192 Format WhatsApp message \u2192 Send to user",
+        "height": 280,
+        "width": 480
+      },
+      "id": "f03a5916-55c7-4953-a1fb-0a5a89dad787",
+      "name": "\ud83d\udca1 STAGE 4: AI Coaching & Response",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -2016,
+        -368
+      ]
+    },
+    {
+      "parameters": {
+        "content": "\ud83d\udcbe STAGE 5: Store Data (Parallel)\n\nThree parallel operations:\n1. Store meal log in MongoDB\n2. Append to Google Sheets food diary\n3. Send WhatsApp response to user",
+        "height": 280,
+        "width": 380
+      },
+      "id": "6b6a18ae-2b64-4f48-a5e0-1cd5cfc39243",
+      "name": "\ud83d\udcbe STAGE 5: Store Data (Parallel)",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -2592,
+        -336
+      ]
+    },
+    {
+      "parameters": {
+        "content": "\ud83d\udcca WEEKLY REPORT WORKFLOW\n\nEvery Sunday at 9 AM:\n\u2192 Aggregate week's meals from MongoDB\n\u2192 GPT-4o analyzes eating patterns\n\u2192 Generate charts and trend data\n\u2192 Send comprehensive weekly report via WhatsApp",
+        "height": 280,
+        "width": 1080
+      },
+      "id": "8c3e73a7-2884-47d4-9a14-28a3190312b0",
+      "name": "\ud83d\udcca WEEKLY REPORT WORKFLOW",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -1616,
+        752
+      ]
+    },
+    {
+      "parameters": {
+        "content": "\u2139\ufe0f WORKFLOW OVERVIEW: AI-Powered Calorie Tracker\n\nSnap & Track - Take a photo of your food and get instant nutrition analysis with AI coaching!\n\n\u2728 Features:\n\u2022 GPT-4V vision for food identification\n\u2022 CalorieNinjas API for accurate nutrition data\n\u2022 Personalized AI coaching feedback\n\u2022 Daily calorie tracking with goals\n\u2022 Automatic logging to MongoDB & Google Sheets\n\u2022 WhatsApp notifications\n\u2022 Weekly pattern analysis reports\n\n\ud83d\udd27 Setup Required:\n\u2022 MongoDB credentials (users & meal_logs collections)\n\u2022 Google Sheets API (Food Diary sheet)\n\u2022 OpenAI API key\n\u2022 CalorieNinjas API key\n\u2022 WhatsApp Business API token",
+        "height": 420,
+        "width": 600
+      },
+      "id": "39f3c4e0-5de8-422a-aa1b-3abc39d60ad7",
+      "name": "\u2139\ufe0f WORKFLOW OVERVIEW: AI-Powered Calorie Tracker",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        16,
+        -432
+      ]
+    }
+  ],
+  "connections": {
+    "Webhook - Food Photo Input": {
+      "main": [
+        [
+          {
+            "node": "Workflow Configuration",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Workflow Configuration": {
+      "main": [
+        [
+          {
+            "node": "Download Food Image",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Fetch User Profile",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Download Food Image": {
+      "main": [
+        [
+          {
+            "node": "Food Identifier - GPT-4V",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Food Identifier - GPT-4V": {
+      "main": [
+        [
+          {
+            "node": "Split Detected Foods",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Split Detected Foods": {
+      "main": [
+        [
+          {
+            "node": "Query Nutrition API",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Query Nutrition API": {
+      "main": [
+        [
+          {
+            "node": "Aggregate Nutrition Data",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Aggregate Nutrition Data": {
+      "main": [
+        [
+          {
+            "node": "Calculate Total Nutrition",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Calculate Total Nutrition": {
+      "main": [
+        [
+          {
+            "node": "Merge Nutrition with User Profile",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Fetch User Profile": {
+      "main": [
+        [
+          {
+            "node": "Merge Nutrition with User Profile",
+            "type": "main",
+            "index": 1
+          }
+        ]
+      ]
+    },
+    "Merge Nutrition with User Profile": {
+      "main": [
+        [
+          {
+            "node": "Calculate Remaining Allowance",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Calculate Remaining Allowance": {
+      "main": [
+        [
+          {
+            "node": "Nutrition Coach - AI Insights",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Nutrition Coach - AI Insights": {
+      "main": [
+        [
+          {
+            "node": "Store Meal Log",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Add to Food Diary",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Format WhatsApp Response",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Format WhatsApp Response": {
+      "main": [
+        [
+          {
+            "node": "Send WhatsApp Response",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Weekly Report - Every Sunday": {
+      "main": [
+        [
+          {
+            "node": "Aggregate Week's Meals",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Aggregate Week's Meals": {
+      "main": [
+        [
+          {
+            "node": "Generate Eating Pattern Insights",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Generate Eating Pattern Insights": {
+      "main": [
+        [
+          {
+            "node": "Generate Charts Data",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Generate Charts Data": {
+      "main": [
+        [
+          {
+            "node": "Send Weekly Report",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1",
+    "availableInMCP": false
+  },
+  "staticData": null,
+  "meta": null,
+  "pinData": {},
+  "versionId": "b97d1c33-824d-4bc5-9959-8555dab90d43",
+  "activeVersionId": null,
+  "triggerCount": 0,
+  "shared": [
+    {
+      "updatedAt": "2026-01-07T19:22:17.725Z",
+      "createdAt": "2026-01-07T19:22:17.725Z",
+      "role": "workflow:owner",
+      "workflowId": "dU7Kho7jaDsAyEjl",
+      "projectId": "DT8YjHwLZsQjJqVc"
+    }
+  ],
+  "activeVersion": null,
+  "tags": []
+}

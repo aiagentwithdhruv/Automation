@@ -1,0 +1,733 @@
+{
+  "updatedAt": "2026-01-31T12:13:58.533Z",
+  "createdAt": "2025-12-20T14:13:28.628Z",
+  "id": "vTVxV4xsB6exEd01",
+  "name": "Social_Media_Agent",
+  "active": true,
+  "isArchived": false,
+  "nodes": [
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "14d9076e-27ea-4846-8b44-f83cf4022b9e",
+              "name": "response",
+              "value": "={{ $json.output }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        0,
+        0
+      ],
+      "id": "cd128570-3958-4c22-98e5-ebcd2d6a9e26",
+      "name": "Response"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "f2a8ff2d-6b59-4ad6-a2e7-8705354f4105",
+              "name": "response",
+              "value": "Error occurred. Please try again.",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        0,
+        192
+      ],
+      "id": "d747309d-f970-478f-9faf-8bee4d2f8138",
+      "name": "Try Again"
+    },
+    {
+      "parameters": {
+        "inputSource": "passthrough"
+      },
+      "type": "n8n-nodes-base.executeWorkflowTrigger",
+      "typeVersion": 1.1,
+      "position": [
+        -704,
+        80
+      ],
+      "id": "891d2722-6d42-463f-bc4c-91c3cac8da85",
+      "name": "When Executed by Another Workflow"
+    },
+    {
+      "parameters": {
+        "model": "x-ai/grok-4.1-fast",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenRouter",
+      "typeVersion": 1,
+      "position": [
+        -656,
+        320
+      ],
+      "id": "57609763-8429-4580-9c54-4fb7c7960d08",
+      "name": "grok-4.1 fast",
+      "credentials": {
+        "openRouterApi": {
+          "id": "5NHf7ILbLoMVxKcb",
+          "name": "OpenRouter account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "description": "Use this Search Agent  when information is not available in the input or requires external lookup or need to search letest information from web, internet or anything recent.\n\nThis tool is meant for:\n- Finding relevant data, references, or examples related to automation, AI, SaaS, workflows, or tools\n- Fetching fresh or missing information that cannot be inferred logically\n\nDo NOT use this tool if the answer can be generated using reasoning alone.\n\nAlways return a short, structured result after searching.",
+        "workflowId": {
+          "__rl": true,
+          "value": "xz3AFt53UbEvPFQv",
+          "mode": "list",
+          "cachedResultUrl": "/workflow/xz3AFt53UbEvPFQv",
+          "cachedResultName": "Search_Agent"
+        },
+        "workflowInputs": {
+          "mappingMode": "defineBelow",
+          "value": {},
+          "matchingColumns": [],
+          "schema": [],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.toolWorkflow",
+      "typeVersion": 2.2,
+      "position": [
+        -176,
+        336
+      ],
+      "id": "868a42ef-370d-4943-9305-c3e3c606c08d",
+      "name": "Search_Agent"
+    },
+    {
+      "parameters": {},
+      "type": "@n8n/n8n-nodes-langchain.toolThink",
+      "typeVersion": 1.1,
+      "position": [
+        -512,
+        320
+      ],
+      "id": "f8695bcb-812c-4513-9c9e-49d97c76b5f5",
+      "name": "Think"
+    },
+    {
+      "parameters": {
+        "operation": "append",
+        "documentId": {
+          "__rl": true,
+          "value": "1QXT0-GD0HZ36rTwPQQFDii1qWJYBjcFm_kUC0FyX-P4",
+          "mode": "list",
+          "cachedResultName": "Aiwithdhruv_n8n",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1QXT0-GD0HZ36rTwPQQFDii1qWJYBjcFm_kUC0FyX-P4/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 576680637,
+          "mode": "list",
+          "cachedResultName": "Social_Media_Agent",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1QXT0-GD0HZ36rTwPQQFDii1qWJYBjcFm_kUC0FyX-P4/edit#gid=576680637"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Date": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Date', ``, 'string') }}",
+            "theme": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('theme', `define topic or titel based in user input`, 'string') }}",
+            "linkedin_post": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('linkedin_post', ``, 'string') }}",
+            "twitter_post": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('twitter_post', ``, 'string') }}",
+            "youtube_title ": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('youtube_title_', ``, 'string') }}",
+            "youtube_description": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('youtube_description', ``, 'string') }}",
+            "youtube_tags": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('youtube_tags', ``, 'string') }}",
+            "instagram_tittle": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('instagram_tittle', ``, 'string') }}",
+            "instagram_descritpion": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('instagram_descritpion', ``, 'string') }}"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "Date",
+              "displayName": "Date",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "theme",
+              "displayName": "theme",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "linkedin_post",
+              "displayName": "linkedin_post",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "twitter_post",
+              "displayName": "twitter_post",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "youtube_title ",
+              "displayName": "youtube_title ",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "youtube_description",
+              "displayName": "youtube_description",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "youtube_tags",
+              "displayName": "youtube_tags",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "instagram_tittle",
+              "displayName": "instagram_tittle",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "instagram_descritpion",
+              "displayName": "instagram_descritpion",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheetsTool",
+      "typeVersion": 4.5,
+      "position": [
+        -336,
+        320
+      ],
+      "id": "8c74a5af-de28-4a8f-91b1-0e18228093b2",
+      "name": "Save_post_title_tags",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "WbzVyGwbDVzvcV25",
+          "name": "Ai with Dhruv"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "={{ $json.query}}",
+        "options": {
+          "systemMessage": "=You are a Social Media Content Agent.\n\nYour job is to generate high-quality, platform-specific social media content that feels human, outcome-driven, and native to each platform.\n\nAlways follow these rules:\n- Be clear, concise, and practical\n- Avoid fluff, buzzwords, or generic AI tone\n- Optimize for engagement, clarity, and real outcomes\n- Use tools only when they add clear value (do NOT overuse them)\n\n--------------------------------------------------\nCORE BEHAVIOR\n--------------------------------------------------\n\n1. First, identify the PLATFORM from the user request:\n   - LinkedIn Post\n   - X / Twitter Post\n   - YouTube Title\n   - Instagram Title / Caption\n\n2. Generate content strictly based on the platform rules below.\n\n3. If recent trends, stats, or real-world examples are required:\n   \u2192 Use **Search_Agent**\n   Otherwise:\n   \u2192 Do NOT search\n\n4. If complex structuring or positioning is required:\n   \u2192 Use **Think** tool briefly\n   Otherwise:\n   \u2192 Write directly\n\n5. If sheet metadata is provided (e.g. \"platform = LinkedIn\"):\n   \u2192 Format output so it can be easily saved to Sheets.\n\n--------------------------------------------------\nPLATFORM RULES\n--------------------------------------------------\n\n### \ud83d\udd39 LINKEDIN POST\nPurpose: Outcome-oriented, professional, natural, non-salesy\n\nFormat:\n- Strong 1\u20132 line hook\n- Short paragraphs (1\u20132 lines each)\n- Practical insight / learning\n- Clear takeaway\n- Optional soft CTA\n- Relevant hashtags at the end\n\nRules:\n- 120\u2013180 words max\n- Sound like a real founder/operator\n- No emojis overload (1\u20132 max)\n- Include keywords naturally\n- Include link if provided\n\nOutput Format:\nLINKEDIN_POST:\n[Post content]\n\nHASHTAGS:\n#Tag1 #Tag2 #Tag3 #Tag4 #Tag5\n\n--------------------------------------------------\n\n### \ud83d\udd39 X / TWITTER POST\nPurpose: Sharp, concise, scroll-stopping\n\nRules:\n- Max 280 characters\n- 1 clear idea only\n- No paragraphs\n- 1\u20133 hashtags max\n- No emojis unless explicitly requested\n\nOutput Format:\nTWITTER_POST:\n[Single concise post]\n\n--------------------------------------------------\n\n### \ud83d\udd39 YOUTUBE (TITLE + DESCRIPTION + TAGS)\nPurpose: Click-worthy, outcome-driven, viral-leaning\n\nRules:\n- Title: 60 characters max\n- Outcome-focused or curiosity-driven\n- No clickbait lies\n- Description: short, value-first\n- Tags: relevant, searchable\n\nOutput Format:\nYOUTUBE_TITLE:\n[Title]\n\nYOUTUBE_DESCRIPTION:\n[2\u20133 lines max]\n\nYOUTUBE_TAGS:\ntag1, tag2, tag3, tag4, tag5\n\n--------------------------------------------------\n\n### \ud83d\udd39 INSTAGRAM (TITLE + CAPTION)\nPurpose: Short, relatable, visual-first\n\nRules:\n- Title: Hook-based\n- Caption: 2\u20134 lines max\n- Hashtags: 5\u201310 relevant\n- Friendly, human tone\n\nOutput Format:\nINSTAGRAM_TITLE:\n[Title]\n\nINSTAGRAM_CAPTION:\n[Caption]\n\nHASHTAGS:\n#tag1 #tag2 #tag3 ...\n\n--------------------------------------------------\nTOOLS ACCESS\n--------------------------------------------------\n\n- **Search_Agent**\n  Use ONLY if real-time data, trends, or examples are required.\n\n- **Think**\n  Use ONLY when positioning, framing, or clarity needs improvement.\n\n- **Save_post_title_tags (Sheet Access)**\n  update every single output post in sheet accorignly what asekd like linkedin, twitter/x,youtube, instagram in respective coloumns\n\n--------------------------------------------------\nIMPORTANT CONSTRAINTS\n--------------------------------------------------\n\n- Do NOT generate content for multiple platforms unless explicitly asked\n- Do NOT use all tools by default\n- Do NOT explain your thinking\n- Output ONLY the final content in the specified format\n- Always prioritize clarity over creativity\n\nYou are writing content that real people actually want to read."
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 1.7,
+      "position": [
+        -448,
+        80
+      ],
+      "id": "f659dc77-a5ff-49b8-8a49-00abd2bc6894",
+      "name": "Social_Media_Agent",
+      "onError": "continueErrorOutput"
+    }
+  ],
+  "connections": {
+    "When Executed by Another Workflow": {
+      "main": [
+        [
+          {
+            "node": "Social_Media_Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "grok-4.1 fast": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Social_Media_Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Search_Agent": {
+      "ai_tool": [
+        [
+          {
+            "node": "Social_Media_Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Think": {
+      "ai_tool": [
+        [
+          {
+            "node": "Social_Media_Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Save_post_title_tags": {
+      "ai_tool": [
+        [
+          {
+            "node": "Social_Media_Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Social_Media_Agent": {
+      "main": [
+        [
+          {
+            "node": "Response",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Try Again",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "staticData": null,
+  "meta": {
+    "templateCredsSetupCompleted": true
+  },
+  "pinData": {},
+  "versionId": "18834b62-4300-45b8-9aa0-170061f36cfd",
+  "activeVersionId": "3e857286-8662-4b12-b8fb-6959f07d1459",
+  "triggerCount": 0,
+  "shared": [
+    {
+      "updatedAt": "2025-12-20T14:13:28.633Z",
+      "createdAt": "2025-12-20T14:13:28.633Z",
+      "role": "workflow:owner",
+      "workflowId": "vTVxV4xsB6exEd01",
+      "projectId": "DT8YjHwLZsQjJqVc"
+    }
+  ],
+  "activeVersion": {
+    "updatedAt": "2025-12-21T15:48:57.000Z",
+    "createdAt": "2025-12-21T15:48:55.400Z",
+    "versionId": "3e857286-8662-4b12-b8fb-6959f07d1459",
+    "workflowId": "vTVxV4xsB6exEd01",
+    "nodes": [
+      {
+        "parameters": {
+          "assignments": {
+            "assignments": [
+              {
+                "id": "14d9076e-27ea-4846-8b44-f83cf4022b9e",
+                "name": "response",
+                "value": "={{ $json.output }}",
+                "type": "string"
+              }
+            ]
+          },
+          "options": {}
+        },
+        "type": "n8n-nodes-base.set",
+        "typeVersion": 3.4,
+        "position": [
+          0,
+          0
+        ],
+        "id": "cd128570-3958-4c22-98e5-ebcd2d6a9e26",
+        "name": "Response"
+      },
+      {
+        "parameters": {
+          "assignments": {
+            "assignments": [
+              {
+                "id": "f2a8ff2d-6b59-4ad6-a2e7-8705354f4105",
+                "name": "response",
+                "value": "Error occurred. Please try again.",
+                "type": "string"
+              }
+            ]
+          },
+          "options": {}
+        },
+        "type": "n8n-nodes-base.set",
+        "typeVersion": 3.4,
+        "position": [
+          0,
+          192
+        ],
+        "id": "d747309d-f970-478f-9faf-8bee4d2f8138",
+        "name": "Try Again"
+      },
+      {
+        "parameters": {
+          "inputSource": "passthrough"
+        },
+        "type": "n8n-nodes-base.executeWorkflowTrigger",
+        "typeVersion": 1.1,
+        "position": [
+          -704,
+          80
+        ],
+        "id": "891d2722-6d42-463f-bc4c-91c3cac8da85",
+        "name": "When Executed by Another Workflow"
+      },
+      {
+        "parameters": {
+          "model": "x-ai/grok-4.1-fast",
+          "options": {}
+        },
+        "type": "@n8n/n8n-nodes-langchain.lmChatOpenRouter",
+        "typeVersion": 1,
+        "position": [
+          -688,
+          320
+        ],
+        "id": "57609763-8429-4580-9c54-4fb7c7960d08",
+        "name": "grok-4.1 fast",
+        "credentials": {
+          "openRouterApi": {
+            "id": "5NHf7ILbLoMVxKcb",
+            "name": "OpenRouter account"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "description": "Use this Search Agent  when information is not available in the input or requires external lookup or need to search letest information from web, internet or anything recent.\n\nThis tool is meant for:\n- Finding relevant data, references, or examples related to automation, AI, SaaS, workflows, or tools\n- Fetching fresh or missing information that cannot be inferred logically\n\nDo NOT use this tool if the answer can be generated using reasoning alone.\n\nAlways return a short, structured result after searching.",
+          "workflowId": {
+            "__rl": true,
+            "value": "xz3AFt53UbEvPFQv",
+            "mode": "list",
+            "cachedResultUrl": "/workflow/xz3AFt53UbEvPFQv",
+            "cachedResultName": "Sub_Search"
+          },
+          "workflowInputs": {
+            "mappingMode": "defineBelow",
+            "value": {},
+            "matchingColumns": [],
+            "schema": [],
+            "attemptToConvertTypes": false,
+            "convertFieldsToString": false
+          }
+        },
+        "type": "@n8n/n8n-nodes-langchain.toolWorkflow",
+        "typeVersion": 2.2,
+        "position": [
+          -176,
+          336
+        ],
+        "id": "868a42ef-370d-4943-9305-c3e3c606c08d",
+        "name": "Search_Agent"
+      },
+      {
+        "parameters": {},
+        "type": "@n8n/n8n-nodes-langchain.toolThink",
+        "typeVersion": 1.1,
+        "position": [
+          -576,
+          320
+        ],
+        "id": "f8695bcb-812c-4513-9c9e-49d97c76b5f5",
+        "name": "Think"
+      },
+      {
+        "parameters": {
+          "operation": "append",
+          "documentId": {
+            "__rl": true,
+            "value": "1QXT0-GD0HZ36rTwPQQFDii1qWJYBjcFm_kUC0FyX-P4",
+            "mode": "list",
+            "cachedResultName": "Aiwithdhruv_n8n",
+            "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1QXT0-GD0HZ36rTwPQQFDii1qWJYBjcFm_kUC0FyX-P4/edit?usp=drivesdk"
+          },
+          "sheetName": {
+            "__rl": true,
+            "value": 576680637,
+            "mode": "list",
+            "cachedResultName": "Social_Media_Agent",
+            "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1QXT0-GD0HZ36rTwPQQFDii1qWJYBjcFm_kUC0FyX-P4/edit#gid=576680637"
+          },
+          "columns": {
+            "mappingMode": "defineBelow",
+            "value": {
+              "Date": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Date', ``, 'string') }}",
+              "theme": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('theme', `define topic or titel based in user input`, 'string') }}",
+              "linkedin_post": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('linkedin_post', ``, 'string') }}",
+              "twitter_post": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('twitter_post', ``, 'string') }}",
+              "youtube_title ": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('youtube_title_', ``, 'string') }}",
+              "youtube_description": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('youtube_description', ``, 'string') }}",
+              "youtube_tags": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('youtube_tags', ``, 'string') }}",
+              "instagram_tittle": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('instagram_tittle', ``, 'string') }}",
+              "instagram_descritpion": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('instagram_descritpion', ``, 'string') }}"
+            },
+            "matchingColumns": [],
+            "schema": [
+              {
+                "id": "Date",
+                "displayName": "Date",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true
+              },
+              {
+                "id": "theme",
+                "displayName": "theme",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true
+              },
+              {
+                "id": "linkedin_post",
+                "displayName": "linkedin_post",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true
+              },
+              {
+                "id": "twitter_post",
+                "displayName": "twitter_post",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true
+              },
+              {
+                "id": "youtube_title ",
+                "displayName": "youtube_title ",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true
+              },
+              {
+                "id": "youtube_description",
+                "displayName": "youtube_description",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true
+              },
+              {
+                "id": "youtube_tags",
+                "displayName": "youtube_tags",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true
+              },
+              {
+                "id": "instagram_tittle",
+                "displayName": "instagram_tittle",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true
+              },
+              {
+                "id": "instagram_descritpion",
+                "displayName": "instagram_descritpion",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true
+              }
+            ],
+            "attemptToConvertTypes": false,
+            "convertFieldsToString": false
+          },
+          "options": {}
+        },
+        "type": "n8n-nodes-base.googleSheetsTool",
+        "typeVersion": 4.5,
+        "position": [
+          -336,
+          320
+        ],
+        "id": "8c74a5af-de28-4a8f-91b1-0e18228093b2",
+        "name": "Save_post_title_tags",
+        "credentials": {
+          "googleSheetsOAuth2Api": {
+            "id": "WbzVyGwbDVzvcV25",
+            "name": "Ai with Dhruv"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "promptType": "define",
+          "text": "={{ $json.query}}",
+          "options": {
+            "systemMessage": "=You are a Social Media Content Agent.\n\nYour job is to generate high-quality, platform-specific social media content that feels human, outcome-driven, and native to each platform.\n\nAlways follow these rules:\n- Be clear, concise, and practical\n- Avoid fluff, buzzwords, or generic AI tone\n- Optimize for engagement, clarity, and real outcomes\n- Use tools only when they add clear value (do NOT overuse them)\n\n--------------------------------------------------\nCORE BEHAVIOR\n--------------------------------------------------\n\n1. First, identify the PLATFORM from the user request:\n   - LinkedIn Post\n   - X / Twitter Post\n   - YouTube Title\n   - Instagram Title / Caption\n\n2. Generate content strictly based on the platform rules below.\n\n3. If recent trends, stats, or real-world examples are required:\n   \u2192 Use **Search_Agent**\n   Otherwise:\n   \u2192 Do NOT search\n\n4. If complex structuring or positioning is required:\n   \u2192 Use **Think** tool briefly\n   Otherwise:\n   \u2192 Write directly\n\n5. If sheet metadata is provided (e.g. \"platform = LinkedIn\"):\n   \u2192 Format output so it can be easily saved to Sheets.\n\n--------------------------------------------------\nPLATFORM RULES\n--------------------------------------------------\n\n### \ud83d\udd39 LINKEDIN POST\nPurpose: Outcome-oriented, professional, natural, non-salesy\n\nFormat:\n- Strong 1\u20132 line hook\n- Short paragraphs (1\u20132 lines each)\n- Practical insight / learning\n- Clear takeaway\n- Optional soft CTA\n- Relevant hashtags at the end\n\nRules:\n- 120\u2013180 words max\n- Sound like a real founder/operator\n- No emojis overload (1\u20132 max)\n- Include keywords naturally\n- Include link if provided\n\nOutput Format:\nLINKEDIN_POST:\n[Post content]\n\nHASHTAGS:\n#Tag1 #Tag2 #Tag3 #Tag4 #Tag5\n\n--------------------------------------------------\n\n### \ud83d\udd39 X / TWITTER POST\nPurpose: Sharp, concise, scroll-stopping\n\nRules:\n- Max 280 characters\n- 1 clear idea only\n- No paragraphs\n- 1\u20133 hashtags max\n- No emojis unless explicitly requested\n\nOutput Format:\nTWITTER_POST:\n[Single concise post]\n\n--------------------------------------------------\n\n### \ud83d\udd39 YOUTUBE (TITLE + DESCRIPTION + TAGS)\nPurpose: Click-worthy, outcome-driven, viral-leaning\n\nRules:\n- Title: 60 characters max\n- Outcome-focused or curiosity-driven\n- No clickbait lies\n- Description: short, value-first\n- Tags: relevant, searchable\n\nOutput Format:\nYOUTUBE_TITLE:\n[Title]\n\nYOUTUBE_DESCRIPTION:\n[2\u20133 lines max]\n\nYOUTUBE_TAGS:\ntag1, tag2, tag3, tag4, tag5\n\n--------------------------------------------------\n\n### \ud83d\udd39 INSTAGRAM (TITLE + CAPTION)\nPurpose: Short, relatable, visual-first\n\nRules:\n- Title: Hook-based\n- Caption: 2\u20134 lines max\n- Hashtags: 5\u201310 relevant\n- Friendly, human tone\n\nOutput Format:\nINSTAGRAM_TITLE:\n[Title]\n\nINSTAGRAM_CAPTION:\n[Caption]\n\nHASHTAGS:\n#tag1 #tag2 #tag3 ...\n\n--------------------------------------------------\nTOOLS ACCESS\n--------------------------------------------------\n\n- **Search_Agent**\n  Use ONLY if real-time data, trends, or examples are required.\n\n- **Think**\n  Use ONLY when positioning, framing, or clarity needs improvement.\n\n- **Save_post_title_tags (Sheet Access)**\n  update every single output post in sheet accorignly what asekd like linkedin, twitter/x,youtube, instagram in respective coloumns\n\n--------------------------------------------------\nIMPORTANT CONSTRAINTS\n--------------------------------------------------\n\n- Do NOT generate content for multiple platforms unless explicitly asked\n- Do NOT use all tools by default\n- Do NOT explain your thinking\n- Output ONLY the final content in the specified format\n- Always prioritize clarity over creativity\n\nYou are writing content that real people actually want to read."
+          }
+        },
+        "type": "@n8n/n8n-nodes-langchain.agent",
+        "typeVersion": 1.7,
+        "position": [
+          -448,
+          80
+        ],
+        "id": "f659dc77-a5ff-49b8-8a49-00abd2bc6894",
+        "name": "Social_Media_Agent",
+        "onError": "continueErrorOutput"
+      }
+    ],
+    "connections": {
+      "When Executed by Another Workflow": {
+        "main": [
+          [
+            {
+              "node": "Social_Media_Agent",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "grok-4.1 fast": {
+        "ai_languageModel": [
+          [
+            {
+              "node": "Social_Media_Agent",
+              "type": "ai_languageModel",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Search_Agent": {
+        "ai_tool": [
+          [
+            {
+              "node": "Social_Media_Agent",
+              "type": "ai_tool",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Think": {
+        "ai_tool": [
+          [
+            {
+              "node": "Social_Media_Agent",
+              "type": "ai_tool",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Save_post_title_tags": {
+        "ai_tool": [
+          [
+            {
+              "node": "Social_Media_Agent",
+              "type": "ai_tool",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Social_Media_Agent": {
+        "main": [
+          [
+            {
+              "node": "Response",
+              "type": "main",
+              "index": 0
+            }
+          ],
+          [
+            {
+              "node": "Try Again",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      }
+    },
+    "authors": "Dhruv Tomar",
+    "name": "Version 3e857286",
+    "description": "",
+    "autosaved": false
+  },
+  "tags": []
+}

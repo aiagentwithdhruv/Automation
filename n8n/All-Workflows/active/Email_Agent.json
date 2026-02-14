@@ -1,0 +1,955 @@
+{
+  "updatedAt": "2026-01-31T12:02:15.199Z",
+  "createdAt": "2025-12-20T14:14:28.367Z",
+  "id": "kezMOKKRjQOAQIi9",
+  "name": "Email_Agent",
+  "active": true,
+  "isArchived": false,
+  "nodes": [
+    {
+      "parameters": {
+        "operation": "markAsRead",
+        "messageId": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Message_ID', ``, 'string') }}"
+      },
+      "type": "n8n-nodes-base.gmailTool",
+      "typeVersion": 2.1,
+      "position": [
+        288,
+        592
+      ],
+      "id": "2e15696a-014e-43db-9dc8-69a66cb860ba",
+      "name": "markRead",
+      "webhookId": "c0ae7f4e-31be-41cd-a899-883b4f5685f6",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "gPGYzjuIbblOf3E1",
+          "name": "Ai with Dhruv"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "resource": "draft",
+        "subject": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Subject', ``, 'string') }}",
+        "message": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Message', `Die Nachricht der Email.`, 'string') }}",
+        "options": {
+          "threadId": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Thread_ID', ``, 'string') }}"
+        }
+      },
+      "type": "n8n-nodes-base.gmailTool",
+      "typeVersion": 2.1,
+      "position": [
+        128,
+        592
+      ],
+      "id": "2ae3b9e3-a0f5-411e-a6e6-a746807c4b19",
+      "name": "saveReplyDraft",
+      "webhookId": "0d64fe08-acf1-4900-99f5-0a34c3b86dbf",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "gPGYzjuIbblOf3E1",
+          "name": "Ai with Dhruv"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "getAll",
+        "simple": false,
+        "filters": {},
+        "options": {}
+      },
+      "type": "n8n-nodes-base.gmailTool",
+      "typeVersion": 2.1,
+      "position": [
+        -448,
+        592
+      ],
+      "id": "043cc03d-5e39-4972-806f-963869d24386",
+      "name": "getEmails",
+      "webhookId": "312f5bbf-7614-4d1a-befc-7592c0367f92",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "gPGYzjuIbblOf3E1",
+          "name": "Ai with Dhruv"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "reply",
+        "messageId": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Message_ID', `Send a reply to an existing email using its message ID.`, 'string') }}",
+        "emailType": "text",
+        "message": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Message', ``, 'string') }}",
+        "options": {
+          "appendAttribution": false,
+          "senderName": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Sender_Name', ``, 'string') }}"
+        }
+      },
+      "type": "n8n-nodes-base.gmailTool",
+      "typeVersion": 2.1,
+      "position": [
+        -16,
+        592
+      ],
+      "id": "db191aee-daaa-412e-8cf8-de14666a9d8c",
+      "name": "sendReply",
+      "webhookId": "bc2509c0-b19d-497e-b0ca-e22aa4c362f2",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "gPGYzjuIbblOf3E1",
+          "name": "Ai with Dhruv"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "sendTo": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('To', `Send a new email to a specified recipient with subject and body content.`, 'string') }}",
+        "subject": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Subject', ``, 'string') }}",
+        "emailType": "text",
+        "message": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Message', ``, 'string') }}",
+        "options": {
+          "appendAttribution": false
+        }
+      },
+      "type": "n8n-nodes-base.gmailTool",
+      "typeVersion": 2.1,
+      "position": [
+        -304,
+        592
+      ],
+      "id": "2823df53-6bb6-4fd7-b621-404a12f3dd89",
+      "name": "sendEmail",
+      "webhookId": "180e0df0-cd79-4ee1-a3b7-660825b2a686",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "gPGYzjuIbblOf3E1",
+          "name": "Ai with Dhruv"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "descriptionType": "manual",
+        "toolDescription": "Create and save an email draft without sending it.",
+        "resource": "draft",
+        "subject": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Subject', ``, 'string') }}",
+        "message": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Message', ``, 'string') }}",
+        "options": {
+          "sendTo": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('To_Email', ``, 'string') }}"
+        }
+      },
+      "type": "n8n-nodes-base.gmailTool",
+      "typeVersion": 2.1,
+      "position": [
+        -160,
+        592
+      ],
+      "id": "c50f08f7-e9fa-46e6-b527-7d73caf6c628",
+      "name": "saveEmailDraft",
+      "webhookId": "82eec91a-c9a1-40ed-bfc8-556c153390f7",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "gPGYzjuIbblOf3E1",
+          "name": "Ai with Dhruv"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "markAsUnread",
+        "messageId": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Message_ID', ``, 'string') }}"
+      },
+      "type": "n8n-nodes-base.gmailTool",
+      "typeVersion": 2.1,
+      "position": [
+        448,
+        592
+      ],
+      "id": "3188dc4f-f657-4232-9cab-04e9bee976e8",
+      "name": "markUnread",
+      "webhookId": "438ce016-c775-4f22-943e-619915336683",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "gPGYzjuIbblOf3E1",
+          "name": "Ai with Dhruv"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "resource": "label"
+      },
+      "type": "n8n-nodes-base.gmailTool",
+      "typeVersion": 2.1,
+      "position": [
+        608,
+        592
+      ],
+      "id": "49ffc07d-f32a-4486-b0f2-2a91e939eb83",
+      "name": "getLabels",
+      "webhookId": "39cedbc5-7f7a-4900-889d-51d32f38d69b",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "gPGYzjuIbblOf3E1",
+          "name": "Ai with Dhruv"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "inputSource": "passthrough"
+      },
+      "type": "n8n-nodes-base.executeWorkflowTrigger",
+      "typeVersion": 1.1,
+      "position": [
+        -736,
+        192
+      ],
+      "id": "5b32e725-67a1-40c4-aab4-03b63ad69d45",
+      "name": "When Executed by Another Workflow"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "4f360190-a717-4a93-8336-d03ea65975d5",
+              "name": "response",
+              "value": "={{ $json.output }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        0,
+        0
+      ],
+      "id": "2a3a6b3d-0610-4985-99b5-5ef096e7ddd5",
+      "name": "Response"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "4f360190-a717-4a93-8336-d03ea65975d5",
+              "name": "response",
+              "value": "An error occurred. Please try again.",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        0,
+        160
+      ],
+      "id": "e11a64a5-b0e8-45bb-92d4-422a73aa63f2",
+      "name": "Try Again"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "={{ $json.query }}",
+        "options": {
+          "systemMessage": "=# ROLE\nYou are an Email Agent responsible for reading, drafting, replying to, and managing emails on behalf of Dhruv.\n\n# CONTEXT\n- Current date & time: {{ $now }}\n- Always write professional, clear, and concise emails.\n- Always sign emails with:\n  Dhruv\n  Ai Automation Expert\n\n# TOOL USAGE RULES\n- Use ONLY the most relevant tool for the task.\n- Never call multiple tools unless strictly required.\n- Do not guess message IDs or thread IDs.\n\n# WHEN TO USE WHICH TOOL\n- \"Read & get my emails\" \u2192 getEmails\n- \"Send an email to\u2026\" \u2192 sendEmail\n- \"Draft an email\" \u2192 saveEmailDraft\n- \"Reply to this email\" \u2192 sendReply\n- \"Draft a reply\" \u2192 saveReplyDraft\n- \"Add label / tag\" \u2192 labelEmails\n- \"Mark as read\" \u2192 markRead\n- \"Mark as unread\" \u2192 markUnread\n\n# IMPORTANT CONSTRAINTS\n- To reply or label an email, you MUST first fetch it using getEmails.\n- If required data is missing, ask a clarification instead of guessing.\n- Do not perform unnecessary actions.\n\n# OUTPUT STYLE\n- Email tone: professional, polite, and confident\n- Short paragraphs\n- Clear call-to-action if applicable"
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 1.7,
+      "position": [
+        -448,
+        192
+      ],
+      "id": "f7c1ea52-4235-4a13-a116-eb44ee6f9688",
+      "name": "Email Agent",
+      "onError": "continueErrorOutput"
+    },
+    {
+      "parameters": {
+        "operation": "addLabels",
+        "messageId": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Message_ID', ``, 'string') }}",
+        "labelIds": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Label_Names_or_IDs', ``, 'string') }}"
+      },
+      "type": "n8n-nodes-base.gmailTool",
+      "typeVersion": 2.1,
+      "position": [
+        752,
+        592
+      ],
+      "id": "07090f80-e992-4019-966c-1e1169f17242",
+      "name": "Add Label",
+      "webhookId": "9af105a2-4f93-4089-8908-ffb714bf1740",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "gPGYzjuIbblOf3E1",
+          "name": "Ai with Dhruv"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "value": "claude-opus-4-5-20251101",
+          "mode": "list",
+          "cachedResultName": "Claude Opus 4.5"
+        },
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatAnthropic",
+      "typeVersion": 1.3,
+      "position": [
+        -608,
+        432
+      ],
+      "id": "532e4bfd-8ba7-4a42-9e7a-5b1eab714d7b",
+      "name": "Anthropic Chat Model",
+      "credentials": {
+        "anthropicApi": {
+          "id": "4TWuiQeAevzJx8R6",
+          "name": "Anthropic account"
+        }
+      }
+    }
+  ],
+  "connections": {
+    "markRead": {
+      "ai_tool": [
+        [
+          {
+            "node": "Email Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "saveReplyDraft": {
+      "ai_tool": [
+        [
+          {
+            "node": "Email Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "getEmails": {
+      "ai_tool": [
+        [
+          {
+            "node": "Email Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "sendReply": {
+      "ai_tool": [
+        [
+          {
+            "node": "Email Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "sendEmail": {
+      "ai_tool": [
+        [
+          {
+            "node": "Email Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "saveEmailDraft": {
+      "ai_tool": [
+        [
+          {
+            "node": "Email Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "markUnread": {
+      "ai_tool": [
+        [
+          {
+            "node": "Email Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "getLabels": {
+      "ai_tool": [
+        [
+          {
+            "node": "Email Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "When Executed by Another Workflow": {
+      "main": [
+        [
+          {
+            "node": "Email Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Email Agent": {
+      "main": [
+        [
+          {
+            "node": "Response",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Try Again",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Add Label": {
+      "ai_tool": [
+        [
+          {
+            "node": "Email Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Anthropic Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Email Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "staticData": null,
+  "meta": {
+    "templateCredsSetupCompleted": true
+  },
+  "pinData": {},
+  "versionId": "099e1366-3c48-4bf5-a15d-146282637859",
+  "activeVersionId": "e6219eec-b104-4f31-a1e1-18f2ff15e16f",
+  "triggerCount": 0,
+  "shared": [
+    {
+      "updatedAt": "2025-12-20T14:14:28.375Z",
+      "createdAt": "2025-12-20T14:14:28.375Z",
+      "role": "workflow:owner",
+      "workflowId": "kezMOKKRjQOAQIi9",
+      "projectId": "DT8YjHwLZsQjJqVc"
+    }
+  ],
+  "activeVersion": {
+    "updatedAt": "2025-12-23T16:15:09.000Z",
+    "createdAt": "2025-12-23T16:15:06.702Z",
+    "versionId": "e6219eec-b104-4f31-a1e1-18f2ff15e16f",
+    "workflowId": "kezMOKKRjQOAQIi9",
+    "nodes": [
+      {
+        "parameters": {
+          "operation": "markAsRead",
+          "messageId": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Message_ID', ``, 'string') }}"
+        },
+        "type": "n8n-nodes-base.gmailTool",
+        "typeVersion": 2.1,
+        "position": [
+          288,
+          592
+        ],
+        "id": "2e15696a-014e-43db-9dc8-69a66cb860ba",
+        "name": "markRead",
+        "webhookId": "c0ae7f4e-31be-41cd-a899-883b4f5685f6",
+        "credentials": {
+          "gmailOAuth2": {
+            "id": "gPGYzjuIbblOf3E1",
+            "name": "Ai with Dhruv"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "resource": "draft",
+          "subject": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Subject', ``, 'string') }}",
+          "message": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Message', `Die Nachricht der Email.`, 'string') }}",
+          "options": {
+            "threadId": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Thread_ID', ``, 'string') }}"
+          }
+        },
+        "type": "n8n-nodes-base.gmailTool",
+        "typeVersion": 2.1,
+        "position": [
+          128,
+          592
+        ],
+        "id": "2ae3b9e3-a0f5-411e-a6e6-a746807c4b19",
+        "name": "saveReplyDraft",
+        "webhookId": "0d64fe08-acf1-4900-99f5-0a34c3b86dbf",
+        "credentials": {
+          "gmailOAuth2": {
+            "id": "gPGYzjuIbblOf3E1",
+            "name": "Ai with Dhruv"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "operation": "getAll",
+          "simple": false,
+          "filters": {},
+          "options": {}
+        },
+        "type": "n8n-nodes-base.gmailTool",
+        "typeVersion": 2.1,
+        "position": [
+          -448,
+          592
+        ],
+        "id": "043cc03d-5e39-4972-806f-963869d24386",
+        "name": "getEmails",
+        "webhookId": "312f5bbf-7614-4d1a-befc-7592c0367f92",
+        "credentials": {
+          "gmailOAuth2": {
+            "id": "gPGYzjuIbblOf3E1",
+            "name": "Ai with Dhruv"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "operation": "reply",
+          "messageId": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Message_ID', `Send a reply to an existing email using its message ID.`, 'string') }}",
+          "emailType": "text",
+          "message": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Message', ``, 'string') }}",
+          "options": {
+            "appendAttribution": false,
+            "senderName": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Sender_Name', ``, 'string') }}"
+          }
+        },
+        "type": "n8n-nodes-base.gmailTool",
+        "typeVersion": 2.1,
+        "position": [
+          -16,
+          592
+        ],
+        "id": "db191aee-daaa-412e-8cf8-de14666a9d8c",
+        "name": "sendReply",
+        "webhookId": "bc2509c0-b19d-497e-b0ca-e22aa4c362f2",
+        "credentials": {
+          "gmailOAuth2": {
+            "id": "gPGYzjuIbblOf3E1",
+            "name": "Ai with Dhruv"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "sendTo": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('To', `Send a new email to a specified recipient with subject and body content.`, 'string') }}",
+          "subject": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Subject', ``, 'string') }}",
+          "emailType": "text",
+          "message": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Message', ``, 'string') }}",
+          "options": {
+            "appendAttribution": false
+          }
+        },
+        "type": "n8n-nodes-base.gmailTool",
+        "typeVersion": 2.1,
+        "position": [
+          -304,
+          592
+        ],
+        "id": "2823df53-6bb6-4fd7-b621-404a12f3dd89",
+        "name": "sendEmail",
+        "webhookId": "180e0df0-cd79-4ee1-a3b7-660825b2a686",
+        "credentials": {
+          "gmailOAuth2": {
+            "id": "gPGYzjuIbblOf3E1",
+            "name": "Ai with Dhruv"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "descriptionType": "manual",
+          "toolDescription": "Create and save an email draft without sending it.",
+          "resource": "draft",
+          "subject": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Subject', ``, 'string') }}",
+          "message": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Message', ``, 'string') }}",
+          "options": {
+            "sendTo": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('To_Email', ``, 'string') }}"
+          }
+        },
+        "type": "n8n-nodes-base.gmailTool",
+        "typeVersion": 2.1,
+        "position": [
+          -160,
+          592
+        ],
+        "id": "c50f08f7-e9fa-46e6-b527-7d73caf6c628",
+        "name": "saveEmailDraft",
+        "webhookId": "82eec91a-c9a1-40ed-bfc8-556c153390f7",
+        "credentials": {
+          "gmailOAuth2": {
+            "id": "gPGYzjuIbblOf3E1",
+            "name": "Ai with Dhruv"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "operation": "markAsUnread",
+          "messageId": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Message_ID', ``, 'string') }}"
+        },
+        "type": "n8n-nodes-base.gmailTool",
+        "typeVersion": 2.1,
+        "position": [
+          448,
+          592
+        ],
+        "id": "3188dc4f-f657-4232-9cab-04e9bee976e8",
+        "name": "markUnread",
+        "webhookId": "438ce016-c775-4f22-943e-619915336683",
+        "credentials": {
+          "gmailOAuth2": {
+            "id": "gPGYzjuIbblOf3E1",
+            "name": "Ai with Dhruv"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "resource": "label"
+        },
+        "type": "n8n-nodes-base.gmailTool",
+        "typeVersion": 2.1,
+        "position": [
+          608,
+          592
+        ],
+        "id": "49ffc07d-f32a-4486-b0f2-2a91e939eb83",
+        "name": "getLabels",
+        "webhookId": "39cedbc5-7f7a-4900-889d-51d32f38d69b",
+        "credentials": {
+          "gmailOAuth2": {
+            "id": "gPGYzjuIbblOf3E1",
+            "name": "Ai with Dhruv"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "inputSource": "passthrough"
+        },
+        "type": "n8n-nodes-base.executeWorkflowTrigger",
+        "typeVersion": 1.1,
+        "position": [
+          -736,
+          192
+        ],
+        "id": "5b32e725-67a1-40c4-aab4-03b63ad69d45",
+        "name": "When Executed by Another Workflow"
+      },
+      {
+        "parameters": {
+          "assignments": {
+            "assignments": [
+              {
+                "id": "4f360190-a717-4a93-8336-d03ea65975d5",
+                "name": "response",
+                "value": "={{ $json.output }}",
+                "type": "string"
+              }
+            ]
+          },
+          "options": {}
+        },
+        "type": "n8n-nodes-base.set",
+        "typeVersion": 3.4,
+        "position": [
+          0,
+          0
+        ],
+        "id": "2a3a6b3d-0610-4985-99b5-5ef096e7ddd5",
+        "name": "Response"
+      },
+      {
+        "parameters": {
+          "assignments": {
+            "assignments": [
+              {
+                "id": "4f360190-a717-4a93-8336-d03ea65975d5",
+                "name": "response",
+                "value": "An error occurred. Please try again.",
+                "type": "string"
+              }
+            ]
+          },
+          "options": {}
+        },
+        "type": "n8n-nodes-base.set",
+        "typeVersion": 3.4,
+        "position": [
+          0,
+          160
+        ],
+        "id": "e11a64a5-b0e8-45bb-92d4-422a73aa63f2",
+        "name": "Try Again"
+      },
+      {
+        "parameters": {
+          "promptType": "define",
+          "text": "={{ $json.query }}",
+          "options": {
+            "systemMessage": "=# ROLE\nYou are an Email Agent responsible for reading, drafting, replying to, and managing emails on behalf of Dhruv.\n\n# CONTEXT\n- Current date & time: {{ $now }}\n- Always write professional, clear, and concise emails.\n- Always sign emails with:\n  Dhruv\n  Ai Automation Expert\n\n# TOOL USAGE RULES\n- Use ONLY the most relevant tool for the task.\n- Never call multiple tools unless strictly required.\n- Do not guess message IDs or thread IDs.\n\n# WHEN TO USE WHICH TOOL\n- \"Read & get my emails\" \u2192 getEmails\n- \"Send an email to\u2026\" \u2192 sendEmail\n- \"Draft an email\" \u2192 saveEmailDraft\n- \"Reply to this email\" \u2192 sendReply\n- \"Draft a reply\" \u2192 saveReplyDraft\n- \"Add label / tag\" \u2192 labelEmails\n- \"Mark as read\" \u2192 markRead\n- \"Mark as unread\" \u2192 markUnread\n\n# IMPORTANT CONSTRAINTS\n- To reply or label an email, you MUST first fetch it using getEmails.\n- If required data is missing, ask a clarification instead of guessing.\n- Do not perform unnecessary actions.\n\n# OUTPUT STYLE\n- Email tone: professional, polite, and confident\n- Short paragraphs\n- Clear call-to-action if applicable"
+          }
+        },
+        "type": "@n8n/n8n-nodes-langchain.agent",
+        "typeVersion": 1.7,
+        "position": [
+          -448,
+          192
+        ],
+        "id": "f7c1ea52-4235-4a13-a116-eb44ee6f9688",
+        "name": "Email Agent",
+        "onError": "continueErrorOutput"
+      },
+      {
+        "parameters": {
+          "model": "x-ai/grok-4.1-fast",
+          "options": {}
+        },
+        "type": "@n8n/n8n-nodes-langchain.lmChatOpenRouter",
+        "typeVersion": 1,
+        "position": [
+          -624,
+          560
+        ],
+        "id": "2501d7a3-c221-42b3-8dee-d89fe75bef69",
+        "name": "grok-4.1-fast",
+        "credentials": {
+          "openRouterApi": {
+            "id": "5NHf7ILbLoMVxKcb",
+            "name": "OpenRouter account"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "operation": "addLabels",
+          "messageId": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Message_ID', ``, 'string') }}",
+          "labelIds": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Label_Names_or_IDs', ``, 'string') }}"
+        },
+        "type": "n8n-nodes-base.gmailTool",
+        "typeVersion": 2.1,
+        "position": [
+          752,
+          592
+        ],
+        "id": "07090f80-e992-4019-966c-1e1169f17242",
+        "name": "Add Label",
+        "webhookId": "9af105a2-4f93-4089-8908-ffb714bf1740",
+        "credentials": {
+          "gmailOAuth2": {
+            "id": "gPGYzjuIbblOf3E1",
+            "name": "Ai with Dhruv"
+          }
+        }
+      }
+    ],
+    "connections": {
+      "markRead": {
+        "ai_tool": [
+          [
+            {
+              "node": "Email Agent",
+              "type": "ai_tool",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "saveReplyDraft": {
+        "ai_tool": [
+          [
+            {
+              "node": "Email Agent",
+              "type": "ai_tool",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "getEmails": {
+        "ai_tool": [
+          [
+            {
+              "node": "Email Agent",
+              "type": "ai_tool",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "sendReply": {
+        "ai_tool": [
+          [
+            {
+              "node": "Email Agent",
+              "type": "ai_tool",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "sendEmail": {
+        "ai_tool": [
+          [
+            {
+              "node": "Email Agent",
+              "type": "ai_tool",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "saveEmailDraft": {
+        "ai_tool": [
+          [
+            {
+              "node": "Email Agent",
+              "type": "ai_tool",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "markUnread": {
+        "ai_tool": [
+          [
+            {
+              "node": "Email Agent",
+              "type": "ai_tool",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "getLabels": {
+        "ai_tool": [
+          [
+            {
+              "node": "Email Agent",
+              "type": "ai_tool",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "When Executed by Another Workflow": {
+        "main": [
+          [
+            {
+              "node": "Email Agent",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Email Agent": {
+        "main": [
+          [
+            {
+              "node": "Response",
+              "type": "main",
+              "index": 0
+            }
+          ],
+          [
+            {
+              "node": "Try Again",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "grok-4.1-fast": {
+        "ai_languageModel": [
+          [
+            {
+              "node": "Email Agent",
+              "type": "ai_languageModel",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Add Label": {
+        "ai_tool": [
+          [
+            {
+              "node": "Email Agent",
+              "type": "ai_tool",
+              "index": 0
+            }
+          ]
+        ]
+      }
+    },
+    "authors": "Dhruv Tomar",
+    "name": "Version e6219eec",
+    "description": "",
+    "autosaved": false
+  },
+  "tags": [
+    {
+      "updatedAt": "2025-12-20T14:14:26.595Z",
+      "createdAt": "2025-12-20T14:14:26.595Z",
+      "id": "zRQn8cbiw0Z9XSXV",
+      "name": "Maybe to Big."
+    }
+  ]
+}

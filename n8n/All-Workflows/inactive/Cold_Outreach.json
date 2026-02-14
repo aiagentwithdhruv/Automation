@@ -1,0 +1,30 @@
+{
+  "updatedAt": "2025-10-21T18:34:01.000Z",
+  "createdAt": "2025-10-21T18:33:57.134Z",
+  "id": "wl48pZR8CxklTmAD",
+  "name": "Cold Outreach",
+  "active": false,
+  "isArchived": false,
+  "nodes": [],
+  "connections": {},
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "staticData": null,
+  "meta": null,
+  "pinData": {},
+  "versionId": "c6540b85-10ee-4fd5-9c3e-84ef61c220d6",
+  "activeVersionId": null,
+  "triggerCount": 0,
+  "shared": [
+    {
+      "updatedAt": "2025-10-21T18:33:57.138Z",
+      "createdAt": "2025-10-21T18:33:57.138Z",
+      "role": "workflow:owner",
+      "workflowId": "wl48pZR8CxklTmAD",
+      "projectId": "DT8YjHwLZsQjJqVc"
+    }
+  ],
+  "activeVersion": null,
+  "tags": []
+}

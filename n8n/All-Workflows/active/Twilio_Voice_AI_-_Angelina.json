@@ -1,0 +1,384 @@
+{
+  "updatedAt": "2026-02-01T12:02:03.843Z",
+  "createdAt": "2026-01-31T19:28:23.405Z",
+  "id": "cbJNg3uBOhfRFUZ4",
+  "name": "Twilio Voice AI - Angelina",
+  "active": true,
+  "isArchived": false,
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "voice-ai",
+        "responseMode": "responseNode",
+        "options": {}
+      },
+      "id": "webhook",
+      "name": "Twilio Webhook",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [
+        208,
+        304
+      ],
+      "webhookId": "318c883f-d395-4aee-8eff-23f8246473dd"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict"
+          },
+          "conditions": [
+            {
+              "id": "check-speech",
+              "leftValue": "={{ $json.body.SpeechResult }}",
+              "rightValue": "",
+              "operator": {
+                "type": "string",
+                "operation": "exists",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "check-speech",
+      "name": "Has Speech?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2,
+      "position": [
+        384,
+        304
+      ]
+    },
+    {
+      "parameters": {
+        "modelId": {
+          "__rl": true,
+          "value": "chatgpt-4o-latest",
+          "mode": "list",
+          "cachedResultName": "CHATGPT-4O-LATEST"
+        },
+        "messages": {
+          "values": [
+            {
+              "content": "You are Angelina, Dhruv's AI assistant. You're on a phone call with him. Be conversational, helpful, warm but concise. Keep responses under 2-3 sentences since this is voice. You help with automation, business ideas, motivation, and anything Dhruv needs. Speak naturally like a phone conversation."
+            },
+            {
+              "content": "={{ $json.body.SpeechResult }}"
+            }
+          ]
+        },
+        "options": {
+          "maxTokens": 150,
+          "temperature": 0.7
+        }
+      },
+      "id": "openai",
+      "name": "AI Response",
+      "type": "@n8n/n8n-nodes-langchain.openAi",
+      "typeVersion": 1.4,
+      "position": [
+        560,
+        208
+      ],
+      "credentials": {
+        "openAiApi": {
+          "id": "MuLqumRLbw42rD7o",
+          "name": "Euron_Feb_2026"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "respondWith": "text",
+        "responseBody": "=<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<Response>\n  <Say voice=\"Polly.Amy\">{{ $json.message.content.replace(/[\"<>&]/g, '') }}</Say>\n  <Gather input=\"speech\" timeout=\"5\" speechTimeout=\"auto\" action=\"https://n8n.aiwithdhruv.cloud/webhook/voice-ai\" method=\"POST\">\n    <Say voice=\"Polly.Amy\">What else?</Say>\n  </Gather>\n  <Say voice=\"Polly.Amy\">I didn't hear anything. Talk to you later Dhruv!</Say>\n</Response>",
+        "options": {
+          "responseHeaders": {
+            "entries": [
+              {
+                "name": "Content-Type",
+                "value": "application/xml"
+              }
+            ]
+          }
+        }
+      },
+      "id": "respond-ai",
+      "name": "Respond with AI",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.1,
+      "position": [
+        912,
+        208
+      ]
+    },
+    {
+      "parameters": {
+        "path": "c57443db-bf17-49e4-abdc-4ea3b80a3f1f",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2.1,
+      "position": [
+        576,
+        416
+      ],
+      "id": "fe970536-e732-49b5-b941-65015f59cc01",
+      "name": "Webhook",
+      "webhookId": "c57443db-bf17-49e4-abdc-4ea3b80a3f1f"
+    }
+  ],
+  "connections": {
+    "Twilio Webhook": {
+      "main": [
+        [
+          {
+            "node": "Has Speech?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Has Speech?": {
+      "main": [
+        [
+          {
+            "node": "AI Response",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        []
+      ]
+    },
+    "AI Response": {
+      "main": [
+        [
+          {
+            "node": "Respond with AI",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1",
+    "callerPolicy": "workflowsFromSameOwner",
+    "availableInMCP": false
+  },
+  "staticData": null,
+  "meta": null,
+  "pinData": {},
+  "versionId": "4dd8e979-acd0-4283-8d97-5cb2079b23ff",
+  "activeVersionId": "98aef73a-dfd8-43c2-9e64-76ec7cb4101a",
+  "triggerCount": 1,
+  "shared": [
+    {
+      "updatedAt": "2026-01-31T19:28:23.423Z",
+      "createdAt": "2026-01-31T19:28:23.423Z",
+      "role": "workflow:owner",
+      "workflowId": "cbJNg3uBOhfRFUZ4",
+      "projectId": "DT8YjHwLZsQjJqVc"
+    }
+  ],
+  "activeVersion": {
+    "updatedAt": "2026-01-31T19:32:06.000Z",
+    "createdAt": "2026-01-31T19:32:04.220Z",
+    "versionId": "98aef73a-dfd8-43c2-9e64-76ec7cb4101a",
+    "workflowId": "cbJNg3uBOhfRFUZ4",
+    "nodes": [
+      {
+        "parameters": {
+          "httpMethod": "POST",
+          "path": "voice-ai",
+          "responseMode": "responseNode",
+          "options": {}
+        },
+        "id": "webhook",
+        "name": "Twilio Webhook",
+        "type": "n8n-nodes-base.webhook",
+        "typeVersion": 2,
+        "position": [
+          208,
+          304
+        ],
+        "webhookId": "318c883f-d395-4aee-8eff-23f8246473dd"
+      },
+      {
+        "parameters": {
+          "conditions": {
+            "options": {
+              "caseSensitive": true,
+              "leftValue": "",
+              "typeValidation": "strict"
+            },
+            "conditions": [
+              {
+                "id": "check-speech",
+                "leftValue": "={{ $json.body.SpeechResult }}",
+                "rightValue": "",
+                "operator": {
+                  "type": "string",
+                  "operation": "exists",
+                  "singleValue": true
+                }
+              }
+            ],
+            "combinator": "and"
+          },
+          "options": {}
+        },
+        "id": "check-speech",
+        "name": "Has Speech?",
+        "type": "n8n-nodes-base.if",
+        "typeVersion": 2,
+        "position": [
+          400,
+          304
+        ]
+      },
+      {
+        "parameters": {
+          "modelId": {
+            "__rl": true,
+            "value": "chatgpt-4o-latest",
+            "mode": "list",
+            "cachedResultName": "CHATGPT-4O-LATEST"
+          },
+          "messages": {
+            "values": [
+              {
+                "content": "You are Angelina, Dhruv's AI assistant. You're on a phone call with him. Be conversational, helpful, warm but concise. Keep responses under 2-3 sentences since this is voice. You help with automation, business ideas, motivation, and anything Dhruv needs. Speak naturally like a phone conversation."
+              },
+              {
+                "content": "={{ $json.body.SpeechResult }}"
+              }
+            ]
+          },
+          "options": {
+            "maxTokens": 150,
+            "temperature": 0.7
+          }
+        },
+        "id": "openai",
+        "name": "AI Response",
+        "type": "@n8n/n8n-nodes-langchain.openAi",
+        "typeVersion": 1.4,
+        "position": [
+          560,
+          208
+        ],
+        "credentials": {
+          "openAiApi": {
+            "id": "MuLqumRLbw42rD7o",
+            "name": "Euron_Feb_2026"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "respondWith": "text",
+          "responseBody": "=<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<Response>\n  <Say voice=\"Polly.Amy\">{{ $json.message.content.replace(/[\"<>&]/g, '') }}</Say>\n  <Gather input=\"speech\" timeout=\"5\" speechTimeout=\"auto\" action=\"https://n8n.aiwithdhruv.cloud/webhook/voice-ai\" method=\"POST\">\n    <Say voice=\"Polly.Amy\">What else?</Say>\n  </Gather>\n  <Say voice=\"Polly.Amy\">I didn't hear anything. Talk to you later Dhruv!</Say>\n</Response>",
+          "options": {
+            "responseHeaders": {
+              "entries": [
+                {
+                  "name": "Content-Type",
+                  "value": "application/xml"
+                }
+              ]
+            }
+          }
+        },
+        "id": "respond-ai",
+        "name": "Respond with AI",
+        "type": "n8n-nodes-base.respondToWebhook",
+        "typeVersion": 1.1,
+        "position": [
+          912,
+          208
+        ]
+      },
+      {
+        "parameters": {
+          "respondWith": "text",
+          "responseBody": "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<Response>\n  <Gather input=\"speech\" timeout=\"5\" speechTimeout=\"auto\" action=\"https://n8n.aiwithdhruv.cloud/webhook/voice-ai\" method=\"POST\">\n    <Say voice=\"Polly.Amy\">Hey Dhruv! This is Angelina. I can hear you now. What's on your mind?</Say>\n  </Gather>\n  <Say voice=\"Polly.Amy\">I didn't hear anything. Call back when you're ready to talk!</Say>\n</Response>",
+          "options": {
+            "responseHeaders": {
+              "entries": [
+                {
+                  "name": "Content-Type",
+                  "value": "application/xml"
+                }
+              ]
+            }
+          }
+        },
+        "id": "respond-greeting",
+        "name": "Greeting",
+        "type": "n8n-nodes-base.respondToWebhook",
+        "typeVersion": 1.1,
+        "position": [
+          608,
+          400
+        ]
+      }
+    ],
+    "connections": {
+      "Twilio Webhook": {
+        "main": [
+          [
+            {
+              "node": "Has Speech?",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Has Speech?": {
+        "main": [
+          [
+            {
+              "node": "AI Response",
+              "type": "main",
+              "index": 0
+            }
+          ],
+          [
+            {
+              "node": "Greeting",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "AI Response": {
+        "main": [
+          [
+            {
+              "node": "Respond with AI",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      }
+    },
+    "authors": "Dhruv Tomar",
+    "name": "Version 98aef73a",
+    "description": "",
+    "autosaved": false
+  },
+  "tags": []
+}

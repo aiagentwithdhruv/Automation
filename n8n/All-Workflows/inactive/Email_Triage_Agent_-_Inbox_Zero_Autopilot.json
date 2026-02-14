@@ -1,0 +1,837 @@
+{
+  "updatedAt": "2026-01-07T19:58:05.000Z",
+  "createdAt": "2026-01-07T19:58:05.228Z",
+  "id": "8IFupHF01rmb4Hkf",
+  "name": "Email Triage Agent - Inbox Zero Autopilot",
+  "active": false,
+  "isArchived": false,
+  "nodes": [
+    {
+      "parameters": {
+        "pollTimes": {
+          "item": [
+            {
+              "mode": "everyMinute"
+            }
+          ]
+        },
+        "filters": {}
+      },
+      "id": "58a47d64-6370-4e86-9629-4aa0ae104910",
+      "name": "Gmail Trigger - New Emails",
+      "type": "n8n-nodes-base.gmailTrigger",
+      "typeVersion": 1.3,
+      "position": [
+        -2304,
+        96
+      ]
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "id": "2523135d-1d66-48b1-8674-2f94eb25540a",
+      "name": "Workflow Configuration",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        -2080,
+        96
+      ]
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "id": "fab6c5a1-9ca6-450c-be01-7785a4bd72dd",
+      "name": "Extract Email Data",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        -1856,
+        96
+      ]
+    },
+    {
+      "parameters": {},
+      "id": "e097e835-5879-48d7-ac57-1f4f3a5fa715",
+      "name": "Email Classification Schema",
+      "type": "@n8n/n8n-nodes-langchain.outputParserStructured",
+      "typeVersion": 1.3,
+      "position": [
+        -1632,
+        320
+      ]
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "mode": "list",
+          "value": "gpt-4.1-mini"
+        },
+        "builtInTools": {},
+        "options": {}
+      },
+      "id": "b320f735-62ba-481f-bbd0-cf94717f4ee2",
+      "name": "OpenAI Chat Model - Classifier",
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.3,
+      "position": [
+        -1504,
+        320
+      ]
+    },
+    {
+      "parameters": {
+        "hasOutputParser": true,
+        "options": {}
+      },
+      "id": "1537d314-b626-4a0c-9c23-184178b82875",
+      "name": "Email Classifier AI",
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 3.1,
+      "position": [
+        -1632,
+        96
+      ]
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "id": "29398b33-7fed-4a4c-b0a7-82ef23d6315a",
+      "name": "Apply Labels",
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.2,
+      "position": [
+        -1280,
+        96
+      ],
+      "webhookId": "2d67bdac-6bc8-4fee-be8f-9643c3a40011"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "id": "d33f6572-ba89-41aa-83fe-388a24c76a7c",
+      "name": "Star High Priority",
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.2,
+      "position": [
+        -1056,
+        96
+      ],
+      "webhookId": "faf1f49d-8adb-499d-adb1-80c168a41f1d"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "id": "bed31149-f2c8-44c7-b49f-54948a52443e",
+      "name": "Check if Newsletter/Promo",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [
+        -832,
+        96
+      ]
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "id": "ba3a733e-2fa9-4ce8-bc99-dea995952081",
+      "name": "Archive Newsletter/Promo",
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.2,
+      "position": [
+        -608,
+        -32
+      ],
+      "webhookId": "49bd05c1-d432-4592-93d8-ec06f1e727bc"
+    },
+    {
+      "parameters": {
+        "rules": {
+          "values": [
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict"
+                },
+                "conditions": [
+                  {
+                    "leftValue": "",
+                    "rightValue": "",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "Urgent + Response Needed"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict"
+                },
+                "conditions": [
+                  {
+                    "leftValue": "",
+                    "rightValue": "",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "Important + Response Needed"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict"
+                },
+                "conditions": [
+                  {
+                    "leftValue": "",
+                    "rightValue": "",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "Medium/Low Priority"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict"
+                },
+                "conditions": [
+                  {
+                    "leftValue": "",
+                    "rightValue": "",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "Newsletter/Promo"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "9dbae896-293b-45d6-938e-a57797b4cad9",
+      "name": "Route by Priority",
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3.4,
+      "position": [
+        -608,
+        176
+      ]
+    },
+    {
+      "parameters": {
+        "otherOptions": {}
+      },
+      "id": "43448593-5e85-4058-80a4-cf9f138f9223",
+      "name": "Urgent Alert to Slack",
+      "type": "n8n-nodes-base.slack",
+      "typeVersion": 2.4,
+      "position": [
+        -384,
+        -96
+      ],
+      "webhookId": "5f0ca917-ef86-48ae-858f-c8faeb725eb5"
+    },
+    {
+      "parameters": {},
+      "id": "1d7815b5-6d6e-438e-ac8f-32fb7371337d",
+      "name": "Response Draft Schema",
+      "type": "@n8n/n8n-nodes-langchain.outputParserStructured",
+      "typeVersion": 1.3,
+      "position": [
+        -160,
+        256
+      ]
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "mode": "list",
+          "value": "gpt-4.1-mini"
+        },
+        "builtInTools": {},
+        "options": {}
+      },
+      "id": "04f0b83d-a460-476c-abbf-568d7557083d",
+      "name": "OpenAI Chat Model - Drafter",
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.3,
+      "position": [
+        -32,
+        256
+      ]
+    },
+    {
+      "parameters": {
+        "hasOutputParser": true,
+        "options": {}
+      },
+      "id": "976aa431-345f-4580-85c8-47e8dc2047c8",
+      "name": "Response Drafter AI",
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 3.1,
+      "position": [
+        -160,
+        32
+      ]
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "id": "d1070f41-1c1f-4e4c-9a11-dbd8baea2fbb",
+      "name": "Create Draft Reply",
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.2,
+      "position": [
+        192,
+        32
+      ],
+      "webhookId": "80882c73-3442-4159-9353-373b9df2a351"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "id": "68457afa-84f3-4bf9-b14f-ebe7dc7a0210",
+      "name": "Check Auto-Send Confidence",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [
+        416,
+        32
+      ]
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "id": "57c536ee-d847-4420-b079-e70c6306ff9e",
+      "name": "Auto-Send High Confidence",
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.2,
+      "position": [
+        640,
+        -96
+      ],
+      "webhookId": "7843dd6e-6a2f-4410-8dea-69861794dc98"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "id": "c251aa15-a843-4090-a93b-e26f9f93eca7",
+      "name": "Log Email Metadata",
+      "type": "n8n-nodes-base.mongoDb",
+      "typeVersion": 1.2,
+      "position": [
+        864,
+        272
+      ]
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "id": "9ed083a9-2bfb-48eb-af57-a569664b7914",
+      "name": "Log Medium/Low Emails",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        640,
+        288
+      ]
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "id": "a89b6a23-1760-4cb9-b838-4f619f36d0ef",
+      "name": "Add to Reading List",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        640,
+        480
+      ]
+    },
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {}
+          ]
+        }
+      },
+      "id": "f79183f1-60cb-4246-97c0-24db072d498a",
+      "name": "Daily Digest Trigger - 8 AM",
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.3,
+      "position": [
+        -2304,
+        800
+      ]
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "id": "de769377-4242-45f9-b1b4-1deb523e8522",
+      "name": "Fetch Yesterday's Emails",
+      "type": "n8n-nodes-base.mongoDb",
+      "typeVersion": 1.2,
+      "position": [
+        -2080,
+        800
+      ]
+    },
+    {
+      "parameters": {
+        "fieldsToAggregate": {
+          "fieldToAggregate": [
+            {}
+          ]
+        },
+        "options": {}
+      },
+      "id": "9401b461-22c9-4e61-a09d-11695faf7889",
+      "name": "Aggregate Email Stats",
+      "type": "n8n-nodes-base.aggregate",
+      "typeVersion": 1,
+      "position": [
+        -1856,
+        800
+      ]
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "mode": "list",
+          "value": "gpt-4.1-mini"
+        },
+        "builtInTools": {},
+        "options": {}
+      },
+      "id": "31048d6d-588d-41e4-b287-9d5a8048bda8",
+      "name": "OpenAI Chat Model - Digest",
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.3,
+      "position": [
+        -1504,
+        1024
+      ]
+    },
+    {
+      "parameters": {
+        "hasOutputParser": true,
+        "options": {}
+      },
+      "id": "5d42e269-b7aa-4851-90f9-5cc90c556f69",
+      "name": "Generate Daily Digest",
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 3.1,
+      "position": [
+        -1632,
+        800
+      ]
+    },
+    {
+      "parameters": {},
+      "id": "56978dc8-c392-42b1-953b-f1cd18f98235",
+      "name": "Daily Digest Schema",
+      "type": "@n8n/n8n-nodes-langchain.outputParserStructured",
+      "typeVersion": 1.3,
+      "position": [
+        -1632,
+        1024
+      ]
+    },
+    {
+      "parameters": {
+        "otherOptions": {}
+      },
+      "id": "45883e0f-b914-48e8-a846-46f32e6b7ffa",
+      "name": "Send Daily Briefing",
+      "type": "n8n-nodes-base.slack",
+      "typeVersion": 2.4,
+      "position": [
+        -1280,
+        800
+      ],
+      "webhookId": "1ba7d4b8-70f6-469c-aa94-3a4b96d3b7d5"
+    }
+  ],
+  "connections": {
+    "Gmail Trigger - New Emails": {
+      "main": [
+        [
+          {
+            "node": "Workflow Configuration",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Workflow Configuration": {
+      "main": [
+        [
+          {
+            "node": "Extract Email Data",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Extract Email Data": {
+      "main": [
+        [
+          {
+            "node": "Email Classifier AI",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Email Classification Schema": {
+      "ai_outputParser": [
+        [
+          {
+            "node": "Email Classifier AI",
+            "type": "ai_outputParser",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI Chat Model - Classifier": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Email Classifier AI",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Email Classifier AI": {
+      "main": [
+        [
+          {
+            "node": "Apply Labels",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Apply Labels": {
+      "main": [
+        [
+          {
+            "node": "Star High Priority",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Star High Priority": {
+      "main": [
+        [
+          {
+            "node": "Check if Newsletter/Promo",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Check if Newsletter/Promo": {
+      "main": [
+        [
+          {
+            "node": "Archive Newsletter/Promo",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Route by Priority",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Route by Priority": {
+      "main": [
+        [
+          {
+            "node": "Urgent Alert to Slack",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Response Drafter AI",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Log Medium/Low Emails",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Add to Reading List",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Urgent Alert to Slack": {
+      "main": [
+        [
+          {
+            "node": "Response Drafter AI",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Response Draft Schema": {
+      "ai_outputParser": [
+        [
+          {
+            "node": "Response Drafter AI",
+            "type": "ai_outputParser",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI Chat Model - Drafter": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Response Drafter AI",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Response Drafter AI": {
+      "main": [
+        [
+          {
+            "node": "Create Draft Reply",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Create Draft Reply": {
+      "main": [
+        [
+          {
+            "node": "Check Auto-Send Confidence",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Check Auto-Send Confidence": {
+      "main": [
+        [
+          {
+            "node": "Auto-Send High Confidence",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Log Email Metadata",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Auto-Send High Confidence": {
+      "main": [
+        [
+          {
+            "node": "Log Email Metadata",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Log Medium/Low Emails": {
+      "main": [
+        [
+          {
+            "node": "Log Email Metadata",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Add to Reading List": {
+      "main": [
+        [
+          {
+            "node": "Log Email Metadata",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Daily Digest Trigger - 8 AM": {
+      "main": [
+        [
+          {
+            "node": "Fetch Yesterday's Emails",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Fetch Yesterday's Emails": {
+      "main": [
+        [
+          {
+            "node": "Aggregate Email Stats",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Aggregate Email Stats": {
+      "main": [
+        [
+          {
+            "node": "Generate Daily Digest",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI Chat Model - Digest": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Generate Daily Digest",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Generate Daily Digest": {
+      "main": [
+        [
+          {
+            "node": "Send Daily Briefing",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Daily Digest Schema": {
+      "ai_outputParser": [
+        [
+          {
+            "node": "Generate Daily Digest",
+            "type": "ai_outputParser",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1",
+    "availableInMCP": false
+  },
+  "staticData": null,
+  "meta": null,
+  "pinData": {},
+  "versionId": "7ab67929-b8f6-4cfe-bec9-6b15edd65f1d",
+  "activeVersionId": null,
+  "triggerCount": 0,
+  "shared": [
+    {
+      "updatedAt": "2026-01-07T19:58:05.234Z",
+      "createdAt": "2026-01-07T19:58:05.234Z",
+      "role": "workflow:owner",
+      "workflowId": "8IFupHF01rmb4Hkf",
+      "projectId": "DT8YjHwLZsQjJqVc"
+    }
+  ],
+  "activeVersion": null,
+  "tags": []
+}

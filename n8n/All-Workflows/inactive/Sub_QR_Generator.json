@@ -1,0 +1,2923 @@
+{
+  "updatedAt": "2026-01-08T04:25:07.218Z",
+  "createdAt": "2026-01-07T21:43:15.516Z",
+  "id": "xdO7z1A5jukODSGy",
+  "name": "Sub_QR_Generator",
+  "active": false,
+  "isArchived": false,
+  "nodes": [
+    {
+      "parameters": {
+        "updates": [
+          "message"
+        ],
+        "additionalFields": {
+          "download": true
+        }
+      },
+      "type": "n8n-nodes-base.telegramTrigger",
+      "typeVersion": 1.2,
+      "position": [
+        176,
+        368
+      ],
+      "id": "7983352f-57c0-430b-90b7-04eb387db81b",
+      "name": "Telegram Trigger",
+      "webhookId": "472bd361-f108-45e6-ade5-f44885bd636b"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "start-1",
+              "name": "request_id",
+              "value": "={{ $uuid }}",
+              "type": "string"
+            },
+            {
+              "id": "start-2",
+              "name": "start_time",
+              "value": "={{ $now.toISO() }}",
+              "type": "string"
+            },
+            {
+              "id": "start-3",
+              "name": "start_timestamp",
+              "value": "={{ $now.toMillis() }}",
+              "type": "number"
+            },
+            {
+              "id": "start-4",
+              "name": "user_id",
+              "value": "={{ $json.message.from.id }}",
+              "type": "string"
+            },
+            {
+              "id": "start-5",
+              "name": "username",
+              "value": "={{ $json.message.from.username || $json.message.from.first_name || 'unknown' }}",
+              "type": "string"
+            },
+            {
+              "id": "start-6",
+              "name": "chat_id",
+              "value": "={{ $json.message.chat.id }}",
+              "type": "string"
+            },
+            {
+              "id": "start-7",
+              "name": "input_type",
+              "value": "={{ $json.message.voice ? 'audio' : $json.message.photo ? 'image' : $json.message.document ? 'document' : $json.message.video ? 'video' : $json.message.location ? 'location' : $json.message.text?.startsWith('/') ? 'command' : 'text' }}",
+              "type": "string"
+            },
+            {
+              "id": "start-8",
+              "name": "raw_input",
+              "value": "={{ $json.message.text || $json.message.caption || 'media_file' }}",
+              "type": "string"
+            },
+            {
+              "id": "start-9",
+              "name": "input_chars",
+              "value": "={{ ($json.message.text || $json.message.caption || '').length }}",
+              "type": "number"
+            },
+            {
+              "id": "start-10",
+              "name": "message_json",
+              "value": "={{ JSON.stringify($json.message) }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        384,
+        368
+      ],
+      "id": "f7d744b5-992c-4be7-8b6a-46375e0c5f7c",
+      "name": "Start Timer"
+    },
+    {
+      "parameters": {
+        "rules": {
+          "values": [
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 3
+                },
+                "conditions": [
+                  {
+                    "id": "audio-condition",
+                    "leftValue": "={{ JSON.parse($json.message_json).voice?.file_id }}",
+                    "rightValue": "",
+                    "operator": {
+                      "type": "string",
+                      "operation": "exists",
+                      "singleValue": true
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "Audio"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 3
+                },
+                "conditions": [
+                  {
+                    "id": "text-condition",
+                    "leftValue": "={{ JSON.parse($json.message_json).text }}",
+                    "rightValue": "",
+                    "operator": {
+                      "type": "string",
+                      "operation": "exists",
+                      "singleValue": true
+                    }
+                  },
+                  {
+                    "id": "not-command",
+                    "leftValue": "={{ !JSON.parse($json.message_json).text?.startsWith('/') }}",
+                    "rightValue": true,
+                    "operator": {
+                      "type": "boolean",
+                      "operation": "equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "Text"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 3
+                },
+                "conditions": [
+                  {
+                    "id": "image-condition",
+                    "leftValue": "={{ JSON.parse($json.message_json).photo }}",
+                    "rightValue": "",
+                    "operator": {
+                      "type": "array",
+                      "operation": "notEmpty",
+                      "singleValue": true
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "Image"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 3
+                },
+                "conditions": [
+                  {
+                    "id": "document-condition",
+                    "leftValue": "={{ JSON.parse($json.message_json).document }}",
+                    "rightValue": "",
+                    "operator": {
+                      "type": "object",
+                      "operation": "exists",
+                      "singleValue": true
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "Document"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 3
+                },
+                "conditions": [
+                  {
+                    "id": "video-condition",
+                    "leftValue": "={{ JSON.parse($json.message_json).video }}",
+                    "rightValue": "",
+                    "operator": {
+                      "type": "object",
+                      "operation": "exists",
+                      "singleValue": true
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "Video"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 3
+                },
+                "conditions": [
+                  {
+                    "id": "location-condition",
+                    "leftValue": "={{ JSON.parse($json.message_json).location }}",
+                    "rightValue": "",
+                    "operator": {
+                      "type": "object",
+                      "operation": "exists",
+                      "singleValue": true
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "Location"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 3
+                },
+                "conditions": [
+                  {
+                    "id": "command-condition",
+                    "leftValue": "={{ JSON.parse($json.message_json).text }}",
+                    "rightValue": "/",
+                    "operator": {
+                      "type": "string",
+                      "operation": "startsWith"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "Command"
+            }
+          ]
+        },
+        "options": {
+          "fallbackOutput": "extra"
+        }
+      },
+      "id": "06f974fc-3bea-4949-9aba-1177e7aa926d",
+      "name": "Input Router",
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3.4,
+      "position": [
+        592,
+        368
+      ]
+    },
+    {
+      "parameters": {
+        "resource": "file",
+        "fileId": "={{ JSON.parse($json.message_json).voice.file_id }}",
+        "additionalFields": {}
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        784,
+        160
+      ],
+      "id": "4182a8ee-1751-476c-9fd9-56a82c2d2e33",
+      "name": "Get Audio File",
+      "webhookId": "88e5039b-bafe-463f-9075-1c728d26c3e9"
+    },
+    {
+      "parameters": {
+        "resource": "audio",
+        "operation": "transcribe",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.openAi",
+      "typeVersion": 2.1,
+      "position": [
+        992,
+        160
+      ],
+      "id": "4fc13a5c-52d1-4ede-985e-7a90abb5275a",
+      "name": "Transcribe Audio"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "audio-text-1",
+              "name": "content",
+              "value": "={{ $json.text }}",
+              "type": "string"
+            },
+            {
+              "id": "audio-text-2",
+              "name": "processed_type",
+              "value": "audio_transcribed",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        1184,
+        160
+      ],
+      "id": "03482950-0cb2-4d2f-8daf-e418ce52d433",
+      "name": "Format Audio Text"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "text-1",
+              "name": "content",
+              "value": "={{ JSON.parse($json.message_json).text }}",
+              "type": "string"
+            },
+            {
+              "id": "text-2",
+              "name": "processed_type",
+              "value": "text_direct",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        784,
+        368
+      ],
+      "id": "1cedb80a-46f0-48ea-8457-975b462ad4b2",
+      "name": "Format Text Input"
+    },
+    {
+      "parameters": {
+        "resource": "file",
+        "fileId": "={{ JSON.parse($json.message_json).photo.slice(-1)[0].file_id }}",
+        "additionalFields": {}
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        784,
+        560
+      ],
+      "id": "b4cde18b-db76-49a9-82f4-ee3c1d19905e",
+      "name": "Get Image File",
+      "webhookId": "5dd51e74-39bf-42b2-87b2-bc19e24bd0c1"
+    },
+    {
+      "parameters": {
+        "resource": "image",
+        "operation": "analyze",
+        "modelId": {
+          "__rl": true,
+          "value": "gpt-4o-mini",
+          "mode": "list",
+          "cachedResultName": "GPT-4O-MINI"
+        },
+        "text": "={{ JSON.parse($('Start Timer').item.json.message_json).caption || 'Analyze this image and describe what you see. If there is text, extract it.' }}",
+        "inputType": "base64",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.openAi",
+      "typeVersion": 2.1,
+      "position": [
+        992,
+        560
+      ],
+      "id": "c261ee4b-9e76-4b3f-bc33-64785e2cff0f",
+      "name": "Analyze Image"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "image-text-1",
+              "name": "content",
+              "value": "=[Image Analysis] {{ $json.content || $json.text || $json.message }}\n\nUser caption: {{ JSON.parse($('Start Timer').item.json.message_json).caption || 'No caption provided' }}",
+              "type": "string"
+            },
+            {
+              "id": "image-text-2",
+              "name": "processed_type",
+              "value": "image_analyzed",
+              "type": "string"
+            },
+            {
+              "id": "image-text-3",
+              "name": "image_tokens_used",
+              "value": "={{ $json.usage?.total_tokens || 500 }}",
+              "type": "number"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        1184,
+        560
+      ],
+      "id": "23462c6d-41be-40f0-bb2a-1304dd8f4055",
+      "name": "Format Image Analysis"
+    },
+    {
+      "parameters": {
+        "resource": "file",
+        "fileId": "={{ JSON.parse($json.message_json).document.file_id }}",
+        "additionalFields": {}
+      },
+      "id": "bdf6e049-7966-4c38-838f-68f0a330c820",
+      "name": "Get Document File",
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        784,
+        768
+      ],
+      "webhookId": "37d8892c-a842-4bcf-924c-f785525bdca2"
+    },
+    {
+      "parameters": {
+        "operation": "text",
+        "options": {}
+      },
+      "id": "46b8237d-5652-489d-bfa1-6a8d8d543d8a",
+      "name": "Extract Document Text",
+      "type": "n8n-nodes-base.extractFromFile",
+      "typeVersion": 1.1,
+      "position": [
+        992,
+        768
+      ]
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "doc-1",
+              "name": "content",
+              "value": "=[Document Content]\nFilename: {{ JSON.parse($('Start Timer').item.json.message_json).document.file_name }}\n\nExtracted text:\n{{ $json.data || $json.text || 'Could not extract text from document' }}",
+              "type": "string"
+            },
+            {
+              "id": "doc-2",
+              "name": "processed_type",
+              "value": "document_extracted",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        1184,
+        768
+      ],
+      "id": "883653d2-6ce3-48e8-aacd-18cb2fa8e09d",
+      "name": "Format Document Content"
+    },
+    {
+      "parameters": {
+        "resource": "file",
+        "fileId": "={{ JSON.parse($json.message_json).video.file_id }}",
+        "additionalFields": {}
+      },
+      "id": "287de923-e2ab-41b7-97fb-fabe2b52b14b",
+      "name": "Get Video File",
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        784,
+        960
+      ],
+      "webhookId": "c4881e9a-5da0-4539-ba12-756052110cf1"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "video-1",
+              "name": "content",
+              "value": "=[Video Received]\nDuration: {{ JSON.parse($('Start Timer').item.json.message_json).video.duration }}s\nCaption: {{ JSON.parse($('Start Timer').item.json.message_json).caption || 'No caption' }}\n\nVideo file received. Please specify what you want to do with this video.",
+              "type": "string"
+            },
+            {
+              "id": "video-2",
+              "name": "processed_type",
+              "value": "video_received",
+              "type": "string"
+            },
+            {
+              "id": "video-3",
+              "name": "video_file_path",
+              "value": "={{ $json.file_path }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        1184,
+        960
+      ],
+      "id": "4653ac74-8aab-4eb4-8963-5fc0cf3d7bf6",
+      "name": "Format Video Input"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "loc-1",
+              "name": "content",
+              "value": "=[Location Shared]\nLatitude: {{ JSON.parse($json.message_json).location.latitude }}\nLongitude: {{ JSON.parse($json.message_json).location.longitude }}\n\nUser shared their location. What would you like to do with this location?",
+              "type": "string"
+            },
+            {
+              "id": "loc-2",
+              "name": "processed_type",
+              "value": "location_shared",
+              "type": "string"
+            },
+            {
+              "id": "loc-3",
+              "name": "latitude",
+              "value": "={{ JSON.parse($json.message_json).location.latitude }}",
+              "type": "number"
+            },
+            {
+              "id": "loc-4",
+              "name": "longitude",
+              "value": "={{ JSON.parse($json.message_json).location.longitude }}",
+              "type": "number"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "45cb4069-ff39-4cfb-9b1b-f243c134980c",
+      "name": "Format Location Data",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        784,
+        1168
+      ]
+    },
+    {
+      "parameters": {
+        "mode": "runOnceForEachItem",
+        "jsCode": "const messageJson = JSON.parse($input.item.json.message_json);\nconst messageText = messageJson.text || '';\n\nif (!messageText.startsWith('/')) {\n  return {\n    json: {\n      ...$input.item.json,\n      content: messageText,\n      command: null,\n      arguments: [],\n      isCommand: false,\n      processed_type: 'text_direct'\n    }\n  };\n}\n\nconst parts = messageText.trim().split(/\\s+/);\nconst command = parts[0].substring(1).toLowerCase();\nconst args = parts.slice(1);\n\n// Map commands to actions\nconst commandMap = {\n  'imagine': 'Generate image: ' + args.join(' '),\n  'image': 'Generate image: ' + args.join(' '),\n  'invoice': 'Create invoice: ' + args.join(' '),\n  'quote': 'Create quotation: ' + args.join(' '),\n  'quotation': 'Create quotation: ' + args.join(' '),\n  'remind': 'Set reminder: ' + args.join(' '),\n  'reminder': 'Set reminder: ' + args.join(' '),\n  'translate': 'Translate: ' + args.join(' '),\n  'tr': 'Translate: ' + args.join(' '),\n  'search': 'Search for: ' + args.join(' '),\n  'weather': 'Get weather for: ' + (args.join(' ') || 'current location'),\n  'stock': 'Get stock info for: ' + args.join(' '),\n  'stocks': 'Get stock info for: ' + args.join(' '),\n  'qr': 'Generate QR code for: ' + args.join(' '),\n  'qrcode': 'Generate QR code for: ' + args.join(' '),\n  'expense': 'Log expense: ' + args.join(' '),\n  'exp': 'Log expense: ' + args.join(' '),\n  'youtube': 'Summarize YouTube video: ' + args.join(' '),\n  'yt': 'Summarize YouTube video: ' + args.join(' '),\n  'summarize': 'Summarize YouTube video: ' + args.join(' '),\n  'research': 'Deep research on: ' + args.join(' '),\n  'email': 'Email action: ' + args.join(' '),\n  'calendar': 'Calendar action: ' + args.join(' '),\n  'cal': 'Calendar action: ' + args.join(' '),\n  'contact': 'Contact action: ' + args.join(' '),\n  'social': 'Create social media post: ' + args.join(' '),\n  'post': 'Create social media post: ' + args.join(' '),\n  'prompt': 'Generate optimized prompt for: ' + args.join(' '),\n  'help': 'Show all available commands and tools',\n  'stats': 'Show my usage statistics',\n  'mystats': 'Show my usage statistics'\n};\n\nconst content = commandMap[command] || `Execute command /${command} with arguments: ${args.join(' ')}`;\n\nreturn {\n  json: {\n    ...$input.item.json,\n    content: content,\n    command: command,\n    arguments: args,\n    argumentsString: args.join(' '),\n    isCommand: true,\n    processed_type: 'command_parsed'\n  }\n};"
+      },
+      "id": "f52c3d9e-7729-42c1-b13a-4cabc1be9f70",
+      "name": "Parse Command",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        784,
+        1360
+      ]
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "merge-1",
+              "name": "final_content",
+              "value": "={{ $json.content }}",
+              "type": "string"
+            },
+            {
+              "id": "merge-2",
+              "name": "final_processed_type",
+              "value": "={{ $json.processed_type }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        1488,
+        560
+      ],
+      "id": "f6a02762-7aca-4e87-a258-568ce94894ac",
+      "name": "Prepare Agent Input"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "={{ $json.final_content || $json.content }}",
+        "options": {
+          "systemMessage": "You are Agent Dhruv \u2014 a powerful, practical AI assistant with access to 20+ specialized tools. Your job is to understand user intent and use the RIGHT tool(s) to deliver results.\n\nCURRENT CONTEXT:\n- User ID: {{ $('Start Timer').item.json.user_id }}\n- Username: {{ $('Start Timer').item.json.username }}\n- Chat ID: {{ $('Start Timer').item.json.chat_id }}\n- Input Type: {{ $('Start Timer').item.json.input_type }}\n- Request ID: {{ $('Start Timer').item.json.request_id }}\n\n\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\n\ud83d\udd27 AVAILABLE TOOLS (Use wisely)\n\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\n\n\ud83d\udcca RESEARCH & INFORMATION\n\u2022 Search_Agent - Web search for facts, data, current info\n\u2022 Research_Agent - Deep multi-source research with reports\n\u2022 Stock_Agent - Indian stock market (NIFTY, stocks, analysis)\n\u2022 Weather_Agent - Current weather and forecasts\n\u2022 YouTube_Summarizer - Summarize any YouTube video\n\n\ud83d\udcdd CONTENT CREATION\n\u2022 Image_Generator - Create AI images from text prompts\n\u2022 Social_Media_Agent - LinkedIn, Twitter, Instagram posts\n\u2022 Prompt_Agent - Generate optimized AI prompts\n\n\ud83d\udcc4 DOCUMENTS & FILES\n\u2022 Invoice_Generator - Professional GST invoices (PDF)\n\u2022 Quotation_Generator - Business quotations (PDF)\n\u2022 QR_Generator - QR codes for URLs, UPI, WiFi, vCards\n\n\ud83d\udcb0 FINANCE & TRACKING\n\u2022 Expense_Logger - Log expenses, OCR receipts\n\u2022 Growth_Architect - SaaS revenue, GTM strategy\n\n\ud83d\udcc5 PRODUCTIVITY\n\u2022 Email_Agent - Read, send, draft emails\n\u2022 Calendar_Agent - Events, scheduling, availability\n\u2022 Contact_Agent - Manage contacts\n\u2022 Reminder_Tool - Set reminders for later\n\n\ud83c\udf10 UTILITIES\n\u2022 Translator - Translate to 25+ languages\n\u2022 Think - Complex reasoning and planning\n\n\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\n\ud83c\udfaf DECISION RULES\n\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\n\n1. ANALYZE first - Can I answer without tools?\n2. ONE TOOL preferred - Use the single best tool\n3. MULTIPLE TOOLS only when necessary (e.g., research + create doc)\n4. NEVER use tools for simple questions I can answer directly\n\n\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\n\u2328\ufe0f COMMAND SHORTCUTS\n\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\n\n/imagine [prompt] \u2192 Image_Generator\n/invoice [details] \u2192 Invoice_Generator\n/quote [details] \u2192 Quotation_Generator\n/expense [amount] [category] [desc] \u2192 Expense_Logger\n/qr [content] \u2192 QR_Generator\n/translate [text] to [language] \u2192 Translator\n/weather [location] \u2192 Weather_Agent\n/stock [symbol] \u2192 Stock_Agent\n/yt [youtube_url] \u2192 YouTube_Summarizer\n/remind [message] in [time] \u2192 Reminder_Tool\n/research [topic] \u2192 Research_Agent\n/help \u2192 Show all commands\n/stats \u2192 Show usage statistics\n\n\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\n\ud83d\udce4 OUTPUT RULES\n\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\n\n\u2022 Keep responses SHORT and actionable\n\u2022 Use bullet points for lists\n\u2022 Include relevant emojis for visual clarity\n\u2022 For files: Return the file_url for Telegram to send\n\u2022 For images: Include [IMAGE_GENERATED] marker\n\u2022 For documents: Include [DOCUMENT_CREATED] marker\n\n\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\n\ud83d\udca1 SMART BEHAVIORS\n\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\n\n\u2022 If location shared \u2192 Offer weather, nearby places\n\u2022 If image shared \u2192 Analyze and ask what to do with it\n\u2022 If document shared \u2192 Summarize or extract key info\n\u2022 If video shared \u2192 Offer to process or describe it\n\u2022 If /help requested \u2192 List ALL available commands with examples\n\n\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\n\ud83c\udfa8 TONE & STYLE\n\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\n\n\u2022 Clear, practical, no fluff\n\u2022 Friendly but efficient\n\u2022 Results-focused\n\u2022 Acknowledge what tool you're using\n\nYou are the most capable Telegram assistant. Deliver results, not excuses."
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 3,
+      "position": [
+        1680,
+        560
+      ],
+      "id": "4fbcefb4-1397-4c5e-81a1-ac3a6909a7f6",
+      "name": "Agent Dhruv"
+    },
+    {
+      "parameters": {
+        "model": "google/gemini-2.5-flash-preview",
+        "options": {
+          "temperature": 0.7
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenRouter",
+      "typeVersion": 1,
+      "position": [
+        1488,
+        768
+      ],
+      "id": "12dafbbc-fa88-4b67-ba1c-795e8d708198",
+      "name": "Gemini 2.5 Flash"
+    },
+    {
+      "parameters": {
+        "sessionIdType": "customKey",
+        "sessionKey": "={{ $('Start Timer').item.json.chat_id }}",
+        "contextWindowLength": 50
+      },
+      "type": "@n8n/n8n-nodes-langchain.memoryBufferWindow",
+      "typeVersion": 1.3,
+      "position": [
+        1584,
+        768
+      ],
+      "id": "56d471a3-2b4f-4f84-a6b0-a41203daaa7c",
+      "name": "Conversation Memory"
+    },
+    {
+      "parameters": {
+        "description": "Use for complex reasoning, step-by-step problem solving, planning, and analysis."
+      },
+      "type": "@n8n/n8n-nodes-langchain.toolThink",
+      "typeVersion": 1.1,
+      "position": [
+        1280,
+        960
+      ],
+      "id": "369b87c4-5d90-488c-9fb0-fe3b83ef8eb4",
+      "name": "Think"
+    },
+    {
+      "parameters": {
+        "description": "Search the web for current information, facts, data, news, or anything requiring external lookup. Use when information is not in your training or needs to be current.",
+        "workflowId": {
+          "__rl": true,
+          "value": "xz3AFt53UbEvPFQv",
+          "mode": "list",
+          "cachedResultUrl": "/workflow/xz3AFt53UbEvPFQv",
+          "cachedResultName": "Sub_Search"
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.toolWorkflow",
+      "typeVersion": 2.2,
+      "position": [
+        1392,
+        960
+      ],
+      "id": "43f7ddf2-484a-4211-a16a-72d40536db70",
+      "name": "Search_Agent"
+    },
+    {
+      "parameters": {
+        "description": "Handle all email operations: read inbox, search emails, send emails, create drafts, manage labels. Use for any email-related request.",
+        "workflowId": {
+          "__rl": true,
+          "value": "kezMOKKRjQOAQIi9",
+          "mode": "list",
+          "cachedResultUrl": "/workflow/kezMOKKRjQOAQIi9",
+          "cachedResultName": "Email_Agent"
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.toolWorkflow",
+      "typeVersion": 2.2,
+      "position": [
+        1488,
+        960
+      ],
+      "id": "5ebba579-bdd1-4c59-9340-6b70f310a008",
+      "name": "Email_Agent"
+    },
+    {
+      "parameters": {
+        "description": "Manage Google Calendar: create events, list events, check availability, find free slots, reschedule meetings. Use for any calendar or scheduling request.",
+        "workflowId": {
+          "__rl": true,
+          "value": "teaBSbleCK34Tw7b",
+          "mode": "list",
+          "cachedResultUrl": "/workflow/teaBSbleCK34Tw7b",
+          "cachedResultName": "Calender_Agent"
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.toolWorkflow",
+      "typeVersion": 2.2,
+      "position": [
+        1584,
+        960
+      ],
+      "id": "08def943-90e8-4a2e-85af-dda55bcb2d55",
+      "name": "Calendar_Agent"
+    },
+    {
+      "parameters": {
+        "description": "Manage contacts: search contacts, add new contacts, update contact info, get contact details. Use for any contact-related request.",
+        "workflowId": {
+          "__rl": true,
+          "value": "6NqoNner3xOi06da",
+          "mode": "list",
+          "cachedResultUrl": "/workflow/6NqoNner3xOi06da",
+          "cachedResultName": "Contact_Agent"
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.toolWorkflow",
+      "typeVersion": 2.2,
+      "position": [
+        1680,
+        960
+      ],
+      "id": "cd115db7-48fc-4bd9-ad97-40468f011c1d",
+      "name": "Contact_Agent"
+    },
+    {
+      "parameters": {
+        "description": "Create social media content optimized for each platform: LinkedIn posts (professional), Twitter/X (concise), Instagram (visual + hashtags), YouTube titles/descriptions. Use when user wants to create posts for social media.",
+        "workflowId": {
+          "__rl": true,
+          "value": "vTVxV4xsB6exEd01",
+          "mode": "list",
+          "cachedResultUrl": "/workflow/vTVxV4xsB6exEd01",
+          "cachedResultName": "Social_Media_Agent"
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.toolWorkflow",
+      "typeVersion": 2.2,
+      "position": [
+        1792,
+        960
+      ],
+      "id": "a60bf462-572b-4990-8aba-374f9a234f6d",
+      "name": "Social_Media_Agent"
+    },
+    {
+      "parameters": {
+        "description": "Get Indian stock market information: NIFTY, BANK NIFTY, individual stocks, prices, trends, analysis. Defaults to Indian markets. Use for any stock market query.",
+        "workflowId": {
+          "__rl": true,
+          "value": "Vj8Ooa2dndbB3HRZ",
+          "mode": "list",
+          "cachedResultUrl": "/workflow/Vj8Ooa2dndbB3HRZ",
+          "cachedResultName": "Stock_Agent"
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.toolWorkflow",
+      "typeVersion": 2.2,
+      "position": [
+        1888,
+        960
+      ],
+      "id": "c5956305-66b5-43d4-bd14-ebb8c53249b5",
+      "name": "Stock_Agent"
+    },
+    {
+      "parameters": {
+        "description": "Strategic SaaS business advisor: revenue growth, GTM strategy, pipeline optimization, pricing strategy, forecasting, competitive analysis. Use for business strategy questions.",
+        "workflowId": {
+          "__rl": true,
+          "value": "6so0qBZoqekx9l6s",
+          "mode": "list",
+          "cachedResultUrl": "/workflow/6so0qBZoqekx9l6s",
+          "cachedResultName": "Growth_Architect"
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.toolWorkflow",
+      "typeVersion": 2.2,
+      "position": [
+        1984,
+        960
+      ],
+      "id": "579db2cb-cab4-4ed0-b116-038bb82b9b30",
+      "name": "Growth_Architect"
+    },
+    {
+      "parameters": {
+        "description": "Generate high-quality, optimized AI prompts for any use case: text generation, image creation, video, code, automation workflows. Use when user wants help creating prompts.",
+        "workflowId": {
+          "__rl": true,
+          "value": "P5pSr2vZIQhhr7S3",
+          "mode": "list",
+          "cachedResultUrl": "/workflow/P5pSr2vZIQhhr7S3",
+          "cachedResultName": "Promt_Agent"
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.toolWorkflow",
+      "typeVersion": 2.2,
+      "position": [
+        2080,
+        960
+      ],
+      "id": "0e0d7c1f-6c56-457e-b051-f89012d1faec",
+      "name": "Prompt_Agent"
+    },
+    {
+      "parameters": {
+        "description": "Generate AI images from text prompts. Supports styles: realistic, anime, 3d, painting, sketch, logo. Aspect ratios: 1:1, 16:9, 9:16. Use for /imagine or any image creation request. Input: {prompt, style, aspect_ratio}",
+        "workflowId": {
+          "__rl": true,
+          "value": "YOUR_IMAGE_GENERATOR_WORKFLOW_ID",
+          "mode": "id"
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.toolWorkflow",
+      "typeVersion": 2.2,
+      "position": [
+        1280,
+        1088
+      ],
+      "id": "ccb6796c-ca04-405b-8c91-8ce16fbd31a0",
+      "name": "Image_Generator"
+    },
+    {
+      "parameters": {
+        "description": "Create professional PDF invoices with automatic GST calculation, invoice numbering, and formatted layout. Input: {client_name, client_email, client_gst, items: [{description, quantity, rate}], payment_terms, due_days}. Use for /invoice command.",
+        "workflowId": {
+          "__rl": true,
+          "value": "YOUR_INVOICE_GENERATOR_WORKFLOW_ID",
+          "mode": "id"
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.toolWorkflow",
+      "typeVersion": 2.2,
+      "position": [
+        1392,
+        1088
+      ],
+      "id": "467c9b19-8201-4c1f-a830-3bd5e911b7ca",
+      "name": "Invoice_Generator"
+    },
+    {
+      "parameters": {
+        "description": "Create professional PDF quotations with pricing, discounts, GST, and validity period. Input: {client_name, project_name, items: [{description, quantity, rate}], validity_days, discount_percent, terms: []}. Use for /quote command.",
+        "workflowId": {
+          "__rl": true,
+          "value": "YOUR_QUOTATION_GENERATOR_WORKFLOW_ID",
+          "mode": "id"
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.toolWorkflow",
+      "typeVersion": 2.2,
+      "position": [
+        1488,
+        1088
+      ],
+      "id": "bf17009c-9c9b-4e85-b03b-b2b51954e391",
+      "name": "Quotation_Generator"
+    },
+    {
+      "parameters": {
+        "description": "Log expenses to Google Sheets. Can extract data from receipt images using OCR. Input: {amount, category (food/travel/office/utilities/entertainment/other), description, payment_method, receipt_image_url (optional)}. Use for /expense command.",
+        "workflowId": {
+          "__rl": true,
+          "value": "YOUR_EXPENSE_LOGGER_WORKFLOW_ID",
+          "mode": "id"
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.toolWorkflow",
+      "typeVersion": 2.2,
+      "position": [
+        1584,
+        1088
+      ],
+      "id": "c05f73ea-9165-4e7e-acbb-6835b053ecfc",
+      "name": "Expense_Logger"
+    },
+    {
+      "parameters": {
+        "description": "Generate QR codes for various types: URLs, plain text, vCards (contacts), WiFi credentials, UPI payment links. Input: {content, type (url/text/vcard/wifi/upi), size, vcard: {name, phone, email}, wifi: {ssid, password}, upi: {vpa, name, amount}}. Use for /qr command.",
+        "workflowId": {
+          "__rl": true,
+          "value": "YOUR_QR_GENERATOR_WORKFLOW_ID",
+          "mode": "id"
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.toolWorkflow",
+      "typeVersion": 2.2,
+      "position": [
+        1680,
+        1088
+      ],
+      "id": "97537bbb-9f4a-4bca-b583-ed1cf186bce1",
+      "name": "QR_Generator"
+    },
+    {
+      "parameters": {
+        "description": "Translate text to 25+ languages including Hindi, Spanish, French, German, Japanese, Chinese, Arabic, Tamil, Telugu, Marathi, Bengali, Gujarati. Input: {text, target_language, formal (true/false)}. Use for /translate command.",
+        "workflowId": {
+          "__rl": true,
+          "value": "YOUR_TRANSLATOR_WORKFLOW_ID",
+          "mode": "id"
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.toolWorkflow",
+      "typeVersion": 2.2,
+      "position": [
+        1792,
+        1088
+      ],
+      "id": "82de6e18-a1cb-46d3-a842-b13567726d52",
+      "name": "Translator"
+    },
+    {
+      "parameters": {
+        "description": "Summarize any YouTube video by extracting and analyzing the transcript. Input: {youtube_url, summary_type (brief/detailed/bullet_points/timestamps)}. Supports youtube.com and youtu.be URLs. Use for /yt or /summarize commands.",
+        "workflowId": {
+          "__rl": true,
+          "value": "YOUR_YOUTUBE_SUMMARIZER_WORKFLOW_ID",
+          "mode": "id"
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.toolWorkflow",
+      "typeVersion": 2.2,
+      "position": [
+        1888,
+        1088
+      ],
+      "id": "f1618d7d-0d9f-4f52-8aee-41fa4234a448",
+      "name": "YouTube_Summarizer"
+    },
+    {
+      "parameters": {
+        "description": "Set reminders that trigger at specified time. Supports natural language: 'in 2 hours', 'tomorrow 9am', '2024-01-20 15:30'. Input: {message, time, user_id, chat_id, recurring (none/daily/weekly/monthly)}. Use for /remind command.",
+        "workflowId": {
+          "__rl": true,
+          "value": "YOUR_REMINDER_TOOL_WORKFLOW_ID",
+          "mode": "id"
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.toolWorkflow",
+      "typeVersion": 2.2,
+      "position": [
+        1984,
+        1088
+      ],
+      "id": "127466ed-6b3d-4193-b6f4-13c6915ce9fb",
+      "name": "Reminder_Tool"
+    },
+    {
+      "parameters": {
+        "description": "Conduct deep research on any topic using multiple sources (web, news, academic). Generates comprehensive reports with citations. Input: {topic, depth (quick/standard/deep), sources (web/news/academic/all), output_format (summary/report/bullet_points)}. Use for /research command.",
+        "workflowId": {
+          "__rl": true,
+          "value": "YOUR_RESEARCH_AGENT_WORKFLOW_ID",
+          "mode": "id"
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.toolWorkflow",
+      "typeVersion": 2.2,
+      "position": [
+        2080,
+        1088
+      ],
+      "id": "31dd18ce-0852-42d6-b6aa-0b8028a436e5",
+      "name": "Research_Agent"
+    },
+    {
+      "parameters": {
+        "description": "Get current weather and forecasts for any location. Returns temperature, conditions, humidity, wind, sunrise/sunset. Input: {location (city name), type (current/forecast), days}. Use for /weather command.",
+        "workflowId": {
+          "__rl": true,
+          "value": "YOUR_WEATHER_AGENT_WORKFLOW_ID",
+          "mode": "id"
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.toolWorkflow",
+      "typeVersion": 2.2,
+      "position": [
+        2192,
+        1088
+      ],
+      "id": "e3274053-41c3-4b6d-a936-8c16ef515448",
+      "name": "Weather_Agent"
+    },
+    {
+      "parameters": {
+        "mode": "runOnceForEachItem",
+        "jsCode": "// Token Counter - Extract token usage from Agent response\nconst agentOutput = $input.item.json;\n\nlet inputTokens = 0;\nlet outputTokens = 0;\nlet totalTokens = 0;\nlet model = 'gemini-2.5-flash';\n\n// Check different possible token locations\nif (agentOutput.usage) {\n  inputTokens = agentOutput.usage.prompt_tokens || agentOutput.usage.promptTokenCount || 0;\n  outputTokens = agentOutput.usage.completion_tokens || agentOutput.usage.candidatesTokenCount || 0;\n  totalTokens = agentOutput.usage.total_tokens || (inputTokens + outputTokens);\n}\n\nif (agentOutput.usageMetadata) {\n  inputTokens = agentOutput.usageMetadata.promptTokenCount || inputTokens;\n  outputTokens = agentOutput.usageMetadata.candidatesTokenCount || outputTokens;\n  totalTokens = agentOutput.usageMetadata.totalTokenCount || (inputTokens + outputTokens);\n}\n\n// Estimate tokens if not available (rough: 4 chars = 1 token)\nif (totalTokens === 0) {\n  const inputText = $('Prepare Agent Input').item.json.final_content || '';\n  const outputText = agentOutput.output || '';\n  inputTokens = Math.ceil(inputText.length / 4);\n  outputTokens = Math.ceil(outputText.length / 4);\n  totalTokens = inputTokens + outputTokens;\n}\n\n// Calculate cost based on model\nconst pricing = {\n  'gemini-2.5-flash': { input: 0.00000015, output: 0.0000006 },\n  'gemini-2.0-flash': { input: 0.0000001, output: 0.0000004 },\n  'gpt-4o-mini': { input: 0.00000015, output: 0.0000006 },\n  'gpt-4o': { input: 0.0000025, output: 0.00001 }\n};\n\nconst rates = pricing[model] || pricing['gemini-2.5-flash'];\nconst costUSD = (inputTokens * rates.input) + (outputTokens * rates.output);\nconst costINR = costUSD * 83;\n\nreturn {\n  json: {\n    ...agentOutput,\n    token_metrics: {\n      model: model,\n      input_tokens: inputTokens,\n      output_tokens: outputTokens,\n      total_tokens: totalTokens,\n      cost_usd: costUSD.toFixed(8),\n      cost_inr: costINR.toFixed(6)\n    }\n  }\n};"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1888,
+        560
+      ],
+      "id": "fd604173-481c-4956-9c2c-6f5bb852b9ae",
+      "name": "Token Counter"
+    },
+    {
+      "parameters": {
+        "mode": "runOnceForEachItem",
+        "jsCode": "// End Timer & Compile Analytics\nconst now = new Date();\nconst startData = $('Start Timer').item.json;\nconst tokenData = $input.item.json.token_metrics || {};\nconst agentOutput = $input.item.json.output || '';\n\nconst startTimestamp = startData.start_timestamp;\nconst endTimestamp = now.getTime();\nconst durationMs = endTimestamp - startTimestamp;\nconst durationSeconds = (durationMs / 1000).toFixed(2);\n\n// Detect tools used from agent execution\nlet toolsUsed = [];\nif ($input.item.json.intermediateSteps) {\n  toolsUsed = $input.item.json.intermediateSteps\n    .filter(s => s.action?.tool)\n    .map(s => s.action.tool);\n}\nconst toolsString = toolsUsed.length > 0 ? toolsUsed.join(' \u2192 ') : 'None (direct response)';\n\n// Determine output type based on content markers\nlet outputType = 'text';\nif (agentOutput.includes('[IMAGE_GENERATED]')) outputType = 'image';\nif (agentOutput.includes('[DOCUMENT_CREATED]')) outputType = 'document';\nif (agentOutput.includes('[AUDIO_GENERATED]')) outputType = 'audio';\nif (agentOutput.includes('file_url')) outputType = 'file';\n\nconst analytics = {\n  // Request identification\n  request_id: startData.request_id,\n  timestamp: startData.start_time,\n  date: now.toISOString().split('T')[0],\n  hour: now.getHours(),\n  \n  // User info\n  user_id: startData.user_id,\n  username: startData.username,\n  chat_id: startData.chat_id,\n  \n  // Input metrics\n  input_type: startData.input_type,\n  input_preview: (startData.raw_input || '').substring(0, 100),\n  input_chars: startData.input_chars,\n  \n  // Token metrics\n  model_used: tokenData.model || 'gemini-2.5-flash',\n  input_tokens: tokenData.input_tokens || 0,\n  output_tokens: tokenData.output_tokens || 0,\n  total_tokens: tokenData.total_tokens || 0,\n  cost_usd: tokenData.cost_usd || '0',\n  cost_inr: tokenData.cost_inr || '0',\n  \n  // Tool metrics\n  tools_used: toolsString,\n  tool_count: toolsUsed.length,\n  \n  // Performance metrics\n  duration_ms: durationMs,\n  duration_seconds: parseFloat(durationSeconds),\n  \n  // Output metrics\n  status: 'success',\n  output_type: outputType,\n  output_chars: agentOutput.length,\n  output_preview: agentOutput.substring(0, 200),\n  error: ''\n};\n\nreturn {\n  json: {\n    ...$input.item.json,\n    analytics: analytics\n  }\n};"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        2080,
+        560
+      ],
+      "id": "5060625f-d1d5-40b7-abc3-9bd7bfd88607",
+      "name": "Compile Analytics"
+    },
+    {
+      "parameters": {
+        "operation": "append",
+        "documentId": {
+          "__rl": true,
+          "value": "YOUR_GOOGLE_SHEET_ID_HERE",
+          "mode": "id"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "Agent_Analytics",
+          "mode": "name"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "request_id": "={{ $json.analytics.request_id }}",
+            "timestamp": "={{ $json.analytics.timestamp }}",
+            "date": "={{ $json.analytics.date }}",
+            "hour": "={{ $json.analytics.hour }}",
+            "user_id": "={{ $json.analytics.user_id }}",
+            "username": "={{ $json.analytics.username }}",
+            "input_type": "={{ $json.analytics.input_type }}",
+            "input_preview": "={{ $json.analytics.input_preview }}",
+            "input_chars": "={{ $json.analytics.input_chars }}",
+            "model_used": "={{ $json.analytics.model_used }}",
+            "input_tokens": "={{ $json.analytics.input_tokens }}",
+            "output_tokens": "={{ $json.analytics.output_tokens }}",
+            "total_tokens": "={{ $json.analytics.total_tokens }}",
+            "cost_usd": "={{ $json.analytics.cost_usd }}",
+            "cost_inr": "={{ $json.analytics.cost_inr }}",
+            "tools_used": "={{ $json.analytics.tools_used }}",
+            "tool_count": "={{ $json.analytics.tool_count }}",
+            "duration_ms": "={{ $json.analytics.duration_ms }}",
+            "duration_seconds": "={{ $json.analytics.duration_seconds }}",
+            "status": "={{ $json.analytics.status }}",
+            "output_type": "={{ $json.analytics.output_type }}",
+            "output_chars": "={{ $json.analytics.output_chars }}",
+            "error": "={{ $json.analytics.error }}"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "request_id",
+              "displayName": "request_id",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "timestamp",
+              "displayName": "timestamp",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "date",
+              "displayName": "date",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "hour",
+              "displayName": "hour",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "number",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "user_id",
+              "displayName": "user_id",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "username",
+              "displayName": "username",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "input_type",
+              "displayName": "input_type",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "input_preview",
+              "displayName": "input_preview",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "input_chars",
+              "displayName": "input_chars",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "number",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "model_used",
+              "displayName": "model_used",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "input_tokens",
+              "displayName": "input_tokens",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "number",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "output_tokens",
+              "displayName": "output_tokens",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "number",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "total_tokens",
+              "displayName": "total_tokens",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "number",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "cost_usd",
+              "displayName": "cost_usd",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "cost_inr",
+              "displayName": "cost_inr",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "tools_used",
+              "displayName": "tools_used",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "tool_count",
+              "displayName": "tool_count",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "number",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "duration_ms",
+              "displayName": "duration_ms",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "number",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "duration_seconds",
+              "displayName": "duration_seconds",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "number",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "status",
+              "displayName": "status",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "output_type",
+              "displayName": "output_type",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "output_chars",
+              "displayName": "output_chars",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "number",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "error",
+              "displayName": "error",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.5,
+      "position": [
+        2288,
+        560
+      ],
+      "id": "2d1a9e3c-be1a-4cfc-ad97-0a454c9f4dd9",
+      "name": "Log to Analytics Sheet"
+    },
+    {
+      "parameters": {
+        "rules": {
+          "values": [
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict"
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $json.analytics.output_type }}",
+                    "rightValue": "image",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "Image"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict"
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $json.analytics.output_type }}",
+                    "rightValue": "document",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "Document"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict"
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $json.analytics.output_type }}",
+                    "rightValue": "audio",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "Audio"
+            }
+          ]
+        },
+        "options": {
+          "fallbackOutput": "extra"
+        }
+      },
+      "id": "c5d829e2-8f9a-4d39-bfa8-26eb905d5d35",
+      "name": "Output Type Router",
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3.4,
+      "position": [
+        2480,
+        560
+      ]
+    },
+    {
+      "parameters": {
+        "chatId": "={{ $('Start Timer').item.json.chat_id }}",
+        "text": "={{ $json.output }}",
+        "additionalFields": {
+          "appendAttribution": false,
+          "parse_mode": "Markdown"
+        }
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        2688,
+        672
+      ],
+      "id": "72c35f89-1b23-4fd3-8ded-08ebe095a082",
+      "name": "Send Text Response",
+      "webhookId": "c4cc5fc0-376b-4dfb-bd16-c128787247e5"
+    },
+    {
+      "parameters": {
+        "operation": "sendPhoto",
+        "chatId": "={{ $('Start Timer').item.json.chat_id }}",
+        "file": "={{ $json.file_url || $json.data?.image_url }}",
+        "additionalFields": {
+          "caption": "={{ $json.output.replace('[IMAGE_GENERATED]', '\ud83c\udfa8').substring(0, 1000) }}"
+        }
+      },
+      "id": "fb8c39fa-1643-4c8f-a93d-5ffeee46f22c",
+      "name": "Send Image",
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        2688,
+        464
+      ],
+      "webhookId": "send-image-webhook"
+    },
+    {
+      "parameters": {
+        "operation": "sendDocument",
+        "chatId": "={{ $('Start Timer').item.json.chat_id }}",
+        "file": "={{ $json.file_url || $json.data?.file_url }}",
+        "additionalFields": {
+          "caption": "={{ $json.output.replace('[DOCUMENT_CREATED]', '\ud83d\udcc4').substring(0, 1000) }}"
+        }
+      },
+      "id": "cdae1d6a-ef6b-4287-b7e4-2cc757eebaa9",
+      "name": "Send Document",
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        2688,
+        864
+      ],
+      "webhookId": "send-document-webhook"
+    },
+    {
+      "parameters": {
+        "operation": "sendAudio",
+        "chatId": "={{ $('Start Timer').item.json.chat_id }}",
+        "file": "={{ $json.file_url || $json.data?.audio_url }}",
+        "additionalFields": {}
+      },
+      "id": "433a0101-a998-458d-a28c-760fd86ff17e",
+      "name": "Send Audio",
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        2688,
+        1072
+      ],
+      "webhookId": "send-audio-webhook"
+    },
+    {
+      "parameters": {
+        "content": "## \ud83d\ude80 TELEGRAM GOD MODE AGENT\n### Complete AI Assistant with 20+ Tools\n\n**Version:** 2.0 Extended\n**Author:** Dhruv (AIwithDhruv)\n\n**Features:**\n\u2705 Multi-input (text, voice, image, doc, video, location)\n\u2705 19 specialized AI tools\n\u2705 Full analytics & token tracking\n\u2705 Cost monitoring (USD/INR)\n\u2705 Smart output routing\n\n**Flow:**\n```\nTelegram \u2192 Timer \u2192 Router \u2192 Process \u2192 Agent \u2192 Analytics \u2192 Respond\n```",
+        "height": 460,
+        "width": 340,
+        "color": 5
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -256,
+        48
+      ],
+      "id": "1a4c9dff-1b43-4f80-9e3b-aad86d9efd27",
+      "name": "Sticky Note - Header"
+    },
+    {
+      "parameters": {
+        "content": "## \u23f1\ufe0f TIMER & ANALYTICS\n### Request Tracking System\n\n**Start Timer captures:**\n- `request_id` - Unique ID (UUID)\n- `start_timestamp` - For duration calc\n- `user_id` & `username`\n- `input_type` - text/audio/image/etc\n- `input_chars` - Input length\n\n**Used by:**\n- Token Counter\n- Compile Analytics\n- Google Sheets logging",
+        "height": 592,
+        "width": 280,
+        "color": 4
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        160,
+        544
+      ],
+      "id": "669f0bb0-e1ee-4594-a0ae-f4d1ae542cba",
+      "name": "Sticky Note - Timer"
+    },
+    {
+      "parameters": {
+        "content": "## \ud83d\udd00 INPUT ROUTER\n### 7-Way Message Handler\n\n**Routes by type:**\n1. \ud83c\udfa4 **Audio** \u2192 Transcribe\n2. \ud83d\udcac **Text** \u2192 Direct process\n3. \ud83d\uddbc\ufe0f **Image** \u2192 Vision analyze\n4. \ud83d\udcc4 **Document** \u2192 Extract text\n5. \ud83c\udfac **Video** \u2192 Store path\n6. \ud83d\udccd **Location** \u2192 Parse coords\n7. \u2328\ufe0f **Command** \u2192 Parse /cmd\n\n**All paths merge to:**\n`Prepare Agent Input` node",
+        "height": 356,
+        "width": 280,
+        "color": 3
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        192,
+        -32
+      ],
+      "id": "8881a00b-fae0-4da8-a34e-63d8749a4498",
+      "name": "Sticky Note - Router"
+    },
+    {
+      "parameters": {
+        "content": "## \ud83e\udde0 AGENT DHRUV\n### Main AI Brain\n\n**Model:** Gemini 2.5 Flash\n**Memory:** 50-message window\n**Temperature:** 0.7\n\n**System Prompt includes:**\n- User context injection\n- All 19 tool descriptions\n- Command shortcuts\n- Decision rules\n- Output formatting\n\n**Decision Priority:**\n1. Answer directly (no tools)\n2. Use single best tool\n3. Chain tools if needed",
+        "height": 360,
+        "width": 280,
+        "color": 2
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        1376,
+        0
+      ],
+      "id": "2350b941-9781-49ee-9ce2-9a1ded69864b",
+      "name": "Sticky Note - Agent"
+    },
+    {
+      "parameters": {
+        "content": "## \ud83d\udd27 EXISTING TOOLS (Row 1)\n### Your Current Sub-Workflows\n\n**Connected & Working:**\n\u2705 Think - Complex reasoning\n\u2705 Search_Agent - Web search\n\u2705 Email_Agent - Email operations\n\u2705 Calendar_Agent - Scheduling\n\u2705 Contact_Agent - Contacts\n\u2705 Social_Media_Agent - Posts\n\u2705 Stock_Agent - Indian markets\n\u2705 Growth_Architect - Strategy\n\u2705 Prompt_Agent - AI prompts\n\n**Workflow IDs already set!**",
+        "height": 372,
+        "width": 300,
+        "color": 6
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        1312,
+        1296
+      ],
+      "id": "6f434914-1ed9-419c-9543-3e143ad3e251",
+      "name": "Sticky Note - Existing Tools"
+    },
+    {
+      "parameters": {
+        "content": "## \ud83c\udd95 NEW TOOLS (Row 2)\n### Sub-Workflows to Create\n\n**Need to build & connect:**\n\u23f3 Image_Generator - AI images\n\u23f3 Invoice_Generator - PDF invoices\n\u23f3 Quotation_Generator - Quotes\n\u23f3 Expense_Logger - Track expenses\n\u23f3 QR_Generator - QR codes\n\u23f3 Translator - 25+ languages\n\u23f3 YouTube_Summarizer - Video summaries\n\u23f3 Reminder_Tool - Set reminders\n\u23f3 Research_Agent - Deep research\n\u23f3 Weather_Agent - Weather info\n\n**Replace YOUR_*_WORKFLOW_ID!**",
+        "height": 364,
+        "width": 300
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        1776,
+        1264
+      ],
+      "id": "9be8e906-b2df-4d1d-89f9-c08d03200850",
+      "name": "Sticky Note - New Tools"
+    },
+    {
+      "parameters": {
+        "content": "## \ud83d\udcca ANALYTICS PIPELINE\n### Token & Cost Tracking\n\n**Token Counter:**\n```\ninput_tokens\noutput_tokens\ntotal_tokens\ncost_usd\ncost_inr\n```\n\n**Compile Analytics:**\n```\nduration_ms\ntools_used\noutput_type\nfull request log\n```\n\n**Pricing (per 1M tokens):**\n- Gemini 2.5: $0.15 in / $0.60 out\n- GPT-4o-mini: $0.15 in / $0.60 out\n\n**INR Rate:** \u00d783",
+        "height": 588,
+        "width": 280,
+        "color": 4
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        1760,
+        -48
+      ],
+      "id": "8e85c45c-f47d-45b3-87df-01a7481a086d",
+      "name": "Sticky Note - Analytics"
+    },
+    {
+      "parameters": {
+        "content": "## \ud83d\udccb GOOGLE SHEETS\n### Analytics Dashboard\n\n**Sheet: Agent_Analytics**\n22 columns tracking:\n- Request ID, timestamp\n- User ID, username\n- Input type, preview, chars\n- Model, tokens (in/out/total)\n- Cost USD, Cost INR\n- Tools used, count\n- Duration ms/seconds\n- Status, output type\n- Error (if any)\n\n**Setup:**\n1. Create Google Sheet\n2. Add headers (row 1)\n3. Replace SHEET_ID\n4. Connect credentials",
+        "height": 480,
+        "width": 280,
+        "color": 7
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        2096,
+        -16
+      ],
+      "id": "1881f8d2-673f-4231-a566-1eb324f63940",
+      "name": "Sticky Note - Sheets"
+    },
+    {
+      "parameters": {
+        "content": "## \ud83d\udce4 OUTPUT ROUTING\n### Smart Response Handler\n\n**Routes by output_type:**\n\n\ud83d\uddbc\ufe0f **Image** \u2192 Send Photo\n- Uses file_url from tool\n- Adds caption\n\n\ud83d\udcc4 **Document** \u2192 Send Document\n- PDF, DOCX, etc.\n- Preserves filename\n\n\ud83d\udd0a **Audio** \u2192 Send Audio\n- Voice/audio files\n\n\ud83d\udcac **Text** \u2192 Send Message\n- Default Markdown format\n- Fallback for all others",
+        "height": 452,
+        "width": 280,
+        "color": 3
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        2784,
+        0
+      ],
+      "id": "30180cfd-4001-4837-a152-ba2d2e0b2296",
+      "name": "Sticky Note - Output"
+    },
+    {
+      "parameters": {
+        "content": "## \u26a0\ufe0f SETUP CHECKLIST\n\n**Before Running:**\n\n\u2610 **Google Sheet**\n   - Create sheet with 22 columns\n   - Copy header row from docs\n   - Replace `YOUR_GOOGLE_SHEET_ID_HERE`\n   - Replace credential ID\n\n\u2610 **Existing Tool IDs** (Already set)\n   - Search: xz3AFt53UbEvPFQv\n   - Email: kezMOKKRjQOAQIi9\n   - Calendar: teaBSbleCK34Tw7b\n   - Contact: 6NqoNner3xOi06da\n   - Social: vTVxV4xsB6exEd01\n   - Stock: Vj8Ooa2dndbB3HRZ\n   - Growth: 6so0qBZoqekx9l6s\n   - Prompt: P5pSr2vZIQhhr7S3\n\n\u2610 **New Sub-Workflows**\n   - Create each from prompts\n   - Get workflow ID from URL\n   - Replace `YOUR_*_WORKFLOW_ID`\n\n\u2610 **Credentials**\n   - OpenRouter (Gemini)\n   - OpenAI (transcribe/vision)\n   - Telegram Bot\n   - Google Sheets OAuth\n\n\u2610 **Telegram Bot**\n   - Create via @BotFather\n   - Set webhook URL\n   - Test with /help",
+        "height": 808,
+        "width": 320,
+        "color": 5
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        2896,
+        624
+      ],
+      "id": "e5173473-0486-49de-ae46-fc4df7e7c5ef",
+      "name": "Sticky Note - Setup"
+    },
+    {
+      "parameters": {
+        "content": "## \u2328\ufe0f AVAILABLE COMMANDS\n\n```\n/imagine [prompt] - Generate image\n/invoice [details] - Create invoice\n/quote [details] - Create quotation\n/expense [amt] [cat] - Log expense\n/qr [content] - Generate QR code\n/translate [text] to [lang] - Translate\n/weather [city] - Get weather\n/stock [symbol] - Stock info\n/yt [url] - Summarize YouTube\n/remind [msg] in [time] - Reminder\n/research [topic] - Deep research\n/email [action] - Email operations\n/cal [action] - Calendar\n/post [content] - Social media\n/help - Show all commands\n/stats - Usage statistics\n```",
+        "height": 424,
+        "width": 320,
+        "color": 2
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        912,
+        1504
+      ],
+      "id": "50edf46b-461d-43cd-80c9-045967fdc8ed",
+      "name": "Sticky Note - Commands"
+    },
+    {
+      "parameters": {
+        "content": "## \ud83d\udd17 WORKFLOW IDS TO REPLACE\n\n**New Sub-Workflows:**\n```\nImage_Generator:\nYOUR_IMAGE_GENERATOR_WORKFLOW_ID\n\nInvoice_Generator:\nYOUR_INVOICE_GENERATOR_WORKFLOW_ID\n\nQuotation_Generator:\nYOUR_QUOTATION_GENERATOR_WORKFLOW_ID\n\nExpense_Logger:\nYOUR_EXPENSE_LOGGER_WORKFLOW_ID\n\nQR_Generator:\nYOUR_QR_GENERATOR_WORKFLOW_ID\n\nTranslator:\nYOUR_TRANSLATOR_WORKFLOW_ID\n\nYouTube_Summarizer:\nYOUR_YOUTUBE_SUMMARIZER_WORKFLOW_ID\n\nReminder_Tool:\nYOUR_REMINDER_TOOL_WORKFLOW_ID\n\nResearch_Agent:\nYOUR_RESEARCH_AGENT_WORKFLOW_ID\n\nWeather_Agent:\nYOUR_WEATHER_AGENT_WORKFLOW_ID\n```\n\n**How to get ID:**\nOpen workflow \u2192 URL shows:\n`/workflow/XXXXXX` \u2190 Copy this",
+        "height": 756,
+        "width": 320
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        2288,
+        1216
+      ],
+      "id": "e614fd8c-e2ad-4719-90b5-f2464a85263b",
+      "name": "Sticky Note - Workflow IDs"
+    },
+    {
+      "parameters": {},
+      "id": "938eba65-339b-4ce6-bd92-983964e1e25b",
+      "name": "Execute Workflow Trigger",
+      "type": "n8n-nodes-base.executeWorkflowTrigger",
+      "typeVersion": 1.1,
+      "position": [
+        880,
+        2816
+      ]
+    },
+    {
+      "parameters": {
+        "mode": "runOnceForEachItem",
+        "jsCode": "// Parse input and prepare image generation request\nconst input = $input.first().json;\n\n// Extract parameters from natural language or structured input\nlet prompt = input.prompt || input.query || input.chatInput || '';\nlet style = input.style || 'realistic';\nlet aspectRatio = input.aspect_ratio || input.aspectRatio || '1:1';\nlet quality = input.quality || 'standard';\nlet negativePrompt = input.negative_prompt || input.negativePrompt || 'blurry, low quality, distorted, ugly, deformed';\n\n// Parse style from prompt if mentioned\nconst styleKeywords = {\n  'anime': 'anime',\n  'cartoon': 'anime',\n  '3d': '3d render',\n  'realistic': 'photorealistic',\n  'photo': 'photorealistic',\n  'painting': 'oil painting',\n  'watercolor': 'watercolor painting',\n  'sketch': 'pencil sketch',\n  'logo': 'logo design, vector art',\n  'icon': 'icon design, flat design'\n};\n\nfor (const [key, value] of Object.entries(styleKeywords)) {\n  if (prompt.toLowerCase().includes(key + ' style') || prompt.toLowerCase().includes('in ' + key)) {\n    style = value;\n    break;\n  }\n}\n\n// Map aspect ratio to dimensions\nconst sizeMap = {\n  '1:1': { width: 1024, height: 1024 },\n  '16:9': { width: 1792, height: 1024 },\n  '9:16': { width: 1024, height: 1792 },\n  '4:3': { width: 1365, height: 1024 },\n  '3:4': { width: 1024, height: 1365 }\n};\n\nconst size = sizeMap[aspectRatio] || sizeMap['1:1'];\n\n// Enhance prompt with style\nconst enhancedPrompt = `${prompt}, ${style} style, high quality, highly detailed, sharp focus, professional`;\n\nreturn {\n  json: {\n    prompt: prompt,\n    enhanced_prompt: enhancedPrompt,\n    negative_prompt: negativePrompt,\n    style: style,\n    aspect_ratio: aspectRatio,\n    width: size.width,\n    height: size.height,\n    quality: quality,\n    start_time: Date.now()\n  }\n};"
+      },
+      "id": "ae6fa0e2-2b84-4993-a057-451891b13250",
+      "name": "Parse Input & Enhance Prompt",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1088,
+        2816
+      ]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.openai.com/v1/images/generations",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "openAiApi",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"model\": \"dall-e-3\",\n  \"prompt\": \"{{ $json.enhanced_prompt }}\",\n  \"n\": 1,\n  \"size\": \"{{ $json.width }}x{{ $json.height }}\",\n  \"quality\": \"{{ $json.quality }}\"\n}",
+        "options": {
+          "timeout": 120000
+        }
+      },
+      "id": "e82afc79-fb84-4bef-ba2b-3ce578387590",
+      "name": "Generate Image (DALL-E 3)",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        1312,
+        2816
+      ]
+    },
+    {
+      "parameters": {
+        "mode": "runOnceForEachItem",
+        "jsCode": "// Format the output for Agent Dhruv\nconst input = $input.first().json;\nconst startTime = $('Parse Input & Enhance Prompt').first().json.start_time;\nconst originalPrompt = $('Parse Input & Enhance Prompt').first().json.prompt;\nconst style = $('Parse Input & Enhance Prompt').first().json.style;\n\n// Extract image URL from DALL-E response\nlet imageUrl = '';\nlet revisedPrompt = '';\n\nif (input.data && input.data[0]) {\n  imageUrl = input.data[0].url;\n  revisedPrompt = input.data[0].revised_prompt || '';\n}\n\nconst executionTime = Date.now() - startTime;\n\nreturn {\n  json: {\n    success: true,\n    result: `[IMAGE_GENERATED] \ud83c\udfa8 Image created successfully!\\n\\n**Prompt:** ${originalPrompt.substring(0, 100)}${originalPrompt.length > 100 ? '...' : ''}\\n**Style:** ${style}\\n\\nImage is ready to view!`,\n    data: {\n      image_url: imageUrl,\n      prompt_used: originalPrompt,\n      revised_prompt: revisedPrompt,\n      style: style,\n      model: 'dall-e-3'\n    },\n    file_url: imageUrl,\n    file_type: 'image',\n    error: '',\n    metadata: {\n      tool_name: 'image_generator',\n      model: 'dall-e-3',\n      execution_time_ms: executionTime\n    }\n  }\n};"
+      },
+      "id": "94a3af9b-f6d2-49b0-9f4f-cdd8fc05d73f",
+      "name": "Format Output",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1536,
+        2816
+      ]
+    },
+    {
+      "parameters": {
+        "content": "## \ud83c\udfa8 IMAGE GENERATOR\n### Sub-Workflow for AI Image Creation\n\n**Trigger:** Execute Workflow Trigger\n**Called by:** Agent Dhruv\n\n**Input:**\n```json\n{\n  \"prompt\": \"sunset over mountains\",\n  \"style\": \"realistic\",\n  \"aspect_ratio\": \"16:9\"\n}\n```\n\n**Supported Styles:**\n- realistic, anime, 3d\n- painting, watercolor\n- sketch, logo, icon",
+        "height": 340,
+        "width": 300,
+        "color": 5
+      },
+      "id": "d20e629c-ab3d-4191-aa07-03956952a56e",
+      "name": "Sticky Note",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        352,
+        2352
+      ]
+    },
+    {
+      "parameters": {
+        "content": "## \u2699\ufe0f CONFIGURATION\n\n**API:** OpenAI DALL-E 3\n**Cost:** ~$0.04 per image\n\n**Sizes:**\n- 1:1 = 1024x1024\n- 16:9 = 1792x1024\n- 9:16 = 1024x1792\n\n**Alternative APIs:**\n- Replicate (Flux) - Cheaper\n- Stability AI\n- Midjourney API",
+        "height": 280,
+        "width": 260,
+        "color": 4
+      },
+      "id": "07ef12b8-2761-4e18-ab90-9eb363d86604",
+      "name": "Sticky Note Config",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        768,
+        2384
+      ]
+    },
+    {
+      "parameters": {
+        "content": "## \ud83d\udce4 OUTPUT FORMAT\n\n```json\n{\n  \"success\": true,\n  \"result\": \"[IMAGE_GENERATED]...\",\n  \"file_url\": \"https://...\",\n  \"file_type\": \"image\",\n  \"data\": {\n    \"image_url\": \"...\",\n    \"style\": \"realistic\"\n  }\n}\n```\n\n**Main workflow routes:**\nfile_type=image \u2192 Send Photo",
+        "height": 300,
+        "width": 260,
+        "color": 3
+      },
+      "id": "becb0c33-9ad3-4d78-b553-4f7f962fb123",
+      "name": "Sticky Note Output",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        1152,
+        2336
+      ]
+    },
+    {
+      "parameters": {
+        "mode": "runOnceForEachItem",
+        "jsCode": "// Parse invoice input and calculate totals\nconst input = $input.first().json;\nconst query = input.query || input.chatInput || input.prompt || '';\n\n// Try to parse structured input or extract from natural language\nlet clientName = input.client_name || '';\nlet clientEmail = input.client_email || '';\nlet clientAddress = input.client_address || '';\nlet clientGst = input.client_gst || '';\nlet items = input.items || [];\nlet paymentTerms = input.payment_terms || '50% advance, 50% on delivery';\nlet dueDays = input.due_days || 15;\nlet includeGst = input.include_gst !== false;\nlet gstRate = input.gst_rate || 18;\nlet notes = input.notes || 'Thank you for your business!';\n\n// If items not provided, try to parse from query\nif (items.length === 0 && query) {\n  // Basic parsing: \"invoice ABC Corp 50000 for website development\"\n  const amountMatch = query.match(/(\\d+(?:,\\d+)*(?:\\.\\d+)?)/g);\n  const amount = amountMatch ? parseFloat(amountMatch[0].replace(/,/g, '')) : 0;\n  \n  // Extract client name (words after \"invoice\" or \"for\")\n  const clientMatch = query.match(/(?:invoice|for|to)\\s+([A-Z][a-zA-Z\\s]+?)(?:\\s+\\d|$)/i);\n  clientName = clientMatch ? clientMatch[1].trim() : 'Client';\n  \n  if (amount > 0) {\n    items = [{\n      description: query.includes('for') ? query.split('for').pop().trim() : 'Services',\n      quantity: 1,\n      rate: amount\n    }];\n  }\n}\n\n// Calculate totals\nlet subtotal = 0;\nconst itemsWithTotals = items.map((item, index) => {\n  const qty = item.quantity || 1;\n  const rate = parseFloat(item.rate) || 0;\n  const total = qty * rate;\n  subtotal += total;\n  return {\n    sr_no: index + 1,\n    description: item.description || 'Item ' + (index + 1),\n    quantity: qty,\n    rate: rate,\n    rate_formatted: '\u20b9' + rate.toLocaleString('en-IN'),\n    total: total,\n    total_formatted: '\u20b9' + total.toLocaleString('en-IN')\n  };\n});\n\nconst gstAmount = includeGst ? Math.round(subtotal * gstRate / 100) : 0;\nconst grandTotal = subtotal + gstAmount;\n\n// Generate invoice number\nconst now = new Date();\nconst invoiceNumber = `INV-${now.getFullYear()}${(now.getMonth()+1).toString().padStart(2,'0')}${now.getDate().toString().padStart(2,'0')}-${Math.floor(Math.random() * 10000).toString().padStart(4, '0')}`;\n\n// Calculate due date\nconst dueDate = new Date();\ndueDate.setDate(dueDate.getDate() + dueDays);\n\nreturn {\n  json: {\n    invoice_number: invoiceNumber,\n    invoice_date: now.toLocaleDateString('en-IN', { day: '2-digit', month: 'short', year: 'numeric' }),\n    due_date: dueDate.toLocaleDateString('en-IN', { day: '2-digit', month: 'short', year: 'numeric' }),\n    client_name: clientName,\n    client_email: clientEmail,\n    client_address: clientAddress,\n    client_gst: clientGst,\n    items: itemsWithTotals,\n    items_count: itemsWithTotals.length,\n    subtotal: subtotal,\n    subtotal_formatted: '\u20b9' + subtotal.toLocaleString('en-IN'),\n    gst_rate: gstRate,\n    gst_amount: gstAmount,\n    gst_formatted: '\u20b9' + gstAmount.toLocaleString('en-IN'),\n    grand_total: grandTotal,\n    grand_total_formatted: '\u20b9' + grandTotal.toLocaleString('en-IN'),\n    payment_terms: paymentTerms,\n    notes: notes,\n    include_gst: includeGst,\n    start_time: Date.now()\n  }\n};"
+      },
+      "id": "c28b08a1-0362-4ba5-99e9-4356c75439d5",
+      "name": "Parse Input & Calculate",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        704,
+        3568
+      ]
+    },
+    {
+      "parameters": {
+        "mode": "runOnceForEachItem",
+        "jsCode": "// Generate HTML invoice\nconst inv = $input.first().json;\n\nconst itemRows = inv.items.map(item => `\n  <tr>\n    <td style=\"padding: 12px; border-bottom: 1px solid #eee;\">${item.sr_no}</td>\n    <td style=\"padding: 12px; border-bottom: 1px solid #eee;\">${item.description}</td>\n    <td style=\"padding: 12px; border-bottom: 1px solid #eee; text-align: center;\">${item.quantity}</td>\n    <td style=\"padding: 12px; border-bottom: 1px solid #eee; text-align: right;\">${item.rate_formatted}</td>\n    <td style=\"padding: 12px; border-bottom: 1px solid #eee; text-align: right;\">${item.total_formatted}</td>\n  </tr>\n`).join('');\n\nconst html = `\n<!DOCTYPE html>\n<html>\n<head>\n  <meta charset=\"UTF-8\">\n  <style>\n    body { font-family: 'Segoe UI', Arial, sans-serif; margin: 0; padding: 40px; background: #f5f5f5; }\n    .invoice-box { max-width: 800px; margin: auto; padding: 40px; background: #fff; box-shadow: 0 0 20px rgba(0,0,0,0.1); border-radius: 8px; }\n    .header { display: flex; justify-content: space-between; margin-bottom: 40px; }\n    .logo { font-size: 28px; font-weight: bold; color: #2c3e50; }\n    .invoice-title { font-size: 32px; color: #3498db; text-align: right; }\n    .invoice-details { text-align: right; color: #666; margin-top: 10px; }\n    .addresses { display: flex; justify-content: space-between; margin-bottom: 30px; }\n    .address-box { width: 45%; }\n    .address-title { font-weight: bold; color: #2c3e50; margin-bottom: 10px; font-size: 14px; text-transform: uppercase; }\n    table { width: 100%; border-collapse: collapse; margin: 20px 0; }\n    th { background: #3498db; color: white; padding: 12px; text-align: left; }\n    th:nth-child(3), th:nth-child(4), th:nth-child(5) { text-align: right; }\n    .totals { margin-top: 20px; text-align: right; }\n    .totals-row { display: flex; justify-content: flex-end; padding: 8px 0; }\n    .totals-label { width: 150px; color: #666; }\n    .totals-value { width: 150px; text-align: right; font-weight: 500; }\n    .grand-total { font-size: 20px; font-weight: bold; color: #2c3e50; border-top: 2px solid #3498db; padding-top: 15px; margin-top: 10px; }\n    .footer { margin-top: 40px; padding-top: 20px; border-top: 1px solid #eee; }\n    .payment-info { background: #f8f9fa; padding: 20px; border-radius: 8px; margin-top: 20px; }\n    .payment-title { font-weight: bold; color: #2c3e50; margin-bottom: 10px; }\n    .notes { color: #666; font-style: italic; margin-top: 20px; }\n  </style>\n</head>\n<body>\n  <div class=\"invoice-box\">\n    <div class=\"header\">\n      <div>\n        <div class=\"logo\">YOUR COMPANY</div>\n        <div style=\"color: #666; margin-top: 5px;\">Your Business Address<br>City, State - PIN<br>GSTIN: YOUR_GST_NUMBER</div>\n      </div>\n      <div>\n        <div class=\"invoice-title\">INVOICE</div>\n        <div class=\"invoice-details\">\n          <strong>${inv.invoice_number}</strong><br>\n          Date: ${inv.invoice_date}<br>\n          Due: ${inv.due_date}\n        </div>\n      </div>\n    </div>\n    \n    <div class=\"addresses\">\n      <div class=\"address-box\">\n        <div class=\"address-title\">Bill To:</div>\n        <div style=\"color: #333;\">\n          <strong>${inv.client_name}</strong><br>\n          ${inv.client_address || 'Address not provided'}<br>\n          ${inv.client_email ? 'Email: ' + inv.client_email + '<br>' : ''}\n          ${inv.client_gst ? 'GSTIN: ' + inv.client_gst : ''}\n        </div>\n      </div>\n    </div>\n    \n    <table>\n      <thead>\n        <tr>\n          <th style=\"width: 50px;\">#</th>\n          <th>Description</th>\n          <th style=\"width: 80px; text-align: center;\">Qty</th>\n          <th style=\"width: 120px; text-align: right;\">Rate</th>\n          <th style=\"width: 120px; text-align: right;\">Amount</th>\n        </tr>\n      </thead>\n      <tbody>\n        ${itemRows}\n      </tbody>\n    </table>\n    \n    <div class=\"totals\">\n      <div class=\"totals-row\">\n        <div class=\"totals-label\">Subtotal:</div>\n        <div class=\"totals-value\">${inv.subtotal_formatted}</div>\n      </div>\n      ${inv.include_gst ? `\n      <div class=\"totals-row\">\n        <div class=\"totals-label\">GST (${inv.gst_rate}%):</div>\n        <div class=\"totals-value\">${inv.gst_formatted}</div>\n      </div>\n      ` : ''}\n      <div class=\"totals-row grand-total\">\n        <div class=\"totals-label\">Grand Total:</div>\n        <div class=\"totals-value\">${inv.grand_total_formatted}</div>\n      </div>\n    </div>\n    \n    <div class=\"payment-info\">\n      <div class=\"payment-title\">Payment Terms</div>\n      <div>${inv.payment_terms}</div>\n      <div style=\"margin-top: 15px;\">\n        <strong>Bank Details:</strong><br>\n        Bank: HDFC Bank<br>\n        A/C: XXXXXXXXXXXX<br>\n        IFSC: HDFC0001234<br>\n        UPI: business@upi\n      </div>\n    </div>\n    \n    <div class=\"notes\">${inv.notes}</div>\n  </div>\n</body>\n</html>\n`;\n\nreturn {\n  json: {\n    ...inv,\n    html_content: html\n  }\n};"
+      },
+      "id": "77e93c48-3897-4855-b34f-0ba416af9dee",
+      "name": "Generate HTML Invoice",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        928,
+        3568
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "toFile"
+      },
+      "id": "4330e744-1d82-466b-a526-2345f21435ce",
+      "name": "Convert to HTML File",
+      "type": "n8n-nodes-base.convertToFile",
+      "typeVersion": 1.1,
+      "position": [
+        1136,
+        3568
+      ]
+    },
+    {
+      "parameters": {
+        "content": "## \ud83d\udcb0 AUTO CALCULATIONS\n\n**Computed Fields:**\n- Invoice Number (auto)\n- Subtotal\n- GST Amount (18%)\n- Grand Total\n- Due Date\n\n**Format:**\n- Indian Rupee (\u20b9)\n- Indian date format\n- GST compliant",
+        "height": 260,
+        "width": 260,
+        "color": 4
+      },
+      "id": "74705e01-bee5-4ced-b121-2112dce98f66",
+      "name": "Sticky Note Calc",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        784,
+        3264
+      ]
+    },
+    {
+      "parameters": {
+        "mode": "runOnceForEachItem",
+        "jsCode": "// Format final output\nconst inv = $('Generate HTML Invoice').first().json;\nconst startTime = inv.start_time;\nconst executionTime = Date.now() - startTime;\n\nreturn {\n  json: {\n    success: true,\n    result: `[DOCUMENT_CREATED] \ud83d\udcc4 Invoice Generated!\\n\\n**Invoice #:** ${inv.invoice_number}\\n**Client:** ${inv.client_name}\\n**Amount:** ${inv.grand_total_formatted}\\n**Due Date:** ${inv.due_date}\\n\\n${inv.items_count} item(s) | GST: ${inv.include_gst ? inv.gst_formatted : 'N/A'}`,\n    data: {\n      invoice_number: inv.invoice_number,\n      client_name: inv.client_name,\n      grand_total: inv.grand_total,\n      grand_total_formatted: inv.grand_total_formatted,\n      due_date: inv.due_date,\n      items_count: inv.items_count,\n      gst_amount: inv.gst_formatted\n    },\n    file_url: '',\n    file_type: 'document',\n    error: '',\n    metadata: {\n      tool_name: 'invoice_generator',\n      invoice_number: inv.invoice_number,\n      execution_time_ms: executionTime\n    }\n  }\n};"
+      },
+      "id": "2ee73a3d-31fc-4078-a971-0b421a53cfd5",
+      "name": "Format Output1",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1360,
+        3568
+      ]
+    },
+    {
+      "parameters": {
+        "content": "## \ud83e\uddfe INVOICE GENERATOR\n### Professional GST Invoice Creator\n\n**Input Options:**\n```json\n{\n  \"client_name\": \"ABC Corp\",\n  \"items\": [\n    {\"description\": \"Service\", \"quantity\": 1, \"rate\": 50000}\n  ],\n  \"include_gst\": true,\n  \"gst_rate\": 18\n}\n```\n\n**Or natural language:**\n\"Create invoice for ABC Corp 50000 for website\"",
+        "height": 320,
+        "width": 300,
+        "color": 5
+      },
+      "id": "a592d84f-712c-4fb4-8e97-6d90ed58bc20",
+      "name": "Sticky Note1",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        464,
+        3264
+      ]
+    },
+    {
+      "parameters": {
+        "content": "## \ud83d\udcc4 OUTPUT\n\n**Generates:**\n- HTML Invoice (styled)\n- Can convert to PDF\n\n**For PDF conversion:**\n- Add Puppeteer/Browserless\n- Or use PDFMonkey API\n- Or Carbone.io\n\n**Returns:** file_type=document",
+        "height": 260,
+        "width": 260,
+        "color": 3
+      },
+      "id": "7a86532b-106d-4fcf-9628-39dec7bcb924",
+      "name": "Sticky Note Output1",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        1056,
+        3264
+      ]
+    },
+    {
+      "parameters": {
+        "mode": "runOnceForEachItem",
+        "jsCode": "// Generate HTML quotation\nconst q = $input.first().json;\n\nconst itemRows = q.items.map(item => `\n  <tr>\n    <td style=\"padding: 12px; border-bottom: 1px solid #eee;\">${item.sr}</td>\n    <td style=\"padding: 12px; border-bottom: 1px solid #eee;\">${item.description}</td>\n    <td style=\"padding: 12px; border-bottom: 1px solid #eee; text-align: center;\">${item.qty}</td>\n    <td style=\"padding: 12px; border-bottom: 1px solid #eee; text-align: right;\">${item.rate_formatted}</td>\n    <td style=\"padding: 12px; border-bottom: 1px solid #eee; text-align: right;\">${item.total_formatted}</td>\n  </tr>\n`).join('');\n\nconst termsHtml = q.terms.map(t => `<li style=\"margin-bottom: 8px;\">${t}</li>`).join('');\n\nconst html = `\n<!DOCTYPE html>\n<html>\n<head>\n  <meta charset=\"UTF-8\">\n  <style>\n    body { font-family: 'Segoe UI', Arial, sans-serif; margin: 0; padding: 40px; background: #f0f4f8; }\n    .quote-box { max-width: 800px; margin: auto; padding: 40px; background: #fff; box-shadow: 0 0 20px rgba(0,0,0,0.1); border-radius: 8px; }\n    .header { display: flex; justify-content: space-between; margin-bottom: 30px; padding-bottom: 20px; border-bottom: 3px solid #27ae60; }\n    .logo { font-size: 28px; font-weight: bold; color: #2c3e50; }\n    .quote-title { font-size: 28px; color: #27ae60; text-align: right; }\n    .quote-details { text-align: right; color: #666; margin-top: 10px; font-size: 14px; }\n    .project-banner { background: linear-gradient(135deg, #27ae60, #2ecc71); color: white; padding: 20px; border-radius: 8px; margin-bottom: 30px; }\n    .project-title { font-size: 20px; font-weight: bold; }\n    .client-info { color: rgba(255,255,255,0.9); margin-top: 10px; }\n    table { width: 100%; border-collapse: collapse; margin: 20px 0; }\n    th { background: #27ae60; color: white; padding: 12px; text-align: left; }\n    .totals { background: #f8f9fa; padding: 20px; border-radius: 8px; margin-top: 20px; }\n    .totals-row { display: flex; justify-content: space-between; padding: 8px 0; border-bottom: 1px solid #eee; }\n    .totals-row:last-child { border-bottom: none; }\n    .grand-total { font-size: 22px; font-weight: bold; color: #27ae60; padding-top: 15px; border-top: 2px solid #27ae60; margin-top: 10px; }\n    .validity { background: #fff3cd; border-left: 4px solid #ffc107; padding: 15px; margin: 20px 0; border-radius: 0 8px 8px 0; }\n    .terms { margin-top: 30px; }\n    .terms-title { font-weight: bold; color: #2c3e50; margin-bottom: 15px; font-size: 16px; }\n    .terms ul { padding-left: 20px; color: #666; }\n  </style>\n</head>\n<body>\n  <div class=\"quote-box\">\n    <div class=\"header\">\n      <div>\n        <div class=\"logo\">YOUR COMPANY</div>\n        <div style=\"color: #666; margin-top: 5px;\">Your Business Address<br>Email: hello@company.com<br>Phone: +91 XXXXXXXXXX</div>\n      </div>\n      <div>\n        <div class=\"quote-title\">QUOTATION</div>\n        <div class=\"quote-details\">\n          <strong>${q.quote_number}</strong><br>\n          Date: ${q.quote_date}\n        </div>\n      </div>\n    </div>\n    \n    <div class=\"project-banner\">\n      <div class=\"project-title\">\ud83d\udccb ${q.project_name}</div>\n      <div class=\"client-info\">\n        <strong>Prepared for:</strong> ${q.client_name}\n        ${q.client_email ? ' | ' + q.client_email : ''}\n        ${q.client_phone ? ' | ' + q.client_phone : ''}\n      </div>\n    </div>\n    \n    <table>\n      <thead>\n        <tr>\n          <th style=\"width: 50px;\">#</th>\n          <th>Description</th>\n          <th style=\"width: 80px; text-align: center;\">Qty</th>\n          <th style=\"width: 120px; text-align: right;\">Rate</th>\n          <th style=\"width: 120px; text-align: right;\">Amount</th>\n        </tr>\n      </thead>\n      <tbody>\n        ${itemRows}\n      </tbody>\n    </table>\n    \n    <div class=\"totals\">\n      <div class=\"totals-row\">\n        <span>Subtotal:</span>\n        <span>${q.subtotal_formatted}</span>\n      </div>\n      ${q.discount_percent > 0 ? `\n      <div class=\"totals-row\" style=\"color: #27ae60;\">\n        <span>Discount (${q.discount_percent}%):</span>\n        <span>-${q.discount_formatted}</span>\n      </div>\n      ` : ''}\n      ${q.include_gst ? `\n      <div class=\"totals-row\">\n        <span>GST (${q.gst_rate}%):</span>\n        <span>${q.gst_formatted}</span>\n      </div>\n      ` : ''}\n      <div class=\"totals-row grand-total\">\n        <span>Grand Total:</span>\n        <span>${q.grand_total_formatted}</span>\n      </div>\n    </div>\n    \n    <div class=\"validity\">\n      \u23f0 <strong>Valid Until:</strong> ${q.valid_until} (${q.validity_days} days from quote date)\n    </div>\n    \n    <div class=\"terms\">\n      <div class=\"terms-title\">Terms & Conditions</div>\n      <ul>${termsHtml}</ul>\n    </div>\n  </div>\n</body>\n</html>\n`;\n\nreturn {\n  json: {\n    ...q,\n    html_content: html\n  }\n};"
+      },
+      "id": "a9c7aab6-cc2f-4393-8f95-93dd1100b627",
+      "name": "Generate HTML Quote",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        2640,
+        2672
+      ]
+    },
+    {
+      "parameters": {
+        "mode": "runOnceForEachItem",
+        "jsCode": "// Parse quotation input\nconst input = $input.first().json;\nconst query = input.query || input.chatInput || input.prompt || '';\n\nlet clientName = input.client_name || 'Client';\nlet clientEmail = input.client_email || '';\nlet clientPhone = input.client_phone || '';\nlet projectName = input.project_name || 'Project';\nlet items = input.items || [];\nlet validityDays = input.validity_days || 15;\nlet discountPercent = input.discount_percent || 0;\nlet terms = input.terms || ['50% advance payment required', 'Balance on completion', 'Prices valid for ' + validityDays + ' days'];\nlet includeGst = input.include_gst !== false;\nlet gstRate = 18;\n\n// Parse from natural language if needed\nif (items.length === 0 && query) {\n  const amountMatch = query.match(/(\\d+(?:,\\d+)*(?:\\.\\d+)?)/g);\n  const amount = amountMatch ? parseFloat(amountMatch[0].replace(/,/g, '')) : 0;\n  \n  const clientMatch = query.match(/(?:quote|quotation|for|to)\\s+([A-Z][a-zA-Z\\s]+?)(?:\\s+\\d|$)/i);\n  clientName = clientMatch ? clientMatch[1].trim() : clientName;\n  \n  if (amount > 0) {\n    items = [{\n      description: query.includes('for') ? query.split('for').pop().split(/\\d/)[0].trim() : 'Services',\n      quantity: 1,\n      rate: amount\n    }];\n  }\n}\n\n// Calculate totals\nlet subtotal = 0;\nconst itemsFormatted = items.map((item, i) => {\n  const qty = item.quantity || 1;\n  const rate = parseFloat(item.rate) || 0;\n  const total = qty * rate;\n  subtotal += total;\n  return {\n    sr: i + 1,\n    description: item.description || 'Item ' + (i + 1),\n    qty: qty,\n    rate: rate,\n    rate_formatted: '\u20b9' + rate.toLocaleString('en-IN'),\n    total: total,\n    total_formatted: '\u20b9' + total.toLocaleString('en-IN')\n  };\n});\n\nconst discount = Math.round(subtotal * discountPercent / 100);\nconst afterDiscount = subtotal - discount;\nconst gst = includeGst ? Math.round(afterDiscount * gstRate / 100) : 0;\nconst grandTotal = afterDiscount + gst;\n\n// Generate quote number\nconst now = new Date();\nconst quoteNumber = `QUO-${now.getFullYear()}${(now.getMonth()+1).toString().padStart(2,'0')}-${Math.floor(Math.random() * 10000).toString().padStart(4, '0')}`;\n\nconst validUntil = new Date();\nvalidUntil.setDate(now.getDate() + validityDays);\n\nreturn {\n  json: {\n    quote_number: quoteNumber,\n    quote_date: now.toLocaleDateString('en-IN', { day: '2-digit', month: 'short', year: 'numeric' }),\n    valid_until: validUntil.toLocaleDateString('en-IN', { day: '2-digit', month: 'short', year: 'numeric' }),\n    validity_days: validityDays,\n    client_name: clientName,\n    client_email: clientEmail,\n    client_phone: clientPhone,\n    project_name: projectName,\n    items: itemsFormatted,\n    items_count: itemsFormatted.length,\n    subtotal: subtotal,\n    subtotal_formatted: '\u20b9' + subtotal.toLocaleString('en-IN'),\n    discount_percent: discountPercent,\n    discount_amount: discount,\n    discount_formatted: '\u20b9' + discount.toLocaleString('en-IN'),\n    after_discount: afterDiscount,\n    after_discount_formatted: '\u20b9' + afterDiscount.toLocaleString('en-IN'),\n    gst_rate: gstRate,\n    gst_amount: gst,\n    gst_formatted: '\u20b9' + gst.toLocaleString('en-IN'),\n    grand_total: grandTotal,\n    grand_total_formatted: '\u20b9' + grandTotal.toLocaleString('en-IN'),\n    terms: terms,\n    include_gst: includeGst,\n    start_time: Date.now()\n  }\n};"
+      },
+      "id": "d548b8e1-cb3e-41b4-aa54-337cc31995be",
+      "name": "Parse Input & Calculate1",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        2432,
+        2672
+      ]
+    },
+    {
+      "parameters": {
+        "mode": "runOnceForEachItem",
+        "jsCode": "// Format final output\nconst q = $input.first().json;\nconst executionTime = Date.now() - q.start_time;\n\nreturn {\n  json: {\n    success: true,\n    result: `[DOCUMENT_CREATED] \ud83d\udccb Quotation Generated!\\n\\n**Quote #:** ${q.quote_number}\\n**Client:** ${q.client_name}\\n**Project:** ${q.project_name}\\n**Total:** ${q.grand_total_formatted}\\n**Valid Until:** ${q.valid_until}\\n\\n${q.items_count} item(s) | ${q.discount_percent > 0 ? 'Discount: ' + q.discount_percent + '%' : 'No discount'}`,\n    data: {\n      quote_number: q.quote_number,\n      client_name: q.client_name,\n      project_name: q.project_name,\n      grand_total: q.grand_total,\n      grand_total_formatted: q.grand_total_formatted,\n      valid_until: q.valid_until\n    },\n    file_url: '',\n    file_type: 'document',\n    error: '',\n    metadata: {\n      tool_name: 'quotation_generator',\n      quote_number: q.quote_number,\n      execution_time_ms: executionTime\n    }\n  }\n};"
+      },
+      "id": "70d75c8c-8efa-47df-bc2d-38a671fb2891",
+      "name": "Format Output2",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        2864,
+        2672
+      ]
+    },
+    {
+      "parameters": {
+        "content": "## \ud83d\udccb QUOTATION GENERATOR\n### Professional Quote Creator\n\n**Input:**\n```json\n{\n  \"client_name\": \"XYZ Startup\",\n  \"project_name\": \"Website\",\n  \"items\": [...],\n  \"validity_days\": 15,\n  \"discount_percent\": 10\n}\n```\n\n**Features:**\n- Auto quote numbering\n- Discount support\n- Custom terms",
+        "height": 300,
+        "width": 280,
+        "color": 5
+      },
+      "id": "d835c19e-f32e-4902-80e7-67df429a4686",
+      "name": "Sticky Note2",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        2192,
+        2368
+      ]
+    },
+    {
+      "parameters": {
+        "mode": "runOnceForEachItem",
+        "jsCode": "// Parse expense input\nconst input = $input.first().json;\nconst query = input.query || input.chatInput || input.prompt || '';\n\n// Category emoji mapping\nconst categoryEmoji = {\n  'food': '\ud83c\udf54',\n  'travel': '\u2708\ufe0f',\n  'transport': '\ud83d\ude97',\n  'office': '\ud83c\udfe2',\n  'utilities': '\ud83d\udca1',\n  'entertainment': '\ud83c\udfac',\n  'shopping': '\ud83d\uded2',\n  'health': '\ud83c\udfe5',\n  'education': '\ud83d\udcda',\n  'other': '\ud83d\udce6'\n};\n\n// Extract data\nlet amount = input.amount || 0;\nlet category = input.category || 'other';\nlet description = input.description || '';\nlet paymentMethod = input.payment_method || 'cash';\nlet date = input.date || new Date().toISOString().split('T')[0];\nlet tags = input.tags || [];\n\n// Parse from natural language: \"/expense 500 food lunch\"\nif (query && !amount) {\n  const parts = query.toLowerCase().replace('/expense', '').trim().split(/\\s+/);\n  \n  // Find amount (first number)\n  for (const part of parts) {\n    const num = parseFloat(part.replace(/,/g, ''));\n    if (!isNaN(num) && num > 0) {\n      amount = num;\n      break;\n    }\n  }\n  \n  // Find category\n  const categories = Object.keys(categoryEmoji);\n  for (const part of parts) {\n    if (categories.includes(part)) {\n      category = part;\n      break;\n    }\n  }\n  \n  // Rest is description\n  description = parts.filter(p => {\n    return isNaN(parseFloat(p)) && !categories.includes(p);\n  }).join(' ') || category + ' expense';\n}\n\n// Generate expense ID\nconst now = new Date();\nconst expenseId = `EXP-${now.getTime()}-${Math.random().toString(36).substr(2, 4)}`;\n\nreturn {\n  json: {\n    expense_id: expenseId,\n    date: date,\n    amount: amount,\n    amount_formatted: '\u20b9' + amount.toLocaleString('en-IN'),\n    category: category,\n    category_emoji: categoryEmoji[category] || '\ud83d\udce6',\n    description: description || category + ' expense',\n    payment_method: paymentMethod,\n    tags: tags,\n    created_at: now.toISOString(),\n    month: now.toLocaleString('en-US', { month: 'long' }),\n    year: now.getFullYear(),\n    start_time: Date.now()\n  }\n};"
+      },
+      "id": "0654ce05-b1a8-4a59-94fe-d957a05b0cba",
+      "name": "Parse Expense Input",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        2352,
+        3472
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "append",
+        "documentId": {
+          "__rl": true,
+          "value": "YOUR_EXPENSE_SHEET_ID",
+          "mode": "id"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "Expenses",
+          "mode": "name"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "expense_id": "={{ $json.expense_id }}",
+            "date": "={{ $json.date }}",
+            "amount": "={{ $json.amount }}",
+            "category": "={{ $json.category }}",
+            "description": "={{ $json.description }}",
+            "payment_method": "={{ $json.payment_method }}",
+            "tags": "={{ $json.tags.join(', ') }}",
+            "created_at": "={{ $json.created_at }}"
+          }
+        },
+        "options": {}
+      },
+      "id": "a74ea35b-104b-4c8f-8e8e-ad749f16efd8",
+      "name": "Log to Google Sheet",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.5,
+      "position": [
+        2576,
+        3472
+      ]
+    },
+    {
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "value": "YOUR_EXPENSE_SHEET_ID",
+          "mode": "id"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "Expenses",
+          "mode": "name"
+        },
+        "filtersUI": {
+          "values": []
+        },
+        "options": {}
+      },
+      "id": "3ef1e6e8-6cfd-40e2-ab40-bd9690b19d8e",
+      "name": "Get All Expenses",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.5,
+      "position": [
+        2800,
+        3472
+      ]
+    },
+    {
+      "parameters": {
+        "content": "## \ud83d\udcca SHEET SETUP\n\n**Create sheet with headers:**\n```\nexpense_id | date | amount | category | description | payment_method | tags | created_at\n```\n\n**Replace:**\n- YOUR_EXPENSE_SHEET_ID\n- YOUR_GOOGLE_SHEETS_CREDENTIAL_ID\n\n**Features:**\n- Auto monthly totals\n- Today's total\n- Category emojis",
+        "height": 300,
+        "width": 280,
+        "color": 4
+      },
+      "id": "a006ce8a-5393-445c-9106-3a7c8a03e245",
+      "name": "Sticky Note Setup",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        2432,
+        3168
+      ]
+    },
+    {
+      "parameters": {
+        "mode": "runOnceForEachItem",
+        "jsCode": "// Calculate monthly total and format output\nconst expense = $('Parse Expense Input').first().json;\nconst allExpenses = $('Get All Expenses').all();\nconst executionTime = Date.now() - expense.start_time;\n\n// Calculate this month's total\nconst now = new Date();\nconst currentMonth = now.getMonth();\nconst currentYear = now.getFullYear();\n\nlet monthlyTotal = 0;\nlet todayTotal = 0;\nconst today = now.toISOString().split('T')[0];\n\nfor (const exp of allExpenses) {\n  const expDate = new Date(exp.json.date || exp.json.created_at);\n  const expAmount = parseFloat(exp.json.amount) || 0;\n  \n  if (expDate.getMonth() === currentMonth && expDate.getFullYear() === currentYear) {\n    monthlyTotal += expAmount;\n  }\n  \n  if (exp.json.date === today) {\n    todayTotal += expAmount;\n  }\n}\n\nreturn {\n  json: {\n    success: true,\n    result: `${expense.category_emoji} Expense Logged!\\n\\n**Amount:** ${expense.amount_formatted}\\n**Category:** ${expense.category}\\n**Description:** ${expense.description}\\n**Payment:** ${expense.payment_method}\\n\\n\ud83d\udcca **Stats:**\\n\u2022 Today: \u20b9${todayTotal.toLocaleString('en-IN')}\\n\u2022 This Month: \u20b9${monthlyTotal.toLocaleString('en-IN')}`,\n    data: {\n      expense_id: expense.expense_id,\n      amount: expense.amount,\n      amount_formatted: expense.amount_formatted,\n      category: expense.category,\n      description: expense.description,\n      today_total: todayTotal,\n      monthly_total: monthlyTotal,\n      today_total_formatted: '\u20b9' + todayTotal.toLocaleString('en-IN'),\n      monthly_total_formatted: '\u20b9' + monthlyTotal.toLocaleString('en-IN')\n    },\n    file_url: '',\n    file_type: 'text',\n    error: '',\n    metadata: {\n      tool_name: 'expense_logger',\n      expense_id: expense.expense_id,\n      execution_time_ms: executionTime\n    }\n  }\n};"
+      },
+      "id": "f9235a76-8503-4937-89b0-6af95f01ddfe",
+      "name": "Format Output3",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        3024,
+        3472
+      ]
+    },
+    {
+      "parameters": {
+        "content": "## \ud83d\udcb0 EXPENSE LOGGER\n### Track Expenses to Google Sheets\n\n**Input Methods:**\n\n1. **Structured:**\n```json\n{\n  \"amount\": 500,\n  \"category\": \"food\",\n  \"description\": \"Team lunch\"\n}\n```\n\n2. **Natural Language:**\n`/expense 500 food lunch`\n\n**Categories:**\nfood, travel, office, utilities, entertainment, shopping, health, education, other",
+        "height": 360,
+        "width": 300,
+        "color": 5
+      },
+      "id": "bb1bdea2-fcbb-4e76-a717-bf14d1039212",
+      "name": "Sticky Note3",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        2112,
+        3168
+      ]
+    },
+    {
+      "parameters": {
+        "mode": "runOnceForEachItem",
+        "jsCode": "// Parse QR code input and generate content\nconst input = $input.first().json;\nconst query = input.query || input.chatInput || input.prompt || '';\n\nlet content = input.content || query.replace('/qr', '').trim();\nlet type = input.type || 'url';\nlet size = input.size || 300;\n\n// Detect type if not specified\nif (!input.type) {\n  if (content.startsWith('http://') || content.startsWith('https://')) {\n    type = 'url';\n  } else if (content.includes('@') && content.includes('.')) {\n    type = 'email';\n  } else if (content.match(/^[\\d\\s\\-\\+]+$/) && content.length >= 10) {\n    type = 'phone';\n  } else if (input.vcard || content.toLowerCase().includes('vcard')) {\n    type = 'vcard';\n  } else if (input.wifi || content.toLowerCase().includes('wifi')) {\n    type = 'wifi';\n  } else if (input.upi || content.toLowerCase().includes('upi') || content.includes('@')) {\n    type = 'upi';\n  } else {\n    type = 'text';\n  }\n}\n\n// Generate QR content based on type\nlet qrContent = content;\nlet displayType = type;\n\nswitch(type) {\n  case 'vcard':\n    const v = input.vcard || {};\n    qrContent = `BEGIN:VCARD\\nVERSION:3.0\\nFN:${v.name || 'Contact'}\\nTEL:${v.phone || ''}\\nEMAIL:${v.email || ''}\\nORG:${v.company || ''}\\nEND:VCARD`;\n    displayType = 'Contact Card';\n    break;\n    \n  case 'wifi':\n    const w = input.wifi || {};\n    qrContent = `WIFI:T:${w.security || 'WPA'};S:${w.ssid || content};P:${w.password || ''};H:${w.hidden ? 'true' : 'false'};;`;\n    displayType = 'WiFi Network';\n    break;\n    \n  case 'upi':\n    const u = input.upi || {};\n    const vpa = u.vpa || content;\n    const amount = u.amount ? `&am=${u.amount}` : '';\n    const name = u.name ? `&pn=${encodeURIComponent(u.name)}` : '';\n    qrContent = `upi://pay?pa=${vpa}${name}${amount}&cu=INR`;\n    displayType = 'UPI Payment';\n    break;\n    \n  case 'email':\n    qrContent = `mailto:${content}`;\n    displayType = 'Email';\n    break;\n    \n  case 'phone':\n    qrContent = `tel:${content.replace(/\\s/g, '')}`;\n    displayType = 'Phone';\n    break;\n    \n  case 'sms':\n    qrContent = `sms:${content}`;\n    displayType = 'SMS';\n    break;\n    \n  default:\n    qrContent = content;\n    displayType = type === 'url' ? 'URL' : 'Text';\n}\n\nreturn {\n  json: {\n    qr_content: qrContent,\n    original_content: content,\n    type: type,\n    display_type: displayType,\n    size: size,\n    start_time: Date.now()\n  }\n};"
+      },
+      "id": "69546ff2-7970-4ade-8e4d-4354ecc44535",
+      "name": "Parse QR Input",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        3680,
+        3248
+      ]
+    },
+    {
+      "parameters": {
+        "url": "=https://api.qrserver.com/v1/create-qr-code/?size={{ $json.size }}x{{ $json.size }}&data={{ encodeURIComponent($json.qr_content) }}&format=png&margin=10",
+        "options": {
+          "response": {
+            "response": {
+              "responseFormat": "file"
+            }
+          }
+        }
+      },
+      "id": "7386dcaf-95ca-43eb-b6fb-b2e2ae83a1ac",
+      "name": "Generate QR Code",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        3904,
+        3248
+      ]
+    },
+    {
+      "parameters": {
+        "content": "## \ud83d\udd27 INPUT EXAMPLES\n\n**Simple:**\n`/qr https://example.com`\n\n**WiFi:**\n```json\n{\n  \"type\": \"wifi\",\n  \"wifi\": {\n    \"ssid\": \"MyNetwork\",\n    \"password\": \"pass123\"\n  }\n}\n```\n\n**UPI:**\n```json\n{\n  \"type\": \"upi\",\n  \"upi\": {\n    \"vpa\": \"name@upi\",\n    \"amount\": 100\n  }\n}\n```",
+        "height": 340,
+        "width": 280,
+        "color": 4
+      },
+      "id": "0498aad1-31eb-4c97-9109-da0254315bf1",
+      "name": "Sticky Note Examples",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        3744,
+        2944
+      ]
+    },
+    {
+      "parameters": {
+        "content": "## \ud83c\udf10 API INFO\n\n**API:** qrserver.com\n**Cost:** FREE\n**Rate Limit:** Generous\n**No Auth Required!**\n\n**Output:**\n- PNG image\n- Direct URL\n- file_type: image\n\n**Main workflow sends as photo**",
+        "height": 280,
+        "width": 260,
+        "color": 3
+      },
+      "id": "3a5b35f1-c112-4a1f-9955-7db71503bac2",
+      "name": "Sticky Note API",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        4048,
+        2944
+      ]
+    },
+    {
+      "parameters": {
+        "mode": "runOnceForEachItem",
+        "jsCode": "// Format output with QR code URL\nconst qrData = $('Parse QR Input').first().json;\nconst executionTime = Date.now() - qrData.start_time;\n\nconst qrUrl = `https://api.qrserver.com/v1/create-qr-code/?size=${qrData.size}x${qrData.size}&data=${encodeURIComponent(qrData.qr_content)}&format=png&margin=10`;\n\nreturn {\n  json: {\n    success: true,\n    result: `[IMAGE_GENERATED] \ud83d\udcf1 QR Code Created!\\n\\n**Type:** ${qrData.display_type}\\n**Content:** ${qrData.original_content.substring(0, 50)}${qrData.original_content.length > 50 ? '...' : ''}\\n**Size:** ${qrData.size}x${qrData.size}px\\n\\nScan with any QR reader!`,\n    data: {\n      qr_url: qrUrl,\n      type: qrData.type,\n      display_type: qrData.display_type,\n      content: qrData.original_content,\n      size: qrData.size\n    },\n    file_url: qrUrl,\n    file_type: 'image',\n    error: '',\n    metadata: {\n      tool_name: 'qr_generator',\n      qr_type: qrData.type,\n      execution_time_ms: executionTime\n    }\n  }\n};"
+      },
+      "id": "8d233c78-eeb4-4889-a498-cbc090f861c1",
+      "name": "Format Output4",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        4128,
+        3248
+      ]
+    },
+    {
+      "parameters": {
+        "content": "## \ud83d\udcf1 QR CODE GENERATOR\n### Multi-Type QR Creator\n\n**Supported Types:**\n- `url` - Website links\n- `text` - Plain text\n- `vcard` - Contact cards\n- `wifi` - WiFi credentials\n- `upi` - Indian payments\n- `email` - Email links\n- `phone` - Phone numbers\n- `sms` - SMS links\n\n**Auto-detects type!**",
+        "height": 300,
+        "width": 280,
+        "color": 5
+      },
+      "id": "be9d1b38-99dd-4b02-9a30-14ed46ba15be",
+      "name": "Sticky Note4",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        3440,
+        2944
+      ]
+    }
+  ],
+  "connections": {
+    "Telegram Trigger": {
+      "main": [
+        [
+          {
+            "node": "Start Timer",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Start Timer": {
+      "main": [
+        [
+          {
+            "node": "Input Router",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Input Router": {
+      "main": [
+        [
+          {
+            "node": "Get Audio File",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Format Text Input",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Get Image File",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Get Document File",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Get Video File",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Format Location Data",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Parse Command",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Format Text Input",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get Audio File": {
+      "main": [
+        [
+          {
+            "node": "Transcribe Audio",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Transcribe Audio": {
+      "main": [
+        [
+          {
+            "node": "Format Audio Text",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Format Audio Text": {
+      "main": [
+        [
+          {
+            "node": "Prepare Agent Input",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Format Text Input": {
+      "main": [
+        [
+          {
+            "node": "Prepare Agent Input",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get Image File": {
+      "main": [
+        [
+          {
+            "node": "Analyze Image",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Analyze Image": {
+      "main": [
+        [
+          {
+            "node": "Format Image Analysis",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Format Image Analysis": {
+      "main": [
+        [
+          {
+            "node": "Prepare Agent Input",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get Document File": {
+      "main": [
+        [
+          {
+            "node": "Extract Document Text",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Extract Document Text": {
+      "main": [
+        [
+          {
+            "node": "Format Document Content",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Format Document Content": {
+      "main": [
+        [
+          {
+            "node": "Prepare Agent Input",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get Video File": {
+      "main": [
+        [
+          {
+            "node": "Format Video Input",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Format Video Input": {
+      "main": [
+        [
+          {
+            "node": "Prepare Agent Input",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Format Location Data": {
+      "main": [
+        [
+          {
+            "node": "Prepare Agent Input",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Parse Command": {
+      "main": [
+        [
+          {
+            "node": "Prepare Agent Input",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Prepare Agent Input": {
+      "main": [
+        [
+          {
+            "node": "Agent Dhruv",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Agent Dhruv": {
+      "main": [
+        [
+          {
+            "node": "Token Counter",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Gemini 2.5 Flash": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Agent Dhruv",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Conversation Memory": {
+      "ai_memory": [
+        [
+          {
+            "node": "Agent Dhruv",
+            "type": "ai_memory",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Think": {
+      "ai_tool": [
+        [
+          {
+            "node": "Agent Dhruv",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Search_Agent": {
+      "ai_tool": [
+        [
+          {
+            "node": "Agent Dhruv",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Email_Agent": {
+      "ai_tool": [
+        [
+          {
+            "node": "Agent Dhruv",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Calendar_Agent": {
+      "ai_tool": [
+        [
+          {
+            "node": "Agent Dhruv",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Contact_Agent": {
+      "ai_tool": [
+        [
+          {
+            "node": "Agent Dhruv",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Social_Media_Agent": {
+      "ai_tool": [
+        [
+          {
+            "node": "Agent Dhruv",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Stock_Agent": {
+      "ai_tool": [
+        [
+          {
+            "node": "Agent Dhruv",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Growth_Architect": {
+      "ai_tool": [
+        [
+          {
+            "node": "Agent Dhruv",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Prompt_Agent": {
+      "ai_tool": [
+        [
+          {
+            "node": "Agent Dhruv",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Image_Generator": {
+      "ai_tool": [
+        [
+          {
+            "node": "Agent Dhruv",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Invoice_Generator": {
+      "ai_tool": [
+        [
+          {
+            "node": "Agent Dhruv",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Quotation_Generator": {
+      "ai_tool": [
+        [
+          {
+            "node": "Agent Dhruv",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Expense_Logger": {
+      "ai_tool": [
+        [
+          {
+            "node": "Agent Dhruv",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "QR_Generator": {
+      "ai_tool": [
+        [
+          {
+            "node": "Agent Dhruv",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Translator": {
+      "ai_tool": [
+        [
+          {
+            "node": "Agent Dhruv",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "YouTube_Summarizer": {
+      "ai_tool": [
+        [
+          {
+            "node": "Agent Dhruv",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Reminder_Tool": {
+      "ai_tool": [
+        [
+          {
+            "node": "Agent Dhruv",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Research_Agent": {
+      "ai_tool": [
+        [
+          {
+            "node": "Agent Dhruv",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Weather_Agent": {
+      "ai_tool": [
+        [
+          {
+            "node": "Agent Dhruv",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Token Counter": {
+      "main": [
+        [
+          {
+            "node": "Compile Analytics",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Compile Analytics": {
+      "main": [
+        [
+          {
+            "node": "Log to Analytics Sheet",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Log to Analytics Sheet": {
+      "main": [
+        [
+          {
+            "node": "Output Type Router",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Output Type Router": {
+      "main": [
+        [
+          {
+            "node": "Send Image",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Send Document",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Send Audio",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Send Text Response",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Execute Workflow Trigger": {
+      "main": [
+        [
+          {
+            "node": "Parse Input & Enhance Prompt",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Parse Input & Enhance Prompt": {
+      "main": [
+        [
+          {
+            "node": "Generate Image (DALL-E 3)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Generate Image (DALL-E 3)": {
+      "main": [
+        [
+          {
+            "node": "Format Output",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Parse Input & Calculate": {
+      "main": [
+        [
+          {
+            "node": "Generate HTML Invoice",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Generate HTML Invoice": {
+      "main": [
+        [
+          {
+            "node": "Convert to HTML File",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Convert to HTML File": {
+      "main": [
+        [
+          {
+            "node": "Format Output1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Generate HTML Quote": {
+      "main": [
+        [
+          {
+            "node": "Format Output2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Parse Input & Calculate1": {
+      "main": [
+        [
+          {
+            "node": "Generate HTML Quote",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Parse Expense Input": {
+      "main": [
+        [
+          {
+            "node": "Log to Google Sheet",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Log to Google Sheet": {
+      "main": [
+        [
+          {
+            "node": "Get All Expenses",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get All Expenses": {
+      "main": [
+        [
+          {
+            "node": "Format Output3",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Parse QR Input": {
+      "main": [
+        [
+          {
+            "node": "Generate QR Code",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Generate QR Code": {
+      "main": [
+        [
+          {
+            "node": "Format Output4",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1",
+    "availableInMCP": false
+  },
+  "staticData": null,
+  "meta": null,
+  "pinData": {},
+  "versionId": "0804d673-16cb-4db2-9c84-a64270c05c93",
+  "activeVersionId": null,
+  "triggerCount": 0,
+  "shared": [
+    {
+      "updatedAt": "2026-01-07T21:43:15.522Z",
+      "createdAt": "2026-01-07T21:43:15.522Z",
+      "role": "workflow:owner",
+      "workflowId": "xdO7z1A5jukODSGy",
+      "projectId": "DT8YjHwLZsQjJqVc"
+    }
+  ],
+  "activeVersion": null,
+  "tags": []
+}

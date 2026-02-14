@@ -1,0 +1,76 @@
+{
+  "updatedAt": "2025-10-05T18:31:34.000Z",
+  "createdAt": "2025-10-05T18:31:34.718Z",
+  "id": "sGrz4u8QyLs5oK3I",
+  "name": "My workflow",
+  "active": false,
+  "isArchived": false,
+  "nodes": [
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [
+        -240,
+        -32
+      ],
+      "id": "aa9044b0-c117-48fc-bf56-5778a722f362",
+      "name": "When clicking \u2018Execute workflow\u2019"
+    },
+    {
+      "parameters": {
+        "resource": "audio",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.openAi",
+      "typeVersion": 1.8,
+      "position": [
+        -48,
+        -32
+      ],
+      "id": "cc79f60c-b365-4601-ae8a-7fd139dec83f",
+      "name": "Generate audio",
+      "credentials": {
+        "openAiApi": {
+          "id": "rXDtizdOnz1rgFGG",
+          "name": "Euron Test"
+        }
+      }
+    }
+  ],
+  "connections": {
+    "When clicking \u2018Execute workflow\u2019": {
+      "main": [
+        [
+          {
+            "node": "Generate audio",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "staticData": null,
+  "meta": {
+    "templateCredsSetupCompleted": true
+  },
+  "pinData": {},
+  "versionId": "81b8a600-dab6-4551-914c-cacc0c794766",
+  "activeVersionId": null,
+  "triggerCount": 0,
+  "shared": [
+    {
+      "updatedAt": "2025-10-05T18:31:34.726Z",
+      "createdAt": "2025-10-05T18:31:34.726Z",
+      "role": "workflow:owner",
+      "workflowId": "sGrz4u8QyLs5oK3I",
+      "projectId": "DT8YjHwLZsQjJqVc"
+    }
+  ],
+  "activeVersion": null,
+  "tags": []
+}

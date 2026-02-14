@@ -1,0 +1,271 @@
+{
+  "updatedAt": "2026-02-03T18:29:15.800Z",
+  "createdAt": "2026-02-03T12:41:59.214Z",
+  "id": "tR3EjHMoejX8n4eT",
+  "name": "ClickUp Move Tasks - Webhook",
+  "active": true,
+  "isArchived": false,
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "clickup-move-in-progress",
+        "options": {}
+      },
+      "id": "webhook",
+      "name": "Webhook",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [
+        -496,
+        0
+      ],
+      "webhookId": "1ec69c82-e58d-4120-8022-bb9b0e5cde5d"
+    },
+    {
+      "parameters": {
+        "operation": "getAll",
+        "team": "90161464007",
+        "space": "90166202270",
+        "folder": "90168365781",
+        "list": "901613344354",
+        "filters": {}
+      },
+      "id": "getTasks",
+      "name": "Get Tasks",
+      "type": "n8n-nodes-base.clickUp",
+      "typeVersion": 1,
+      "position": [
+        -304,
+        0
+      ],
+      "credentials": {
+        "clickUpApi": {
+          "id": "OQFYtlbfr1sDEzmd",
+          "name": "ClickUp_Dhruv"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "const tasks = $input.all();\nconst toMove = ['Build: Ramesh workflow', 'Build: n8n + ClickUp sync'];\nreturn tasks\n  .filter(t => toMove.includes(t.json.name))\n  .map(t => ({ json: { taskId: t.json.id, newStatus: 'IN PROGRESS' } }));"
+      },
+      "id": "filter",
+      "name": "Tasks to Move",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -96,
+        0
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "id": "={{ $json.taskId }}",
+        "updateFields": {
+          "status": "={{ $json.newStatus }}"
+        }
+      },
+      "id": "update",
+      "name": "Update Status",
+      "type": "n8n-nodes-base.clickUp",
+      "typeVersion": 1,
+      "position": [
+        112,
+        0
+      ],
+      "credentials": {
+        "clickUpApi": {
+          "id": "OQFYtlbfr1sDEzmd",
+          "name": "ClickUp_Dhruv"
+        }
+      }
+    }
+  ],
+  "connections": {
+    "Webhook": {
+      "main": [
+        [
+          {
+            "node": "Get Tasks",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get Tasks": {
+      "main": [
+        [
+          {
+            "node": "Tasks to Move",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Tasks to Move": {
+      "main": [
+        [
+          {
+            "node": "Update Status",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1",
+    "saveDataErrorExecution": "all",
+    "saveDataSuccessExecution": "all",
+    "saveManualExecutions": true,
+    "saveExecutionProgress": true,
+    "callerPolicy": "workflowsFromSameOwner",
+    "availableInMCP": false
+  },
+  "staticData": null,
+  "meta": {
+    "templateCredsSetupCompleted": true
+  },
+  "pinData": {},
+  "versionId": "3bdaca6b-0044-4768-8817-a01a69cb9ff1",
+  "activeVersionId": "3bdaca6b-0044-4768-8817-a01a69cb9ff1",
+  "triggerCount": 1,
+  "shared": [
+    {
+      "updatedAt": "2026-02-03T12:41:59.216Z",
+      "createdAt": "2026-02-03T12:41:59.216Z",
+      "role": "workflow:owner",
+      "workflowId": "tR3EjHMoejX8n4eT",
+      "projectId": "DT8YjHwLZsQjJqVc"
+    }
+  ],
+  "activeVersion": {
+    "updatedAt": "2026-02-03T18:29:15.800Z",
+    "createdAt": "2026-02-03T18:29:15.800Z",
+    "versionId": "3bdaca6b-0044-4768-8817-a01a69cb9ff1",
+    "workflowId": "tR3EjHMoejX8n4eT",
+    "nodes": [
+      {
+        "parameters": {
+          "httpMethod": "POST",
+          "path": "clickup-move-in-progress",
+          "options": {}
+        },
+        "id": "webhook",
+        "name": "Webhook",
+        "type": "n8n-nodes-base.webhook",
+        "typeVersion": 2,
+        "position": [
+          -496,
+          0
+        ],
+        "webhookId": "1ec69c82-e58d-4120-8022-bb9b0e5cde5d"
+      },
+      {
+        "parameters": {
+          "operation": "getAll",
+          "team": "90161464007",
+          "space": "90166202270",
+          "folder": "90168365781",
+          "list": "901613344354",
+          "filters": {}
+        },
+        "id": "getTasks",
+        "name": "Get Tasks",
+        "type": "n8n-nodes-base.clickUp",
+        "typeVersion": 1,
+        "position": [
+          -304,
+          0
+        ],
+        "credentials": {
+          "clickUpApi": {
+            "id": "OQFYtlbfr1sDEzmd",
+            "name": "ClickUp_Dhruv"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "jsCode": "const tasks = $input.all();\nconst toMove = ['Build: Ramesh workflow', 'Build: n8n + ClickUp sync'];\nreturn tasks\n  .filter(t => toMove.includes(t.json.name))\n  .map(t => ({ json: { taskId: t.json.id, newStatus: 'IN PROGRESS' } }));"
+        },
+        "id": "filter",
+        "name": "Tasks to Move",
+        "type": "n8n-nodes-base.code",
+        "typeVersion": 2,
+        "position": [
+          -96,
+          0
+        ]
+      },
+      {
+        "parameters": {
+          "operation": "update",
+          "id": "={{ $json.taskId }}",
+          "updateFields": {
+            "status": "={{ $json.newStatus }}"
+          }
+        },
+        "id": "update",
+        "name": "Update Status",
+        "type": "n8n-nodes-base.clickUp",
+        "typeVersion": 1,
+        "position": [
+          112,
+          0
+        ],
+        "credentials": {
+          "clickUpApi": {
+            "id": "OQFYtlbfr1sDEzmd",
+            "name": "ClickUp_Dhruv"
+          }
+        }
+      }
+    ],
+    "connections": {
+      "Webhook": {
+        "main": [
+          [
+            {
+              "node": "Get Tasks",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Get Tasks": {
+        "main": [
+          [
+            {
+              "node": "Tasks to Move",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Tasks to Move": {
+        "main": [
+          [
+            {
+              "node": "Update Status",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      }
+    },
+    "authors": "Dhruv Tomar",
+    "name": null,
+    "description": null,
+    "autosaved": false
+  },
+  "tags": []
+}

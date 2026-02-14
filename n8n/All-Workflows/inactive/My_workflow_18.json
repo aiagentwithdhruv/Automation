@@ -1,0 +1,50 @@
+{
+  "updatedAt": "2026-01-31T17:38:41.165Z",
+  "createdAt": "2026-01-31T17:38:33.572Z",
+  "id": "YgCljZiBAN7xv6V-9KcbN",
+  "name": "My workflow 18",
+  "active": false,
+  "isArchived": false,
+  "nodes": [
+    {
+      "parameters": {
+        "authentication": "oAuth2",
+        "events": [
+          "listCreated"
+        ],
+        "filters": {}
+      },
+      "type": "n8n-nodes-base.clickUpTrigger",
+      "typeVersion": 1,
+      "position": [
+        0,
+        0
+      ],
+      "id": "38dd2273-2b9d-4ca6-9ce7-24b731cf3350",
+      "name": "ClickUp Trigger",
+      "webhookId": "60117d12-f6e1-4a1a-8e0a-2ea4a7cd9f6d"
+    }
+  ],
+  "connections": {},
+  "settings": {
+    "executionOrder": "v1",
+    "availableInMCP": false
+  },
+  "staticData": null,
+  "meta": null,
+  "pinData": {},
+  "versionId": "8e7ce9b2-89a6-44e2-9ede-3d17b0f30cc9",
+  "activeVersionId": null,
+  "triggerCount": 0,
+  "shared": [
+    {
+      "updatedAt": "2026-01-31T17:38:33.576Z",
+      "createdAt": "2026-01-31T17:38:33.576Z",
+      "role": "workflow:owner",
+      "workflowId": "YgCljZiBAN7xv6V-9KcbN",
+      "projectId": "DT8YjHwLZsQjJqVc"
+    }
+  ],
+  "activeVersion": null,
+  "tags": []
+}

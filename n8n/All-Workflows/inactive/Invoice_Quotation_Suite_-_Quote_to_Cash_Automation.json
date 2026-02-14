@@ -1,0 +1,1196 @@
+{
+  "updatedAt": "2026-01-07T19:42:01.792Z",
+  "createdAt": "2026-01-07T19:41:55.709Z",
+  "id": "arbpTjuvUyMozAiV",
+  "name": "Invoice & Quotation Suite - Quote to Cash Automation",
+  "active": false,
+  "isArchived": false,
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "convert-quote",
+        "responseMode": "lastNode",
+        "options": {}
+      },
+      "id": "b3509911-0dd5-4d13-acdf-6bba3accc30c",
+      "name": "Webhook: Convert Quote to Invoice",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2.1,
+      "position": [
+        576,
+        256
+      ],
+      "webhookId": "db84db61-9261-4fa9-86c1-423c6dd75ee7"
+    },
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "triggerAtHour": 9
+            }
+          ]
+        }
+      },
+      "id": "867d061d-462e-4fe2-b00a-f07c73136836",
+      "name": "Cron: Daily Payment Check (9 AM)",
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.3,
+      "position": [
+        -112,
+        576
+      ]
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "id-1",
+              "name": "company_name",
+              "value": "Your Company Name",
+              "type": "string"
+            },
+            {
+              "id": "id-2",
+              "name": "company_gst",
+              "value": "YOUR_GST_NUMBER",
+              "type": "string"
+            },
+            {
+              "id": "id-3",
+              "name": "company_email",
+              "value": "billing@yourcompany.com",
+              "type": "string"
+            },
+            {
+              "id": "id-4",
+              "name": "company_phone",
+              "value": "+91-XXXXXXXXXX",
+              "type": "string"
+            },
+            {
+              "id": "id-5",
+              "name": "bank_name",
+              "value": "Your Bank Name",
+              "type": "string"
+            },
+            {
+              "id": "id-6",
+              "name": "account_number",
+              "value": "XXXXXXXXXXXX",
+              "type": "string"
+            },
+            {
+              "id": "id-7",
+              "name": "ifsc_code",
+              "value": "XXXXXX",
+              "type": "string"
+            },
+            {
+              "id": "id-8",
+              "name": "upi_id",
+              "value": "yourcompany@upi",
+              "type": "string"
+            },
+            {
+              "id": "id-9",
+              "name": "gst_rate",
+              "value": 0.18,
+              "type": "number"
+            },
+            {
+              "id": "id-10",
+              "name": "logo_url",
+              "value": "https://yourcompany.com/logo.png",
+              "type": "string"
+            },
+            {
+              "id": "id-11",
+              "name": "client",
+              "value": "={{ JSON.stringify({ \"name\": $('Form: New Quotation/Invoice Request').item.json.client_name, \"email\": $('Form: New Quotation/Invoice Request').item.json.client_email, \"phone\": $('Form: New Quotation/Invoice Request').item.json.client_phone, \"gst\": $('Form: New Quotation/Invoice Request').item.json.client_gst }) }}",
+              "type": "object"
+            },
+            {
+              "id": "id-12",
+              "name": "items",
+              "value": "={{ JSON.stringify([$('Form: New Quotation/Invoice Request').item.json.item1_description ? { \"description\": $('Form: New Quotation/Invoice Request').item.json.item1_description, \"qty\": $('Form: New Quotation/Invoice Request').item.json.item1_qty, \"rate\": $('Form: New Quotation/Invoice Request').item.json.item1_rate } : null, $('Form: New Quotation/Invoice Request').item.json.item2_description ? { \"description\": $('Form: New Quotation/Invoice Request').item.json.item2_description, \"qty\": $('Form: New Quotation/Invoice Request').item.json.item2_qty, \"rate\": $('Form: New Quotation/Invoice Request').item.json.item2_rate } : null, $('Form: New Quotation/Invoice Request').item.json.item3_description ? { \"description\": $('Form: New Quotation/Invoice Request').item.json.item3_description, \"qty\": $('Form: New Quotation/Invoice Request').item.json.item3_qty, \"rate\": $('Form: New Quotation/Invoice Request').item.json.item3_rate } : null].filter(item => item !== null)) }}",
+              "type": "array"
+            },
+            {
+              "id": "id-13",
+              "name": "type",
+              "value": "={{ $('Form: New Quotation/Invoice Request').item.json.type.toLowerCase() }}",
+              "type": "string"
+            },
+            {
+              "id": "id-14",
+              "name": "payment_terms",
+              "value": "={{ $('Form: New Quotation/Invoice Request').item.json.payment_terms || 'Payment due within 30 days' }}",
+              "type": "string"
+            },
+            {
+              "id": "id-15",
+              "name": "notes",
+              "value": "={{ $('Form: New Quotation/Invoice Request').item.json.notes || '' }}",
+              "type": "string"
+            },
+            {
+              "id": "id-16",
+              "name": "validity_days",
+              "value": "={{ $('Form: New Quotation/Invoice Request').item.json.validity_days || 30 }}",
+              "type": "number"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "2a200e6a-65c1-4bf6-a168-168aaca9b0c5",
+      "name": "Workflow Configuration",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        352,
+        16
+      ]
+    },
+    {
+      "parameters": {
+        "rules": {
+          "values": [
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict"
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $json.type }}",
+                    "rightValue": "quotation",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "Quotation"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict"
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $json.type }}",
+                    "rightValue": "invoice",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "Invoice"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "63ba4168-3715-4715-a05c-16ce270aa1ec",
+      "name": "Route by Type (Quotation vs Invoice)",
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3.4,
+      "position": [
+        576,
+        16
+      ]
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "id-1",
+              "name": "subtotal",
+              "value": "={{ $json.items.reduce((sum, item) => sum + (item.qty * item.rate), 0) }}",
+              "type": "number"
+            },
+            {
+              "id": "id-2",
+              "name": "gst_amount",
+              "value": "={{ $json.items.reduce((sum, item) => sum + (item.qty * item.rate), 0) * 0.18 }}",
+              "type": "number"
+            },
+            {
+              "id": "id-3",
+              "name": "grand_total",
+              "value": "={{ $json.items.reduce((sum, item) => sum + (item.qty * item.rate), 0) * 1.18 }}",
+              "type": "number"
+            },
+            {
+              "id": "id-4",
+              "name": "due_date",
+              "value": "={{ $now.plus($json.validity_days || 7, 'days').toISO() }}",
+              "type": "string"
+            },
+            {
+              "id": "id-5",
+              "name": "created_date",
+              "value": "={{ $now.toISO() }}",
+              "type": "string"
+            },
+            {
+              "id": "id-6",
+              "name": "status",
+              "value": "draft",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "8b80a313-4230-4daf-9a79-66d8f650c40f",
+      "name": "Calculate Totals & Due Dates",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        800,
+        16
+      ]
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "id": "e8d3160c-677d-4240-8665-db6cd1eb703a",
+      "name": "MongoDB: Get Last Document Number",
+      "type": "n8n-nodes-base.mongoDb",
+      "typeVersion": 1.2,
+      "position": [
+        1024,
+        16
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "const docType = $input.first().json.type;\nconst lastCounter = $('MongoDB: Get Last Document Number').first().json?.counter || 0;\nconst newCounter = lastCounter + 1;\n\nconst year = new Date().getFullYear();\nconst prefix = docType === 'quotation' ? 'QUO' : 'INV';\nconst docNumber = `${prefix}-${year}-${String(newCounter).padStart(4, '0')}`;\n\nreturn [{\n  json: {\n    ...($input.first().json),\n    doc_number: docNumber,\n    counter: newCounter\n  }\n}];"
+      },
+      "id": "ff30eb6c-4b1c-41f3-b92f-534419c3cbbe",
+      "name": "Generate Sequential Document Number",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1248,
+        16
+      ]
+    },
+    {
+      "parameters": {
+        "modelId": {
+          "mode": "id",
+          "value": "gpt-4o-mini"
+        },
+        "responses": {
+          "values": [
+            {
+              "content": "=You are a professional business document assistant. Polish the following invoice/quotation data:\n\n**Items:**\n{{ $json.items.map(item => `- ${item.description} (Qty: ${item.qty}, Rate: \u20b9${item.rate})`).join('\\n') }}\n\n**Client:** {{ $json.client.name }}\n**Type:** {{ $json.type }}\n**Total:** \u20b9{{ $json.grand_total }}\n\nTasks:\n1. Enhance item descriptions to be more professional\n2. Format all currency values in Indian format (\u20b91,00,000)\n3. Suggest any missing payment terms or notes\n4. Return JSON with: enhanced_items (array), formatted_total (string), suggested_terms (string)\n\nReturn ONLY valid JSON, no markdown."
+            }
+          ]
+        },
+        "builtInTools": {},
+        "options": {}
+      },
+      "id": "3f003f21-a7c6-452b-897a-411b586e83f0",
+      "name": "AI Document Polisher",
+      "type": "@n8n/n8n-nodes-langchain.openAi",
+      "typeVersion": 2.1,
+      "position": [
+        1472,
+        16
+      ]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.pdfmonkey.io/api/v1/documents",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Authorization",
+              "value": "Bearer YOUR_PDFMONKEY_API_KEY"
+            },
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"document\": {\n    \"document_template_id\": \"YOUR_TEMPLATE_ID\",\n    \"payload\": {\n      \"doc_number\": \"{{ $json.doc_number }}\",\n      \"type\": \"{{ $json.type }}\",\n      \"date\": \"{{ $json.created_date }}\",\n      \"due_date\": \"{{ $json.due_date }}\",\n      \"client\": {\n        \"name\": \"{{ $json.client.name }}\",\n        \"email\": \"{{ $json.client.email }}\",\n        \"phone\": \"{{ $json.client.phone }}\",\n        \"gst\": \"{{ $json.client.gst }}\"\n      },\n      \"items\": \"{{ $json.items }}\",\n      \"subtotal\": \"{{ $json.subtotal }}\",\n      \"gst_amount\": \"{{ $json.gst_amount }}\",\n      \"grand_total\": \"{{ $json.grand_total }}\",\n      \"payment_terms\": \"{{ $json.payment_terms }}\",\n      \"notes\": \"{{ $json.notes }}\",\n      \"company\": {\n        \"name\": \"{{ $('Workflow Configuration').item.json.company_name }}\",\n        \"gst\": \"{{ $('Workflow Configuration').item.json.company_gst }}\",\n        \"email\": \"{{ $('Workflow Configuration').item.json.company_email }}\",\n        \"phone\": \"{{ $('Workflow Configuration').item.json.company_phone }}\",\n        \"bank_name\": \"{{ $('Workflow Configuration').item.json.bank_name }}\",\n        \"account_number\": \"{{ $('Workflow Configuration').item.json.account_number }}\",\n        \"ifsc_code\": \"{{ $('Workflow Configuration').item.json.ifsc_code }}\",\n        \"upi_id\": \"{{ $('Workflow Configuration').item.json.upi_id }}\",\n        \"logo_url\": \"{{ $('Workflow Configuration').item.json.logo_url }}\"\n      }\n    }\n  }\n}",
+        "options": {}
+      },
+      "id": "03631330-0a08-48e1-a76a-b76dbb404d90",
+      "name": "PDF API: Generate Document",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.3,
+      "position": [
+        1824,
+        160
+      ]
+    },
+    {
+      "parameters": {
+        "sendTo": "={{ $('Calculate Totals & Due Dates').item.json.client.email }}",
+        "subject": "={{ $json.type === 'quotation' ? 'Quotation' : 'Invoice' }} #{{ $json.doc_number }} from {{ $('Workflow Configuration').item.json.company_name }}",
+        "message": "=<html>\n<body style=\"font-family: Arial, sans-serif; line-height: 1.6; color: #333;\">\n  <h2>Dear {{ $('Calculate Totals & Due Dates').item.json.client.name }},</h2>\n  \n  <p>Thank you for your business! Please find attached {{ $json.type === 'quotation' ? 'quotation' : 'invoice' }} <strong>{{ $json.doc_number }}</strong>.</p>\n  \n  <div style=\"background: #f5f5f5; padding: 15px; border-radius: 5px; margin: 20px 0;\">\n    <h3 style=\"margin-top: 0;\">Summary:</h3>\n    <p><strong>Amount:</strong> \u20b9{{ $json.grand_total.toLocaleString('en-IN') }}</p>\n    <p><strong>{{ $json.type === 'quotation' ? 'Valid Until' : 'Due Date' }}:</strong> {{ $json.due_date.split('T')[0] }}</p>\n    <p><strong>Payment Terms:</strong> {{ $json.payment_terms }}</p>\n  </div>\n  \n  <p>{{ $json.type === 'quotation' ? 'Please review and let us know if you have any questions.' : 'Please process payment by the due date.' }}</p>\n  \n  <p>Best regards,<br>\n  <strong>{{ $('Workflow Configuration').item.json.company_name }}</strong><br>\n  {{ $('Workflow Configuration').item.json.company_email }}<br>\n  {{ $('Workflow Configuration').item.json.company_phone }}</p>\n</body>\n</html>",
+        "options": {
+          "attachmentsUi": {
+            "attachmentsBinary": [
+              {}
+            ]
+          }
+        }
+      },
+      "id": "85c5c34c-3c29-4e7a-88d5-ce56a841887a",
+      "name": "Gmail: Send Document Email",
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.2,
+      "position": [
+        2048,
+        -48
+      ],
+      "webhookId": "6feba708-345e-4c7a-98f5-d3f1afa2e06f"
+    },
+    {
+      "parameters": {
+        "operation": "send",
+        "recipientPhoneNumber": "={{ $('Calculate Totals & Due Dates').item.json.client.phone }}",
+        "textBody": "={{ $json.type === 'quotation' ? 'Quotation' : 'Invoice' }} {{ $json.doc_number }}\n\nDear {{ $('Calculate Totals & Due Dates').item.json.client.name }},\n\nAmount: \u20b9{{ $json.grand_total.toLocaleString('en-IN') }}\n{{ $json.type === 'quotation' ? 'Valid Until' : 'Due Date' }}: {{ $json.due_date.split('T')[0] }}\n\nDocument attached. Thank you!\n\n{{ $('Workflow Configuration').item.json.company_name }}",
+        "additionalFields": {}
+      },
+      "id": "a03f1c26-fa76-4b4f-85b3-35b7d0db27df",
+      "name": "WhatsApp: Send PDF (Optional)",
+      "type": "n8n-nodes-base.whatsApp",
+      "typeVersion": 1.1,
+      "position": [
+        2048,
+        160
+      ],
+      "webhookId": "6d7028d2-d5d2-49d2-9c17-4df9a93a6b51"
+    },
+    {
+      "parameters": {
+        "name": "={{ $json.doc_number }}.pdf",
+        "driveId": {
+          "__rl": true,
+          "mode": "list",
+          "value": "My Drive"
+        },
+        "folderId": {
+          "__rl": true,
+          "mode": "id",
+          "value": "={{ $json.type === 'quotation' ? 'Quotations' : 'Invoices' }}/{{ $now.year }}/{{ $now.toFormat('MMMM') }}"
+        },
+        "options": {}
+      },
+      "id": "4f8dedcd-94de-4b09-a10f-7ec777aff6e1",
+      "name": "Google Drive: Store PDF",
+      "type": "n8n-nodes-base.googleDrive",
+      "typeVersion": 3,
+      "position": [
+        2048,
+        352
+      ]
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "id": "e86a85a7-240a-417a-b3ad-6bf46269741c",
+      "name": "MongoDB: Store Document Record",
+      "type": "n8n-nodes-base.mongoDb",
+      "typeVersion": 1.2,
+      "position": [
+        2272,
+        352
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "append",
+        "documentId": {
+          "__rl": true,
+          "mode": "id",
+          "value": "YOUR_SPREADSHEET_ID"
+        },
+        "sheetName": {
+          "__rl": true,
+          "mode": "name",
+          "value": "Document Tracker"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Doc Number": "={{ $('Generate Sequential Document Number').item.json.doc_number }}",
+            "Type": "={{ $('Calculate Totals & Due Dates').item.json.type }}",
+            "Client Name": "={{ $('Calculate Totals & Due Dates').item.json.client.name }}",
+            "Client Email": "={{ $('Calculate Totals & Due Dates').item.json.client.email }}",
+            "Amount": "={{ $('Calculate Totals & Due Dates').item.json.grand_total }}",
+            "Status": "sent",
+            "Sent Date": "={{ $now.toFormat('yyyy-MM-dd') }}",
+            "Due Date": "={{ $('Calculate Totals & Due Dates').item.json.due_date.split('T')[0] }}",
+            "PDF Link": "={{ $('Google Drive: Store PDF').item.json.webViewLink }}"
+          }
+        },
+        "options": {}
+      },
+      "id": "0100d574-e5fe-405e-80eb-38734c168d61",
+      "name": "Google Sheets: Add to Tracker",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        2496,
+        352
+      ]
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={\n  \"success\": true,\n  \"doc_number\": \"={{ $('Generate Sequential Document Number').item.json.doc_number }}\",\n  \"type\": \"={{ $('Calculate Totals & Due Dates').item.json.type }}\",\n  \"client\": \"={{ $('Calculate Totals & Due Dates').item.json.client.name }}\",\n  \"total\": \"={{ $('Calculate Totals & Due Dates').item.json.grand_total }}\",\n  \"status\": \"sent\",\n  \"pdf_url\": \"={{ $('Google Drive: Store PDF').item.json.webViewLink }}\",\n  \"message\": \"Document generated and sent successfully\"\n}",
+        "options": {}
+      },
+      "id": "ec0b63ba-3a07-45b4-9a1e-41ace87946f4",
+      "name": "Respond to Webhook",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.5,
+      "position": [
+        2720,
+        352
+      ]
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "id": "dd6a9747-e99c-478f-be68-5c021a4cdcd7",
+      "name": "MongoDB: Fetch Original Quote",
+      "type": "n8n-nodes-base.mongoDb",
+      "typeVersion": 1.2,
+      "position": [
+        800,
+        256
+      ]
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "id-1",
+              "name": "type",
+              "value": "invoice",
+              "type": "string"
+            },
+            {
+              "id": "id-2",
+              "name": "client",
+              "value": "={{ $json.client }}",
+              "type": "string"
+            },
+            {
+              "id": "id-3",
+              "name": "items",
+              "value": "={{ $json.items }}",
+              "type": "array"
+            },
+            {
+              "id": "id-4",
+              "name": "payment_terms",
+              "value": "={{ $json.payment_terms }}",
+              "type": "string"
+            },
+            {
+              "id": "id-5",
+              "name": "notes",
+              "value": "={{ $json.notes }}",
+              "type": "string"
+            },
+            {
+              "id": "id-6",
+              "name": "original_quote_number",
+              "value": "={{ $json.doc_number }}",
+              "type": "string"
+            },
+            {
+              "id": "id-7",
+              "name": "validity_days",
+              "value": 30,
+              "type": "number"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "141304e1-2ec3-4169-97ae-0344c21aa873",
+      "name": "Convert Quote to Invoice Data",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        1024,
+        256
+      ]
+    },
+    {
+      "parameters": {
+        "mode": "combine",
+        "combineBy": "combineByPosition",
+        "options": {}
+      },
+      "id": "f726f74e-9360-4dce-8ea2-e87a3828bb6f",
+      "name": "Merge Quote Data with Invoice Number",
+      "type": "n8n-nodes-base.merge",
+      "typeVersion": 3.2,
+      "position": [
+        1536,
+        256
+      ]
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "id": "e4cf01b6-4dd3-4903-a99e-59f5a2926ce0",
+      "name": "MongoDB: Find Overdue Invoices",
+      "type": "n8n-nodes-base.mongoDb",
+      "typeVersion": 1.2,
+      "position": [
+        128,
+        576
+      ]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": false,
+            "leftValue": "",
+            "typeValidation": "loose"
+          },
+          "conditions": [
+            {
+              "id": "id-1",
+              "leftValue": "={{ $json.doc_number }}",
+              "operator": {
+                "type": "string",
+                "operation": "notEmpty"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "614d5cd8-0f86-440b-a2ad-15fb02a5ad08",
+      "name": "Check if Overdue Invoices Found",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [
+        352,
+        576
+      ]
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "id": "6c779cf2-7a83-41ea-9c60-01db14f033d0",
+      "name": "MongoDB: Mark as Overdue",
+      "type": "n8n-nodes-base.mongoDb",
+      "typeVersion": 1.2,
+      "position": [
+        576,
+        576
+      ]
+    },
+    {
+      "parameters": {
+        "sendTo": "={{ $json.client.email }}",
+        "subject": "=Payment Reminder: Invoice {{ $json.doc_number }} is Overdue",
+        "message": "=<html>\n<body style=\"font-family: Arial, sans-serif; line-height: 1.6; color: #333;\">\n  <h2>Payment Reminder</h2>\n  \n  <p>Dear {{ $json.client.name }},</p>\n  \n  <p>This is a friendly reminder that invoice <strong>{{ $json.doc_number }}</strong> is now overdue.</p>\n  \n  <div style=\"background: #fff3cd; padding: 15px; border-left: 4px solid #ffc107; margin: 20px 0;\">\n    <h3 style=\"margin-top: 0; color: #856404;\">Invoice Details:</h3>\n    <p><strong>Invoice Number:</strong> {{ $json.doc_number }}</p>\n    <p><strong>Amount Due:</strong> \u20b9{{ $json.totals.total.toLocaleString('en-IN') }}</p>\n    <p><strong>Original Due Date:</strong> {{ $json.due_date.split('T')[0] }}</p>\n    <p><strong>Days Overdue:</strong> {{ Math.floor(($now.toMillis() - new Date($json.due_date).getTime()) / (1000 * 60 * 60 * 24)) }}</p>\n  </div>\n  \n  <p>Please arrange payment at your earliest convenience. If you have already made the payment, please disregard this reminder.</p>\n  \n  <p>For any questions, please contact us.</p>\n  \n  <p>Best regards,<br>\n  <strong>Accounts Team</strong></p>\n</body>\n</html>",
+        "options": {}
+      },
+      "id": "a106d87c-cd79-4696-8299-7460047d6f68",
+      "name": "Gmail: Send Payment Reminder",
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.2,
+      "position": [
+        800,
+        576
+      ],
+      "webhookId": "7bda4ca1-590d-4e96-b95e-5c33c701180e"
+    },
+    {
+      "parameters": {
+        "jsCode": "const year = new Date().getFullYear();\nconst prefix = 'INV';\n\n// This would normally fetch from MongoDB, but for conversion we'll generate directly\nconst randomCounter = Math.floor(Math.random() * 1000) + 1;\nconst docNumber = `${prefix}-${year}-${String(randomCounter).padStart(4, '0')}`;\n\nreturn [{\n  json: {\n    doc_number: docNumber,\n    counter: randomCounter\n  }\n}];"
+      },
+      "id": "8f42a273-e480-42c4-aa83-dda0dead83da",
+      "name": "Generate Invoice Number for Conversion",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1248,
+        320
+      ]
+    },
+    {
+      "parameters": {
+        "formTitle": "Create New Quotation or Invoice",
+        "formDescription": "Fill in the details below to generate a professional quotation or invoice",
+        "formFields": {
+          "values": [
+            {
+              "fieldName": "type",
+              "fieldLabel": "Document Type",
+              "fieldType": "dropdown",
+              "fieldOptions": {
+                "values": [
+                  {
+                    "option": "Quotation"
+                  },
+                  {
+                    "option": "Invoice"
+                  }
+                ]
+              },
+              "requiredField": true
+            },
+            {
+              "fieldName": "client_name",
+              "fieldLabel": "Client Name",
+              "requiredField": true
+            },
+            {
+              "fieldName": "client_email",
+              "fieldLabel": "Client Email",
+              "fieldType": "email",
+              "requiredField": true
+            },
+            {
+              "fieldName": "client_phone",
+              "fieldLabel": "Client Phone",
+              "requiredField": true
+            },
+            {
+              "fieldName": "client_gst",
+              "fieldLabel": "Client GST Number"
+            },
+            {
+              "fieldName": "item1_description",
+              "fieldLabel": "Item 1 Description",
+              "requiredField": true
+            },
+            {
+              "fieldName": "item1_qty",
+              "fieldLabel": "Item 1 Quantity",
+              "fieldType": "number",
+              "requiredField": true
+            },
+            {
+              "fieldName": "item1_rate",
+              "fieldLabel": "Item 1 Rate (\u20b9)",
+              "fieldType": "number",
+              "requiredField": true
+            },
+            {
+              "fieldName": "item2_description",
+              "fieldLabel": "Item 2 Description"
+            },
+            {
+              "fieldName": "item2_qty",
+              "fieldLabel": "Item 2 Quantity",
+              "fieldType": "number"
+            },
+            {
+              "fieldName": "item2_rate",
+              "fieldLabel": "Item 2 Rate (\u20b9)",
+              "fieldType": "number"
+            },
+            {
+              "fieldName": "item3_description",
+              "fieldLabel": "Item 3 Description"
+            },
+            {
+              "fieldName": "item3_qty",
+              "fieldLabel": "Item 3 Quantity",
+              "fieldType": "number"
+            },
+            {
+              "fieldName": "item3_rate",
+              "fieldLabel": "Item 3 Rate (\u20b9)",
+              "fieldType": "number"
+            },
+            {
+              "fieldName": "payment_terms",
+              "fieldLabel": "Payment Terms",
+              "fieldType": "textarea",
+              "placeholder": "e.g., Payment due within 30 days"
+            },
+            {
+              "fieldName": "notes",
+              "fieldLabel": "Additional Notes",
+              "fieldType": "textarea"
+            },
+            {
+              "fieldName": "validity_days",
+              "fieldLabel": "Validity Days",
+              "fieldType": "number",
+              "defaultValue": "30"
+            }
+          ]
+        },
+        "options": {
+          "appendAttribution": false,
+          "buttonLabel": "Generate Document"
+        }
+      },
+      "id": "2389337a-887b-4e6a-8170-f5739b6621d9",
+      "name": "Form: New Quotation/Invoice Request",
+      "type": "n8n-nodes-base.formTrigger",
+      "typeVersion": 2.4,
+      "position": [
+        -112,
+        16
+      ],
+      "webhookId": "32d2620f-b01e-4d0d-96a4-c6ba928eeb40"
+    },
+    {
+      "parameters": {
+        "content": "\ud83d\udcdd FORM ENTRY POINT\n\nThis form collects quotation/invoice details from users.\n\n\u2705 Captures: Client info, line items, payment terms\n\u2705 Stores raw responses to Google Sheets\n\u2705 Feeds into main workflow for document generation",
+        "height": 200,
+        "width": 300
+      },
+      "id": "17f5337a-a77d-48aa-bead-062129c6612a",
+      "name": "Note: Form Entry Point",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -208,
+        -32
+      ]
+    },
+    {
+      "parameters": {
+        "content": "\u2699\ufe0f CONFIGURATION & ROUTING\n\nWorkflow Configuration: Sets company details, GST rates, bank info\n\nRoute by Type: Splits flow between quotations and invoices\n\n\u2705 Centralizes all business settings\n\u2705 Enables different handling for quotes vs invoices",
+        "height": 220,
+        "width": 320
+      },
+      "id": "f4198534-fe49-476e-9c1e-12d2bde35725",
+      "name": "Note: Configuration & Routing",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -224,
+        -48
+      ]
+    },
+    {
+      "parameters": {
+        "content": "\ud83d\udcc4 DOCUMENT GENERATION\n\nCalculate Totals: Computes subtotal, GST, grand total\nGenerate Number: Creates sequential doc numbers (QUO-2024-0001)\nAI Polisher: Enhances descriptions and formatting\nPDF API: Generates professional PDF documents\n\n\u2705 Automated numbering system\n\u2705 AI-enhanced content\n\u2705 Professional PDF output",
+        "height": 260,
+        "width": 340,
+        "color": 4
+      },
+      "id": "5207f7d3-80b4-4b45-9f6e-78ef21b72e4f",
+      "name": "Note: Document Generation",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -224,
+        -96
+      ]
+    },
+    {
+      "parameters": {
+        "content": "\ud83d\udce7 DISTRIBUTION & STORAGE\n\nGmail: Sends professional email with PDF attachment\nWhatsApp: Optional SMS notification\nGoogle Drive: Organizes PDFs by type/year/month\nMongoDB: Stores document metadata\nGoogle Sheets: Tracks all documents\n\n\u2705 Multi-channel delivery\n\u2705 Organized cloud storage\n\u2705 Complete audit trail",
+        "height": 280,
+        "width": 360
+      },
+      "id": "027e8635-ef45-405a-9b17-638d1dc20a8f",
+      "name": "Note: Distribution & Storage",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -240,
+        -112
+      ]
+    },
+    {
+      "parameters": {
+        "content": "\ud83d\udd04 QUOTE CONVERSION\n\nWebhook trigger accepts quote_id\nFetches original quotation from MongoDB\nConverts to invoice with new number\nMerges data and generates invoice PDF\n\n\u2705 One-click quote-to-invoice\n\u2705 Preserves original quote reference\n\u2705 Automatic invoice numbering",
+        "height": 240,
+        "width": 320,
+        "color": 6
+      },
+      "id": "e58a93c7-a706-4235-87da-375076fb9c59",
+      "name": "Note: Quote Conversion",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -224,
+        -80
+      ]
+    },
+    {
+      "parameters": {
+        "content": "\u23f0 PAYMENT REMINDERS\n\nDaily cron job (9 AM)\nFinds overdue invoices in MongoDB\nMarks status as overdue\nSends professional reminder emails\n\n\u2705 Automated follow-ups\n\u2705 Improves cash flow\n\u2705 Professional communication",
+        "height": 220,
+        "width": 300,
+        "color": 4
+      },
+      "id": "596b5247-3390-4f36-928d-42b2e0e7d1af",
+      "name": "Note: Payment Reminders",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -208,
+        -48
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "append",
+        "documentId": {
+          "__rl": true,
+          "mode": "id",
+          "value": "YOUR_SPREADSHEET_ID"
+        },
+        "sheetName": {
+          "__rl": true,
+          "mode": "name",
+          "value": "Form Responses"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Timestamp": "={{ $now.toFormat('yyyy-MM-dd HH:mm:ss') }}",
+            "Document Type": "={{ $json.type }}",
+            "Client Name": "={{ $json.client_name }}",
+            "Client Email": "={{ $json.client_email }}",
+            "Client Phone": "={{ $json.client_phone }}",
+            "Client GST": "={{ $json.client_gst }}",
+            "Item 1 Description": "={{ $json.item1_description }}",
+            "Item 1 Qty": "={{ $json.item1_qty }}",
+            "Item 1 Rate": "={{ $json.item1_rate }}",
+            "Item 2 Description": "={{ $json.item2_description }}",
+            "Item 2 Qty": "={{ $json.item2_qty }}",
+            "Item 2 Rate": "={{ $json.item2_rate }}",
+            "Item 3 Description": "={{ $json.item3_description }}",
+            "Item 3 Qty": "={{ $json.item3_qty }}",
+            "Item 3 Rate": "={{ $json.item3_rate }}",
+            "Payment Terms": "={{ $json.payment_terms }}",
+            "Notes": "={{ $json.notes }}",
+            "Validity Days": "={{ $json.validity_days }}"
+          }
+        },
+        "options": {}
+      },
+      "id": "c2a1c48b-6cdf-4a01-8f65-2885b0b5cb1d",
+      "name": "Google Sheets: Store Form Responses",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        128,
+        16
+      ]
+    }
+  ],
+  "connections": {
+    "Webhook: Convert Quote to Invoice": {
+      "main": [
+        [
+          {
+            "node": "MongoDB: Fetch Original Quote",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Cron: Daily Payment Check (9 AM)": {
+      "main": [
+        [
+          {
+            "node": "MongoDB: Find Overdue Invoices",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Workflow Configuration": {
+      "main": [
+        [
+          {
+            "node": "Route by Type (Quotation vs Invoice)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Route by Type (Quotation vs Invoice)": {
+      "main": [
+        [
+          {
+            "node": "Calculate Totals & Due Dates",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Calculate Totals & Due Dates",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Calculate Totals & Due Dates": {
+      "main": [
+        [
+          {
+            "node": "MongoDB: Get Last Document Number",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "MongoDB: Get Last Document Number": {
+      "main": [
+        [
+          {
+            "node": "Generate Sequential Document Number",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Generate Sequential Document Number": {
+      "main": [
+        [
+          {
+            "node": "AI Document Polisher",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "AI Document Polisher": {
+      "main": [
+        [
+          {
+            "node": "PDF API: Generate Document",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "PDF API: Generate Document": {
+      "main": [
+        [
+          {
+            "node": "Gmail: Send Document Email",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "WhatsApp: Send PDF (Optional)",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Google Drive: Store PDF",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Drive: Store PDF": {
+      "main": [
+        [
+          {
+            "node": "MongoDB: Store Document Record",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "MongoDB: Store Document Record": {
+      "main": [
+        [
+          {
+            "node": "Google Sheets: Add to Tracker",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Sheets: Add to Tracker": {
+      "main": [
+        [
+          {
+            "node": "Respond to Webhook",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "MongoDB: Fetch Original Quote": {
+      "main": [
+        [
+          {
+            "node": "Convert Quote to Invoice Data",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Convert Quote to Invoice Data": {
+      "main": [
+        [
+          {
+            "node": "Generate Invoice Number for Conversion",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Merge Quote Data with Invoice Number",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Merge Quote Data with Invoice Number": {
+      "main": [
+        [
+          {
+            "node": "PDF API: Generate Document",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "MongoDB: Find Overdue Invoices": {
+      "main": [
+        [
+          {
+            "node": "Check if Overdue Invoices Found",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Check if Overdue Invoices Found": {
+      "main": [
+        [
+          {
+            "node": "MongoDB: Mark as Overdue",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "MongoDB: Mark as Overdue": {
+      "main": [
+        [
+          {
+            "node": "Gmail: Send Payment Reminder",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Generate Invoice Number for Conversion": {
+      "main": [
+        [
+          {
+            "node": "Merge Quote Data with Invoice Number",
+            "type": "main",
+            "index": 1
+          }
+        ]
+      ]
+    },
+    "Form: New Quotation/Invoice Request": {
+      "main": [
+        [
+          {
+            "node": "Google Sheets: Store Form Responses",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Sheets: Store Form Responses": {
+      "main": [
+        [
+          {
+            "node": "Workflow Configuration",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1",
+    "availableInMCP": false
+  },
+  "staticData": null,
+  "meta": null,
+  "pinData": {},
+  "versionId": "2600cc5f-415e-4411-a250-a3a3622dad48",
+  "activeVersionId": null,
+  "triggerCount": 0,
+  "shared": [
+    {
+      "updatedAt": "2026-01-07T19:41:55.715Z",
+      "createdAt": "2026-01-07T19:41:55.715Z",
+      "role": "workflow:owner",
+      "workflowId": "arbpTjuvUyMozAiV",
+      "projectId": "DT8YjHwLZsQjJqVc"
+    }
+  ],
+  "activeVersion": null,
+  "tags": []
+}

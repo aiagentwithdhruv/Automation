@@ -1,0 +1,1219 @@
+{
+  "updatedAt": "2026-01-22T16:16:58.433Z",
+  "createdAt": "2025-12-28T04:22:55.584Z",
+  "id": "YwIeDouMEqmZUCAN",
+  "name": "Autonomous AI Job Application and Recruiter Outreach System",
+  "active": false,
+  "isArchived": false,
+  "nodes": [
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {}
+          ]
+        }
+      },
+      "id": "9995a39a-a926-426f-bf95-eddf002517ec",
+      "name": "Daily Job Search Trigger",
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.3,
+      "position": [
+        -3840,
+        240
+      ]
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "id": "8e5d0758-4d9e-4d61-bd38-fd17a1056d13",
+      "name": "Workflow Configuration",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        -3616,
+        240
+      ]
+    },
+    {
+      "parameters": {
+        "driveId": {
+          "__rl": true,
+          "mode": "list",
+          "value": "My Drive"
+        },
+        "folderId": {
+          "__rl": true,
+          "mode": "list",
+          "value": "root",
+          "cachedResultName": "/ (Root folder)"
+        },
+        "options": {}
+      },
+      "id": "bdcfc78e-5ed0-433d-9308-3ef8e45c4407",
+      "name": "Download Resume from Drive",
+      "type": "n8n-nodes-base.googleDrive",
+      "typeVersion": 3,
+      "position": [
+        -3392,
+        240
+      ]
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "id": "0d3b919a-8ca5-4a11-bef6-0606d5c7f720",
+      "name": "Extract Resume Text",
+      "type": "n8n-nodes-base.extractFromFile",
+      "typeVersion": 1.1,
+      "position": [
+        -3168,
+        240
+      ]
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "id": "7d448459-dc05-48dd-9f2d-8f2aff99f1cd",
+      "name": "Gemini Model",
+      "type": "@n8n/n8n-nodes-langchain.lmChatGoogleGemini",
+      "typeVersion": 1,
+      "position": [
+        -2944,
+        464
+      ]
+    },
+    {
+      "parameters": {
+        "hasOutputParser": true,
+        "options": {}
+      },
+      "id": "05fd9666-55d5-4bf3-ae93-15f2dd426e9b",
+      "name": "Resume Parser Agent",
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 3.1,
+      "position": [
+        -2944,
+        240
+      ]
+    },
+    {
+      "parameters": {},
+      "id": "d16f5738-0383-4d90-a49a-c8ff238391b6",
+      "name": "Resume Data Parser",
+      "type": "@n8n/n8n-nodes-langchain.outputParserStructured",
+      "typeVersion": 1.3,
+      "position": [
+        -2816,
+        464
+      ]
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "id": "673c1b72-5791-4819-b156-20cfbcfbf441",
+      "name": "Search LinkedIn Jobs",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.3,
+      "position": [
+        -2592,
+        96
+      ]
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "id": "a21363e5-a322-453f-949c-d44dc646b5ea",
+      "name": "Search Indeed Jobs",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.3,
+      "position": [
+        -2592,
+        288
+      ]
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "id": "cf994911-e8ec-43f1-b8cc-469c1110be73",
+      "name": "Search Remote Job Boards",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.3,
+      "position": [
+        -2592,
+        480
+      ]
+    },
+    {
+      "parameters": {},
+      "id": "11238e70-9a3f-46e5-a6e4-9748a320f9e0",
+      "name": "Merge Job Results",
+      "type": "n8n-nodes-base.merge",
+      "typeVersion": 3.2,
+      "position": [
+        -2368,
+        336
+      ]
+    },
+    {
+      "parameters": {},
+      "id": "507650b0-09ef-4cca-bb56-545010440b9c",
+      "name": "Extract Job Details",
+      "type": "n8n-nodes-base.html",
+      "typeVersion": 1.2,
+      "position": [
+        -2144,
+        336
+      ]
+    },
+    {
+      "parameters": {},
+      "id": "6cedbab6-e6d0-4c11-8067-4eb38255cf8e",
+      "name": "Normalize Job Data",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -1920,
+        336
+      ]
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "id": "d0257a17-2813-4606-b253-b05b297a30d1",
+      "name": "Split Jobs for Processing",
+      "type": "n8n-nodes-base.splitOut",
+      "typeVersion": 1,
+      "position": [
+        -1696,
+        336
+      ]
+    },
+    {
+      "parameters": {
+        "hasOutputParser": true,
+        "options": {}
+      },
+      "id": "855adca2-3924-4b95-8f28-fb0b1bc9d8a4",
+      "name": "Job Matching Agent",
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 3.1,
+      "position": [
+        -1248,
+        336
+      ]
+    },
+    {
+      "parameters": {},
+      "id": "c248d7b6-2a57-459b-8740-d0f41293a28e",
+      "name": "Job Match Parser",
+      "type": "@n8n/n8n-nodes-langchain.outputParserStructured",
+      "typeVersion": 1.3,
+      "position": [
+        -1120,
+        560
+      ]
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "id": "89e80025-05a5-4450-a715-97d5c2a5c761",
+      "name": "Filter High Match Jobs",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [
+        -896,
+        336
+      ]
+    },
+    {
+      "parameters": {
+        "hasOutputParser": true,
+        "options": {}
+      },
+      "id": "d25f9fc2-13a0-4d58-a10a-961f4ee89ec5",
+      "name": "Resume Customization Agent",
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 3.1,
+      "position": [
+        -672,
+        336
+      ]
+    },
+    {
+      "parameters": {},
+      "id": "2b98b090-0d48-40b1-9da8-12e72b6e1a04",
+      "name": "Resume Content Parser",
+      "type": "@n8n/n8n-nodes-langchain.outputParserStructured",
+      "typeVersion": 1.3,
+      "position": [
+        -544,
+        560
+      ]
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "id": "4a78fb68-2257-4e28-8bb8-518e04a9c65d",
+      "name": "Cover Letter Generator Agent",
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 3.1,
+      "position": [
+        -320,
+        -16
+      ]
+    },
+    {
+      "parameters": {},
+      "id": "d09f6ba9-ee56-400e-8a89-2dba706e5da5",
+      "name": "Format Resume Document",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -256,
+        384
+      ]
+    },
+    {
+      "parameters": {
+        "driveId": {
+          "__rl": true,
+          "mode": "list",
+          "value": "My Drive"
+        },
+        "folderId": {
+          "__rl": true,
+          "mode": "list",
+          "value": "root",
+          "cachedResultName": "/ (Root folder)"
+        },
+        "options": {}
+      },
+      "id": "79d28111-f171-4e25-b2b8-9a43553cb304",
+      "name": "Save Custom Resume to Drive",
+      "type": "n8n-nodes-base.googleDrive",
+      "typeVersion": 3,
+      "position": [
+        32,
+        384
+      ]
+    },
+    {
+      "parameters": {
+        "driveId": {
+          "__rl": true,
+          "mode": "list",
+          "value": "My Drive"
+        },
+        "folderId": {
+          "__rl": true,
+          "mode": "list",
+          "value": "root",
+          "cachedResultName": "/ (Root folder)"
+        },
+        "options": {}
+      },
+      "id": "46a022b8-6ae0-41d1-b885-bba91d1cea49",
+      "name": "Save Cover Letter to Drive",
+      "type": "n8n-nodes-base.googleDrive",
+      "typeVersion": 3,
+      "position": [
+        32,
+        96
+      ]
+    },
+    {
+      "parameters": {
+        "rules": {
+          "values": [
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict"
+                },
+                "conditions": [
+                  {
+                    "leftValue": "",
+                    "rightValue": "",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              }
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "6ae18762-293d-4c7a-bc16-e418cc884d79",
+      "name": "Route by Application Method",
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3.4,
+      "position": [
+        256,
+        384
+      ]
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "id": "4eed5a36-a271-493a-bcc8-222f920778fe",
+      "name": "Apply via LinkedIn API",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.3,
+      "position": [
+        480,
+        384
+      ]
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "id": "4b403b17-64f7-461a-b86b-3b402e5a3094",
+      "name": "Apply via Indeed API",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.3,
+      "position": [
+        480,
+        576
+      ]
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "id": "a9f74376-be80-4389-be84-b4477c9294fe",
+      "name": "Apply via Company ATS",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.3,
+      "position": [
+        480,
+        768
+      ]
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "id": "e13f30fe-7a9b-4a3f-9c4f-e1ac12dad6e5",
+      "name": "Mark as Manual Apply",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        480,
+        960
+      ]
+    },
+    {
+      "parameters": {},
+      "id": "94741d6d-94e5-4c3d-99e7-f72fa16df890",
+      "name": "Merge Application Results",
+      "type": "n8n-nodes-base.merge",
+      "typeVersion": 3.2,
+      "position": [
+        704,
+        768
+      ]
+    },
+    {
+      "parameters": {},
+      "id": "a5d614d6-ffb8-483e-9897-48b41cea17ad",
+      "name": "Find Recruiter Contact",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        928,
+        768
+      ]
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "id": "e6bdfd2e-1b1d-40ba-a35e-29fb5b88b95a",
+      "name": "Recruiter Outreach Agent",
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 3.1,
+      "position": [
+        1152,
+        768
+      ]
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "id": "5e1c94bf-0baf-4be7-adee-6f0726559424",
+      "name": "Send Recruiter Email",
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.2,
+      "position": [
+        1504,
+        768
+      ],
+      "webhookId": "b8079c56-ce20-4147-a07c-b5ba9569471d"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "id": "d7592d99-9d5f-4f23-8b88-fd7a98e1236e",
+      "name": "Prepare Tracking Data",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        1728,
+        768
+      ]
+    },
+    {
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "mode": "list",
+          "value": ""
+        },
+        "sheetName": {
+          "__rl": true,
+          "mode": "list",
+          "value": ""
+        }
+      },
+      "id": "f9b72cf1-dad4-4b39-9ccc-a41f6e916195",
+      "name": "Log to Application Tracker",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        1952,
+        768
+      ]
+    },
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {}
+          ]
+        }
+      },
+      "id": "32b55b6e-b4fc-4a6e-b8da-c368f4abbc34",
+      "name": "Follow-up Check Trigger",
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.3,
+      "position": [
+        -3840,
+        1296
+      ]
+    },
+    {
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "mode": "list",
+          "value": ""
+        },
+        "sheetName": {
+          "__rl": true,
+          "mode": "list",
+          "value": ""
+        }
+      },
+      "id": "3f33ed16-3dfe-4672-a491-95a140e8e4d6",
+      "name": "Get Pending Applications",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        -3616,
+        1296
+      ]
+    },
+    {
+      "parameters": {},
+      "id": "4cf9aa98-5004-4662-b08c-28224d0fc538",
+      "name": "Filter Follow-up Needed",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -3392,
+        1296
+      ]
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "id": "f5bad155-1702-414f-8220-42ab8af7ca1d",
+      "name": "Split for Follow-ups",
+      "type": "n8n-nodes-base.splitOut",
+      "typeVersion": 1,
+      "position": [
+        -3168,
+        1296
+      ]
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "id": "0e60086f-c758-43ae-a7d3-cf5bad9a648a",
+      "name": "Follow-up Email Agent",
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 3.1,
+      "position": [
+        -2944,
+        1296
+      ]
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "id": "dabd6e8a-1af3-4431-aeff-023f7a75a29d",
+      "name": "Send Follow-up Email",
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.2,
+      "position": [
+        -2592,
+        1296
+      ],
+      "webhookId": "c1bab3f1-6d07-4130-9ac2-55ab57599b39"
+    },
+    {
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "mode": "list",
+          "value": ""
+        },
+        "sheetName": {
+          "__rl": true,
+          "mode": "list",
+          "value": ""
+        }
+      },
+      "id": "5df27f7d-cf7c-433f-bf3d-19b56d41f66d",
+      "name": "Update Follow-up Status",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        -2368,
+        1296
+      ]
+    },
+    {
+      "parameters": {},
+      "id": "0fa3c637-a076-4a3c-83a5-881a1b5d6127",
+      "name": "Rate Limit Delay",
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1.1,
+      "position": [
+        -1472,
+        336
+      ],
+      "webhookId": "aabcd52d-f1db-44da-b3b6-699497db76bd"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "id": "e47d3239-bb9e-4883-95f5-22af048659e3",
+      "name": "Gemini Model for Matching",
+      "type": "@n8n/n8n-nodes-langchain.lmChatGoogleGemini",
+      "typeVersion": 1,
+      "position": [
+        -1248,
+        560
+      ]
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "id": "9a7aab66-02f6-4bf6-ad02-e05e214f02ae",
+      "name": "Gemini Model for Resume",
+      "type": "@n8n/n8n-nodes-langchain.lmChatGoogleGemini",
+      "typeVersion": 1,
+      "position": [
+        -672,
+        560
+      ]
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "id": "87fffdeb-4912-4fdd-94b3-310eca144d65",
+      "name": "Gemini Model for Cover Letter",
+      "type": "@n8n/n8n-nodes-langchain.lmChatGoogleGemini",
+      "typeVersion": 1,
+      "position": [
+        -256,
+        208
+      ]
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "id": "f872f506-17e8-48ec-8ac3-c934d3f10874",
+      "name": "Gemini Model for Outreach",
+      "type": "@n8n/n8n-nodes-langchain.lmChatGoogleGemini",
+      "typeVersion": 1,
+      "position": [
+        1232,
+        992
+      ]
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "id": "1b8a5c64-64a8-487e-933f-f7de8081dd13",
+      "name": "Gemini Model for Follow-up",
+      "type": "@n8n/n8n-nodes-langchain.lmChatGoogleGemini",
+      "typeVersion": 1,
+      "position": [
+        -2880,
+        1520
+      ]
+    }
+  ],
+  "connections": {
+    "Daily Job Search Trigger": {
+      "main": [
+        [
+          {
+            "node": "Workflow Configuration",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Workflow Configuration": {
+      "main": [
+        [
+          {
+            "node": "Download Resume from Drive",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Download Resume from Drive": {
+      "main": [
+        [
+          {
+            "node": "Extract Resume Text",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Extract Resume Text": {
+      "main": [
+        [
+          {
+            "node": "Resume Parser Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Gemini Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Resume Parser Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Resume Parser Agent": {
+      "main": [
+        [
+          {
+            "node": "Search LinkedIn Jobs",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Search Indeed Jobs",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Search Remote Job Boards",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Resume Data Parser": {
+      "ai_outputParser": [
+        [
+          {
+            "node": "Resume Parser Agent",
+            "type": "ai_outputParser",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Search LinkedIn Jobs": {
+      "main": [
+        [
+          {
+            "node": "Merge Job Results",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Search Indeed Jobs": {
+      "main": [
+        [
+          {
+            "node": "Merge Job Results",
+            "type": "main",
+            "index": 1
+          }
+        ]
+      ]
+    },
+    "Search Remote Job Boards": {
+      "main": [
+        [
+          {
+            "node": "Merge Job Results",
+            "type": "main",
+            "index": 1
+          }
+        ]
+      ]
+    },
+    "Merge Job Results": {
+      "main": [
+        [
+          {
+            "node": "Extract Job Details",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Extract Job Details": {
+      "main": [
+        [
+          {
+            "node": "Normalize Job Data",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Normalize Job Data": {
+      "main": [
+        [
+          {
+            "node": "Split Jobs for Processing",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Split Jobs for Processing": {
+      "main": [
+        [
+          {
+            "node": "Rate Limit Delay",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Job Matching Agent": {
+      "main": [
+        [
+          {
+            "node": "Filter High Match Jobs",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Job Match Parser": {
+      "ai_outputParser": [
+        [
+          {
+            "node": "Job Matching Agent",
+            "type": "ai_outputParser",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Filter High Match Jobs": {
+      "main": [
+        [
+          {
+            "node": "Resume Customization Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Resume Customization Agent": {
+      "main": [
+        [
+          {
+            "node": "Format Resume Document",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Cover Letter Generator Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Resume Content Parser": {
+      "ai_outputParser": [
+        [
+          {
+            "node": "Resume Customization Agent",
+            "type": "ai_outputParser",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Cover Letter Generator Agent": {
+      "main": [
+        [
+          {
+            "node": "Save Cover Letter to Drive",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Format Resume Document": {
+      "main": [
+        [
+          {
+            "node": "Save Custom Resume to Drive",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Save Custom Resume to Drive": {
+      "main": [
+        [
+          {
+            "node": "Route by Application Method",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Route by Application Method": {
+      "main": [
+        [
+          {
+            "node": "Apply via LinkedIn API",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Apply via LinkedIn API": {
+      "main": [
+        [
+          {
+            "node": "Merge Application Results",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Apply via Indeed API": {
+      "main": [
+        [
+          {
+            "node": "Merge Application Results",
+            "type": "main",
+            "index": 1
+          }
+        ]
+      ]
+    },
+    "Apply via Company ATS": {
+      "main": [
+        [
+          {
+            "node": "Merge Application Results",
+            "type": "main",
+            "index": 1
+          }
+        ]
+      ]
+    },
+    "Mark as Manual Apply": {
+      "main": [
+        [
+          {
+            "node": "Merge Application Results",
+            "type": "main",
+            "index": 1
+          }
+        ]
+      ]
+    },
+    "Merge Application Results": {
+      "main": [
+        [
+          {
+            "node": "Find Recruiter Contact",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Find Recruiter Contact": {
+      "main": [
+        [
+          {
+            "node": "Recruiter Outreach Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Recruiter Outreach Agent": {
+      "main": [
+        [
+          {
+            "node": "Send Recruiter Email",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Send Recruiter Email": {
+      "main": [
+        [
+          {
+            "node": "Prepare Tracking Data",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Prepare Tracking Data": {
+      "main": [
+        [
+          {
+            "node": "Log to Application Tracker",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Follow-up Check Trigger": {
+      "main": [
+        [
+          {
+            "node": "Get Pending Applications",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get Pending Applications": {
+      "main": [
+        [
+          {
+            "node": "Filter Follow-up Needed",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Filter Follow-up Needed": {
+      "main": [
+        [
+          {
+            "node": "Split for Follow-ups",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Split for Follow-ups": {
+      "main": [
+        [
+          {
+            "node": "Follow-up Email Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Follow-up Email Agent": {
+      "main": [
+        [
+          {
+            "node": "Send Follow-up Email",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Send Follow-up Email": {
+      "main": [
+        [
+          {
+            "node": "Update Follow-up Status",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Rate Limit Delay": {
+      "main": [
+        [
+          {
+            "node": "Job Matching Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Gemini Model for Matching": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Job Matching Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Gemini Model for Resume": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Resume Customization Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Gemini Model for Cover Letter": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Cover Letter Generator Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Gemini Model for Outreach": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Recruiter Outreach Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Gemini Model for Follow-up": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Follow-up Email Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1",
+    "availableInMCP": false
+  },
+  "staticData": null,
+  "meta": null,
+  "pinData": {},
+  "versionId": "0c86e660-660f-46d1-b3b3-c4dc966f920c",
+  "activeVersionId": null,
+  "triggerCount": 0,
+  "shared": [
+    {
+      "updatedAt": "2025-12-28T04:22:55.589Z",
+      "createdAt": "2025-12-28T04:22:55.589Z",
+      "role": "workflow:owner",
+      "workflowId": "YwIeDouMEqmZUCAN",
+      "projectId": "DT8YjHwLZsQjJqVc"
+    }
+  ],
+  "activeVersion": null,
+  "tags": []
+}

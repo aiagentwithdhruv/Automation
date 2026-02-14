@@ -1,0 +1,1322 @@
+{
+  "updatedAt": "2025-12-14T17:49:45.580Z",
+  "createdAt": "2025-12-14T14:38:01.677Z",
+  "id": "YuguteocALip59GQ",
+  "name": "14th_Dec_Ai Agent Workflows_Manuplate HTML for gmail_Perplexity_Tavily",
+  "active": false,
+  "isArchived": false,
+  "nodes": [
+    {
+      "parameters": {
+        "content": "## Todays Agenda\n\n### Tool -  Perplexity / Tavily \n### Workflows\n### Manuplate HTML for gmail\n",
+        "height": 208,
+        "width": 224,
+        "color": 5
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -1328,
+        -384
+      ],
+      "id": "6d8903f8-841f-47aa-b920-e9434fed83b4",
+      "name": "Sticky Note"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "={{ $json.input }}",
+        "needsFallback": true,
+        "options": {
+          "systemMessage": "=You are Euron Ai \nGive answers in short and simple outcome oriented and consutling way\n\nTool -\nAlways use perplexity for web search \nif this not works then use Tavily web search"
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 3,
+      "position": [
+        176,
+        -176
+      ],
+      "id": "86c1d1e8-8501-47e5-99e3-b344a3aba38e",
+      "name": "AI Agent"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatGoogleGemini",
+      "typeVersion": 1,
+      "position": [
+        48,
+        48
+      ],
+      "id": "c30cbdf2-dd3b-446a-96b0-6c69916b849d",
+      "name": "2.5 Flash",
+      "credentials": {
+        "googlePalmApi": {
+          "id": "1YAglGZ0F8CcWPRL",
+          "name": "Gemini"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "model": "openai/gpt-5-mini",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenRouter",
+      "typeVersion": 1,
+      "position": [
+        224,
+        32
+      ],
+      "id": "91c199e8-c75c-4af6-ba44-22bb16064d2f",
+      "name": "GPT-5 Mini",
+      "credentials": {
+        "openRouterApi": {
+          "id": "5NHf7ILbLoMVxKcb",
+          "name": "OpenRouter account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "chatId": "={{ $('Agent Dhruv').item.json.message.chat.id }}",
+        "text": "={{ $json.output }}",
+        "additionalFields": {
+          "appendAttribution": false
+        }
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        576,
+        -176
+      ],
+      "id": "e4b6e3f6-da20-4a40-a283-6d86ee787c58",
+      "name": "Send a text message",
+      "webhookId": "fb531358-2952-4903-accb-71789501a413",
+      "credentials": {
+        "telegramApi": {
+          "id": "W6XV6RQORTB3eBDg",
+          "name": "Agent Dhruv"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "resource": "file",
+        "fileId": "={{ $json.message.voice.file_id }}",
+        "additionalFields": {}
+      },
+      "id": "71ded83d-84e1-4f6c-9ead-28ac1a08e38a",
+      "name": "Download Voice File",
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        -336,
+        -336
+      ],
+      "webhookId": "c0b376b1-7b63-41b6-8063-0b3096b8333d",
+      "credentials": {
+        "telegramApi": {
+          "id": "W6XV6RQORTB3eBDg",
+          "name": "Agent Dhruv"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "resource": "audio",
+        "operation": "transcribe",
+        "options": {}
+      },
+      "id": "4ad29e52-c076-4c3e-8026-44868ca96c36",
+      "name": "Transcribe Audio",
+      "type": "@n8n/n8n-nodes-langchain.openAi",
+      "typeVersion": 1.6,
+      "position": [
+        -176,
+        -336
+      ],
+      "credentials": {
+        "openAiApi": {
+          "id": "8IidOdkLmo0Xt32q",
+          "name": "OpenAi account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "rules": {
+          "values": [
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $json.message.voice.file_id }}",
+                    "rightValue": "",
+                    "operator": {
+                      "type": "string",
+                      "operation": "exists",
+                      "singleValue": true
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "Voice"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "id": "8c844924-b2ed-48b0-935c-c66a8fd0c778",
+                    "leftValue": "={{ $json.message.text }}",
+                    "rightValue": "",
+                    "operator": {
+                      "type": "string",
+                      "operation": "exists",
+                      "singleValue": true
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "Text"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "4dd36594-9cc7-4697-8cac-38a4d509455f",
+      "name": "Switch",
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3.2,
+      "position": [
+        -512,
+        -192
+      ]
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "976cf2c9-01b6-46cf-97b4-675a67ca57bc",
+              "name": "input",
+              "value": "={{ $json.text }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        -16,
+        -176
+      ],
+      "id": "aa43c3ff-f7a6-45e3-9388-e1fc8a085a04",
+      "name": "Input"
+    },
+    {
+      "parameters": {
+        "updates": [
+          "message"
+        ],
+        "additionalFields": {}
+      },
+      "id": "8988a210-e624-4c73-83cd-0a1c92306743",
+      "name": "Agent Dhruv",
+      "type": "n8n-nodes-base.telegramTrigger",
+      "typeVersion": 1.1,
+      "position": [
+        -720,
+        -192
+      ],
+      "webhookId": "99eab1a0-569d-4f0f-a49e-578a02abfe63",
+      "credentials": {
+        "telegramApi": {
+          "id": "W6XV6RQORTB3eBDg",
+          "name": "Agent Dhruv"
+        }
+      },
+      "disabled": true
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "fe7ecc99-e1e8-4a5e-bdd6-6fce9757b234",
+              "name": "text",
+              "value": "={{ $json.message.text }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "439b96d5-554f-4ac4-9c1c-ccc7df8f8cbb",
+      "name": "Set 'Text'",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        -256,
+        -176
+      ]
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "={{ $('Agent Dhruv1').item.json.message.text }}\n\nor \n\n{{ $json.text }}",
+        "needsFallback": true,
+        "options": {
+          "systemMessage": "You are Euron Ai \nGive answers in short and simple outcome oriented and consutling way"
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 3,
+      "position": [
+        -48,
+        1248
+      ],
+      "id": "b4794ae9-69e8-49bb-9b80-5d0b5dca048b",
+      "name": "AI Agent1"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatGoogleGemini",
+      "typeVersion": 1,
+      "position": [
+        -208,
+        1488
+      ],
+      "id": "30085e25-0cb9-4bff-a1d1-75f1e0ea3896",
+      "name": "2.5 Flash1",
+      "credentials": {
+        "googlePalmApi": {
+          "id": "1YAglGZ0F8CcWPRL",
+          "name": "Gemini"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "model": "openai/gpt-5-mini",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenRouter",
+      "typeVersion": 1,
+      "position": [
+        -32,
+        1472
+      ],
+      "id": "a7b54f0e-21e8-4d17-ada5-9f4876bd76b9",
+      "name": "GPT-5 Mini1",
+      "credentials": {
+        "openRouterApi": {
+          "id": "ia1i9k9oyhOfq22R",
+          "name": "OpenRouter account 2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "chatId": "={{ $('Agent Dhruv1').item.json.message.chat.id }}",
+        "text": "={{ $json.output }}",
+        "additionalFields": {
+          "appendAttribution": false
+        }
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        304,
+        1248
+      ],
+      "id": "d3da9863-5eca-48c5-8262-82fa9619a31a",
+      "name": "Send a text message1",
+      "webhookId": "fb531358-2952-4903-accb-71789501a413",
+      "credentials": {
+        "telegramApi": {
+          "id": "W6XV6RQORTB3eBDg",
+          "name": "Agent Dhruv"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "resource": "file",
+        "fileId": "={{ $json.message.voice.file_id }}",
+        "additionalFields": {}
+      },
+      "id": "5617cbd1-bdba-4b9c-a635-9f7d55ad924e",
+      "name": "Download Voice File1",
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        -560,
+        1088
+      ],
+      "webhookId": "c0b376b1-7b63-41b6-8063-0b3096b8333d",
+      "credentials": {
+        "telegramApi": {
+          "id": "W6XV6RQORTB3eBDg",
+          "name": "Agent Dhruv"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "resource": "audio",
+        "operation": "transcribe",
+        "options": {}
+      },
+      "id": "754596b6-081d-4ca1-9709-47989921472d",
+      "name": "Transcribe Audio1",
+      "type": "@n8n/n8n-nodes-langchain.openAi",
+      "typeVersion": 1.6,
+      "position": [
+        -400,
+        1088
+      ],
+      "credentials": {
+        "openAiApi": {
+          "id": "8IidOdkLmo0Xt32q",
+          "name": "OpenAi account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "rules": {
+          "values": [
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $json.message.voice.file_id }}",
+                    "rightValue": "",
+                    "operator": {
+                      "type": "string",
+                      "operation": "exists",
+                      "singleValue": true
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "Voice"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "id": "8c844924-b2ed-48b0-935c-c66a8fd0c778",
+                    "leftValue": "={{ $json.message.text }}",
+                    "rightValue": "",
+                    "operator": {
+                      "type": "string",
+                      "operation": "exists",
+                      "singleValue": true
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "Text"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "c957a480-f356-45af-8e47-7954a1c736e9",
+      "name": "Switch1",
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3.2,
+      "position": [
+        -736,
+        1232
+      ]
+    },
+    {
+      "parameters": {
+        "updates": [
+          "message"
+        ],
+        "additionalFields": {}
+      },
+      "id": "dd22f18c-2143-4288-8a71-846204a31a90",
+      "name": "Agent Dhruv1",
+      "type": "n8n-nodes-base.telegramTrigger",
+      "typeVersion": 1.1,
+      "position": [
+        -944,
+        1232
+      ],
+      "webhookId": "99eab1a0-569d-4f0f-a49e-578a02abfe63",
+      "credentials": {
+        "telegramApi": {
+          "id": "W6XV6RQORTB3eBDg",
+          "name": "Agent Dhruv"
+        }
+      },
+      "disabled": true
+    },
+    {
+      "parameters": {
+        "messages": {
+          "message": [
+            {
+              "content": "={{ $json.input }}"
+            }
+          ]
+        },
+        "options": {},
+        "requestOptions": {}
+      },
+      "type": "n8n-nodes-base.perplexityTool",
+      "typeVersion": 1,
+      "position": [
+        400,
+        48
+      ],
+      "id": "0adc6c6a-8fa4-4b2a-b81c-14b808f0c5f2",
+      "name": "Message a model in Perplexity",
+      "credentials": {
+        "perplexityApi": {
+          "id": "mACe6bHyuo7Z3exN",
+          "name": "Perplexity 2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "query": "={{ $json.input }}",
+        "options": {}
+      },
+      "type": "@tavily/n8n-nodes-tavily.tavilyTool",
+      "typeVersion": 1,
+      "position": [
+        528,
+        48
+      ],
+      "id": "cdc72835-a4a4-4262-8c7c-afa88c38e459",
+      "name": "Tavily Web Search",
+      "credentials": {
+        "tavilyApi": {
+          "id": "5GWaJhYsrLHYZkOF",
+          "name": "Tavily account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "resource": "file",
+        "fileId": "={{ $json.message.voice.file_id }}",
+        "additionalFields": {}
+      },
+      "id": "df12b7bb-3c63-4cfe-a59f-da02a9938a78",
+      "name": "Download Voice File2",
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        -528,
+        336
+      ],
+      "webhookId": "c0b376b1-7b63-41b6-8063-0b3096b8333d",
+      "credentials": {
+        "telegramApi": {
+          "id": "W6XV6RQORTB3eBDg",
+          "name": "Agent Dhruv"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "resource": "audio",
+        "operation": "transcribe",
+        "options": {}
+      },
+      "id": "7082addf-0ed9-4912-8827-e14b91d097c0",
+      "name": "Transcribe Audio2",
+      "type": "@n8n/n8n-nodes-langchain.openAi",
+      "typeVersion": 1.6,
+      "position": [
+        -368,
+        336
+      ],
+      "credentials": {
+        "openAiApi": {
+          "id": "8IidOdkLmo0Xt32q",
+          "name": "OpenAi account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "rules": {
+          "values": [
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $json.message.voice.file_id }}",
+                    "rightValue": "",
+                    "operator": {
+                      "type": "string",
+                      "operation": "exists",
+                      "singleValue": true
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "Voice"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "id": "8c844924-b2ed-48b0-935c-c66a8fd0c778",
+                    "leftValue": "={{ $json.message.text }}",
+                    "rightValue": "",
+                    "operator": {
+                      "type": "string",
+                      "operation": "exists",
+                      "singleValue": true
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "Text"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "14156afb-d714-4d58-ac85-a736dfdc3ffa",
+      "name": "Switch2",
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3.2,
+      "position": [
+        -704,
+        480
+      ]
+    },
+    {
+      "parameters": {
+        "query": "={{ $json.input }}",
+        "options": {}
+      },
+      "type": "@tavily/n8n-nodes-tavily.tavilyTool",
+      "typeVersion": 1,
+      "position": [
+        496,
+        816
+      ],
+      "id": "cd09bc32-dead-4fc3-a34e-da1a2f797494",
+      "name": "Tavily Web Search1",
+      "credentials": {
+        "tavilyApi": {
+          "id": "5GWaJhYsrLHYZkOF",
+          "name": "Tavily account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "content": "## Ai Workflow\n### Telegram,Perplexity,Tavlliy, Voice Transcribe ,Set",
+        "height": 112,
+        "width": 336,
+        "color": 4
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        -1088,
+        -208
+      ],
+      "typeVersion": 1,
+      "id": "a3e98cb3-8766-48f3-bb33-f3a63e0dfdf0",
+      "name": "Sticky Note1"
+    },
+    {
+      "parameters": {
+        "content": "\n## Agentic Ai Workflow\n### Get Letest Ai Information send to mail with Cool Ui with the help of HTML\n- Telgram for triggers \n- Fallback Model \n- Use Perplexity / Tavily Web Search\n- Gmail to receive & send information\n- GPT - 5.2 Letest Model",
+        "height": 224,
+        "width": 320,
+        "color": 5
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        -144,
+        256
+      ],
+      "typeVersion": 1,
+      "id": "1a93ed78-4d2b-40c6-be27-5deda230feee",
+      "name": "Sticky Note2"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "={{ $json.input }}",
+        "needsFallback": true,
+        "options": {
+          "systemMessage": "=You are Euron Ai \nGive answers in short and simple outcome oriented and consutling way\n\nTool -\nAlways use perplexity for web search \nif this not works then use Tavily web search\n\nGmail - send email if user ask in strugture format"
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 3,
+      "position": [
+        -16,
+        496
+      ],
+      "id": "ef7f5e0f-c3d2-4ade-b0f6-8747e112e97e",
+      "name": "Dhruv Ai Smart Agent"
+    },
+    {
+      "parameters": {
+        "updates": [
+          "message"
+        ],
+        "additionalFields": {}
+      },
+      "id": "810f0510-f010-433f-87a6-2f1a91d0b74c",
+      "name": "Agent Dhruv 2.O",
+      "type": "n8n-nodes-base.telegramTrigger",
+      "typeVersion": 1.1,
+      "position": [
+        -912,
+        480
+      ],
+      "webhookId": "99eab1a0-569d-4f0f-a49e-578a02abfe63",
+      "credentials": {
+        "telegramApi": {
+          "id": "W6XV6RQORTB3eBDg",
+          "name": "Agent Dhruv"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "sendTo": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('To', ``, 'string') }}",
+        "subject": "={{ $('Agent Dhruv 2.O').item.json.message.text }}",
+        "emailType": "text",
+        "message": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Message', ``, 'string') }}",
+        "options": {
+          "appendAttribution": false
+        }
+      },
+      "type": "n8n-nodes-base.gmailTool",
+      "typeVersion": 2.2,
+      "position": [
+        208,
+        832
+      ],
+      "id": "8f79f454-548e-42a5-aea5-c406fed0871b",
+      "name": "Send Email",
+      "webhookId": "ba5061a9-cc0a-4d08-8a2d-7bc57cd9eeba",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "gPGYzjuIbblOf3E1",
+          "name": "Ai with Dhruv"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "sendTo": "aiwithdhruv@gmail.com",
+        "subject": "={{ $('Agent Dhruv 2.O').item.json.message.text }}",
+        "message": "=<!DOCTYPE html>\n<html>\n<head>\n  <meta charset=\"UTF-8\" />\n  <title>AI Automation Plays</title>\n</head>\n\n<body style=\"margin:0; padding:0; background-color:#f8fafc; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Arial, sans-serif; color:#0f172a;\">\n\n  <table width=\"100%\" cellpadding=\"0\" cellspacing=\"0\" style=\"padding:24px;\">\n    <tr>\n      <td align=\"center\">\n\n        <!-- Container -->\n        <table width=\"600\" cellpadding=\"0\" cellspacing=\"0\" style=\"background:#ffffff; border-radius:14px; padding:28px; border:1px solid #e5e7eb;\">\n\n          <!-- Header -->\n          <tr>\n            <td style=\"padding-bottom:16px;\">\n              <h1 style=\"margin:0; font-size:22px; font-weight:600; color:#020617;\">\n                Top AI Automation Plays \u2014 Weekly\n              </h1>\n              <p style=\"margin:6px 0 0; font-size:14px; color:#475569;\">\n                Outcome-focused ideas to save time, improve quality, and grow revenue.\n              </p>\n            </td>\n          </tr>\n\n          <tr>\n            <td style=\"border-top:1px solid #e5e7eb; padding-top:20px;\"></td>\n          </tr>\n\n          <!-- Item 1 -->\n          <tr>\n            <td style=\"padding:14px 0;\">\n              <h3 style=\"margin:0; font-size:16px; font-weight:600;\">\n                1. AI Lead Enrichment & Scoring\n              </h3>\n              <p style=\"margin:6px 0; font-size:14px; color:#334155;\">\n                Automatically prioritize high-value leads using AI-based enrichment and scoring.\n              </p>\n              <p style=\"margin:6px 0 0; font-size:13px; color:#64748b;\">\n                Impact: Faster SDR action \u00b7 Higher demo conversion\n              </p>\n              <a href=\"https://example.com/lead-scoring\" \n                 style=\"font-size:13px; color:#2563eb; text-decoration:none;\">\n                View workflow \u2192\n              </a>\n            </td>\n          </tr>\n\n          <tr><td style=\"border-top:1px solid #e5e7eb;\"></td></tr>\n\n          <!-- Item 2 -->\n          <tr>\n            <td style=\"padding:14px 0;\">\n              <h3 style=\"margin:0; font-size:16px; font-weight:600;\">\n                2. 24/7 AI Sales Chatbot (Human Handoff)\n              </h3>\n              <p style=\"margin:6px 0; font-size:14px; color:#334155;\">\n                Capture, qualify, and book meetings automatically \u2014 escalate only high-intent leads.\n              </p>\n              <p style=\"margin:6px 0 0; font-size:13px; color:#64748b;\">\n                Impact: Lower SDR cost \u00b7 More meetings booked\n              </p>\n              <a href=\"https://example.com/ai-chatbot\"\n                 style=\"font-size:13px; color:#2563eb; text-decoration:none;\">\n                View workflow \u2192\n              </a>\n            </td>\n          </tr>\n\n          <tr><td style=\"border-top:1px solid #e5e7eb;\"></td></tr>\n\n          <!-- Item 3 -->\n          <tr>\n            <td style=\"padding:14px 0;\">\n              <h3 style=\"margin:0; font-size:16px; font-weight:600;\">\n                3. Content & SEO Automation\n              </h3>\n              <p style=\"margin:6px 0; font-size:14px; color:#334155;\">\n                Generate blogs, social posts, and product content consistently using AI.\n              </p>\n              <p style=\"margin:6px 0 0; font-size:13px; color:#64748b;\">\n                Impact: Lower content cost \u00b7 More organic traffic\n              </p>\n              <a href=\"https://example.com/content-automation\"\n                 style=\"font-size:13px; color:#2563eb; text-decoration:none;\">\n                View workflow \u2192\n              </a>\n            </td>\n          </tr>\n\n          <!-- Footer -->\n          <tr>\n            <td style=\"padding-top:20px; border-top:1px solid #e5e7eb;\">\n              <p style=\"margin:0; font-size:12px; color:#94a3b8;\">\n                Built with n8n \u00b7 Curated by AIwithDhruv\n              </p>\n            </td>\n          </tr>\n\n        </table>\n\n      </td>\n    </tr>\n  </table>\n\n</body>\n</html>",
+        "options": {
+          "appendAttribution": false
+        }
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.2,
+      "position": [
+        576,
+        496
+      ],
+      "id": "5e7ea82c-78b2-4074-a7b5-d7bbfec9001e",
+      "name": "Get Email Notification",
+      "webhookId": "3d128c6d-1de9-432c-9b97-a767fc670183",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "gPGYzjuIbblOf3E1",
+          "name": "Ai with Dhruv"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "messages": {
+          "message": [
+            {
+              "content": "={{ $json.input }}"
+            }
+          ]
+        },
+        "options": {},
+        "requestOptions": {}
+      },
+      "type": "n8n-nodes-base.perplexityTool",
+      "typeVersion": 1,
+      "position": [
+        352,
+        816
+      ],
+      "id": "a7285258-b212-4143-b06a-6fb3399d0bbc",
+      "name": "Perplexity Web Search",
+      "credentials": {
+        "perplexityApi": {
+          "id": "mACe6bHyuo7Z3exN",
+          "name": "Perplexity 2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatGoogleGemini",
+      "typeVersion": 1,
+      "position": [
+        -128,
+        736
+      ],
+      "id": "22e65b5e-5fce-4bb8-9a81-890168290cf6",
+      "name": "2.5_Flash",
+      "credentials": {
+        "googlePalmApi": {
+          "id": "1YAglGZ0F8CcWPRL",
+          "name": "Gemini"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "model": "openai/gpt-5-mini",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenRouter",
+      "typeVersion": 1,
+      "position": [
+        32,
+        736
+      ],
+      "id": "aafd214b-6391-4951-8117-59c6509b313a",
+      "name": "Claud Sonnet 4.5",
+      "credentials": {
+        "openRouterApi": {
+          "id": "5NHf7ILbLoMVxKcb",
+          "name": "OpenRouter account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "chatId": "={{ $('Agent Dhruv 2.O').item.json.message.chat.id }}",
+        "text": "={{ $json.output }}",
+        "additionalFields": {
+          "appendAttribution": false
+        }
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        368,
+        496
+      ],
+      "id": "90dbf120-bc6d-4ad7-9c66-19ff3f7f57e3",
+      "name": "Alert on Telegram",
+      "webhookId": "fb531358-2952-4903-accb-71789501a413",
+      "credentials": {
+        "telegramApi": {
+          "id": "W6XV6RQORTB3eBDg",
+          "name": "Agent Dhruv"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "976cf2c9-01b6-46cf-97b4-675a67ca57bc",
+              "name": "input",
+              "value": "={{ $json.text }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        -208,
+        496
+      ],
+      "id": "dd8deb62-4073-4094-8cc6-4d1241ddaec2",
+      "name": "Final Text"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "fe7ecc99-e1e8-4a5e-bdd6-6fce9757b234",
+              "name": "text",
+              "value": "={{ $json.message.text }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "7d596011-40b1-441b-8e90-521e0daba064",
+      "name": "Text",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        -448,
+        496
+      ]
+    }
+  ],
+  "connections": {
+    "2.5 Flash": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "GPT-5 Mini": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_languageModel",
+            "index": 1
+          }
+        ]
+      ]
+    },
+    "AI Agent": {
+      "main": [
+        [
+          {
+            "node": "Send a text message",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Download Voice File": {
+      "main": [
+        [
+          {
+            "node": "Transcribe Audio",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Transcribe Audio": {
+      "main": [
+        [
+          {
+            "node": "Input",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Switch": {
+      "main": [
+        [
+          {
+            "node": "Download Voice File",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Set 'Text'",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Input": {
+      "main": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Agent Dhruv": {
+      "main": [
+        [
+          {
+            "node": "Switch",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Set 'Text'": {
+      "main": [
+        [
+          {
+            "node": "Input",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "AI Agent1": {
+      "main": [
+        [
+          {
+            "node": "Send a text message1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "2.5 Flash1": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent1",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "GPT-5 Mini1": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent1",
+            "type": "ai_languageModel",
+            "index": 1
+          }
+        ]
+      ]
+    },
+    "Download Voice File1": {
+      "main": [
+        [
+          {
+            "node": "Transcribe Audio1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Transcribe Audio1": {
+      "main": [
+        [
+          {
+            "node": "AI Agent1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Switch1": {
+      "main": [
+        [
+          {
+            "node": "Download Voice File1",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "AI Agent1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Agent Dhruv1": {
+      "main": [
+        [
+          {
+            "node": "Switch1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Message a model in Perplexity": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Tavily Web Search": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Download Voice File2": {
+      "main": [
+        [
+          {
+            "node": "Transcribe Audio2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Transcribe Audio2": {
+      "main": [
+        [
+          {
+            "node": "Final Text",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Switch2": {
+      "main": [
+        [
+          {
+            "node": "Download Voice File2",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Text",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Tavily Web Search1": {
+      "ai_tool": [
+        [
+          {
+            "node": "Dhruv Ai Smart Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Dhruv Ai Smart Agent": {
+      "main": [
+        [
+          {
+            "node": "Alert on Telegram",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Agent Dhruv 2.O": {
+      "main": [
+        [
+          {
+            "node": "Switch2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Send Email": {
+      "ai_tool": [
+        [
+          {
+            "node": "Dhruv Ai Smart Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Perplexity Web Search": {
+      "ai_tool": [
+        [
+          {
+            "node": "Dhruv Ai Smart Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "2.5_Flash": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Dhruv Ai Smart Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Claud Sonnet 4.5": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Dhruv Ai Smart Agent",
+            "type": "ai_languageModel",
+            "index": 1
+          }
+        ]
+      ]
+    },
+    "Alert on Telegram": {
+      "main": [
+        [
+          {
+            "node": "Get Email Notification",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Final Text": {
+      "main": [
+        [
+          {
+            "node": "Dhruv Ai Smart Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Text": {
+      "main": [
+        [
+          {
+            "node": "Final Text",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "staticData": null,
+  "meta": {
+    "templateCredsSetupCompleted": true
+  },
+  "pinData": {},
+  "versionId": "61d47177-a881-46f2-8082-b3a064e7b868",
+  "activeVersionId": null,
+  "triggerCount": 1,
+  "shared": [
+    {
+      "updatedAt": "2025-12-14T14:38:01.702Z",
+      "createdAt": "2025-12-14T14:38:01.702Z",
+      "role": "workflow:owner",
+      "workflowId": "YuguteocALip59GQ",
+      "projectId": "DT8YjHwLZsQjJqVc"
+    }
+  ],
+  "activeVersion": null,
+  "tags": []
+}

@@ -1,0 +1,2073 @@
+{
+  "updatedAt": "2026-01-25T17:05:11.057Z",
+  "createdAt": "2026-01-22T16:31:19.526Z",
+  "id": "wdxvJi7184nqNwhj",
+  "name": "AI-Powered Resume Screening and Candidate Ranking System",
+  "active": false,
+  "isArchived": false,
+  "nodes": [
+    {
+      "parameters": {
+        "formTitle": "Resume Submission - AI Screening",
+        "formDescription": "Submit your resume for automated screening and evaluation",
+        "formFields": {
+          "values": [
+            {
+              "fieldName": "fullName",
+              "fieldLabel": "Full Name",
+              "requiredField": true
+            },
+            {
+              "fieldName": "email",
+              "fieldLabel": "Email Address",
+              "fieldType": "email",
+              "requiredField": true
+            },
+            {
+              "fieldName": "phone",
+              "fieldLabel": "Phone Number",
+              "requiredField": true
+            },
+            {
+              "fieldName": "jobRole",
+              "fieldLabel": "Job Role Applied For",
+              "fieldType": "dropdown",
+              "fieldOptions": {
+                "values": [
+                  {
+                    "option": "Software Engineer"
+                  },
+                  {
+                    "option": "Data Analyst"
+                  },
+                  {
+                    "option": "Product Manager"
+                  },
+                  {
+                    "option": "Marketing Manager"
+                  },
+                  {
+                    "option": "Sales Representative"
+                  }
+                ]
+              },
+              "requiredField": true
+            },
+            {
+              "fieldName": "resume",
+              "fieldLabel": "Upload Resume (PDF or DOCX)",
+              "fieldType": "file",
+              "multipleFiles": false,
+              "acceptFileTypes": ".pdf, .docx",
+              "requiredField": true
+            }
+          ]
+        },
+        "options": {
+          "appendAttribution": false
+        }
+      },
+      "id": "c977f902-b201-4065-9a13-dfc1fea73140",
+      "name": "Resume Upload Form",
+      "type": "n8n-nodes-base.formTrigger",
+      "typeVersion": 2.4,
+      "position": [
+        -224,
+        480
+      ],
+      "webhookId": "39658bbe-a622-491d-8259-eae6f8760b39"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "id-1",
+              "name": "jobDescription",
+              "value": "We are seeking talented professionals to join our team. The ideal candidate should demonstrate strong technical skills, relevant experience, and cultural fit with our organization.",
+              "type": "string"
+            },
+            {
+              "id": "id-2",
+              "name": "strongFitThreshold",
+              "value": 70,
+              "type": "number"
+            },
+            {
+              "id": "id-3",
+              "name": "averageFitThreshold",
+              "value": 50,
+              "type": "number"
+            },
+            {
+              "id": "id-4",
+              "name": "driveFolderName",
+              "value": "Resumes",
+              "type": "string"
+            }
+          ]
+        },
+        "includeOtherFields": true,
+        "options": {}
+      },
+      "id": "77f0ef02-3a0b-42d8-af44-210cdedc3fc2",
+      "name": "Workflow Configuration",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        -48,
+        480
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "pdf",
+        "binaryPropertyName": "=data",
+        "options": {}
+      },
+      "id": "18decbd0-d5ea-4b28-93b7-685a3121e90f",
+      "name": "Extract Resume Text",
+      "type": "n8n-nodes-base.extractFromFile",
+      "typeVersion": 1.1,
+      "position": [
+        496,
+        480
+      ]
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "id-1",
+              "name": "resumeText",
+              "value": "={{ $json.text }}",
+              "type": "string"
+            },
+            {
+              "id": "id-2",
+              "name": "candidateName",
+              "value": "={{ $('Resume Upload Form').item.json.fullName }}",
+              "type": "string"
+            },
+            {
+              "id": "id-3",
+              "name": "candidateEmail",
+              "value": "={{ $('Resume Upload Form').item.json.email }}",
+              "type": "string"
+            },
+            {
+              "id": "id-4",
+              "name": "jobRole",
+              "value": "={{ $('Resume Upload Form').item.json.jobRole }}",
+              "type": "string"
+            },
+            {
+              "id": "id-5",
+              "name": "jobDescription",
+              "value": "={{ $('Workflow Configuration').item.json.jobDescription }}",
+              "type": "string"
+            },
+            {
+              "id": "id-6",
+              "name": "driveLink",
+              "value": "={{ $('Google Drive').item.json.webContentLink }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "c485425c-39f5-47fb-bd6e-c5d03918bccf",
+      "name": "Prepare AI Analysis Input",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        720,
+        480
+      ],
+      "onError": "continueRegularOutput"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "={{ $json.resumeText }}",
+        "hasOutputParser": true,
+        "options": {
+          "systemMessage": "=You are an expert HR recruiter and resume analyst. Your task is to thoroughly evaluate the candidate's resume against the job requirements and provide a comprehensive assessment.\n\nJob Role: {{ $json.jobRole }}\nJob Description: {{ $json.jobDescription }}\n\nAnalyze the resume for:\n1. **Skills Match**: How well do the candidate's skills align with the job requirements? Identify present and missing skills.\n2. **Experience Quality**: Evaluate years of experience, relevance, progression, and achievements.\n3. **Education & Certifications**: Assess educational background and relevant certifications.\n4. **Career Gaps**: Identify any unexplained gaps or red flags in employment history.\n5. **Cultural Fit Indicators**: Look for soft skills, teamwork, leadership, and values alignment.\n\nProvide:\n- Overall score (0-100)\n- Classification: Strong Fit (70-100), Average (50-69), or Reject (0-49)\n- Key strengths (list)\n- Key gaps or concerns (list)\n- Recommendation summary\n\nBe objective, fair, and thorough in your evaluation."
+        }
+      },
+      "id": "57056a69-09b3-4b8c-abfb-0f60f8c6f5f0",
+      "name": "AI Resume Analyzer",
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 3.1,
+      "position": [
+        976,
+        480
+      ]
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "mode": "id",
+          "value": "gpt-4o-mini"
+        },
+        "builtInTools": {},
+        "options": {}
+      },
+      "id": "d4bea564-73e9-490d-9301-16042df457dc",
+      "name": "OpenAI Chat Model",
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.3,
+      "position": [
+        976,
+        704
+      ],
+      "credentials": {
+        "openAiApi": {
+          "id": "8IidOdkLmo0Xt32q",
+          "name": "OpenAi account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "schemaType": "manual",
+        "inputSchema": "{\n  \"type\": \"object\",\n  \"required\": [\"overall_score\", \"classification\", \"strengths\", \"gaps\", \"skills_present\", \"skills_missing\", \"experience_years\", \"recommendation_summary\"],\n  \"properties\": {\n    \"overall_score\": {\n      \"type\": \"integer\",\n      \"minimum\": 0,\n      \"maximum\": 100,\n      \"description\": \"Overall candidate score out of 100\"\n    },\n    \"classification\": {\n      \"type\": \"string\",\n      \"enum\": [\"Strong Fit\", \"Average\", \"Reject\"],\n      \"description\": \"Candidate classification\"\n    },\n    \"strengths\": {\n      \"type\": \"array\",\n      \"items\": {\"type\": \"string\"},\n      \"description\": \"Key strengths of the candidate\"\n    },\n    \"gaps\": {\n      \"type\": \"array\",\n      \"items\": {\"type\": \"string\"},\n      \"description\": \"Key gaps or concerns\"\n    },\n    \"skills_present\": {\n      \"type\": \"array\",\n      \"items\": {\"type\": \"string\"},\n      \"description\": \"Skills that match job requirements\"\n    },\n    \"skills_missing\": {\n      \"type\": \"array\",\n      \"items\": {\"type\": \"string\"},\n      \"description\": \"Required skills that are missing\"\n    },\n    \"experience_years\": {\n      \"type\": \"string\",\n      \"description\": \"Years of relevant experience\"\n    },\n    \"recommendation_summary\": {\n      \"type\": \"string\",\n      \"description\": \"Brief recommendation summary\"\n    }\n  }\n}"
+      },
+      "id": "23d045bb-a5cf-49d6-89dd-ccedb8ae79f6",
+      "name": "Structured Output Parser",
+      "type": "@n8n/n8n-nodes-langchain.outputParserStructured",
+      "typeVersion": 1.3,
+      "position": [
+        1120,
+        704
+      ]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "id-1",
+              "leftValue": "={{ $json.output.overall_score }}",
+              "rightValue": "={{ $('Workflow Configuration').item.json.strongFitThreshold }}",
+              "operator": {
+                "type": "number",
+                "operation": "gte"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "12748f14-a2fc-4343-a51a-19caf412a6a5",
+      "name": "Classify Candidate",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [
+        1328,
+        480
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "append",
+        "documentId": {
+          "__rl": true,
+          "value": "1QXT0-GD0HZ36rTwPQQFDii1qWJYBjcFm_kUC0FyX-P4",
+          "mode": "list",
+          "cachedResultName": "Aiwithdhruv_n8n",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1QXT0-GD0HZ36rTwPQQFDii1qWJYBjcFm_kUC0FyX-P4/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 1331524625,
+          "mode": "list",
+          "cachedResultName": "Resume_Data_2026",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1QXT0-GD0HZ36rTwPQQFDii1qWJYBjcFm_kUC0FyX-P4/edit#gid=1331524625"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "overall_score": "={{ $('AI Resume Analyzer').item.json.output.overall_score }}",
+            "classification": "={{ $('AI Resume Analyzer').item.json.output.classification }}",
+            "strengths": "={{ $('AI Resume Analyzer').item.json.output.strengths[0] }}\n{{ $('AI Resume Analyzer').item.json.output.strengths[1] }}\n{{ $('AI Resume Analyzer').item.json.output.strengths[2] }}\n{{ $('AI Resume Analyzer').item.json.output.strengths[3] }}",
+            "gaps": "={{ $('AI Resume Analyzer').item.json.output.gaps[0] }}\n{{ $('AI Resume Analyzer').item.json.output.gaps[1] }}",
+            "skills_present": "={{ $('AI Resume Analyzer').item.json.output.skills_present }}",
+            "skills_missing": "={{ $('AI Resume Analyzer').item.json.output.skills_missing }}",
+            "experience_years": "={{ $('AI Resume Analyzer').item.json.output.experience_years }}",
+            "recommendation_summary": "={{ $('AI Resume Analyzer').item.json.output.recommendation_summary }}",
+            "AI Call Status": "Pending",
+            "Name": "={{ $('Resume Upload Form').item.json.fullName }}",
+            "email": "={{ $('Resume Upload Form').item.json.email }}",
+            "Phone Number": "={{ $('Resume Upload Form').item.json.phone }}"
+          },
+          "matchingColumns": [
+            "id"
+          ],
+          "schema": [
+            {
+              "id": "Name",
+              "displayName": "Name",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "email",
+              "displayName": "email",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Phone Number",
+              "displayName": "Phone Number",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "overall_score",
+              "displayName": "overall_score",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "classification",
+              "displayName": "classification",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "strengths",
+              "displayName": "strengths",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "gaps",
+              "displayName": "gaps",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "skills_present",
+              "displayName": "skills_present",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "skills_missing",
+              "displayName": "skills_missing",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "experience_years",
+              "displayName": "experience_years",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "recommendation_summary",
+              "displayName": "recommendation_summary",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "AI Call Status",
+              "displayName": "AI Call Status",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Ai Discussion",
+              "displayName": "Ai Discussion",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Recording URL",
+              "displayName": "Recording URL",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "id": "dc4bbec6-3ae9-46f8-89ef-f4a4d96f7a9f",
+      "name": "Store All Results in Google Sheets",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        2000,
+        480
+      ],
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "WbzVyGwbDVzvcV25",
+          "name": "Ai with Dhruv"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "authentication": "oAuth2",
+        "select": "channel",
+        "channelId": {
+          "__rl": true,
+          "value": "C0A5RUUSF17",
+          "mode": "list",
+          "cachedResultName": "24_dec_n8n"
+        },
+        "text": "=\ud83c\udfaf *Strong Candidate Alert!*\n\n*Candidate:* {{ $('Prepare AI Analysis Input').item.json.candidateName }}\n*Email:* {{ $('Prepare AI Analysis Input').item.json.candidateEmail }}\n*Job Role:* {{ $('Prepare AI Analysis Input').item.json.jobRole }}\n*Score:* {{ $json.output.overall_score }}/100\n*Classification:* {{ $json.output.classification }}\n\n*Key Strengths:*\n{{ $json.output.strengths.map((s, i) => `${i+1}. ${s}`).join('\\n') }}\n\n*Resume:* {{ $('Prepare AI Analysis Input').item.json.driveLink }}\n\n_Recommendation: {{ $json.output.recommendation_summary }}_",
+        "otherOptions": {}
+      },
+      "id": "b939e747-2cf3-41e8-8e60-4623a96f6434",
+      "name": "Notify HR on Slack",
+      "type": "n8n-nodes-base.slack",
+      "typeVersion": 2.4,
+      "position": [
+        1552,
+        384
+      ],
+      "webhookId": "73a41ab1-03b2-4727-a836-6be0095f072d",
+      "credentials": {
+        "slackOAuth2Api": {
+          "id": "1w3syamNlvhO12bU",
+          "name": "Slack account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "sendTo": "={{ $('Prepare AI Analysis Input').item.json.candidateEmail }}",
+        "subject": "=Next Steps - {{ $('Prepare AI Analysis Input').item.json.jobRole }} Application",
+        "message": "=<p>Dear {{ $('Prepare AI Analysis Input').item.json.candidateName }},</p>\n\n<p>Thank you for applying for the <strong>{{ $('Prepare AI Analysis Input').item.json.jobRole }}</strong> position.</p>\n\n<p>We are pleased to inform you that your application has been reviewed and you have been shortlisted for the next round of our hiring process. Your qualifications and experience align well with what we are looking for.</p>\n\n<p><strong>Next Steps:</strong></p>\n<ul>\n<li>Our HR team will contact you within 2-3 business days to schedule an interview</li>\n<li>Please keep an eye on your email and phone for our communication</li>\n</ul>\n\n<p>We look forward to speaking with you soon!</p>\n\n<p>Best regards,<br>HR Team</p>",
+        "options": {
+          "appendAttribution": false
+        }
+      },
+      "id": "f5f3f910-f875-427e-9957-b77cc93e9276",
+      "name": "Send Acceptance Email",
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.2,
+      "position": [
+        1776,
+        384
+      ],
+      "webhookId": "80504d9e-e95c-48d6-92ab-fbe05c941b9a",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "gPGYzjuIbblOf3E1",
+          "name": "Ai with Dhruv"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "sendTo": "={{ $('Prepare AI Analysis Input').item.json.candidateEmail }}",
+        "subject": "=Application Status - {{ $('Prepare AI Analysis Input').item.json.jobRole }}",
+        "message": "=<p>Dear {{ $('Prepare AI Analysis Input').item.json.candidateName }},</p>\n\n<p>Thank you for taking the time to apply for the <strong>{{ $('Prepare AI Analysis Input').item.json.jobRole }}</strong> position with us.</p>\n\n<p>After careful review of your application, we regret to inform you that we will not be moving forward with your candidacy at this time. This decision was not easy, as we received many qualified applications.</p>\n\n<p>We encourage you to:</p>\n<ul>\n<li>Keep an eye on our careers page for future opportunities that may be a better fit</li>\n<li>Continue building your skills and experience in areas relevant to your career goals</li>\n</ul>\n\n<p>We appreciate your interest in our organization and wish you the best in your job search.</p>\n\n<p>Best regards,<br>HR Team</p>",
+        "options": {}
+      },
+      "id": "00c5f27f-6766-41a6-8318-0376d3e9e9a8",
+      "name": "Send Rejection Email",
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.2,
+      "position": [
+        1776,
+        576
+      ],
+      "webhookId": "43475747-651a-4f1f-9db3-f056af7d1c28",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "gPGYzjuIbblOf3E1",
+          "name": "Ai with Dhruv"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "chatId": "637313836",
+        "text": "=\ud83c\udfaf *Strong Candidate Alert!*\n\n*Candidate:* {{ $('Prepare AI Analysis Input').item.json.candidateName }}\n*Email:* {{ $('Prepare AI Analysis Input').item.json.candidateEmail }}\n*Job Role:* {{ $('Prepare AI Analysis Input').item.json.jobRole }}\n*Score:* {{ $json.output.overall_score }}/100\n*Classification:* {{ $json.output.classification }}\n\n*Key Strengths:*\n{{ $json.output.strengths.map((s, i) => `${i+1}. ${s}`).join('\\n') }}\n\n*Resume:*\n\nhttps://drive.google.com/file/d/1cwMpHjg68qYkcv_88M05Bnum-hQYz9aL/view?usp=drivesdk\n\n_Recommendation: {{ $json.output.recommendation_summary }}_",
+        "additionalFields": {}
+      },
+      "id": "f02e85c5-5aec-4dcf-a3e6-9f3cf8cc388a",
+      "name": "Send Telegram Notification",
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        1616,
+        128
+      ],
+      "webhookId": "8a2be188-ba16-4174-a598-395fd611a5a0",
+      "credentials": {
+        "telegramApi": {
+          "id": "W6XV6RQORTB3eBDg",
+          "name": "Agent Dhruv"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "content": "\ud83d\udcdd FORM INPUT SECTION\n\nCollects candidate information and resume upload:\n\u2022 Personal details (name, email, phone)\n\u2022 Job role selection from dropdown\n\u2022 Resume file upload (PDF/DOCX)\n\u2022 Form configured with n8n attribution disabled\n\nStarts the automated screening workflow",
+        "height": 384,
+        "width": 480,
+        "color": 3
+      },
+      "id": "a4086616-401d-41da-acd3-7dcb120fb7be",
+      "name": "Form Input Section",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -576,
+        352
+      ]
+    },
+    {
+      "parameters": {
+        "content": "\ud83e\udd16 AI ANALYSIS SECTION\n\nIntelligent resume evaluation using OpenAI:\n\u2022 Analyzes skills match against job requirements\n\u2022 Evaluates experience quality and relevance\n\u2022 Assesses education and certifications\n\u2022 Identifies career gaps and red flags\n\u2022 Scores candidate 0-100\n\u2022 Returns structured JSON output\n\n\u26a0\ufe0f Requires: OpenAI API credentials",
+        "height": 712,
+        "width": 352,
+        "color": 5
+      },
+      "id": "daaaf4a1-ec8d-4da0-b927-a7d3f846e1ed",
+      "name": "AI Analysis Section",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        880,
+        208
+      ]
+    },
+    {
+      "parameters": {
+        "content": "\ud83d\udd00 CANDIDATE TRIAGE & ROUTING\n\nClassifies candidates based on AI score:\n\u2022 Strong Fit: Score \u2265 70 \u2192 Acceptance path\n\u2022 Below threshold: Score < 70 \u2192 Rejection path\n\nThresholds configurable in Workflow Configuration node\n\nRoutes to appropriate notification and email flows",
+        "height": 784,
+        "width": 256,
+        "color": 6
+      },
+      "id": "dfeae905-a1a2-46d1-b0f8-c4363d116796",
+      "name": "Candidate Triage & Routing",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        1264,
+        48
+      ]
+    },
+    {
+      "parameters": {
+        "content": "\ud83d\udcca DATA PERSISTENCE\n\nStores ALL candidate results in Google Sheets:\n\u2022 Timestamp, candidate info, job role\n\u2022 AI scores and classification\n\u2022 Strengths, gaps, skills analysis\n\u2022 Experience years and recommendation\n\u2022 Resume link for easy access\n\nProvides audit trail and analytics capability\n\n\u26a0\ufe0f Requires: Google Sheets document ID",
+        "height": 300,
+        "width": 320,
+        "color": 7
+      },
+      "id": "43ec1e6f-623f-4570-99d4-0d967a47f357",
+      "name": "Data Persistence",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        176,
+        80
+      ]
+    },
+    {
+      "parameters": {
+        "inputDataFieldName": "resume",
+        "name": "={{ \n  $('Resume Upload Form').item.json.fullName.replace(/\\s+/g, '_') \n}}_{{ \n  $('Resume Upload Form').item.json.jobRole.replace(/\\s+/g, '_') \n}}_{{ \n  $now.format('yyyy-MM-dd') \n}}.pdf",
+        "driveId": {
+          "__rl": true,
+          "mode": "list",
+          "value": "My Drive"
+        },
+        "folderId": {
+          "__rl": true,
+          "value": "1QzFt7FMw21Ma-oiKp9UruXJBoAWJBd8z",
+          "mode": "id"
+        },
+        "options": {}
+      },
+      "id": "d753d645-b3a0-4cc2-b00b-485b0bd22d20",
+      "name": "Save Resume to Google Drive1",
+      "type": "n8n-nodes-base.googleDrive",
+      "typeVersion": 3,
+      "position": [
+        128,
+        480
+      ],
+      "credentials": {
+        "googleDriveOAuth2Api": {
+          "id": "etId49ji6y1gWG3l",
+          "name": "Ai with Dhruv"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "pollTimes": {
+          "item": [
+            {
+              "mode": "everyMinute"
+            }
+          ]
+        },
+        "documentId": {
+          "__rl": true,
+          "value": "1QXT0-GD0HZ36rTwPQQFDii1qWJYBjcFm_kUC0FyX-P4",
+          "mode": "list",
+          "cachedResultName": "Aiwithdhruv_n8n",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1QXT0-GD0HZ36rTwPQQFDii1qWJYBjcFm_kUC0FyX-P4/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 1331524625,
+          "mode": "list",
+          "cachedResultName": "Resume_Data_2026",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1QXT0-GD0HZ36rTwPQQFDii1qWJYBjcFm_kUC0FyX-P4/edit#gid=1331524625"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheetsTrigger",
+      "typeVersion": 1,
+      "position": [
+        -560,
+        1360
+      ],
+      "id": "e694668a-b880-4c9e-8bae-cc5d6d47fef4",
+      "name": "Google Sheets Trigger",
+      "credentials": {
+        "googleSheetsTriggerOAuth2Api": {
+          "id": "ER35FLmb8qkMRyaj",
+          "name": "Ai with Dhruv Trigger"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "append",
+        "documentId": {
+          "__rl": true,
+          "value": "1NEEmrQhRC0cGLyYKa0qTr5e72Iub38_tZFs4l37PwTk",
+          "mode": "list",
+          "cachedResultName": "Form Submission Outbound Caller",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1NEEmrQhRC0cGLyYKa0qTr5e72Iub38_tZFs4l37PwTk/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Sheet1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1NEEmrQhRC0cGLyYKa0qTr5e72Iub38_tZFs4l37PwTk/edit#gid=0"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Date": "={{ $now.format('yyyy-MM-dd hh:mm a') }}",
+            "Name": "={{ $json.Name }}",
+            "Phone": "={{ $json['Phone Number'] }}",
+            "Email": "={{ $json.Email }}",
+            "Company": "={{ $json['Company Name'] }}",
+            "Role": "={{ $json.Role }}",
+            "Request": "={{ $json.Request }}",
+            "Company Size": "={{ $json['Company Size'] }}",
+            "Status": "Incorrect Phone #"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "Date",
+              "displayName": "Date",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Name",
+              "displayName": "Name",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Phone",
+              "displayName": "Phone",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Email",
+              "displayName": "Email",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Company",
+              "displayName": "Company",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Role",
+              "displayName": "Role",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Request",
+              "displayName": "Request",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Company Size",
+              "displayName": "Company Size",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Service Interest",
+              "displayName": "Service Interest",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Motivation",
+              "displayName": "Motivation",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Urgency",
+              "displayName": "Urgency",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Past Experience",
+              "displayName": "Past Experience",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Budget",
+              "displayName": "Budget",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Intent?",
+              "displayName": "Intent?",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Status",
+              "displayName": "Status",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        464,
+        1184
+      ],
+      "id": "713a54bc-8bf8-444a-8d05-98f9722a51ae",
+      "name": "Log Incorrect Phone",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "WbzVyGwbDVzvcV25",
+          "name": "Ai with Dhruv"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "e68a68dc-720b-423e-84f5-1b7aa9238daa",
+              "leftValue": "={{ $json[\"Phone Number\"] }}",
+              "rightValue": "incorrect format",
+              "operator": {
+                "type": "string",
+                "operation": "equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [
+        288,
+        1344
+      ],
+      "id": "1fc3e59a-da98-45dd-bc88-3b114df2abe6",
+      "name": "Incorrect Phone?"
+    },
+    {
+      "parameters": {
+        "jsCode": "// Get all input items\nconst items = $input.all();\n\n// Process each item\nreturn items.map(item => {\n  const phoneNumber = item.json['Phone Number'];\n  \n  // Convert to string and remove all non-digit characters\n  let cleanNumber = String(phoneNumber).replace(/\\D/g, '');\n  \n  // Handle different cases\n  let standardizedNumber;\n  \n  if (cleanNumber.length === 10) {\n    // Perfect - just 10 digits\n    standardizedNumber = cleanNumber;\n  } else if (cleanNumber.length === 11 && cleanNumber.startsWith('1')) {\n    // US number with country code +1\n    standardizedNumber = cleanNumber.slice(1);\n  } else {\n    // Wrong format - too many, too few, or wrong country code\n    standardizedNumber = 'incorrect format';\n  }\n  \n  // Return the item with standardized phone number\n  return {\n    json: {\n      ...item.json,\n      'Phone Number': standardizedNumber\n    }\n  };\n});"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        112,
+        1344
+      ],
+      "id": "e8b5834f-b8ff-443b-ba97-0c10dd0a796d",
+      "name": "Standardize Data"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.vapi.ai/call",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpBearerAuth",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"assistantId\": \"11917e83-c8a5-4a8f-82e6-cda98b9736c1\",\n  \"phoneNumberId\": \"23f7c809-ba0c-4bd3-a706-7509a9a853a8\",\n  \"customers\": [\n    {\n      \"number\": \"+1{{ $json['Phone Number'] }}\"\n    }\n  ],\n  \"assistantOverrides\": {\n    \"variableValues\": {\n      \"lead_name\": \"{{ $json.Name }}\",\n      \"lead_company_name\": \"{{ $json['Company Name'] }}\",\n      \"lead_request\": \"{{ $json.Requirement }}\"\n    }\n  }\n}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.3,
+      "position": [
+        480,
+        1424
+      ],
+      "id": "617476af-e20f-4d35-a6f4-6e94fbce5c1d",
+      "name": "Call Lead",
+      "credentials": {
+        "httpBearerAuth": {
+          "id": "ChR34jWF1yJXcipO",
+          "name": "Vapi"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "amount": 60
+      },
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1.1,
+      "position": [
+        640,
+        1344
+      ],
+      "id": "68c260c9-a73f-433e-80cf-ec24be639bc6",
+      "name": "Wait",
+      "webhookId": "0c05dec5-3ea2-4c18-9d2f-8e3e5d1689a8"
+    },
+    {
+      "parameters": {
+        "url": "=https://api.vapi.ai/call/{{ $json.results[0].id }}",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpBearerAuth",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.3,
+      "position": [
+        880,
+        1344
+      ],
+      "id": "594a052f-f4df-40a5-af4f-0c8e39e9284c",
+      "name": "Get Call Details",
+      "executeOnce": true,
+      "credentials": {
+        "httpBearerAuth": {
+          "id": "ChR34jWF1yJXcipO",
+          "name": "Vapi"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "73716a76-22fa-4f8c-880f-b76350b436f9",
+              "leftValue": "={{ $json.endedReason }}",
+              "rightValue": "voicemail",
+              "operator": {
+                "type": "string",
+                "operation": "equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [
+        1376,
+        1264
+      ],
+      "id": "77611c07-d685-4ca9-93d0-5323685ccf7c",
+      "name": "Voicemail?"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "30c7ebf4-6de9-49f3-9a27-b7f3a7e2b558",
+              "leftValue": "={{ $json.status }}",
+              "rightValue": "ended",
+              "operator": {
+                "type": "string",
+                "operation": "equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [
+        1200,
+        1344
+      ],
+      "id": "e59e4a6a-5d6e-4a02-9cb0-e9f4ad529121",
+      "name": "Ended?"
+    },
+    {
+      "parameters": {
+        "amount": 10
+      },
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1.1,
+      "position": [
+        1376,
+        1424
+      ],
+      "id": "458c7cbf-0bff-4584-a15b-2c23f920fe6b",
+      "name": "Polling",
+      "webhookId": "521bc4a4-0445-4842-be13-770e334bb86d"
+    },
+    {
+      "parameters": {
+        "operation": "append",
+        "documentId": {
+          "__rl": true,
+          "value": "1NEEmrQhRC0cGLyYKa0qTr5e72Iub38_tZFs4l37PwTk",
+          "mode": "list",
+          "cachedResultName": "Form Submission Outbound Caller",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1NEEmrQhRC0cGLyYKa0qTr5e72Iub38_tZFs4l37PwTk/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Sheet1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1NEEmrQhRC0cGLyYKa0qTr5e72Iub38_tZFs4l37PwTk/edit#gid=0"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Date": "={{ $now.format('yyyy-MM-dd hh:mm a') }}",
+            "Name": "={{ $('On form submission').item.json.Name }}",
+            "Phone": "={{ $('On form submission').item.json['Phone Number'] }}",
+            "Email": "={{ $('On form submission').item.json.Email }}",
+            "Company": "={{ $('On form submission').item.json['Company Name'] }}",
+            "Role": "={{ $('On form submission').item.json.Role }}",
+            "Request": "={{ $('On form submission').item.json.Request }}",
+            "Company Size": "={{ $('On form submission').item.json['Company Size'] }}",
+            "Service Interest": "N/A",
+            "Motivation": "N/A",
+            "Urgency": "N/A",
+            "Past Experience": "N/A",
+            "Budget": "N/A",
+            "Intent?": "N/A",
+            "Status": "Call Back"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "Date",
+              "displayName": "Date",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Name",
+              "displayName": "Name",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Phone",
+              "displayName": "Phone",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Email",
+              "displayName": "Email",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Company",
+              "displayName": "Company",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Role",
+              "displayName": "Role",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Request",
+              "displayName": "Request",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Company Size",
+              "displayName": "Company Size",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Service Interest",
+              "displayName": "Service Interest",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Motivation",
+              "displayName": "Motivation",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Urgency",
+              "displayName": "Urgency",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Past Experience",
+              "displayName": "Past Experience",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Budget",
+              "displayName": "Budget",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Intent?",
+              "displayName": "Intent?",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Status",
+              "displayName": "Status",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        1664,
+        1248
+      ],
+      "id": "b11ba182-8d0a-4d37-ba1e-aa98fd51b00f",
+      "name": "Log Voicemal",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "SdL7tmc5CSF99khk",
+          "name": "Dhruv7008@"
+        }
+      }
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.limit",
+      "typeVersion": 1,
+      "position": [
+        1056,
+        1344
+      ],
+      "id": "56b76ae9-9d84-435f-ad56-27e6d5e9dbd6",
+      "name": "Limit"
+    },
+    {
+      "parameters": {
+        "operation": "appendOrUpdate",
+        "documentId": {
+          "__rl": true,
+          "value": "1QXT0-GD0HZ36rTwPQQFDii1qWJYBjcFm_kUC0FyX-P4",
+          "mode": "list",
+          "cachedResultName": "Aiwithdhruv_n8n",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1QXT0-GD0HZ36rTwPQQFDii1qWJYBjcFm_kUC0FyX-P4/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 1331524625,
+          "mode": "list",
+          "cachedResultName": "Resume_Data_2026",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1QXT0-GD0HZ36rTwPQQFDii1qWJYBjcFm_kUC0FyX-P4/edit#gid=1331524625"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "AI Call Status": "Done",
+            "Ai Discussion": "={{ $('Get Call Details').item.json.transcript }} ",
+            "Recording URL": "={{ $('Get Call Details').item.json.recordingUrl }}",
+            "Phone Number": "={{ $('Google Sheets Trigger').item.json['Phone Number'] }}"
+          },
+          "matchingColumns": [
+            "Phone Number"
+          ],
+          "schema": [
+            {
+              "id": "Name",
+              "displayName": "Name",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "email",
+              "displayName": "email",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Phone Number",
+              "displayName": "Phone Number",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "overall_score",
+              "displayName": "overall_score",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "classification",
+              "displayName": "classification",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "strengths",
+              "displayName": "strengths",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "gaps",
+              "displayName": "gaps",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "skills_present",
+              "displayName": "skills_present",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "skills_missing",
+              "displayName": "skills_missing",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "experience_years",
+              "displayName": "experience_years",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "recommendation_summary",
+              "displayName": "recommendation_summary",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "AI Call Status",
+              "displayName": "AI Call Status",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Ai Discussion",
+              "displayName": "Ai Discussion",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Recording URL",
+              "displayName": "Recording URL",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        1680,
+        1424
+      ],
+      "id": "e700d8bb-46f6-4404-a593-a061626853a2",
+      "name": "Log Complete",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "WbzVyGwbDVzvcV25",
+          "name": "Ai with Dhruv"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "cdef613e-c6e9-4e30-a6f4-512c3f3173b4",
+              "leftValue": "={{ $json['AI Call Status'] }}",
+              "rightValue": "Pending",
+              "operator": {
+                "type": "string",
+                "operation": "contains"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [
+        -368,
+        1360
+      ],
+      "id": "751c8408-2a06-4742-9f44-a06d78cf59a8",
+      "name": "If"
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.limit",
+      "typeVersion": 1,
+      "position": [
+        -112,
+        1344
+      ],
+      "id": "62e2b9b3-2218-47be-a535-dcbf2f008496",
+      "name": "Limit1"
+    },
+    {
+      "parameters": {
+        "content": "# Make a Call to Candidates  --->>>",
+        "height": 80,
+        "width": 576,
+        "color": 6
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        -352,
+        1200
+      ],
+      "typeVersion": 1,
+      "id": "f4554e09-0f05-4233-bf69-eecef4706813",
+      "name": "Sticky Note"
+    },
+    {
+      "parameters": {
+        "operation": "download",
+        "fileId": {
+          "__rl": true,
+          "mode": "id",
+          "value": "={{ $json.id }}"
+        },
+        "options": {}
+      },
+      "id": "f93ab51a-9519-474b-b74e-dd87900f0445",
+      "name": "Google Drive",
+      "type": "n8n-nodes-base.googleDrive",
+      "position": [
+        288,
+        480
+      ],
+      "typeVersion": 3,
+      "credentials": {
+        "googleDriveOAuth2Api": {
+          "id": "etId49ji6y1gWG3l",
+          "name": "Ai with Dhruv"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "content": "# \ud83c\udfaf Trigger Section\n\n**Google Sheets Trigger**\nMonitors the Resume_Data_2026 sheet for any updates every minute.\n\n**What it does:**\n- Polls sheet for new/updated rows\n- Triggers workflow when changes detected\n- Passes candidate data downstream\n\n**Data includes:** Name, Phone, Email, Company, Role, Request, etc.",
+        "height": 384,
+        "width": 380,
+        "color": 5
+      },
+      "id": "44de666f-bdd2-475b-8d38-24e58ed748b4",
+      "name": "Trigger Section",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -800,
+        1216
+      ]
+    },
+    {
+      "parameters": {
+        "content": "# \ud83d\udcf1 Phone Standardization\n\n**Code Node: Standardize Data**\nCleans and validates phone numbers to US format.\n\n**Processing logic:**\n- Removes all non-digit characters\n- Handles 10-digit numbers (US format)\n- Strips country code if +1 prefix exists\n- Marks invalid formats as \"incorrect format\"\n\n**Output:** Clean 10-digit number or error flag",
+        "height": 356,
+        "width": 380,
+        "color": 6
+      },
+      "id": "31dea3fa-a8c0-4bb1-b3a4-efdaabe07c1c",
+      "name": "Phone Standardization",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -112,
+        1584
+      ]
+    },
+    {
+      "parameters": {
+        "content": "# \u26a0\ufe0f Error Handling\n\n**IF Node: Incorrect Phone?**\nRoutes workflow based on phone validation result.\n\n**Two paths:**\n\u2705 **Valid Phone** \u2192 Proceeds to make call\n\u274c **Invalid Phone** \u2192 Logs to \"Incorrect Phone\" sheet\n\n**Log Incorrect Phone Node:**\nRecords failed validations with status \"Incorrect Phone #\" for manual review",
+        "height": 260,
+        "width": 380,
+        "color": 7
+      },
+      "id": "7f34597a-b338-4736-a89f-91fb09789390",
+      "name": "Error Handling",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        1936,
+        1776
+      ]
+    },
+    {
+      "parameters": {
+        "content": "# \ud83d\ude80 API Call Section\n\n**HTTP Request: Call Lead**\nInitiates outbound call via VAPI API.\n\n**Request details:**\n- Method: POST to https://api.vapi.ai/call\n- Assistant ID: Pre-configured AI agent\n- Phone Number ID: VAPI phone line\n- Dynamic variables: lead_name, lead_company_name, lead_request\n\n**Returns:** Call ID for tracking",
+        "height": 260,
+        "width": 380,
+        "color": 2
+      },
+      "id": "4f397b6e-e04c-4d91-9e28-e3e1035cfc56",
+      "name": "API Call Section",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        512,
+        1616
+      ]
+    },
+    {
+      "parameters": {
+        "content": "# \u23f3 Wait & Poll Logic\n\n**Wait Node (60s)**\nInitial delay to allow call to connect and progress.\n\n**Get Call Details**\nFetches current call status from VAPI API using call ID.\n\n**Polling Node (10s)**\nRepeats status check every 10 seconds if call not ended.\n\n**Why needed:** Calls take time; we need to wait for completion before logging results",
+        "height": 260,
+        "width": 380
+      },
+      "id": "98adf46f-62f4-48db-9e10-71f91c148637",
+      "name": "Wait & Poll Logic",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        640,
+        1008
+      ]
+    },
+    {
+      "parameters": {
+        "content": "# \ud83d\udd0d Call Status Check\n\n**Limit Node**\nEnsures only one item processed (prevents duplicate checks).\n\n**IF Node: Ended?**\nChecks if call status = \"ended\"\n\n**Two outcomes:**\n\u2705 **Ended** \u2192 Proceed to voicemail detection\n\u23f3 **Still Active** \u2192 Loop back to Polling node\n\n**Prevents:** Logging incomplete call data",
+        "height": 260,
+        "width": 380,
+        "color": 5
+      },
+      "id": "5f77bfb9-20cb-459a-94d9-20c77f26e8ad",
+      "name": "Call Status Check",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        1024,
+        1728
+      ]
+    },
+    {
+      "parameters": {
+        "content": "# \ud83d\udce7 Voicemail Detection\n\n**IF Node: Voicemail?**\nChecks if endedReason = \"voicemail\"\n\n**Two paths:**\n\ud83d\udcde **Voicemail** \u2192 Log as \"Call Back\" status\n\u2705 **Answered** \u2192 Log complete conversation\n\n**Why important:**\n- Different follow-up actions needed\n- Voicemails require manual callback\n- Answered calls have transcript data",
+        "height": 260,
+        "width": 380,
+        "color": 4
+      },
+      "id": "92b783c9-7a3a-48e4-a82e-1caaee175e03",
+      "name": "Voicemail Detection",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -768,
+        1648
+      ]
+    },
+    {
+      "parameters": {
+        "content": "# \ud83d\udcdd Logging Results\n\n**Log Voicemail Node**\nAppends row with status \"Call Back\" and N/A for conversation fields.\n\n**Log Complete Node**\nUpdates original sheet with:\n- AI Call Status: \"Done\"\n- AI Discussion: Full transcript\n- Recording URL: Link to call recording\n\n**Matches by:** Phone Number (ensures correct row updated)",
+        "height": 260,
+        "width": 380,
+        "color": 3
+      },
+      "id": "a554cded-2c2c-4fb3-b806-fefb77dfc704",
+      "name": "Logging Results",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        1568,
+        1584
+      ]
+    },
+    {
+      "parameters": {
+        "content": "# \ud83d\udcde Outbound Call Workflow\n\nThis workflow automates calling candidates from Google Sheets. It validates phone numbers, makes AI-powered calls via VAPI, monitors call status, and logs results back to the spreadsheet.\n\n**Key Features:**\n- Phone number validation & standardization\n- AI voice agent integration\n- Voicemail detection\n- Automatic result logging",
+        "height": 344,
+        "width": 450,
+        "color": 4
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        -1264,
+        1232
+      ],
+      "typeVersion": 1,
+      "id": "2f392866-b057-49df-8077-8f92dcd57889",
+      "name": "Sticky Note1"
+    },
+    {
+      "parameters": {
+        "content": "# AI-Powered Resume Screening",
+        "height": 80,
+        "width": 640,
+        "color": 5
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        -224,
+        880
+      ],
+      "typeVersion": 1,
+      "id": "825338a3-16e6-4dc2-a274-7fb722d4a80b",
+      "name": "Sticky Note2"
+    }
+  ],
+  "connections": {
+    "Resume Upload Form": {
+      "main": [
+        [
+          {
+            "node": "Workflow Configuration",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Workflow Configuration": {
+      "main": [
+        [
+          {
+            "node": "Save Resume to Google Drive1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Extract Resume Text": {
+      "main": [
+        [
+          {
+            "node": "Prepare AI Analysis Input",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Prepare AI Analysis Input": {
+      "main": [
+        [
+          {
+            "node": "AI Resume Analyzer",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "AI Resume Analyzer": {
+      "main": [
+        [
+          {
+            "node": "Classify Candidate",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Resume Analyzer",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Structured Output Parser": {
+      "ai_outputParser": [
+        [
+          {
+            "node": "AI Resume Analyzer",
+            "type": "ai_outputParser",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Classify Candidate": {
+      "main": [
+        [
+          {
+            "node": "Notify HR on Slack",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Send Telegram Notification",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Send Rejection Email",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Notify HR on Slack": {
+      "main": [
+        [
+          {
+            "node": "Send Acceptance Email",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Send Acceptance Email": {
+      "main": [
+        [
+          {
+            "node": "Store All Results in Google Sheets",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Send Rejection Email": {
+      "main": [
+        [
+          {
+            "node": "Store All Results in Google Sheets",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Save Resume to Google Drive1": {
+      "main": [
+        [
+          {
+            "node": "Google Drive",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Sheets Trigger": {
+      "main": [
+        [
+          {
+            "node": "If",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Incorrect Phone?": {
+      "main": [
+        [
+          {
+            "node": "Log Incorrect Phone",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Call Lead",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Standardize Data": {
+      "main": [
+        [
+          {
+            "node": "Incorrect Phone?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Call Lead": {
+      "main": [
+        [
+          {
+            "node": "Wait",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Wait": {
+      "main": [
+        [
+          {
+            "node": "Get Call Details",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get Call Details": {
+      "main": [
+        [
+          {
+            "node": "Limit",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Voicemail?": {
+      "main": [
+        [
+          {
+            "node": "Log Voicemal",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Log Complete",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Ended?": {
+      "main": [
+        [
+          {
+            "node": "Voicemail?",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Polling",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Polling": {
+      "main": [
+        [
+          {
+            "node": "Get Call Details",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Limit": {
+      "main": [
+        [
+          {
+            "node": "Ended?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If": {
+      "main": [
+        [
+          {
+            "node": "Limit1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Limit1": {
+      "main": [
+        [
+          {
+            "node": "Standardize Data",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Store All Results in Google Sheets": {
+      "main": [
+        []
+      ]
+    },
+    "Google Drive": {
+      "main": [
+        [
+          {
+            "node": "Extract Resume Text",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1",
+    "availableInMCP": false
+  },
+  "staticData": {
+    "node:Google Sheets Trigger": {
+      "documentId": "1QXT0-GD0HZ36rTwPQQFDii1qWJYBjcFm_kUC0FyX-P4",
+      "sheetId": 1331524625,
+      "lastRevision": 365,
+      "lastRevisionLink": "https://docs.google.com/spreadsheets/export?id=1QXT0-GD0HZ36rTwPQQFDii1qWJYBjcFm_kUC0FyX-P4&revision=365&exportFormat=xlsx"
+    }
+  },
+  "meta": {
+    "templateCredsSetupCompleted": true
+  },
+  "pinData": {},
+  "versionId": "55a79840-017c-41e6-ab00-e94cb9e343d4",
+  "activeVersionId": null,
+  "triggerCount": 2,
+  "shared": [
+    {
+      "updatedAt": "2026-01-22T16:31:19.534Z",
+      "createdAt": "2026-01-22T16:31:19.534Z",
+      "role": "workflow:owner",
+      "workflowId": "wdxvJi7184nqNwhj",
+      "projectId": "DT8YjHwLZsQjJqVc"
+    }
+  ],
+  "activeVersion": null,
+  "tags": []
+}

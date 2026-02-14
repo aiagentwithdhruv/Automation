@@ -1,0 +1,107 @@
+{
+  "updatedAt": "2025-12-12T16:46:14.000Z",
+  "createdAt": "2025-12-12T16:46:14.558Z",
+  "id": "c8kwH28UtAFf26pc",
+  "name": "Webhook -> OpenAI -> Respond (Motivational) - Fixed v2",
+  "active": false,
+  "isArchived": false,
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "motivational",
+        "responseMode": "lastNode",
+        "responseData": "={{ $json }}",
+        "options": {}
+      },
+      "name": "Webhook",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 1,
+      "position": [
+        256,
+        272
+      ],
+      "id": "2fad6df2-f1ca-4655-82e4-b83f28917e43",
+      "webhookId": "3bdcde48-cfd0-4413-b722-36c6f1795315"
+    },
+    {
+      "parameters": {
+        "operation": "chat",
+        "requestOptions": {}
+      },
+      "name": "OpenAI",
+      "type": "n8n-nodes-base.openAi",
+      "typeVersion": 1,
+      "position": [
+        560,
+        272
+      ],
+      "id": "0de7b10b-2692-4f84-9375-8ba54f7fade2",
+      "credentials": {
+        "openAiApi": {
+          "id": "8IidOdkLmo0Xt32q",
+          "name": "OpenAi account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "name": "Respond to Webhook",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1,
+      "position": [
+        864,
+        272
+      ],
+      "id": "2c2cb45c-7090-4d54-8ad3-5c77d0b60e83"
+    }
+  ],
+  "connections": {
+    "Webhook": {
+      "main": [
+        [
+          {
+            "node": "OpenAI",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI": {
+      "main": [
+        [
+          {
+            "node": "Respond to Webhook",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "staticData": null,
+  "meta": {
+    "templateCredsSetupCompleted": true
+  },
+  "pinData": {},
+  "versionId": "bec21e9a-a72e-4884-ba9c-534bf5b875e6",
+  "activeVersionId": null,
+  "triggerCount": 0,
+  "shared": [
+    {
+      "updatedAt": "2025-12-12T16:46:14.564Z",
+      "createdAt": "2025-12-12T16:46:14.564Z",
+      "role": "workflow:owner",
+      "workflowId": "c8kwH28UtAFf26pc",
+      "projectId": "DT8YjHwLZsQjJqVc"
+    }
+  ],
+  "activeVersion": null,
+  "tags": []
+}
