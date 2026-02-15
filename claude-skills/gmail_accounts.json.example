@@ -1,0 +1,10 @@
+{
+  "primary": {
+    "email": "you@example.com",
+    "token_file": "token_primary.json"
+  },
+  "secondary": {
+    "email": "you@yourdomain.com",
+    "token_file": "token_secondary.json"
+  }
+}

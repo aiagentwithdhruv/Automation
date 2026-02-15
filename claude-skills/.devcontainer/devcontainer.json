@@ -1,0 +1,34 @@
+{
+  "name": "DOE Workspace",
+  "image": "mcr.microsoft.com/devcontainers/python:3.11",
+  "features": {
+    "ghcr.io/devcontainers/features/node:1": {
+      "version": "lts"
+    }
+  },
+  "customizations": {
+    "vscode": {
+      "extensions": [
+        "anthropics.claude-code",
+        "ms-python.python",
+        "ms-python.vscode-pylance",
+        "ms-python.debugpy"
+      ],
+      "settings": {
+        "python.defaultInterpreterPath": "/usr/local/bin/python",
+        "python.terminal.activateEnvironment": true
+      }
+    }
+  },
+  "postCreateCommand": "pip install -r requirements.txt && playwright install chromium",
+  "remoteEnv": {
+    "PYTHONPATH": "${containerWorkspaceFolder}"
+  },
+  "forwardPorts": [],
+  "portsAttributes": {
+    "8000": {
+      "label": "Application",
+      "onAutoForward": "notify"
+    }
+  }
+}

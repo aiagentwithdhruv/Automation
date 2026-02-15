@@ -1,0 +1,10 @@
+{
+  "hourly_scraper": {
+    "sheet_id": "YOUR_SHEET_ID_HERE",
+    "sheet_url": "https://docs.google.com/spreadsheets/d/YOUR_SHEET_ID_HERE",
+    "search_query": "marketing agencies",
+    "location": "United States",
+    "max_results_per_run": 25,
+    "description": "Hourly scrape of Google Maps for marketing agencies"
+  }
+}

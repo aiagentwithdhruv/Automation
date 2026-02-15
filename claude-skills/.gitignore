@@ -1,0 +1,47 @@
+# Dependencies
+node_modules/
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.Python
+venv/
+env/
+
+# Environment variables
+.env
+.env.local
+.env.*.local
+
+# Credentials and tokens
+credentials.json
+token.json
+gmail_accounts.json
+*_token.json
+*.pem
+*.key
+
+# Build outputs
+dist/
+build/
+out/
+.tmp/
+*.log
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Git
+.git/
+
+# Large binaries
+*.dylib
+*.so
+*.dll
