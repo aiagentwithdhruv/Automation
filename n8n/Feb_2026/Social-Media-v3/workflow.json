@@ -1,0 +1,2200 @@
+{
+  "updatedAt": "2026-02-21T21:56:11.725Z",
+  "createdAt": "2026-02-14T07:02:32.737Z",
+  "id": "HrHmBqxevYgegY37",
+  "name": "AIwithDhruv - Social Media v3",
+  "description": null,
+  "active": true,
+  "isArchived": false,
+  "nodes": [
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "triggerAtHour": 10
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.2,
+      "position": [
+        -400,
+        -160
+      ],
+      "id": "t-9am",
+      "name": "10 AM Trigger"
+    },
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "triggerAtHour": 22
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.2,
+      "position": [
+        -400,
+        48
+      ],
+      "id": "t-10pm",
+      "name": "10 PM Trigger"
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [
+        -416,
+        272
+      ],
+      "id": "t-manual",
+      "name": "Manual Trigger"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "ts",
+              "name": "time_slot",
+              "value": "={{ (() => { const h = new Date().getHours(); return h < 12 ? 'Morning' : h < 17 ? 'Afternoon' : 'Evening'; })() }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        -176,
+        0
+      ],
+      "id": "set-ts",
+      "name": "Set Time Slot"
+    },
+    {
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "value": "1YZk12lNR7ZpjtJ6pOB2ugIgVIyF15-oAGPhuzCg2KE4",
+          "mode": "id"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "Social Media v3",
+          "mode": "name"
+        },
+        "filtersUI": {
+          "values": [
+            {
+              "lookupColumn": "Status",
+              "lookupValue": "To Do"
+            },
+            {
+              "lookupColumn": "Time_Slot",
+              "lookupValue": "={{ $json.time_slot }}"
+            }
+          ]
+        },
+        "options": {
+          "returnFirstMatch": true
+        }
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.5,
+      "position": [
+        48,
+        0
+      ],
+      "id": "get-topic",
+      "name": "Get Topic",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "WbzVyGwbDVzvcV25",
+          "name": "Ai with Dhruv"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "conditions": [
+            {
+              "id": "c1",
+              "leftValue": "={{ $json.Topic }}",
+              "rightValue": "",
+              "operator": {
+                "type": "string",
+                "operation": "notEmpty"
+              }
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        272,
+        0
+      ],
+      "id": "has-topic",
+      "name": "Has Topic?"
+    },
+    {
+      "parameters": {
+        "chatId": "637313836",
+        "text": "=No {{ $('Set Time Slot').item.json.time_slot }} topics left for today.",
+        "additionalFields": {}
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        480,
+        160
+      ],
+      "id": "no-topics",
+      "name": "No Topics",
+      "webhookId": "cce7850b-fc77-4007-88bd-9a12b0cb7e66",
+      "credentials": {
+        "telegramApi": {
+          "id": "W6XV6RQORTB3eBDg",
+          "name": "Agent Dhruv"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "documentId": {
+          "__rl": true,
+          "value": "1YZk12lNR7ZpjtJ6pOB2ugIgVIyF15-oAGPhuzCg2KE4",
+          "mode": "id"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "Social Media v3",
+          "mode": "name"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Status": "Generating",
+            "Topic": "={{ $json.Topic }}",
+            "row_number": 0
+          },
+          "matchingColumns": [
+            "Topic"
+          ],
+          "schema": [
+            {
+              "id": "Date",
+              "displayName": "Date",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Time_Slot",
+              "displayName": "Time_Slot",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Topic",
+              "displayName": "Topic",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Image_Style",
+              "displayName": "Image_Style",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Status",
+              "displayName": "Status",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "LinkedIn_Post",
+              "displayName": "LinkedIn_Post",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Twitter_Post",
+              "displayName": "Twitter_Post",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Image_A_Link",
+              "displayName": "Image_A_Link",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "LinkedIn_URL",
+              "displayName": "LinkedIn_URL",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Twitter_URL",
+              "displayName": "Twitter_URL",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Posted_At",
+              "displayName": "Posted_At",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "row_number",
+              "displayName": "row_number",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "number",
+              "canBeUsedToMatch": true,
+              "readOnly": true,
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.5,
+      "position": [
+        480,
+        -16
+      ],
+      "id": "update-gen",
+      "name": "Update Generating",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "WbzVyGwbDVzvcV25",
+          "name": "Ai with Dhruv"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=Topic: {{ $('Get Topic').item.json.Topic }}\nImage_Style: {{ $('Get Topic').item.json.Image_Style }}\nTime_Slot: {{ $('Get Topic').item.json.Time_Slot }}\n\nResearch this topic, then generate content. Return ONLY the JSON.",
+        "options": {
+          "systemMessage": "# AIwithDhruv Social Media Content Generator\n\nYou are an expert social media content creator for the AIwithDhruv brand (Dhruv Tomar).\n\n## Brand Voice:\n- Builder mindset, not theorist\n- Practical, no-BS, slightly witty\n- First-person experience (\"I built...\", \"Here's what happened...\")\n- Reference real tools: Claude, Cursor, n8n, Perplexity, GPT-5\n- When relevant, mention quotahit.com as example built by Dhruv\n\n## PROMOTIONAL CONTEXT (weave naturally into AI/Automation posts only):\n\n### QuotaHit (quotahit.com):\nAI-powered Sales Coach built by Dhruv. Free to try. Real-time AI voice practice for sales teams. Mention when talking about building AI products, shipping fast, or AI in sales.\n\n### Euron Bootcamp \u2014 \"Future-Proof AI Automation Bootcamp\":\nLink: https://euron.one/course/future-proof-ai-automation-bootcamp\nStarting 8th March 2026. 3-4 months, Sat & Sun 8-10 PM IST, live interactive classes. Mentor: Dhruv Tomar.\n\nKEY SELLING POINTS (use these naturally in posts):\n- 19 modules, 110+ subtopics, 18+ production projects\n- Build your own AI Personal Assistant from scratch (capstone)\n- Not theory \u2014 you BUILD real systems: AI voice agents, RAG chatbots, CRM automation, multi-channel communication, deployment on VPS\n- Covers: n8n/Make/Zapier automation, AI agents (Vapi, LangChain), RAG systems, Docker deployment, client acquisition\n- Module highlights to reference in posts:\n  * \"Automation Thinking\" \u2014 audit any business, find 5L+ automation opportunities\n  * \"AI-First Development\" \u2014 you design, AI builds. Prompt engineering for architects\n  * \"10 Universal Automation Patterns\" that cover 90% of business use cases\n  * \"AI Voice Agents\" \u2014 build inbound receptionists + outbound callers (exactly what we built with Vapi)\n  * \"RAG Systems\" \u2014 make AI know YOUR business, deploy on website + WhatsApp\n  * \"Full-Stack AI Personal Assistant\" \u2014 the capstone that becomes your demo for clients\n  * \"Getting Clients & Closing Deals\" \u2014 cold outreach, pricing, discovery calls\n- Students deploy on real VPS with Docker + custom domains\n- Career paths: AI Automation Engineer, Consultant, Freelancer, Agency owner\n- Perfect for: developers wanting AI skills, entrepreneurs automating businesses, freelancers adding AI services\n\nPROMOTION RULES:\n- ~40-50% of morning AI posts should naturally mention the bootcamp OR QuotaHit\n- Vary which one you promote \u2014 alternate between them\n- Keep it organic \u2014 weave into the story as a real example:\n  * \"This is exactly what we teach in Module 10 of the bootcamp...\"\n  * \"I built this for a client \u2014 and we're covering this pattern in the bootcamp starting March 8...\"\n  * \"Want to build systems like this? That's literally what the Future-Proof AI Automation Bootcamp covers...\"\n- NEVER promote in evening/stoic/mindset posts (Image_Style = \"dark\")\n- Link format: always include the full URL when mentioning the bootcamp\n\n## PROCESS:\n1. Use Perplexity tool FIRST to research the topic with latest 2026 data\n2. Generate ALL outputs based on research\n\n## OUTPUT FORMAT:\nReturn ONLY a valid JSON object:\n\n{\n  \"linkedin_post\": \"Full LinkedIn post (150-250 words)\",\n  \"twitter_post\": \"Native tweet (max 250 chars, NOT truncated LinkedIn)\",\n  \"image_prompt\": \"Image prompt following the style rules below\"\n}\n\n## LINKEDIN POST:\n- Hook (scroll-stopping) \u2192 Problem \u2192 Solution \u2192 Proof \u2192 CTA\n- 150-250 words, 3-5 hashtags including #AIwithDhruv\n- Short paragraphs, max 2-3 emojis\n- NO markdown (no *, _, ~, `)\n- Plain text only\n\n## TWITTER POST:\n- Standalone tweet, NOT cut from LinkedIn\n- Hook + insight + CTA, max 250 chars\n- 2-3 hashtags including #AIwithDhruv\n\n## IMAGE PROMPT \u2014 Based on Image_Style:\n\n### If Image_Style = \"light\" (AI/Automation posts \u2014 Morning):\nLandscape 1200x628. Premium cyberpunk minimal aesthetic, ultra-detailed 4K.\nBackground: Deep Space Black #0a0a0f (almost black with blue undertone).\nSecondary surfaces: Charcoal #141418. Panels/surfaces: Gunmetal #1e1e24.\nBorders/lines: Steel Dark #2a2a32, Steel Mid #3a3a44. Highlights: Steel Light #4a4a56.\nPrimary accent glow: Cyan Neon #00c8e8 (selective edges/corners ONLY, not everywhere).\nText: metallic chrome/silver gradient finish (NOT fully blue text).\nGlow rules: strong rgba(0,200,232,0.40) edges, medium rgba(0,200,232,0.25) borders, subtle rgba(0,200,232,0.12) ambient.\nUse glass/metal panels with chrome borders, corner glow, subtle reflections.\nAdd faint HUD lines / tech grid patterns in background.\nClean minimal layout, lots of negative space, readable on mobile.\nStyle: minimal infographic / premium UI card / futuristic panel.\n\"AIwithDhruv\" in small metallic gunmetal text with subtle silver glow, bottom-right.\nNO cartoon, NO anime, NO faces, NO photos. Must look ultra premium and 4K clean.\nNegative prompt: cartoon, anime, low quality, blurry, watermark, logo, messy layout, too much text, oversaturated glow, random arrows, floating elements outside panel.\n\n### If Image_Style = \"dark\" (Mindset/Stoic/Health posts \u2014 Evening):\nSquare 1080x1080, pure black (#0A0A0A) background.\n4 minimalist white thin line-art icons centered in a row, related to the topic.\nBold white sans-serif headline text below the icons.\n\"AIwithDhruv\" in small grey (#6B7280) bottom-right.\nPremium minimalist style. Clean, dark, simple.\nNO faces, NO photos, NO clutter. Icons + typography only.\nNegative prompt: cartoon, anime, colorful, busy, messy, low quality, blurry."
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 1.7,
+      "position": [
+        704,
+        0
+      ],
+      "id": "ai-gen",
+      "name": "AI Content Generator"
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "value": "gpt-5.1",
+          "mode": "list",
+          "cachedResultName": "gpt-5.1"
+        },
+        "options": {
+          "temperature": 0.7
+        }
+      },
+      "id": "gpt5-model",
+      "name": "GPT-5",
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.2,
+      "position": [
+        688,
+        208
+      ],
+      "credentials": {
+        "openAiApi": {
+          "id": "8IidOdkLmo0Xt32q",
+          "name": "OpenAi account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "messages": {
+          "message": [
+            {
+              "content": "={{ $fromAI('query', 'The search query or topic to research') }}"
+            }
+          ]
+        },
+        "options": {
+          "maxTokens": 2048,
+          "temperature": 0.3
+        },
+        "requestOptions": {}
+      },
+      "id": "perp-tool",
+      "name": "Perplexity Research",
+      "type": "n8n-nodes-base.perplexityTool",
+      "typeVersion": 1,
+      "position": [
+        864,
+        208
+      ],
+      "credentials": {
+        "perplexityApi": {
+          "id": "mACe6bHyuo7Z3exN",
+          "name": "Perplexity 2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "topic",
+              "name": "topic",
+              "value": "={{ $('Get Topic').item.json.Topic }}",
+              "type": "string"
+            },
+            {
+              "id": "image_style",
+              "name": "image_style",
+              "value": "={{ $('Get Topic').item.json.Image_Style || 'light' }}",
+              "type": "string"
+            },
+            {
+              "id": "linkedin_post",
+              "name": "linkedin_post",
+              "value": "={{ (() => { try { const o = $json.output || $json.text || ''; const s = o.indexOf('{'); const e = o.lastIndexOf('}'); if(s>=0&&e>s) return JSON.parse(o.substring(s,e+1)).linkedin_post||''; return o.substring(0,3000); } catch(e) { return ($json.output||'').substring(0,3000); } })() }}",
+              "type": "string"
+            },
+            {
+              "id": "twitter_post",
+              "name": "twitter_post",
+              "value": "={{ (() => { try { const o = $json.output || $json.text || ''; const s = o.indexOf('{'); const e = o.lastIndexOf('}'); if(s>=0&&e>s) return JSON.parse(o.substring(s,e+1)).twitter_post||''; return o.substring(0,250); } catch(e) { return ($json.output||'').substring(0,250); } })() }}",
+              "type": "string"
+            },
+            {
+              "id": "image_prompt",
+              "name": "image_prompt",
+              "value": "={{ (() => { try { const o = $json.output || $json.text || ''; const s = o.indexOf('{'); const e = o.lastIndexOf('}'); if(s>=0&&e>s) return JSON.parse(o.substring(s,e+1)).image_prompt||''; return 'Professional infographic about ' + $('Get Topic').item.json.Topic; } catch(e) { return 'Professional infographic about ' + $('Get Topic').item.json.Topic; } })() }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        976,
+        0
+      ],
+      "id": "parse",
+      "name": "Parse Content"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://queue.fal.run/fal-ai/nano-banana-pro",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"prompt\": {{ JSON.stringify($json.image_prompt) }},\n  \"image_size\": {{ $json.image_style === \"dark\" ? \"\\\"square\\\"\" : \"\\\"landscape_16_9\\\"\" }},\n  \"num_images\": 1\n}",
+        "options": {
+          "timeout": 60000
+        }
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        1152,
+        0
+      ],
+      "id": "fal-gen",
+      "name": "Generate Image",
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "HikPoUdE4JY63L36",
+          "name": "fal.ai"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "amount": 60
+      },
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1.1,
+      "position": [
+        1360,
+        0
+      ],
+      "id": "wait-img",
+      "name": "Wait for Image",
+      "webhookId": "04122e22-a743-49a0-a6a9-a3e0317f35c2"
+    },
+    {
+      "parameters": {
+        "url": "={{ $('Generate Image').item.json.response_url }}",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        1584,
+        0
+      ],
+      "id": "fal-get",
+      "name": "Get Image Result",
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "HikPoUdE4JY63L36",
+          "name": "fal.ai"
+        }
+      },
+      "onError": "continueErrorOutput"
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "documentId": {
+          "__rl": true,
+          "value": "1YZk12lNR7ZpjtJ6pOB2ugIgVIyF15-oAGPhuzCg2KE4",
+          "mode": "id"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "Social Media v3",
+          "mode": "name"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Status": "Posting",
+            "LinkedIn_Post": "={{ $('Parse Content').item.json.linkedin_post }}",
+            "Twitter_Post": "={{ $('Parse Content').item.json.twitter_post }}",
+            "Image_A_Link": "={{ $json.images ? $json.images[0].url : 'Failed' }}",
+            "Topic": "={{ $('Get Topic').item.json.Topic }}"
+          },
+          "matchingColumns": [
+            "Topic"
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.5,
+      "position": [
+        1808,
+        0
+      ],
+      "id": "save-sheet",
+      "name": "Save to Sheet",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "WbzVyGwbDVzvcV25",
+          "name": "Ai with Dhruv"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "url": "={{ $('Get Image Result').first().json.images[0].url }}",
+        "options": {
+          "response": {
+            "response": {
+              "responseFormat": "file"
+            }
+          }
+        }
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        1904,
+        304
+      ],
+      "id": "dl-post-img",
+      "name": "Download Post Image"
+    },
+    {
+      "parameters": {
+        "person": "0acXkbkIhL",
+        "text": "={{ $('Parse Content').item.json.linkedin_post }}",
+        "shareMediaCategory": "IMAGE",
+        "additionalFields": {}
+      },
+      "type": "n8n-nodes-base.linkedIn",
+      "typeVersion": 1,
+      "position": [
+        2144,
+        304
+      ],
+      "id": "li-image",
+      "name": "Post LinkedIn + Image",
+      "credentials": {
+        "linkedInOAuth2Api": {
+          "id": "f520by1wOAMg6btX",
+          "name": "Dhruv"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "text": "={{ $('Parse Content').item.json.twitter_post }}",
+        "additionalFields": {}
+      },
+      "type": "n8n-nodes-base.twitter",
+      "typeVersion": 2,
+      "position": [
+        2384,
+        304
+      ],
+      "id": "tw-post",
+      "name": "Post Twitter",
+      "credentials": {
+        "twitterOAuth2Api": {
+          "id": "o0feRFKgKQPKR3ZX",
+          "name": "agiwithdhruv"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "documentId": {
+          "__rl": true,
+          "value": "1YZk12lNR7ZpjtJ6pOB2ugIgVIyF15-oAGPhuzCg2KE4",
+          "mode": "id"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 1385163992,
+          "mode": "list",
+          "cachedResultName": "Social Media v3",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1YZk12lNR7ZpjtJ6pOB2ugIgVIyF15-oAGPhuzCg2KE4/edit#gid=1385163992"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Status": "Posted",
+            "Posted_At": "={{ new Date().toISOString() }}",
+            "Topic": "={{ $('Get Topic').item.json.Topic }}",
+            "row_number": 0
+          },
+          "matchingColumns": [
+            "Topic"
+          ],
+          "schema": [
+            {
+              "id": "Date",
+              "displayName": "Date",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Time_Slot",
+              "displayName": "Time_Slot",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Topic",
+              "displayName": "Topic",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Image_Style",
+              "displayName": "Image_Style",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Status",
+              "displayName": "Status",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "LinkedIn_Post",
+              "displayName": "LinkedIn_Post",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Twitter_Post",
+              "displayName": "Twitter_Post",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Image_A_Link",
+              "displayName": "Image_A_Link",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "LinkedIn_URL",
+              "displayName": "LinkedIn_URL",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Twitter_URL",
+              "displayName": "Twitter_URL",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Posted_At",
+              "displayName": "Posted_At",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "row_number",
+              "displayName": "row_number",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "number",
+              "canBeUsedToMatch": true,
+              "readOnly": true,
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.5,
+      "position": [
+        2624,
+        304
+      ],
+      "id": "mark-posted",
+      "name": "Mark Posted",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "WbzVyGwbDVzvcV25",
+          "name": "Ai with Dhruv"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "chatId": "637313836",
+        "text": "=\u2705 Posted: {{ $('Get Topic').item.json.Topic }}",
+        "additionalFields": {}
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        2864,
+        304
+      ],
+      "id": "notify-done",
+      "name": "Notify Done",
+      "webhookId": "8116cb01-098f-4695-902f-108902a5ddcf",
+      "credentials": {
+        "telegramApi": {
+          "id": "W6XV6RQORTB3eBDg",
+          "name": "Agent Dhruv"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "content": "## AIwithDhruv - Social Media v3 (Auto-Post)\n\n**Schedule:** 10 AM (AI/Automation) + 10 PM (Stoic/Mindset) IST\n**Flow:** Topic \u2192 AI Content \u2192 Image \u2192 LinkedIn + Twitter \u2192 Done\n**No approval needed** \u2014 posts directly\n**Promotes:** QuotaHit + Euron Bootcamp (in AI posts only)",
+        "height": 392,
+        "width": 320,
+        "color": 5
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -784,
+        -480
+      ],
+      "id": "note",
+      "name": "Sticky Note"
+    }
+  ],
+  "connections": {
+    "10 AM Trigger": {
+      "main": [
+        [
+          {
+            "node": "Set Time Slot",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "10 PM Trigger": {
+      "main": [
+        [
+          {
+            "node": "Set Time Slot",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Manual Trigger": {
+      "main": [
+        [
+          {
+            "node": "Set Time Slot",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Set Time Slot": {
+      "main": [
+        [
+          {
+            "node": "Get Topic",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get Topic": {
+      "main": [
+        [
+          {
+            "node": "Has Topic?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Has Topic?": {
+      "main": [
+        [
+          {
+            "node": "Update Generating",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "No Topics",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Update Generating": {
+      "main": [
+        [
+          {
+            "node": "AI Content Generator",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "AI Content Generator": {
+      "main": [
+        [
+          {
+            "node": "Parse Content",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Parse Content": {
+      "main": [
+        [
+          {
+            "node": "Generate Image",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Generate Image": {
+      "main": [
+        [
+          {
+            "node": "Wait for Image",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Wait for Image": {
+      "main": [
+        [
+          {
+            "node": "Get Image Result",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get Image Result": {
+      "main": [
+        [
+          {
+            "node": "Save to Sheet",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Wait for Image",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Save to Sheet": {
+      "main": [
+        [
+          {
+            "node": "Download Post Image",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Download Post Image": {
+      "main": [
+        [
+          {
+            "node": "Post LinkedIn + Image",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Post LinkedIn + Image": {
+      "main": [
+        [
+          {
+            "node": "Post Twitter",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Post Twitter": {
+      "main": [
+        [
+          {
+            "node": "Mark Posted",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Mark Posted": {
+      "main": [
+        [
+          {
+            "node": "Notify Done",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "GPT-5": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Content Generator",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1",
+    "saveManualExecutions": true,
+    "callerPolicy": "workflowsFromSameOwner",
+    "availableInMCP": false,
+    "timeSavedMode": "fixed",
+    "timezone": "Asia/Kolkata",
+    "binaryMode": "separate"
+  },
+  "staticData": {
+    "node:9 AM Trigger": {
+      "recurrenceRules": []
+    },
+    "node:2 PM Trigger": {
+      "recurrenceRules": []
+    },
+    "node:10 PM Trigger": {
+      "recurrenceRules": []
+    },
+    "node:10 AM Trigger": {
+      "recurrenceRules": []
+    }
+  },
+  "meta": null,
+  "pinData": {},
+  "versionId": "45c22be3-d64f-4d73-83c9-75f99b4e8a22",
+  "activeVersionId": "45c22be3-d64f-4d73-83c9-75f99b4e8a22",
+  "versionCounter": 200,
+  "triggerCount": 2,
+  "shared": [
+    {
+      "updatedAt": "2026-02-14T07:02:32.747Z",
+      "createdAt": "2026-02-14T07:02:32.747Z",
+      "role": "workflow:owner",
+      "workflowId": "HrHmBqxevYgegY37",
+      "projectId": "DT8YjHwLZsQjJqVc",
+      "project": {
+        "updatedAt": "2025-09-30T14:49:00.207Z",
+        "createdAt": "2025-09-30T14:45:13.837Z",
+        "id": "DT8YjHwLZsQjJqVc",
+        "name": "Dhruv Tomar <dhruv70081@gmail.com>",
+        "type": "personal",
+        "icon": null,
+        "description": null,
+        "creatorId": "eeb2630f-4760-4254-9eb8-71cf49a24999",
+        "projectRelations": [
+          {
+            "updatedAt": "2025-09-30T14:45:13.837Z",
+            "createdAt": "2025-09-30T14:45:13.837Z",
+            "userId": "eeb2630f-4760-4254-9eb8-71cf49a24999",
+            "projectId": "DT8YjHwLZsQjJqVc",
+            "user": {
+              "updatedAt": "2026-02-20T21:05:29.000Z",
+              "createdAt": "2025-09-30T14:45:13.204Z",
+              "id": "eeb2630f-4760-4254-9eb8-71cf49a24999",
+              "email": "dhruv70081@gmail.com",
+              "firstName": "Dhruv",
+              "lastName": "Tomar",
+              "personalizationAnswers": {
+                "version": "v4",
+                "personalization_survey_submitted_at": "2025-09-30T14:49:20.090Z",
+                "personalization_survey_n8n_version": "1.113.3",
+                "companySize": "<20",
+                "companyType": "education",
+                "automationGoalSm": [
+                  "lead-generation"
+                ],
+                "role": "sales-and-marketing",
+                "reportedSource": "google"
+              },
+              "settings": {
+                "userActivated": true,
+                "easyAIWorkflowOnboarded": true,
+                "firstSuccessfulWorkflowId": "qbWjLjqmTXha48b0",
+                "userActivatedAt": 1759559314268,
+                "npsSurvey": {
+                  "responded": true,
+                  "lastShownAt": 1762350067664
+                },
+                "dismissedCallouts": {
+                  "aiAgentStarterCallout": true,
+                  "ragStarterCallout": true
+                }
+              },
+              "disabled": false,
+              "mfaEnabled": false,
+              "lastActiveAt": "2026-02-20",
+              "isPending": false
+            }
+          }
+        ]
+      }
+    }
+  ],
+  "tags": [],
+  "activeVersion": {
+    "updatedAt": "2026-02-21T21:56:11.727Z",
+    "createdAt": "2026-02-21T21:56:11.727Z",
+    "versionId": "45c22be3-d64f-4d73-83c9-75f99b4e8a22",
+    "workflowId": "HrHmBqxevYgegY37",
+    "nodes": [
+      {
+        "parameters": {
+          "rule": {
+            "interval": [
+              {
+                "triggerAtHour": 10
+              }
+            ]
+          }
+        },
+        "type": "n8n-nodes-base.scheduleTrigger",
+        "typeVersion": 1.2,
+        "position": [
+          -400,
+          -160
+        ],
+        "id": "t-9am",
+        "name": "10 AM Trigger"
+      },
+      {
+        "parameters": {
+          "rule": {
+            "interval": [
+              {
+                "triggerAtHour": 22
+              }
+            ]
+          }
+        },
+        "type": "n8n-nodes-base.scheduleTrigger",
+        "typeVersion": 1.2,
+        "position": [
+          -400,
+          48
+        ],
+        "id": "t-10pm",
+        "name": "10 PM Trigger"
+      },
+      {
+        "parameters": {},
+        "type": "n8n-nodes-base.manualTrigger",
+        "typeVersion": 1,
+        "position": [
+          -416,
+          272
+        ],
+        "id": "t-manual",
+        "name": "Manual Trigger"
+      },
+      {
+        "parameters": {
+          "assignments": {
+            "assignments": [
+              {
+                "id": "ts",
+                "name": "time_slot",
+                "value": "={{ (() => { const h = new Date().getHours(); return h < 12 ? 'Morning' : h < 17 ? 'Afternoon' : 'Evening'; })() }}",
+                "type": "string"
+              }
+            ]
+          },
+          "options": {}
+        },
+        "type": "n8n-nodes-base.set",
+        "typeVersion": 3.4,
+        "position": [
+          -176,
+          0
+        ],
+        "id": "set-ts",
+        "name": "Set Time Slot"
+      },
+      {
+        "parameters": {
+          "documentId": {
+            "__rl": true,
+            "value": "1YZk12lNR7ZpjtJ6pOB2ugIgVIyF15-oAGPhuzCg2KE4",
+            "mode": "id"
+          },
+          "sheetName": {
+            "__rl": true,
+            "value": "Social Media v3",
+            "mode": "name"
+          },
+          "filtersUI": {
+            "values": [
+              {
+                "lookupColumn": "Status",
+                "lookupValue": "To Do"
+              },
+              {
+                "lookupColumn": "Time_Slot",
+                "lookupValue": "={{ $json.time_slot }}"
+              }
+            ]
+          },
+          "options": {
+            "returnFirstMatch": true
+          }
+        },
+        "type": "n8n-nodes-base.googleSheets",
+        "typeVersion": 4.5,
+        "position": [
+          48,
+          0
+        ],
+        "id": "get-topic",
+        "name": "Get Topic",
+        "credentials": {
+          "googleSheetsOAuth2Api": {
+            "id": "WbzVyGwbDVzvcV25",
+            "name": "Ai with Dhruv"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "conditions": {
+            "conditions": [
+              {
+                "id": "c1",
+                "leftValue": "={{ $json.Topic }}",
+                "rightValue": "",
+                "operator": {
+                  "type": "string",
+                  "operation": "notEmpty"
+                }
+              }
+            ]
+          },
+          "options": {}
+        },
+        "type": "n8n-nodes-base.if",
+        "typeVersion": 2.2,
+        "position": [
+          272,
+          0
+        ],
+        "id": "has-topic",
+        "name": "Has Topic?"
+      },
+      {
+        "parameters": {
+          "chatId": "637313836",
+          "text": "=No {{ $('Set Time Slot').item.json.time_slot }} topics left for today.",
+          "additionalFields": {}
+        },
+        "type": "n8n-nodes-base.telegram",
+        "typeVersion": 1.2,
+        "position": [
+          480,
+          160
+        ],
+        "id": "no-topics",
+        "name": "No Topics",
+        "webhookId": "cce7850b-fc77-4007-88bd-9a12b0cb7e66",
+        "credentials": {
+          "telegramApi": {
+            "id": "W6XV6RQORTB3eBDg",
+            "name": "Agent Dhruv"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "operation": "update",
+          "documentId": {
+            "__rl": true,
+            "value": "1YZk12lNR7ZpjtJ6pOB2ugIgVIyF15-oAGPhuzCg2KE4",
+            "mode": "id"
+          },
+          "sheetName": {
+            "__rl": true,
+            "value": "Social Media v3",
+            "mode": "name"
+          },
+          "columns": {
+            "mappingMode": "defineBelow",
+            "value": {
+              "Status": "Generating",
+              "Topic": "={{ $json.Topic }}",
+              "row_number": 0
+            },
+            "matchingColumns": [
+              "Topic"
+            ],
+            "schema": [
+              {
+                "id": "Date",
+                "displayName": "Date",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true,
+                "removed": false
+              },
+              {
+                "id": "Time_Slot",
+                "displayName": "Time_Slot",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true,
+                "removed": false
+              },
+              {
+                "id": "Topic",
+                "displayName": "Topic",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true
+              },
+              {
+                "id": "Image_Style",
+                "displayName": "Image_Style",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true,
+                "removed": false
+              },
+              {
+                "id": "Status",
+                "displayName": "Status",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true
+              },
+              {
+                "id": "LinkedIn_Post",
+                "displayName": "LinkedIn_Post",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true,
+                "removed": false
+              },
+              {
+                "id": "Twitter_Post",
+                "displayName": "Twitter_Post",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true,
+                "removed": false
+              },
+              {
+                "id": "Image_A_Link",
+                "displayName": "Image_A_Link",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true,
+                "removed": false
+              },
+              {
+                "id": "LinkedIn_URL",
+                "displayName": "LinkedIn_URL",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true,
+                "removed": false
+              },
+              {
+                "id": "Twitter_URL",
+                "displayName": "Twitter_URL",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true,
+                "removed": false
+              },
+              {
+                "id": "Posted_At",
+                "displayName": "Posted_At",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true,
+                "removed": false
+              },
+              {
+                "id": "row_number",
+                "displayName": "row_number",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "number",
+                "canBeUsedToMatch": true,
+                "readOnly": true,
+                "removed": false
+              }
+            ],
+            "attemptToConvertTypes": false,
+            "convertFieldsToString": false
+          },
+          "options": {}
+        },
+        "type": "n8n-nodes-base.googleSheets",
+        "typeVersion": 4.5,
+        "position": [
+          480,
+          -16
+        ],
+        "id": "update-gen",
+        "name": "Update Generating",
+        "credentials": {
+          "googleSheetsOAuth2Api": {
+            "id": "WbzVyGwbDVzvcV25",
+            "name": "Ai with Dhruv"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "promptType": "define",
+          "text": "=Topic: {{ $('Get Topic').item.json.Topic }}\nImage_Style: {{ $('Get Topic').item.json.Image_Style }}\nTime_Slot: {{ $('Get Topic').item.json.Time_Slot }}\n\nResearch this topic, then generate content. Return ONLY the JSON.",
+          "options": {
+            "systemMessage": "# AIwithDhruv Social Media Content Generator\n\nYou are an expert social media content creator for the AIwithDhruv brand (Dhruv Tomar).\n\n## Brand Voice:\n- Builder mindset, not theorist\n- Practical, no-BS, slightly witty\n- First-person experience (\"I built...\", \"Here's what happened...\")\n- Reference real tools: Claude, Cursor, n8n, Perplexity, GPT-5\n- When relevant, mention quotahit.com as example built by Dhruv\n\n## PROMOTIONAL CONTEXT (weave naturally into AI/Automation posts only):\n\n### QuotaHit (quotahit.com):\nAI-powered Sales Coach built by Dhruv. Free to try. Real-time AI voice practice for sales teams. Mention when talking about building AI products, shipping fast, or AI in sales.\n\n### Euron Bootcamp \u2014 \"Future-Proof AI Automation Bootcamp\":\nLink: https://euron.one/course/future-proof-ai-automation-bootcamp\nStarting 8th March 2026. 3-4 months, Sat & Sun 8-10 PM IST, live interactive classes. Mentor: Dhruv Tomar.\n\nKEY SELLING POINTS (use these naturally in posts):\n- 19 modules, 110+ subtopics, 18+ production projects\n- Build your own AI Personal Assistant from scratch (capstone)\n- Not theory \u2014 you BUILD real systems: AI voice agents, RAG chatbots, CRM automation, multi-channel communication, deployment on VPS\n- Covers: n8n/Make/Zapier automation, AI agents (Vapi, LangChain), RAG systems, Docker deployment, client acquisition\n- Module highlights to reference in posts:\n  * \"Automation Thinking\" \u2014 audit any business, find 5L+ automation opportunities\n  * \"AI-First Development\" \u2014 you design, AI builds. Prompt engineering for architects\n  * \"10 Universal Automation Patterns\" that cover 90% of business use cases\n  * \"AI Voice Agents\" \u2014 build inbound receptionists + outbound callers (exactly what we built with Vapi)\n  * \"RAG Systems\" \u2014 make AI know YOUR business, deploy on website + WhatsApp\n  * \"Full-Stack AI Personal Assistant\" \u2014 the capstone that becomes your demo for clients\n  * \"Getting Clients & Closing Deals\" \u2014 cold outreach, pricing, discovery calls\n- Students deploy on real VPS with Docker + custom domains\n- Career paths: AI Automation Engineer, Consultant, Freelancer, Agency owner\n- Perfect for: developers wanting AI skills, entrepreneurs automating businesses, freelancers adding AI services\n\nPROMOTION RULES:\n- ~40-50% of morning AI posts should naturally mention the bootcamp OR QuotaHit\n- Vary which one you promote \u2014 alternate between them\n- Keep it organic \u2014 weave into the story as a real example:\n  * \"This is exactly what we teach in Module 10 of the bootcamp...\"\n  * \"I built this for a client \u2014 and we're covering this pattern in the bootcamp starting March 8...\"\n  * \"Want to build systems like this? That's literally what the Future-Proof AI Automation Bootcamp covers...\"\n- NEVER promote in evening/stoic/mindset posts (Image_Style = \"dark\")\n- Link format: always include the full URL when mentioning the bootcamp\n\n## PROCESS:\n1. Use Perplexity tool FIRST to research the topic with latest 2026 data\n2. Generate ALL outputs based on research\n\n## OUTPUT FORMAT:\nReturn ONLY a valid JSON object:\n\n{\n  \"linkedin_post\": \"Full LinkedIn post (150-250 words)\",\n  \"twitter_post\": \"Native tweet (max 250 chars, NOT truncated LinkedIn)\",\n  \"image_prompt\": \"Image prompt following the style rules below\"\n}\n\n## LINKEDIN POST:\n- Hook (scroll-stopping) \u2192 Problem \u2192 Solution \u2192 Proof \u2192 CTA\n- 150-250 words, 3-5 hashtags including #AIwithDhruv\n- Short paragraphs, max 2-3 emojis\n- NO markdown (no *, _, ~, `)\n- Plain text only\n\n## TWITTER POST:\n- Standalone tweet, NOT cut from LinkedIn\n- Hook + insight + CTA, max 250 chars\n- 2-3 hashtags including #AIwithDhruv\n\n## IMAGE PROMPT \u2014 Based on Image_Style:\n\n### If Image_Style = \"light\" (AI/Automation posts \u2014 Morning):\nLandscape 1200x628. Premium cyberpunk minimal aesthetic, ultra-detailed 4K.\nBackground: Deep Space Black #0a0a0f (almost black with blue undertone).\nSecondary surfaces: Charcoal #141418. Panels/surfaces: Gunmetal #1e1e24.\nBorders/lines: Steel Dark #2a2a32, Steel Mid #3a3a44. Highlights: Steel Light #4a4a56.\nPrimary accent glow: Cyan Neon #00c8e8 (selective edges/corners ONLY, not everywhere).\nText: metallic chrome/silver gradient finish (NOT fully blue text).\nGlow rules: strong rgba(0,200,232,0.40) edges, medium rgba(0,200,232,0.25) borders, subtle rgba(0,200,232,0.12) ambient.\nUse glass/metal panels with chrome borders, corner glow, subtle reflections.\nAdd faint HUD lines / tech grid patterns in background.\nClean minimal layout, lots of negative space, readable on mobile.\nStyle: minimal infographic / premium UI card / futuristic panel.\n\"AIwithDhruv\" in small metallic gunmetal text with subtle silver glow, bottom-right.\nNO cartoon, NO anime, NO faces, NO photos. Must look ultra premium and 4K clean.\nNegative prompt: cartoon, anime, low quality, blurry, watermark, logo, messy layout, too much text, oversaturated glow, random arrows, floating elements outside panel.\n\n### If Image_Style = \"dark\" (Mindset/Stoic/Health posts \u2014 Evening):\nSquare 1080x1080, pure black (#0A0A0A) background.\n4 minimalist white thin line-art icons centered in a row, related to the topic.\nBold white sans-serif headline text below the icons.\n\"AIwithDhruv\" in small grey (#6B7280) bottom-right.\nPremium minimalist style. Clean, dark, simple.\nNO faces, NO photos, NO clutter. Icons + typography only.\nNegative prompt: cartoon, anime, colorful, busy, messy, low quality, blurry."
+          }
+        },
+        "type": "@n8n/n8n-nodes-langchain.agent",
+        "typeVersion": 1.7,
+        "position": [
+          704,
+          0
+        ],
+        "id": "ai-gen",
+        "name": "AI Content Generator"
+      },
+      {
+        "parameters": {
+          "model": {
+            "__rl": true,
+            "value": "gpt-5.1",
+            "mode": "list",
+            "cachedResultName": "gpt-5.1"
+          },
+          "options": {
+            "temperature": 0.7
+          }
+        },
+        "id": "gpt5-model",
+        "name": "GPT-5",
+        "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+        "typeVersion": 1.2,
+        "position": [
+          688,
+          208
+        ],
+        "credentials": {
+          "openAiApi": {
+            "id": "8IidOdkLmo0Xt32q",
+            "name": "OpenAi account"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "messages": {
+            "message": [
+              {
+                "content": "={{ $fromAI('query', 'The search query or topic to research') }}"
+              }
+            ]
+          },
+          "options": {
+            "maxTokens": 2048,
+            "temperature": 0.3
+          },
+          "requestOptions": {}
+        },
+        "id": "perp-tool",
+        "name": "Perplexity Research",
+        "type": "n8n-nodes-base.perplexityTool",
+        "typeVersion": 1,
+        "position": [
+          864,
+          208
+        ],
+        "credentials": {
+          "perplexityApi": {
+            "id": "mACe6bHyuo7Z3exN",
+            "name": "Perplexity 2"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "assignments": {
+            "assignments": [
+              {
+                "id": "topic",
+                "name": "topic",
+                "value": "={{ $('Get Topic').item.json.Topic }}",
+                "type": "string"
+              },
+              {
+                "id": "image_style",
+                "name": "image_style",
+                "value": "={{ $('Get Topic').item.json.Image_Style || 'light' }}",
+                "type": "string"
+              },
+              {
+                "id": "linkedin_post",
+                "name": "linkedin_post",
+                "value": "={{ (() => { try { const o = $json.output || $json.text || ''; const s = o.indexOf('{'); const e = o.lastIndexOf('}'); if(s>=0&&e>s) return JSON.parse(o.substring(s,e+1)).linkedin_post||''; return o.substring(0,3000); } catch(e) { return ($json.output||'').substring(0,3000); } })() }}",
+                "type": "string"
+              },
+              {
+                "id": "twitter_post",
+                "name": "twitter_post",
+                "value": "={{ (() => { try { const o = $json.output || $json.text || ''; const s = o.indexOf('{'); const e = o.lastIndexOf('}'); if(s>=0&&e>s) return JSON.parse(o.substring(s,e+1)).twitter_post||''; return o.substring(0,250); } catch(e) { return ($json.output||'').substring(0,250); } })() }}",
+                "type": "string"
+              },
+              {
+                "id": "image_prompt",
+                "name": "image_prompt",
+                "value": "={{ (() => { try { const o = $json.output || $json.text || ''; const s = o.indexOf('{'); const e = o.lastIndexOf('}'); if(s>=0&&e>s) return JSON.parse(o.substring(s,e+1)).image_prompt||''; return 'Professional infographic about ' + $('Get Topic').item.json.Topic; } catch(e) { return 'Professional infographic about ' + $('Get Topic').item.json.Topic; } })() }}",
+                "type": "string"
+              }
+            ]
+          },
+          "options": {}
+        },
+        "type": "n8n-nodes-base.set",
+        "typeVersion": 3.4,
+        "position": [
+          976,
+          0
+        ],
+        "id": "parse",
+        "name": "Parse Content"
+      },
+      {
+        "parameters": {
+          "method": "POST",
+          "url": "https://queue.fal.run/fal-ai/nano-banana-pro",
+          "authentication": "genericCredentialType",
+          "genericAuthType": "httpHeaderAuth",
+          "sendBody": true,
+          "specifyBody": "json",
+          "jsonBody": "={\n  \"prompt\": {{ JSON.stringify($json.image_prompt) }},\n  \"image_size\": {{ $json.image_style === \"dark\" ? \"\\\"square\\\"\" : \"\\\"landscape_16_9\\\"\" }},\n  \"num_images\": 1\n}",
+          "options": {
+            "timeout": 60000
+          }
+        },
+        "type": "n8n-nodes-base.httpRequest",
+        "typeVersion": 4.2,
+        "position": [
+          1152,
+          0
+        ],
+        "id": "fal-gen",
+        "name": "Generate Image",
+        "credentials": {
+          "httpHeaderAuth": {
+            "id": "HikPoUdE4JY63L36",
+            "name": "fal.ai"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "amount": 60
+        },
+        "type": "n8n-nodes-base.wait",
+        "typeVersion": 1.1,
+        "position": [
+          1360,
+          0
+        ],
+        "id": "wait-img",
+        "name": "Wait for Image",
+        "webhookId": "04122e22-a743-49a0-a6a9-a3e0317f35c2"
+      },
+      {
+        "parameters": {
+          "url": "={{ $('Generate Image').item.json.response_url }}",
+          "authentication": "genericCredentialType",
+          "genericAuthType": "httpHeaderAuth",
+          "options": {}
+        },
+        "type": "n8n-nodes-base.httpRequest",
+        "typeVersion": 4.2,
+        "position": [
+          1584,
+          0
+        ],
+        "id": "fal-get",
+        "name": "Get Image Result",
+        "credentials": {
+          "httpHeaderAuth": {
+            "id": "HikPoUdE4JY63L36",
+            "name": "fal.ai"
+          }
+        },
+        "onError": "continueErrorOutput"
+      },
+      {
+        "parameters": {
+          "operation": "update",
+          "documentId": {
+            "__rl": true,
+            "value": "1YZk12lNR7ZpjtJ6pOB2ugIgVIyF15-oAGPhuzCg2KE4",
+            "mode": "id"
+          },
+          "sheetName": {
+            "__rl": true,
+            "value": "Social Media v3",
+            "mode": "name"
+          },
+          "columns": {
+            "mappingMode": "defineBelow",
+            "value": {
+              "Status": "Posting",
+              "LinkedIn_Post": "={{ $('Parse Content').item.json.linkedin_post }}",
+              "Twitter_Post": "={{ $('Parse Content').item.json.twitter_post }}",
+              "Image_A_Link": "={{ $json.images ? $json.images[0].url : 'Failed' }}",
+              "Topic": "={{ $('Get Topic').item.json.Topic }}"
+            },
+            "matchingColumns": [
+              "Topic"
+            ]
+          },
+          "options": {}
+        },
+        "type": "n8n-nodes-base.googleSheets",
+        "typeVersion": 4.5,
+        "position": [
+          1808,
+          0
+        ],
+        "id": "save-sheet",
+        "name": "Save to Sheet",
+        "credentials": {
+          "googleSheetsOAuth2Api": {
+            "id": "WbzVyGwbDVzvcV25",
+            "name": "Ai with Dhruv"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "url": "={{ $('Get Image Result').first().json.images[0].url }}",
+          "options": {
+            "response": {
+              "response": {
+                "responseFormat": "file"
+              }
+            }
+          }
+        },
+        "type": "n8n-nodes-base.httpRequest",
+        "typeVersion": 4.2,
+        "position": [
+          1904,
+          304
+        ],
+        "id": "dl-post-img",
+        "name": "Download Post Image"
+      },
+      {
+        "parameters": {
+          "person": "0acXkbkIhL",
+          "text": "={{ $('Parse Content').item.json.linkedin_post }}",
+          "shareMediaCategory": "IMAGE",
+          "additionalFields": {}
+        },
+        "type": "n8n-nodes-base.linkedIn",
+        "typeVersion": 1,
+        "position": [
+          2144,
+          304
+        ],
+        "id": "li-image",
+        "name": "Post LinkedIn + Image",
+        "credentials": {
+          "linkedInOAuth2Api": {
+            "id": "f520by1wOAMg6btX",
+            "name": "Dhruv"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "text": "={{ $('Parse Content').item.json.twitter_post }}",
+          "additionalFields": {}
+        },
+        "type": "n8n-nodes-base.twitter",
+        "typeVersion": 2,
+        "position": [
+          2384,
+          304
+        ],
+        "id": "tw-post",
+        "name": "Post Twitter",
+        "credentials": {
+          "twitterOAuth2Api": {
+            "id": "o0feRFKgKQPKR3ZX",
+            "name": "agiwithdhruv"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "operation": "update",
+          "documentId": {
+            "__rl": true,
+            "value": "1YZk12lNR7ZpjtJ6pOB2ugIgVIyF15-oAGPhuzCg2KE4",
+            "mode": "id"
+          },
+          "sheetName": {
+            "__rl": true,
+            "value": 1385163992,
+            "mode": "list",
+            "cachedResultName": "Social Media v3",
+            "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1YZk12lNR7ZpjtJ6pOB2ugIgVIyF15-oAGPhuzCg2KE4/edit#gid=1385163992"
+          },
+          "columns": {
+            "mappingMode": "defineBelow",
+            "value": {
+              "Status": "Posted",
+              "Posted_At": "={{ new Date().toISOString() }}",
+              "Topic": "={{ $('Get Topic').item.json.Topic }}",
+              "row_number": 0
+            },
+            "matchingColumns": [
+              "Topic"
+            ],
+            "schema": [
+              {
+                "id": "Date",
+                "displayName": "Date",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true,
+                "removed": false
+              },
+              {
+                "id": "Time_Slot",
+                "displayName": "Time_Slot",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true,
+                "removed": false
+              },
+              {
+                "id": "Topic",
+                "displayName": "Topic",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true
+              },
+              {
+                "id": "Image_Style",
+                "displayName": "Image_Style",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true,
+                "removed": false
+              },
+              {
+                "id": "Status",
+                "displayName": "Status",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true
+              },
+              {
+                "id": "LinkedIn_Post",
+                "displayName": "LinkedIn_Post",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true,
+                "removed": false
+              },
+              {
+                "id": "Twitter_Post",
+                "displayName": "Twitter_Post",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true,
+                "removed": false
+              },
+              {
+                "id": "Image_A_Link",
+                "displayName": "Image_A_Link",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true,
+                "removed": false
+              },
+              {
+                "id": "LinkedIn_URL",
+                "displayName": "LinkedIn_URL",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true,
+                "removed": false
+              },
+              {
+                "id": "Twitter_URL",
+                "displayName": "Twitter_URL",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true,
+                "removed": false
+              },
+              {
+                "id": "Posted_At",
+                "displayName": "Posted_At",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true
+              },
+              {
+                "id": "row_number",
+                "displayName": "row_number",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "number",
+                "canBeUsedToMatch": true,
+                "readOnly": true,
+                "removed": false
+              }
+            ],
+            "attemptToConvertTypes": false,
+            "convertFieldsToString": false
+          },
+          "options": {}
+        },
+        "type": "n8n-nodes-base.googleSheets",
+        "typeVersion": 4.5,
+        "position": [
+          2624,
+          304
+        ],
+        "id": "mark-posted",
+        "name": "Mark Posted",
+        "credentials": {
+          "googleSheetsOAuth2Api": {
+            "id": "WbzVyGwbDVzvcV25",
+            "name": "Ai with Dhruv"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "chatId": "637313836",
+          "text": "=\u2705 Posted: {{ $('Get Topic').item.json.Topic }}",
+          "additionalFields": {}
+        },
+        "type": "n8n-nodes-base.telegram",
+        "typeVersion": 1.2,
+        "position": [
+          2864,
+          304
+        ],
+        "id": "notify-done",
+        "name": "Notify Done",
+        "webhookId": "8116cb01-098f-4695-902f-108902a5ddcf",
+        "credentials": {
+          "telegramApi": {
+            "id": "W6XV6RQORTB3eBDg",
+            "name": "Agent Dhruv"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "content": "## AIwithDhruv - Social Media v3 (Auto-Post)\n\n**Schedule:** 10 AM (AI/Automation) + 10 PM (Stoic/Mindset) IST\n**Flow:** Topic \u2192 AI Content \u2192 Image \u2192 LinkedIn + Twitter \u2192 Done\n**No approval needed** \u2014 posts directly\n**Promotes:** QuotaHit + Euron Bootcamp (in AI posts only)",
+          "height": 392,
+          "width": 320,
+          "color": 5
+        },
+        "type": "n8n-nodes-base.stickyNote",
+        "typeVersion": 1,
+        "position": [
+          -784,
+          -480
+        ],
+        "id": "note",
+        "name": "Sticky Note"
+      }
+    ],
+    "connections": {
+      "10 AM Trigger": {
+        "main": [
+          [
+            {
+              "node": "Set Time Slot",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "10 PM Trigger": {
+        "main": [
+          [
+            {
+              "node": "Set Time Slot",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Manual Trigger": {
+        "main": [
+          [
+            {
+              "node": "Set Time Slot",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Set Time Slot": {
+        "main": [
+          [
+            {
+              "node": "Get Topic",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Get Topic": {
+        "main": [
+          [
+            {
+              "node": "Has Topic?",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Has Topic?": {
+        "main": [
+          [
+            {
+              "node": "Update Generating",
+              "type": "main",
+              "index": 0
+            }
+          ],
+          [
+            {
+              "node": "No Topics",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Update Generating": {
+        "main": [
+          [
+            {
+              "node": "AI Content Generator",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "AI Content Generator": {
+        "main": [
+          [
+            {
+              "node": "Parse Content",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Parse Content": {
+        "main": [
+          [
+            {
+              "node": "Generate Image",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Generate Image": {
+        "main": [
+          [
+            {
+              "node": "Wait for Image",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Wait for Image": {
+        "main": [
+          [
+            {
+              "node": "Get Image Result",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Get Image Result": {
+        "main": [
+          [
+            {
+              "node": "Save to Sheet",
+              "type": "main",
+              "index": 0
+            }
+          ],
+          [
+            {
+              "node": "Wait for Image",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Save to Sheet": {
+        "main": [
+          [
+            {
+              "node": "Download Post Image",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Download Post Image": {
+        "main": [
+          [
+            {
+              "node": "Post LinkedIn + Image",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Post LinkedIn + Image": {
+        "main": [
+          [
+            {
+              "node": "Post Twitter",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Post Twitter": {
+        "main": [
+          [
+            {
+              "node": "Mark Posted",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Mark Posted": {
+        "main": [
+          [
+            {
+              "node": "Notify Done",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "GPT-5": {
+        "ai_languageModel": [
+          [
+            {
+              "node": "AI Content Generator",
+              "type": "ai_languageModel",
+              "index": 0
+            }
+          ]
+        ]
+      }
+    },
+    "authors": "Dhruv Tomar",
+    "name": null,
+    "description": null,
+    "autosaved": false,
+    "workflowPublishHistory": [
+      {
+        "createdAt": "2026-02-21T21:56:11.813Z",
+        "id": 409,
+        "workflowId": "HrHmBqxevYgegY37",
+        "versionId": "45c22be3-d64f-4d73-83c9-75f99b4e8a22",
+        "event": "activated",
+        "userId": "eeb2630f-4760-4254-9eb8-71cf49a24999"
+      }
+    ]
+  }
+}

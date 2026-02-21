@@ -1,27 +1,33 @@
 # n8n Workflow Backup - Complete Index
 
 **Source:** https://n8n.aiwithdhruv.cloud
-**Last synced:** 2026-02-14
-**Total workflows:** 208
+**Last synced:** 2026-02-22
+**Total workflows:** 218
 
 ## Folder Structure
 
 ```
 n8n/
-├── All-Workflows/          ← ALL 208 workflows from live n8n
-│   ├── active/             ← 49 currently running workflows
-│   ├── inactive/           ← 127 paused/draft workflows
+├── All-Workflows/          ← ALL 218 workflows from live n8n
+│   ├── active/             ← 54 currently running workflows
+│   ├── inactive/           ← 132 paused/draft workflows
 │   └── archived/           ← 32 archived workflows
 ├── Feb_2026/               ← Client-ready workflows with READMEs
 │   ├── Daily-AI-News-Digest/
 │   ├── Lead-Generation-Email-Outreach/
-│   └── Outlook-Email-Summary/
+│   ├── Outlook-Email-Summary/
+│   ├── SecurityAI-Vapi-Sales-Followup/
+│   ├── QuotaHit-Daily-Blog-Generator/
+│   ├── QuotaHit-Sales-Lead-Notifications/
+│   ├── QuotaHit-Feedback-Widget-Handler/
+│   ├── Social-Media-v3/
+│   └── Claude-Telegram-Sender/
 ├── N8N_Workflows/          ← Original 93 workflow export
 └── n8n-installation/       ← Docker setup for self-hosting
 ```
 
 
-## ✅ Active Workflows (49)
+## ✅ Active Workflows (54)
 
 | # | Workflow Name | ID | File |
 |---|--------------|-----|------|
@@ -33,49 +39,54 @@ n8n/
 | 6 | 6th_Dec_FA 1.O | `VgBFRybKnU7Nq2Gg` | `6th_Dec_FA_1O.json` |
 | 7 | 7th_Dec_Http_Webhook_if_switch_Telegram | `jias8BJDRjZ6hZCp` | `7th_Dec_Http_Webhook_if_switch_Telegram.json` |
 | 8 | AI Daily News Notifier | `IJeT6TdjCXyh7OhE` | `AI_Daily_News_Notifier.json` |
-| 9 | AI Voice Agent - Instant Lead Callback & CRM | `NFlmhhoVSQnhSusmjstKV` | `AI_Voice_Agent_-_Instant_Lead_Callback_CRM.json` |
+| 9 | AI Voice Agent - Instant Lead Callback & CRM | `NFlmhhoVSQnhSusmjstKV` | `AI_Voice_Agent_-_Instant_Lead_Callback_and_CRM.json` |
 | 10 | AIwithDhruv - Social Media v2 (Telegram Approval + Twitter) | `O1QJ1JCxjRMdz8EgrNJqY` | `AIwithDhruv_-_Social_Media_v2_Telegram_Approval_Twitter.json` |
-| 11 | Agent_Dhruv_2.O | `2cOg4zAC5T61pGJr` | `Agent_Dhruv_2O.json` |
-| 12 | Ai News Agent | `wzPTd0RazDRwr5av` | `Ai_News_Agent.json` |
-| 13 | BrowserAgent | `8zENlZ7OmeaEmBoW` | `BrowserAgent.json` |
-| 14 | BrowserAgent | `YGpE8jb0SHh2q92A` | `BrowserAgent_1.json` |
-| 15 | Calender_Agent | `teaBSbleCK34Tw7b` | `Calender_Agent.json` |
-| 16 | ClickUp - Mark Ramesh + Sync IN PROGRESS | `2BLDg2txnM07LeVx` | `ClickUp_-_Mark_Ramesh_Sync_IN_PROGRESS.json` |
-| 17 | ClickUp - Push All Tasks (Webhook) | `w52xUxguFifjvCjd` | `ClickUp_-_Push_All_Tasks_Webhook.json` |
-| 18 | ClickUp - Push Tasks to Angelina | `VTugt3WuzNbwwjhO` | `ClickUp_-_Push_Tasks_to_Angelina.json` |
-| 19 | ClickUp - Run Move Tasks (Webhook) | `Y2Bm1Psx2Y4wLeuV` | `ClickUp_-_Run_Move_Tasks_Webhook.json` |
-| 20 | ClickUp Move Tasks - Webhook | `tR3EjHMoejX8n4eT` | `ClickUp_Move_Tasks_-_Webhook.json` |
-| 21 | ClickUp Push Tasks - Manual Only | `S56Hbzfrh228aGs9` | `ClickUp_Push_Tasks_-_Manual_Only.json` |
-| 22 | Combine Image | `5o4yBwqXtX6bbMAl` | `Combine_Image.json` |
-| 23 | Contact_Agent | `6NqoNner3xOi06da` | `Contact_Agent.json` |
-| 24 | Daily AI News Digest | `eXFngiKv2boNVs4q` | `Daily_AI_News_Digest.json` |
-| 25 | Daily Aim & Stoic Accountability System_shaurya | `QdA07BXast8cJS0j` | `Daily_Aim_Stoic_Accountability_System_shaurya.json` |
-| 26 | Daily Motivation Calls - Angelina (Twilio) | `rqtJW3GFbdDOn0Gb` | `Daily_Motivation_Calls_-_Angelina_Twilio.json` |
-| 27 | Dhruv_RAG_AI_Workflow | `Ssoa4Di0B2oeGOdX` | `Dhruv_RAG_AI_Workflow.json` |
-| 28 | Edit Image | `gme8pyyJrxswxZfx` | `Edit_Image.json` |
-| 29 | Email_Agent | `kezMOKKRjQOAQIi9` | `Email_Agent.json` |
-| 30 | Email Auto followups | `qbWjLjqmTXha48b0` | `Email_Auto_followups.json` |
-| 31 | Error Trigger | `QV0m3reWguONvDAN` | `Error_Trigger.json` |
-| 32 | Growth_Architect | `6so0qBZoqekx9l6s` | `Growth_Architect.json` |
-| 33 | 🎯 Job Hunter Agent v1 | `S017WN9oFUpHTCiJ` | `Job_Hunter_Agent_v1.json` |
-| 34 | My workflow 16 | `j4wc0JWyba1FzXLFEDcSz` | `My_workflow_16.json` |
-| 35 | OnsiteUpload data from Drive to Pinecone | `mbxhJKeafeVgHGIb` | `OnsiteUpload_data_from_Drive_to_Pinecone.json` |
-| 36 | Onsite AI Rag Workflow | `SZ4C06KYyypDF3Ob` | `Onsite_AI_Rag_Workflow.json` |
-| 37 | OpenClaw | `OW0ST-aR72rtur4R1ejUf` | `OpenClaw.json` |
-| 38 | Promt_Agent | `P5pSr2vZIQhhr7S3` | `Promt_Agent.json` |
-| 39 | Search_Agent | `xz3AFt53UbEvPFQv` | `Search_Agent.json` |
-| 40 | Setu - Research & Copywriting Pipeline (Demo) | `a7B0-JVg-KXoqP_0VImy5` | `Setu_-_Research_Copywriting_Pipeline_Demo.json` |
-| 41 | Simple AI Chat | `yQ7ZyjcVjIMnsQ9A` | `Simple_AI_Chat.json` |
-| 42 | Slack & Discord | `mLJ7qfVo4X82eZmI` | `Slack_Discord.json` |
-| 43 | Social_Media_Agent | `vTVxV4xsB6exEd01` | `Social_Media_Agent.json` |
-| 44 | Social Media Automation | `KpXHSyWxCneAn2Oz` | `Social_Media_Automation.json` |
-| 45 | Stock_Agent | `Vj8Ooa2dndbB3HRZ` | `Stock_Agent.json` |
-| 46 | Twilio Voice AI - Angelina | `cbJNg3uBOhfRFUZ4` | `Twilio_Voice_AI_-_Angelina.json` |
-| 47 | Upload Dhruv data from Drive to Pinecone | `9WTxkULxPPip7JED` | `Upload_Dhruv_data_from_Drive_to_Pinecone.json` |
-| 48 | Webhook Test with Euri | `R7CsVjwGAosANlDp` | `Webhook_Test_with_Euri.json` |
-| 49 | Webhook Test with Postman | `bgWcIRMz3e5wkckF` | `Webhook_Test_with_Postman.json` |
+| 11 | AIwithDhruv - Social Media v3 | `HrHmBqxevYgegY37` | `AIwithDhruv_-_Social_Media_v3.json` |
+| 12 | Agent_Dhruv_2.O | `2cOg4zAC5T61pGJr` | `Agent_Dhruv_2O.json` |
+| 13 | Ai News Agent | `wzPTd0RazDRwr5av` | `Ai_News_Agent.json` |
+| 14 | BrowserAgent | `8zENlZ7OmeaEmBoW` | `BrowserAgent.json` |
+| 15 | BrowserAgent | `YGpE8jb0SHh2q92A` | `BrowserAgent_1.json` |
+| 16 | Calender_Agent | `teaBSbleCK34Tw7b` | `Calender_Agent.json` |
+| 17 | Claude Telegram Sender | `fkErsg4iulUvpcsa` | `Claude_Telegram_Sender.json` |
+| 18 | ClickUp - Mark Ramesh + Sync IN PROGRESS | `2BLDg2txnM07LeVx` | `ClickUp_-_Mark_Ramesh_Sync_IN_PROGRESS.json` |
+| 19 | ClickUp - Push All Tasks (Webhook) | `w52xUxguFifjvCjd` | `ClickUp_-_Push_All_Tasks_Webhook.json` |
+| 20 | ClickUp - Push Tasks to Angelina | `VTugt3WuzNbwwjhO` | `ClickUp_-_Push_Tasks_to_Angelina.json` |
+| 21 | ClickUp - Run Move Tasks (Webhook) | `Y2Bm1Psx2Y4wLeuV` | `ClickUp_-_Run_Move_Tasks_Webhook.json` |
+| 22 | ClickUp Move Tasks - Webhook | `tR3EjHMoejX8n4eT` | `ClickUp_Move_Tasks_-_Webhook.json` |
+| 23 | ClickUp Push Tasks - Manual Only | `S56Hbzfrh228aGs9` | `ClickUp_Push_Tasks_-_Manual_Only.json` |
+| 24 | Combine Image | `5o4yBwqXtX6bbMAl` | `Combine_Image.json` |
+| 25 | Contact_Agent | `6NqoNner3xOi06da` | `Contact_Agent.json` |
+| 26 | Daily AI News Digest | `eXFngiKv2boNVs4q` | `Daily_AI_News_Digest.json` |
+| 27 | Daily Aim & Stoic Accountability System_shaurya | `QdA07BXast8cJS0j` | `Daily_Aim_Stoic_Accountability_System_shaurya.json` |
+| 28 | Daily Motivation Calls - Angelina (Twilio) | `rqtJW3GFbdDOn0Gb` | `Daily_Motivation_Calls_-_Angelina_(Twilio).json` |
+| 29 | Dhruv_RAG_AI_Workflow | `Ssoa4Di0B2oeGOdX` | `Dhruv_RAG_AI_Workflow.json` |
+| 30 | Edit Image | `gme8pyyJrxswxZfx` | `Edit_Image.json` |
+| 31 | Email_Agent | `kezMOKKRjQOAQIi9` | `Email_Agent.json` |
+| 32 | Email Auto followups | `qbWjLjqmTXha48b0` | `Email_Auto_followups.json` |
+| 33 | Error Trigger | `QV0m3reWguONvDAN` | `Error_Trigger.json` |
+| 34 | Growth_Architect | `6so0qBZoqekx9l6s` | `Growth_Architect.json` |
+| 35 | 🎯 Job Hunter Agent v1 | `S017WN9oFUpHTCiJ` | `Job_Hunter_Agent_v1.json` |
+| 36 | My workflow 16 | `j4wc0JWyba1FzXLFEDcSz` | `My_workflow_16.json` |
+| 37 | OnsiteUpload data from Drive to Pinecone | `mbxhJKeafeVgHGIb` | `OnsiteUpload_data_from_Drive_to_Pinecone.json` |
+| 38 | Onsite AI Rag Workflow | `SZ4C06KYyypDF3Ob` | `Onsite_AI_Rag_Workflow.json` |
+| 39 | OpenClaw | `OW0ST-aR72rtur4R1ejUf` | `OpenClaw.json` |
+| 40 | Promt_Agent | `P5pSr2vZIQhhr7S3` | `Promt_Agent.json` |
+| 41 | QuotaHit - Daily Blog Post Generator | `UCSCmilt6au6vaRG` | `QuotaHit_-_Daily_Blog_Post_Generator.json` |
+| 42 | QuotaHit - Feedback Widget Handler | `W4p7Z4rfFNMPIV1d` | `QuotaHit_-_Feedback_Widget_Handler.json` |
+| 43 | QuotaHit Sales Agent Lead Notifications | `EwldtVuZqsLomLfS` | `QuotaHit_Sales_Agent_Lead_Notifications.json` |
+| 44 | Search_Agent | `xz3AFt53UbEvPFQv` | `Search_Agent.json` |
+| 45 | SecurityAI - Vapi Sales Follow-up | `aeB7LxxNmLfJJEJC` | `SecurityAI_-_Vapi_Sales_Follow-up.json` |
+| 46 | Setu - Research & Copywriting Pipeline (Demo) | `a7B0-JVg-KXoqP_0VImy5` | `Setu_-_Research_Copywriting_Pipeline_Demo.json` |
+| 47 | Simple AI Chat | `yQ7ZyjcVjIMnsQ9A` | `Simple_AI_Chat.json` |
+| 48 | Slack & Discord | `mLJ7qfVo4X82eZmI` | `Slack_Discord.json` |
+| 49 | Social_Media_Agent | `vTVxV4xsB6exEd01` | `Social_Media_Agent.json` |
+| 50 | Stock_Agent | `Vj8Ooa2dndbB3HRZ` | `Stock_Agent.json` |
+| 51 | Twilio Voice AI - Angelina | `cbJNg3uBOhfRFUZ4` | `Twilio_Voice_AI_-_Angelina.json` |
+| 52 | Upload Dhruv data from Drive to Pinecone | `9WTxkULxPPip7JED` | `Upload_Dhruv_data_from_Drive_to_Pinecone.json` |
+| 53 | Webhook Test with Euri | `R7CsVjwGAosANlDp` | `Webhook_Test_with_Euri.json` |
+| 54 | Webhook Test with Postman | `bgWcIRMz3e5wkckF` | `Webhook_Test_with_Postman.json` |
 
-## ⏸️ Inactive Workflows (127)
+## ⏸️ Inactive Workflows (132)
 
 | # | Workflow Name | ID | File |
 |---|--------------|-----|------|
@@ -179,33 +190,38 @@ n8n/
 | 98 | Payment Reminder Machine - Never Chase Payments Manually | `38XtDtWKSPqbOnW7` | `Payment_Reminder_Machine_-_Never_Chase_Payments_Manually.json` |
 | 99 | Photo to Accounts - Snap Bill, Done | `wn0qA91MZiK3BE23` | `Photo_to_Accounts_-_Snap_Bill_Done.json` |
 | 100 | Property Image Analysis and Investment Scoring Workflow | `3DnQZMPPAkcBZ767` | `Property_Image_Analysis_and_Investment_Scoring_Workflow.json` |
-| 101 | Real Estate - Lead Qualification Workflow | `NA1vC3SoibkoOpe1` | `Real_Estate_-_Lead_Qualification_Workflow.json` |
-| 102 | Recruiter-Email-Outreach | `cGkQTcZsv4BVYEMJ` | `Recruiter-Email-Outreach.json` |
-| 103 | Resume Screener - Screen 100 Resumes in Minutes | `vTn7TYjIA9Up04Se` | `Resume_Screener_-_Screen_100_Resumes_in_Minutes.json` |
-| 104 | Smart Inbox → Action Assistant | `kEhSnpf6zIvTVVnw` | `Smart_Inbox_Action_Assistant.json` |
-| 105 | Snap & Track - AI Calorie Counter from Food Photos | `dU7Kho7jaDsAyEjl` | `Snap_Track_-_AI_Calorie_Counter_from_Food_Photos.json` |
-| 106 | Social Media Agent | `85iGhkLhNCsZ1tsA` | `Social_Media_Agent.json` |
-| 107 | Social Media Agent - Create & Publish Everywhere | `9hTfMjiRFHpzjVvH` | `Social_Media_Agent_-_Create_Publish_Everywhere.json` |
-| 108 | Social Media Agent - One Input, All Platforms | `Mi2AfIh9RVjYO7rc` | `Social_Media_Agent_-_One_Input_All_Platforms.json` |
-| 109 | Social Media Automation 2.0 | `8NUrulEZz6sWOt4N` | `Social_Media_Automation_20.json` |
-| 110 | Sub_QR_Generator | `xdO7z1A5jukODSGy` | `Sub_QR_Generator.json` |
-| 111 | Taniya Linkedin | `dbL1DqoTx8pghvUP` | `Taniya_Linkedin.json` |
-| 112 | Telegram with subworkflow | `yDrG2urpDEqOU8v1` | `Telegram_with_subworkflow.json` |
-| 113 | Telgram 2 with some gmail tools | `qrkPPf414F9fny2G` | `Telgram_2_with_some_gmail_tools.json` |
-| 114 | Test Lead Agent | `2N5yMfDGpumeaMHA` | `Test_Lead_Agent.json` |
-| 115 | Testing EURI AI | `6KNxCiGZl44riWz3` | `Testing_EURI_AI.json` |
-| 116 | UGC video  factory | `uzk69_rJiPAD1ueReZS4D` | `UGC_video_factory.json` |
-| 117 | Warm/Cold Email Outreach | `SQiFNuZdkxMnbqKC` | `WarmCold_Email_Outreach.json` |
-| 118 | Weather Report with AI-Powered Email | `DuJyAoHyedN9hlnE` | `Weather_Report_with_AI-Powered_Email.json` |
-| 119 | Webhook -> OpenAI -> Respond (Motivational) - Fixed v2 | `c8kwH28UtAFf26pc` | `Webhook_-_OpenAI_-_Respond_Motivational_-_Fixed_v2.json` |
-| 120 | Webhook Test | `2MZvYFMWE7EUHB1M` | `Webhook_Test.json` |
-| 121 | WhatsApp AI Assistant - 24/7 Business Bot | `ZMwPg8lbbl6VRCZ5` | `WhatsApp_AI_Assistant_-_247_Business_Bot.json` |
-| 122 | Whatsapp AI Agent 2.0 | `VZGFaEbNHxuL8ghf` | `Whatsapp_AI_Agent_20.json` |
-| 123 | Whatsapp AI Agent + Long Term Memory | `rE1Vtpwtqzn4qOI6` | `Whatsapp_AI_Agent_Long_Term_Memory.json` |
-| 124 | Zoho CRM | `GktE4FxDCXVRtwoz` | `Zoho_CRM.json` |
-| 125 | eleven labs testing | `dr4Feg31hYZ2fLQ9` | `eleven_labs_testing.json` |
-| 126 | n8n Workflow Builder | `XepMJeA9mfBVvFpA` | `n8n_Workflow_Builder.json` |
-| 127 | n8n Workflow Builder Pro | `XpXL0zxXUmgqf3SK` | `n8n_Workflow_Builder_Pro.json` |
+| 101 | QuotaHit - Feedback Widget Handler | `krV1tlJuzUntPkKU` | `QuotaHit_-_Feedback_Widget_Handler.json` |
+| 102 | Real Estate - Lead Qualification Workflow | `NA1vC3SoibkoOpe1` | `Real_Estate_-_Lead_Qualification_Workflow.json` |
+| 103 | Recruiter-Email-Outreach | `cGkQTcZsv4BVYEMJ` | `Recruiter-Email-Outreach.json` |
+| 104 | Resume Screener - Screen 100 Resumes in Minutes | `vTn7TYjIA9Up04Se` | `Resume_Screener_-_Screen_100_Resumes_in_Minutes.json` |
+| 105 | SecurityAI - Vapi Sales Follow-up | `6O8vLAYOqqvRPymd` | `SecurityAI_-_Vapi_Sales_Follow-up.json` |
+| 106 | Smart Inbox → Action Assistant | `kEhSnpf6zIvTVVnw` | `Smart_Inbox_Action_Assistant.json` |
+| 107 | Snap & Track - AI Calorie Counter from Food Photos | `dU7Kho7jaDsAyEjl` | `Snap_Track_-_AI_Calorie_Counter_from_Food_Photos.json` |
+| 108 | Social Media Agent | `85iGhkLhNCsZ1tsA` | `Social_Media_Agent.json` |
+| 109 | Social Media Agent - Create & Publish Everywhere | `9hTfMjiRFHpzjVvH` | `Social_Media_Agent_-_Create_Publish_Everywhere.json` |
+| 110 | Social Media Agent - One Input, All Platforms | `Mi2AfIh9RVjYO7rc` | `Social_Media_Agent_-_One_Input_All_Platforms.json` |
+| 111 | Social Media Automation | `KpXHSyWxCneAn2Oz` | `Social_Media_Automation.json` |
+| 112 | Social Media Automation 2.0 | `8NUrulEZz6sWOt4N` | `Social_Media_Automation_20.json` |
+| 113 | Sub_QR_Generator | `xdO7z1A5jukODSGy` | `Sub_QR_Generator.json` |
+| 114 | TEMP - Setup Sales Calls Headers | `yvot3M2RtFt8ronA` | `TEMP_-_Setup_Sales_Calls_Headers.json` |
+| 115 | [TEMP] Load 45 Topics to Sheet | `KUFV3PCojsht2VU9` | `TEMP_Load_45_Topics_to_Sheet.json` |
+| 116 | Taniya Linkedin | `dbL1DqoTx8pghvUP` | `Taniya_Linkedin.json` |
+| 117 | Telegram with subworkflow | `yDrG2urpDEqOU8v1` | `Telegram_with_subworkflow.json` |
+| 118 | Telgram 2 with some gmail tools | `qrkPPf414F9fny2G` | `Telgram_2_with_some_gmail_tools.json` |
+| 119 | Test Lead Agent | `2N5yMfDGpumeaMHA` | `Test_Lead_Agent.json` |
+| 120 | Testing EURI AI | `6KNxCiGZl44riWz3` | `Testing_EURI_AI.json` |
+| 121 | UGC video  factory | `uzk69_rJiPAD1ueReZS4D` | `UGC_video_factory.json` |
+| 122 | Warm/Cold Email Outreach | `SQiFNuZdkxMnbqKC` | `WarmCold_Email_Outreach.json` |
+| 123 | Weather Report with AI-Powered Email | `DuJyAoHyedN9hlnE` | `Weather_Report_with_AI-Powered_Email.json` |
+| 124 | Webhook -> OpenAI -> Respond (Motivational) - Fixed v2 | `c8kwH28UtAFf26pc` | `Webhook_-_OpenAI_-_Respond_Motivational_-_Fixed_v2.json` |
+| 125 | Webhook Test | `2MZvYFMWE7EUHB1M` | `Webhook_Test.json` |
+| 126 | WhatsApp AI Assistant - 24/7 Business Bot | `ZMwPg8lbbl6VRCZ5` | `WhatsApp_AI_Assistant_-_247_Business_Bot.json` |
+| 127 | Whatsapp AI Agent 2.0 | `VZGFaEbNHxuL8ghf` | `Whatsapp_AI_Agent_20.json` |
+| 128 | Whatsapp AI Agent + Long Term Memory | `rE1Vtpwtqzn4qOI6` | `Whatsapp_AI_Agent_Long_Term_Memory.json` |
+| 129 | Zoho CRM | `GktE4FxDCXVRtwoz` | `Zoho_CRM.json` |
+| 130 | eleven labs testing | `dr4Feg31hYZ2fLQ9` | `eleven_labs_testing.json` |
+| 131 | n8n Workflow Builder | `XepMJeA9mfBVvFpA` | `n8n_Workflow_Builder.json` |
+| 132 | n8n Workflow Builder Pro | `XpXL0zxXUmgqf3SK` | `n8n_Workflow_Builder_Pro.json` |
 
 ## 🗄️ Archived Workflows (32)
 

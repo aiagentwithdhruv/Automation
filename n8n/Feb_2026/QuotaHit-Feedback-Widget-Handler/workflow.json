@@ -1,0 +1,1237 @@
+{
+  "updatedAt": "2026-02-21T21:50:05.809Z",
+  "createdAt": "2026-02-21T21:50:05.809Z",
+  "id": "W4p7Z4rfFNMPIV1d",
+  "name": "QuotaHit - Feedback Widget Handler",
+  "description": null,
+  "active": true,
+  "isArchived": false,
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "feedback-widget",
+        "options": {
+          "responseMode": "responseNode"
+        }
+      },
+      "name": "Feedback Webhook",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [
+        240,
+        400
+      ],
+      "webhookId": "feedback-widget",
+      "id": "wh"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict"
+          },
+          "conditions": [
+            {
+              "id": "c1",
+              "leftValue": "={{ $json.body.type }}",
+              "rightValue": "feedback",
+              "operator": {
+                "type": "string",
+                "operation": "equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "name": "Is Feedback?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        480,
+        400
+      ],
+      "id": "if-type"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict"
+          },
+          "conditions": [
+            {
+              "id": "c2",
+              "leftValue": "={{ $json.body.screenshotDataUrl }}",
+              "rightValue": "",
+              "operator": {
+                "type": "string",
+                "operation": "notEquals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "name": "Has Screenshot?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        700,
+        280
+      ],
+      "id": "if-screenshot"
+    },
+    {
+      "parameters": {
+        "mode": "runOnceForAllItems",
+        "jsCode": "const body = $input.first().json.body;\nconst dataUrl = body.screenshotDataUrl;\n\n// Parse data URL: data:image/jpeg;base64,/9j/4AAQ...\nconst matches = dataUrl.match(/^data:([^;]+);base64,(.+)$/);\nif (!matches) throw new Error('Invalid data URL format');\n\nconst mimeType = matches[1];\nconst base64Data = matches[2];\nconst buffer = Buffer.from(base64Data, 'base64');\n\n// Determine file extension\nconst extMap = { 'image/jpeg': 'jpg', 'image/png': 'png', 'image/webp': 'webp', 'image/gif': 'gif' };\nconst ext = extMap[mimeType] || 'jpg';\n\nconst now = new Date();\nconst ts = now.toISOString().replace(/[:.]/g, '-').slice(0, 19);\nconst fileName = `feedback-${body.category || 'general'}-${ts}.${ext}`;\n\nconst binaryData = await this.helpers.prepareBinaryData(buffer, fileName, mimeType);\n\nreturn [{\n  json: { ...body, _fileName: fileName },\n  binary: { data: binaryData }\n}];"
+      },
+      "name": "Base64 to Binary",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        940,
+        180
+      ],
+      "id": "code-b64"
+    },
+    {
+      "parameters": {
+        "name": "={{ $json._fileName }}",
+        "folderId": {
+          "__rl": true,
+          "mode": "id",
+          "value": "1TgADBM8S9_SZK9365iquB3DV8BiGuSjE"
+        },
+        "options": {}
+      },
+      "name": "Upload to Drive",
+      "type": "n8n-nodes-base.googleDrive",
+      "typeVersion": 3,
+      "position": [
+        1160,
+        180
+      ],
+      "id": "drive-upload",
+      "credentials": {
+        "googleDriveOAuth2Api": {
+          "id": "etId49ji6y1gWG3l",
+          "name": "Ai with Dhruv"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "mode": "runOnceForAllItems",
+        "jsCode": "const driveResult = $input.first().json;\nconst fileId = driveResult.id;\nconst screenshotUrl = fileId ? 'https://drive.google.com/file/d/' + fileId + '/view' : '';\nconst viewUrl = fileId ? 'https://lh3.googleusercontent.com/d/' + fileId + '=w800' : '';\n\n// Pass through original body from webhook\nconst body = $('Has Screenshot?').first().json.body;\n\nreturn [{ json: { ...body, screenshotUrl, screenshotViewUrl: viewUrl, _driveFileId: fileId } }];"
+      },
+      "name": "Set Screenshot URL",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1380,
+        180
+      ],
+      "id": "code-url"
+    },
+    {
+      "parameters": {
+        "mode": "runOnceForAllItems",
+        "jsCode": "const body = $input.first().json.body;\nreturn [{ json: { ...body, screenshotUrl: '', screenshotViewUrl: '', _driveFileId: '' } }];"
+      },
+      "name": "No Screenshot",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        940,
+        380
+      ],
+      "id": "code-noimg"
+    },
+    {
+      "parameters": {
+        "mode": "chooseBranch",
+        "output": "empty"
+      },
+      "name": "Merge",
+      "type": "n8n-nodes-base.merge",
+      "typeVersion": 3.1,
+      "position": [
+        1580,
+        280
+      ],
+      "id": "merge-1"
+    },
+    {
+      "parameters": {
+        "mode": "runOnceForAllItems",
+        "jsCode": "const body = $input.first().json;\n\nconst now = new Date();\nconst dateStr = now.toLocaleDateString('en-US', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });\nconst timeStr = now.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', hour12: true });\n\nconst labelMap = { 'bug': 'BUG', 'feature_request': 'FEATURE REQUEST', 'feedback': 'FEEDBACK', 'improvement': 'IMPROVEMENT' };\nconst label = labelMap[body.category] || (body.category || 'UNKNOWN').toUpperCase();\n\nconst rating = body.rating || 0;\nconst stars = '\\u2B50'.repeat(rating) + '\\u2606'.repeat(5 - rating);\n\n// Telegram message\nlet telegram = `*\\\\[${label}\\\\]* \\u2014 QuotaHit Feedback\\n\\n`;\ntelegram += `*Rating:* ${stars} (${rating}/5)\\n`;\ntelegram += `*From:* ${body.name || 'Anonymous'} (${body.email || 'No email'})\\n`;\ntelegram += `*Page:* ${body.pageUrl || 'Unknown'}\\n\\n`;\ntelegram += `*Feedback:*\\n${body.primaryText || '(empty)'}\\n`;\nif (body.secondaryText) telegram += `\\n*Details:*\\n${body.secondaryText}\\n`;\nif (body.tertiaryText) telegram += `\\n*Additional:*\\n${body.tertiaryText}\\n`;\nif (body.screenshotUrl) telegram += `\\n\\u{1F4F8} [View Screenshot](${body.screenshotUrl})`;\ntelegram += `\\n\\n\\u23F0 ${dateStr} at ${timeStr}`;\n\n// Gmail HTML\nlet html = '<div style=\"font-family:Arial,sans-serif;max-width:640px;margin:0 auto;padding:20px;\">';\nconst color = body.category === 'bug' ? '#ef4444' : body.category === 'feature_request' ? '#3b82f6' : '#22c55e';\nconst bg = body.category === 'bug' ? '#fef2f2' : body.category === 'feature_request' ? '#f0f9ff' : '#f0fdf4';\nhtml += `<div style=\"background:${bg};border-left:4px solid ${color};padding:16px;border-radius:4px;margin-bottom:20px;\">`;\nhtml += `<strong style=\"font-size:16px;\">[${label}]</strong> &mdash; Rating: ${stars} (${rating}/5)</div>`;\nhtml += '<table style=\"width:100%;border-collapse:collapse;margin-bottom:20px;\">';\nhtml += `<tr><td style=\"padding:8px;font-weight:bold;width:120px;\">From:</td><td style=\"padding:8px;\">${body.name || 'Anonymous'} (${body.email || 'No email'})</td></tr>`;\nhtml += `<tr><td style=\"padding:8px;font-weight:bold;\">Category:</td><td style=\"padding:8px;\">${label}</td></tr>`;\nhtml += `<tr><td style=\"padding:8px;font-weight:bold;\">Page:</td><td style=\"padding:8px;\"><a href=\"${body.pageUrl || '#'}\">${body.pageUrl || 'Unknown'}</a></td></tr>`;\nhtml += `<tr><td style=\"padding:8px;font-weight:bold;\">Timestamp:</td><td style=\"padding:8px;\">${dateStr} at ${timeStr}</td></tr>`;\nhtml += '</table>';\nhtml += `<h3>Feedback</h3><p style=\"background:#f9fafb;padding:12px;border-radius:6px;\">${body.primaryText || '(empty)'}</p>`;\nif (body.secondaryText) html += `<h3>Additional Details</h3><p style=\"background:#f9fafb;padding:12px;border-radius:6px;\">${body.secondaryText}</p>`;\nif (body.tertiaryText) html += `<h3>Other Notes</h3><p style=\"background:#f9fafb;padding:12px;border-radius:6px;\">${body.tertiaryText}</p>`;\nif (body.screenshotViewUrl) {\n  html += `<h3>Screenshot</h3><a href=\"${body.screenshotUrl}\"><img src=\"${body.screenshotViewUrl}\" style=\"max-width:100%;border-radius:8px;border:1px solid #e5e7eb;\" /></a>`;\n}\nhtml += '</div>';\n\nconst emailSubject = `[${label}] Feedback from ${body.name || 'Anonymous'} \u2014 QuotaHit`;\n\nconst sheetRow = {\n  Date: `${dateStr} at ${timeStr}`,\n  Category: label,\n  Rating: rating,\n  'Primary Text': body.primaryText || '',\n  'Secondary Text': body.secondaryText || '',\n  Email: body.email || '',\n  Name: body.name || '',\n  'Page URL': body.pageUrl || '',\n  'Screenshot URL': body.screenshotUrl || '',\n  'User Agent': body.userAgent || ''\n};\n\nreturn [{ json: { telegramMessage: telegram, emailSubject, emailHtml: html, sheetRow, category: body.category, label } }];"
+      },
+      "name": "Format Feedback",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1800,
+        280
+      ],
+      "id": "code-format"
+    },
+    {
+      "parameters": {
+        "chatId": "637313836",
+        "text": "={{ $json.telegramMessage }}",
+        "additionalFields": {
+          "parse_mode": "MarkdownV2"
+        }
+      },
+      "name": "Telegram",
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        2060,
+        160
+      ],
+      "id": "tg",
+      "credentials": {
+        "telegramApi": {
+          "id": "W6XV6RQORTB3eBDg",
+          "name": "Agent Dhruv"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "sendTo": "aiwithdhruv@gmail.com",
+        "subject": "={{ $json.emailSubject }}",
+        "message": "={{ $json.emailHtml }}",
+        "options": {}
+      },
+      "name": "Gmail",
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.2,
+      "position": [
+        2060,
+        320
+      ],
+      "id": "gmail",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "gPGYzjuIbblOf3E1",
+          "name": "Ai with Dhruv"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "mode": "runOnceForAllItems",
+        "jsCode": "const row = $('Format Feedback').first().json.sheetRow;\nreturn [{ json: row }];"
+      },
+      "name": "Prepare Sheet Row",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        2060,
+        480
+      ],
+      "id": "code-sheet"
+    },
+    {
+      "parameters": {
+        "operation": "append",
+        "documentId": {
+          "__rl": true,
+          "mode": "id",
+          "value": "1RMV6PIO3vCEuBu1Z6eNxEaXnUY7nzoKsvLSKZGhXtq0"
+        },
+        "sheetName": {
+          "__rl": true,
+          "mode": "name",
+          "value": "Feedback"
+        },
+        "columns": {
+          "mappingMode": "autoMapInputData",
+          "value": {},
+          "matchingColumns": [],
+          "schema": []
+        },
+        "options": {}
+      },
+      "name": "Log to Sheet",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.5,
+      "position": [
+        2300,
+        480
+      ],
+      "id": "sheets-fb",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "WbzVyGwbDVzvcV25",
+          "name": "Ai with Dhruv"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={ \"success\": true }",
+        "options": {
+          "responseCode": 200
+        }
+      },
+      "name": "Respond OK",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.1,
+      "position": [
+        2540,
+        320
+      ],
+      "id": "resp-fb"
+    },
+    {
+      "parameters": {
+        "mode": "runOnceForAllItems",
+        "jsCode": "const body = $input.first().json.body;\nconst now = new Date();\nconst dateStr = now.toLocaleDateString('en-US', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });\nconst timeStr = now.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', hour12: true });\nreturn [{ json: {\n  Date: dateStr + ' at ' + timeStr,\n  'Suggestion ID': body.suggestionId || '',\n  'Suggestion Title': body.suggestionTitle || '',\n  Action: body.action || ''\n} }];"
+      },
+      "name": "Format Vote",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        700,
+        560
+      ],
+      "id": "code-vote"
+    },
+    {
+      "parameters": {
+        "operation": "append",
+        "documentId": {
+          "__rl": true,
+          "mode": "id",
+          "value": "1RMV6PIO3vCEuBu1Z6eNxEaXnUY7nzoKsvLSKZGhXtq0"
+        },
+        "sheetName": {
+          "__rl": true,
+          "mode": "name",
+          "value": "Suggestion Votes"
+        },
+        "columns": {
+          "mappingMode": "autoMapInputData",
+          "value": {},
+          "matchingColumns": [],
+          "schema": []
+        },
+        "options": {}
+      },
+      "name": "Log Vote",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.5,
+      "position": [
+        960,
+        560
+      ],
+      "id": "sheets-vote",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "WbzVyGwbDVzvcV25",
+          "name": "Ai with Dhruv"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={ \"success\": true }",
+        "options": {
+          "responseCode": 200
+        }
+      },
+      "name": "Respond Vote OK",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.1,
+      "position": [
+        1200,
+        560
+      ],
+      "id": "resp-vote"
+    },
+    {
+      "parameters": {
+        "content": "## QuotaHit \u2014 Feedback Widget Handler v2\n\n**Webhook:** `POST /webhook/feedback-widget`\n\n**Feedback flow:**\n1. Check for screenshot \u2192 upload to Google Drive\n2. Format notification with screenshot URL\n3. Send Telegram + Gmail + log to Sheet\n\n**Vote flow:**\n1. Log vote to Suggestion Votes sheet\n\n**Screenshot URL format:**\n`https://drive.google.com/file/d/{id}/view`",
+        "height": 320,
+        "width": 420,
+        "color": 5
+      },
+      "name": "Sticky Note",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        180,
+        -80
+      ],
+      "id": "sticky"
+    }
+  ],
+  "connections": {
+    "Feedback Webhook": {
+      "main": [
+        [
+          {
+            "node": "Is Feedback?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Is Feedback?": {
+      "main": [
+        [
+          {
+            "node": "Has Screenshot?",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Format Vote",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Has Screenshot?": {
+      "main": [
+        [
+          {
+            "node": "Base64 to Binary",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "No Screenshot",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Base64 to Binary": {
+      "main": [
+        [
+          {
+            "node": "Upload to Drive",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Upload to Drive": {
+      "main": [
+        [
+          {
+            "node": "Set Screenshot URL",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Set Screenshot URL": {
+      "main": [
+        [
+          {
+            "node": "Merge",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "No Screenshot": {
+      "main": [
+        [
+          {
+            "node": "Merge",
+            "type": "main",
+            "index": 1
+          }
+        ]
+      ]
+    },
+    "Merge": {
+      "main": [
+        [
+          {
+            "node": "Format Feedback",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Format Feedback": {
+      "main": [
+        [
+          {
+            "node": "Telegram",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Gmail",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Prepare Sheet Row",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Telegram": {
+      "main": [
+        [
+          {
+            "node": "Respond OK",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Gmail": {
+      "main": [
+        [
+          {
+            "node": "Respond OK",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Prepare Sheet Row": {
+      "main": [
+        [
+          {
+            "node": "Log to Sheet",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Log to Sheet": {
+      "main": [
+        [
+          {
+            "node": "Respond OK",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Format Vote": {
+      "main": [
+        [
+          {
+            "node": "Log Vote",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Log Vote": {
+      "main": [
+        [
+          {
+            "node": "Respond Vote OK",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1",
+    "callerPolicy": "workflowsFromSameOwner",
+    "availableInMCP": false
+  },
+  "staticData": null,
+  "meta": null,
+  "pinData": null,
+  "versionId": "aaf7d90c-dbc2-4c2e-922d-542404fd33db",
+  "activeVersionId": "aaf7d90c-dbc2-4c2e-922d-542404fd33db",
+  "versionCounter": 3,
+  "triggerCount": 1,
+  "shared": [
+    {
+      "updatedAt": "2026-02-21T21:50:05.814Z",
+      "createdAt": "2026-02-21T21:50:05.814Z",
+      "role": "workflow:owner",
+      "workflowId": "W4p7Z4rfFNMPIV1d",
+      "projectId": "DT8YjHwLZsQjJqVc",
+      "project": {
+        "updatedAt": "2025-09-30T14:49:00.207Z",
+        "createdAt": "2025-09-30T14:45:13.837Z",
+        "id": "DT8YjHwLZsQjJqVc",
+        "name": "Dhruv Tomar <dhruv70081@gmail.com>",
+        "type": "personal",
+        "icon": null,
+        "description": null,
+        "creatorId": "eeb2630f-4760-4254-9eb8-71cf49a24999",
+        "projectRelations": [
+          {
+            "updatedAt": "2025-09-30T14:45:13.837Z",
+            "createdAt": "2025-09-30T14:45:13.837Z",
+            "userId": "eeb2630f-4760-4254-9eb8-71cf49a24999",
+            "projectId": "DT8YjHwLZsQjJqVc",
+            "user": {
+              "updatedAt": "2026-02-20T21:05:29.000Z",
+              "createdAt": "2025-09-30T14:45:13.204Z",
+              "id": "eeb2630f-4760-4254-9eb8-71cf49a24999",
+              "email": "dhruv70081@gmail.com",
+              "firstName": "Dhruv",
+              "lastName": "Tomar",
+              "personalizationAnswers": {
+                "version": "v4",
+                "personalization_survey_submitted_at": "2025-09-30T14:49:20.090Z",
+                "personalization_survey_n8n_version": "1.113.3",
+                "companySize": "<20",
+                "companyType": "education",
+                "automationGoalSm": [
+                  "lead-generation"
+                ],
+                "role": "sales-and-marketing",
+                "reportedSource": "google"
+              },
+              "settings": {
+                "userActivated": true,
+                "easyAIWorkflowOnboarded": true,
+                "firstSuccessfulWorkflowId": "qbWjLjqmTXha48b0",
+                "userActivatedAt": 1759559314268,
+                "npsSurvey": {
+                  "responded": true,
+                  "lastShownAt": 1762350067664
+                },
+                "dismissedCallouts": {
+                  "aiAgentStarterCallout": true,
+                  "ragStarterCallout": true
+                }
+              },
+              "disabled": false,
+              "mfaEnabled": false,
+              "lastActiveAt": "2026-02-20",
+              "isPending": false
+            }
+          }
+        ]
+      }
+    }
+  ],
+  "tags": [],
+  "activeVersion": {
+    "updatedAt": "2026-02-21T21:50:05.822Z",
+    "createdAt": "2026-02-21T21:50:05.822Z",
+    "versionId": "aaf7d90c-dbc2-4c2e-922d-542404fd33db",
+    "workflowId": "W4p7Z4rfFNMPIV1d",
+    "nodes": [
+      {
+        "parameters": {
+          "httpMethod": "POST",
+          "path": "feedback-widget",
+          "options": {
+            "responseMode": "responseNode"
+          }
+        },
+        "name": "Feedback Webhook",
+        "type": "n8n-nodes-base.webhook",
+        "typeVersion": 2,
+        "position": [
+          240,
+          400
+        ],
+        "webhookId": "feedback-widget",
+        "id": "wh"
+      },
+      {
+        "parameters": {
+          "conditions": {
+            "options": {
+              "caseSensitive": true,
+              "leftValue": "",
+              "typeValidation": "strict"
+            },
+            "conditions": [
+              {
+                "id": "c1",
+                "leftValue": "={{ $json.body.type }}",
+                "rightValue": "feedback",
+                "operator": {
+                  "type": "string",
+                  "operation": "equals"
+                }
+              }
+            ],
+            "combinator": "and"
+          },
+          "options": {}
+        },
+        "name": "Is Feedback?",
+        "type": "n8n-nodes-base.if",
+        "typeVersion": 2.2,
+        "position": [
+          480,
+          400
+        ],
+        "id": "if-type"
+      },
+      {
+        "parameters": {
+          "conditions": {
+            "options": {
+              "caseSensitive": true,
+              "leftValue": "",
+              "typeValidation": "strict"
+            },
+            "conditions": [
+              {
+                "id": "c2",
+                "leftValue": "={{ $json.body.screenshotDataUrl }}",
+                "rightValue": "",
+                "operator": {
+                  "type": "string",
+                  "operation": "notEquals"
+                }
+              }
+            ],
+            "combinator": "and"
+          },
+          "options": {}
+        },
+        "name": "Has Screenshot?",
+        "type": "n8n-nodes-base.if",
+        "typeVersion": 2.2,
+        "position": [
+          700,
+          280
+        ],
+        "id": "if-screenshot"
+      },
+      {
+        "parameters": {
+          "mode": "runOnceForAllItems",
+          "jsCode": "const body = $input.first().json.body;\nconst dataUrl = body.screenshotDataUrl;\n\n// Parse data URL: data:image/jpeg;base64,/9j/4AAQ...\nconst matches = dataUrl.match(/^data:([^;]+);base64,(.+)$/);\nif (!matches) throw new Error('Invalid data URL format');\n\nconst mimeType = matches[1];\nconst base64Data = matches[2];\nconst buffer = Buffer.from(base64Data, 'base64');\n\n// Determine file extension\nconst extMap = { 'image/jpeg': 'jpg', 'image/png': 'png', 'image/webp': 'webp', 'image/gif': 'gif' };\nconst ext = extMap[mimeType] || 'jpg';\n\nconst now = new Date();\nconst ts = now.toISOString().replace(/[:.]/g, '-').slice(0, 19);\nconst fileName = `feedback-${body.category || 'general'}-${ts}.${ext}`;\n\nconst binaryData = await this.helpers.prepareBinaryData(buffer, fileName, mimeType);\n\nreturn [{\n  json: { ...body, _fileName: fileName },\n  binary: { data: binaryData }\n}];"
+        },
+        "name": "Base64 to Binary",
+        "type": "n8n-nodes-base.code",
+        "typeVersion": 2,
+        "position": [
+          940,
+          180
+        ],
+        "id": "code-b64"
+      },
+      {
+        "parameters": {
+          "name": "={{ $json._fileName }}",
+          "folderId": {
+            "__rl": true,
+            "mode": "id",
+            "value": "1TgADBM8S9_SZK9365iquB3DV8BiGuSjE"
+          },
+          "options": {}
+        },
+        "name": "Upload to Drive",
+        "type": "n8n-nodes-base.googleDrive",
+        "typeVersion": 3,
+        "position": [
+          1160,
+          180
+        ],
+        "id": "drive-upload",
+        "credentials": {
+          "googleDriveOAuth2Api": {
+            "id": "etId49ji6y1gWG3l",
+            "name": "Ai with Dhruv"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "mode": "runOnceForAllItems",
+          "jsCode": "const driveResult = $input.first().json;\nconst fileId = driveResult.id;\nconst screenshotUrl = fileId ? 'https://drive.google.com/file/d/' + fileId + '/view' : '';\nconst viewUrl = fileId ? 'https://lh3.googleusercontent.com/d/' + fileId + '=w800' : '';\n\n// Pass through original body from webhook\nconst body = $('Has Screenshot?').first().json.body;\n\nreturn [{ json: { ...body, screenshotUrl, screenshotViewUrl: viewUrl, _driveFileId: fileId } }];"
+        },
+        "name": "Set Screenshot URL",
+        "type": "n8n-nodes-base.code",
+        "typeVersion": 2,
+        "position": [
+          1380,
+          180
+        ],
+        "id": "code-url"
+      },
+      {
+        "parameters": {
+          "mode": "runOnceForAllItems",
+          "jsCode": "const body = $input.first().json.body;\nreturn [{ json: { ...body, screenshotUrl: '', screenshotViewUrl: '', _driveFileId: '' } }];"
+        },
+        "name": "No Screenshot",
+        "type": "n8n-nodes-base.code",
+        "typeVersion": 2,
+        "position": [
+          940,
+          380
+        ],
+        "id": "code-noimg"
+      },
+      {
+        "parameters": {
+          "mode": "chooseBranch",
+          "output": "empty"
+        },
+        "name": "Merge",
+        "type": "n8n-nodes-base.merge",
+        "typeVersion": 3.1,
+        "position": [
+          1580,
+          280
+        ],
+        "id": "merge-1"
+      },
+      {
+        "parameters": {
+          "mode": "runOnceForAllItems",
+          "jsCode": "const body = $input.first().json;\n\nconst now = new Date();\nconst dateStr = now.toLocaleDateString('en-US', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });\nconst timeStr = now.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', hour12: true });\n\nconst labelMap = { 'bug': 'BUG', 'feature_request': 'FEATURE REQUEST', 'feedback': 'FEEDBACK', 'improvement': 'IMPROVEMENT' };\nconst label = labelMap[body.category] || (body.category || 'UNKNOWN').toUpperCase();\n\nconst rating = body.rating || 0;\nconst stars = '\\u2B50'.repeat(rating) + '\\u2606'.repeat(5 - rating);\n\n// Telegram message\nlet telegram = `*\\\\[${label}\\\\]* \\u2014 QuotaHit Feedback\\n\\n`;\ntelegram += `*Rating:* ${stars} (${rating}/5)\\n`;\ntelegram += `*From:* ${body.name || 'Anonymous'} (${body.email || 'No email'})\\n`;\ntelegram += `*Page:* ${body.pageUrl || 'Unknown'}\\n\\n`;\ntelegram += `*Feedback:*\\n${body.primaryText || '(empty)'}\\n`;\nif (body.secondaryText) telegram += `\\n*Details:*\\n${body.secondaryText}\\n`;\nif (body.tertiaryText) telegram += `\\n*Additional:*\\n${body.tertiaryText}\\n`;\nif (body.screenshotUrl) telegram += `\\n\\u{1F4F8} [View Screenshot](${body.screenshotUrl})`;\ntelegram += `\\n\\n\\u23F0 ${dateStr} at ${timeStr}`;\n\n// Gmail HTML\nlet html = '<div style=\"font-family:Arial,sans-serif;max-width:640px;margin:0 auto;padding:20px;\">';\nconst color = body.category === 'bug' ? '#ef4444' : body.category === 'feature_request' ? '#3b82f6' : '#22c55e';\nconst bg = body.category === 'bug' ? '#fef2f2' : body.category === 'feature_request' ? '#f0f9ff' : '#f0fdf4';\nhtml += `<div style=\"background:${bg};border-left:4px solid ${color};padding:16px;border-radius:4px;margin-bottom:20px;\">`;\nhtml += `<strong style=\"font-size:16px;\">[${label}]</strong> &mdash; Rating: ${stars} (${rating}/5)</div>`;\nhtml += '<table style=\"width:100%;border-collapse:collapse;margin-bottom:20px;\">';\nhtml += `<tr><td style=\"padding:8px;font-weight:bold;width:120px;\">From:</td><td style=\"padding:8px;\">${body.name || 'Anonymous'} (${body.email || 'No email'})</td></tr>`;\nhtml += `<tr><td style=\"padding:8px;font-weight:bold;\">Category:</td><td style=\"padding:8px;\">${label}</td></tr>`;\nhtml += `<tr><td style=\"padding:8px;font-weight:bold;\">Page:</td><td style=\"padding:8px;\"><a href=\"${body.pageUrl || '#'}\">${body.pageUrl || 'Unknown'}</a></td></tr>`;\nhtml += `<tr><td style=\"padding:8px;font-weight:bold;\">Timestamp:</td><td style=\"padding:8px;\">${dateStr} at ${timeStr}</td></tr>`;\nhtml += '</table>';\nhtml += `<h3>Feedback</h3><p style=\"background:#f9fafb;padding:12px;border-radius:6px;\">${body.primaryText || '(empty)'}</p>`;\nif (body.secondaryText) html += `<h3>Additional Details</h3><p style=\"background:#f9fafb;padding:12px;border-radius:6px;\">${body.secondaryText}</p>`;\nif (body.tertiaryText) html += `<h3>Other Notes</h3><p style=\"background:#f9fafb;padding:12px;border-radius:6px;\">${body.tertiaryText}</p>`;\nif (body.screenshotViewUrl) {\n  html += `<h3>Screenshot</h3><a href=\"${body.screenshotUrl}\"><img src=\"${body.screenshotViewUrl}\" style=\"max-width:100%;border-radius:8px;border:1px solid #e5e7eb;\" /></a>`;\n}\nhtml += '</div>';\n\nconst emailSubject = `[${label}] Feedback from ${body.name || 'Anonymous'} \u2014 QuotaHit`;\n\nconst sheetRow = {\n  Date: `${dateStr} at ${timeStr}`,\n  Category: label,\n  Rating: rating,\n  'Primary Text': body.primaryText || '',\n  'Secondary Text': body.secondaryText || '',\n  Email: body.email || '',\n  Name: body.name || '',\n  'Page URL': body.pageUrl || '',\n  'Screenshot URL': body.screenshotUrl || '',\n  'User Agent': body.userAgent || ''\n};\n\nreturn [{ json: { telegramMessage: telegram, emailSubject, emailHtml: html, sheetRow, category: body.category, label } }];"
+        },
+        "name": "Format Feedback",
+        "type": "n8n-nodes-base.code",
+        "typeVersion": 2,
+        "position": [
+          1800,
+          280
+        ],
+        "id": "code-format"
+      },
+      {
+        "parameters": {
+          "chatId": "637313836",
+          "text": "={{ $json.telegramMessage }}",
+          "additionalFields": {
+            "parse_mode": "MarkdownV2"
+          }
+        },
+        "name": "Telegram",
+        "type": "n8n-nodes-base.telegram",
+        "typeVersion": 1.2,
+        "position": [
+          2060,
+          160
+        ],
+        "id": "tg",
+        "credentials": {
+          "telegramApi": {
+            "id": "W6XV6RQORTB3eBDg",
+            "name": "Agent Dhruv"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "sendTo": "aiwithdhruv@gmail.com",
+          "subject": "={{ $json.emailSubject }}",
+          "message": "={{ $json.emailHtml }}",
+          "options": {}
+        },
+        "name": "Gmail",
+        "type": "n8n-nodes-base.gmail",
+        "typeVersion": 2.2,
+        "position": [
+          2060,
+          320
+        ],
+        "id": "gmail",
+        "credentials": {
+          "gmailOAuth2": {
+            "id": "gPGYzjuIbblOf3E1",
+            "name": "Ai with Dhruv"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "mode": "runOnceForAllItems",
+          "jsCode": "const row = $('Format Feedback').first().json.sheetRow;\nreturn [{ json: row }];"
+        },
+        "name": "Prepare Sheet Row",
+        "type": "n8n-nodes-base.code",
+        "typeVersion": 2,
+        "position": [
+          2060,
+          480
+        ],
+        "id": "code-sheet"
+      },
+      {
+        "parameters": {
+          "operation": "append",
+          "documentId": {
+            "__rl": true,
+            "mode": "id",
+            "value": "1RMV6PIO3vCEuBu1Z6eNxEaXnUY7nzoKsvLSKZGhXtq0"
+          },
+          "sheetName": {
+            "__rl": true,
+            "mode": "name",
+            "value": "Feedback"
+          },
+          "columns": {
+            "mappingMode": "autoMapInputData",
+            "value": {},
+            "matchingColumns": [],
+            "schema": []
+          },
+          "options": {}
+        },
+        "name": "Log to Sheet",
+        "type": "n8n-nodes-base.googleSheets",
+        "typeVersion": 4.5,
+        "position": [
+          2300,
+          480
+        ],
+        "id": "sheets-fb",
+        "credentials": {
+          "googleSheetsOAuth2Api": {
+            "id": "WbzVyGwbDVzvcV25",
+            "name": "Ai with Dhruv"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "respondWith": "json",
+          "responseBody": "={ \"success\": true }",
+          "options": {
+            "responseCode": 200
+          }
+        },
+        "name": "Respond OK",
+        "type": "n8n-nodes-base.respondToWebhook",
+        "typeVersion": 1.1,
+        "position": [
+          2540,
+          320
+        ],
+        "id": "resp-fb"
+      },
+      {
+        "parameters": {
+          "mode": "runOnceForAllItems",
+          "jsCode": "const body = $input.first().json.body;\nconst now = new Date();\nconst dateStr = now.toLocaleDateString('en-US', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });\nconst timeStr = now.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', hour12: true });\nreturn [{ json: {\n  Date: dateStr + ' at ' + timeStr,\n  'Suggestion ID': body.suggestionId || '',\n  'Suggestion Title': body.suggestionTitle || '',\n  Action: body.action || ''\n} }];"
+        },
+        "name": "Format Vote",
+        "type": "n8n-nodes-base.code",
+        "typeVersion": 2,
+        "position": [
+          700,
+          560
+        ],
+        "id": "code-vote"
+      },
+      {
+        "parameters": {
+          "operation": "append",
+          "documentId": {
+            "__rl": true,
+            "mode": "id",
+            "value": "1RMV6PIO3vCEuBu1Z6eNxEaXnUY7nzoKsvLSKZGhXtq0"
+          },
+          "sheetName": {
+            "__rl": true,
+            "mode": "name",
+            "value": "Suggestion Votes"
+          },
+          "columns": {
+            "mappingMode": "autoMapInputData",
+            "value": {},
+            "matchingColumns": [],
+            "schema": []
+          },
+          "options": {}
+        },
+        "name": "Log Vote",
+        "type": "n8n-nodes-base.googleSheets",
+        "typeVersion": 4.5,
+        "position": [
+          960,
+          560
+        ],
+        "id": "sheets-vote",
+        "credentials": {
+          "googleSheetsOAuth2Api": {
+            "id": "WbzVyGwbDVzvcV25",
+            "name": "Ai with Dhruv"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "respondWith": "json",
+          "responseBody": "={ \"success\": true }",
+          "options": {
+            "responseCode": 200
+          }
+        },
+        "name": "Respond Vote OK",
+        "type": "n8n-nodes-base.respondToWebhook",
+        "typeVersion": 1.1,
+        "position": [
+          1200,
+          560
+        ],
+        "id": "resp-vote"
+      },
+      {
+        "parameters": {
+          "content": "## QuotaHit \u2014 Feedback Widget Handler v2\n\n**Webhook:** `POST /webhook/feedback-widget`\n\n**Feedback flow:**\n1. Check for screenshot \u2192 upload to Google Drive\n2. Format notification with screenshot URL\n3. Send Telegram + Gmail + log to Sheet\n\n**Vote flow:**\n1. Log vote to Suggestion Votes sheet\n\n**Screenshot URL format:**\n`https://drive.google.com/file/d/{id}/view`",
+          "height": 320,
+          "width": 420,
+          "color": 5
+        },
+        "name": "Sticky Note",
+        "type": "n8n-nodes-base.stickyNote",
+        "typeVersion": 1,
+        "position": [
+          180,
+          -80
+        ],
+        "id": "sticky"
+      }
+    ],
+    "connections": {
+      "Feedback Webhook": {
+        "main": [
+          [
+            {
+              "node": "Is Feedback?",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Is Feedback?": {
+        "main": [
+          [
+            {
+              "node": "Has Screenshot?",
+              "type": "main",
+              "index": 0
+            }
+          ],
+          [
+            {
+              "node": "Format Vote",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Has Screenshot?": {
+        "main": [
+          [
+            {
+              "node": "Base64 to Binary",
+              "type": "main",
+              "index": 0
+            }
+          ],
+          [
+            {
+              "node": "No Screenshot",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Base64 to Binary": {
+        "main": [
+          [
+            {
+              "node": "Upload to Drive",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Upload to Drive": {
+        "main": [
+          [
+            {
+              "node": "Set Screenshot URL",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Set Screenshot URL": {
+        "main": [
+          [
+            {
+              "node": "Merge",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "No Screenshot": {
+        "main": [
+          [
+            {
+              "node": "Merge",
+              "type": "main",
+              "index": 1
+            }
+          ]
+        ]
+      },
+      "Merge": {
+        "main": [
+          [
+            {
+              "node": "Format Feedback",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Format Feedback": {
+        "main": [
+          [
+            {
+              "node": "Telegram",
+              "type": "main",
+              "index": 0
+            },
+            {
+              "node": "Gmail",
+              "type": "main",
+              "index": 0
+            },
+            {
+              "node": "Prepare Sheet Row",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Telegram": {
+        "main": [
+          [
+            {
+              "node": "Respond OK",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Gmail": {
+        "main": [
+          [
+            {
+              "node": "Respond OK",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Prepare Sheet Row": {
+        "main": [
+          [
+            {
+              "node": "Log to Sheet",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Log to Sheet": {
+        "main": [
+          [
+            {
+              "node": "Respond OK",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Format Vote": {
+        "main": [
+          [
+            {
+              "node": "Log Vote",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Log Vote": {
+        "main": [
+          [
+            {
+              "node": "Respond Vote OK",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      }
+    },
+    "authors": "Dhruv Tomar",
+    "name": null,
+    "description": null,
+    "autosaved": false,
+    "workflowPublishHistory": [
+      {
+        "createdAt": "2026-02-21T21:50:06.333Z",
+        "id": 408,
+        "workflowId": "W4p7Z4rfFNMPIV1d",
+        "versionId": "aaf7d90c-dbc2-4c2e-922d-542404fd33db",
+        "event": "activated",
+        "userId": "eeb2630f-4760-4254-9eb8-71cf49a24999"
+      }
+    ]
+  }
+}

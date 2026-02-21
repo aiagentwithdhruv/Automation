@@ -1,0 +1,1242 @@
+{
+  "updatedAt": "2026-02-21T07:33:55.180Z",
+  "createdAt": "2026-02-20T19:25:58.793Z",
+  "id": "UCSCmilt6au6vaRG",
+  "name": "QuotaHit - Daily Blog Post Generator",
+  "description": null,
+  "active": true,
+  "isArchived": false,
+  "nodes": [
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "field": "cronExpression",
+              "expression": "30 3 * * *"
+            }
+          ]
+        }
+      },
+      "id": "a1b2c3d4-0001-0001-0001-000000000001",
+      "name": "Daily 9AM IST",
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.2,
+      "position": [
+        -400,
+        300
+      ]
+    },
+    {
+      "parameters": {
+        "mode": "runOnceForAllItems",
+        "jsCode": "// Topic Cluster System for QuotaHit Blog SEO\n// Organized into pillars for Google topical authority\n// AM = educational content, PM = action-oriented content\n\nconst clusters = {\n  // === MORNING PILLARS (Educational, informational intent) ===\n  \"objection-handling\": {\n    pillar: \"Objection Handling\",\n    relatedTag: \"objection+handling\",\n    timeSlot: \"am\",\n    topics: [\n      { title_hint: \"Price objection handling scripts that close deals in any industry\", tags: [\"objection handling\", \"pricing\", \"sales scripts\"] },\n      { title_hint: \"How to respond when prospects say I need to think about it\", tags: [\"objection handling\", \"closing\", \"sales techniques\"] },\n      { title_hint: \"Handling we already have a solution \u2014 competitive displacement scripts\", tags: [\"objection handling\", \"competition\", \"B2B sales\"] },\n      { title_hint: \"When prospects say send me an email \u2014 pivot scripts that book meetings\", tags: [\"objection handling\", \"cold calling\", \"email outreach\"] },\n      { title_hint: \"Reframing not interested into a real sales conversation\", tags: [\"objection handling\", \"cold calling\", \"mindset\"] },\n      { title_hint: \"Budget objection scripts that actually work for B2B sales reps\", tags: [\"objection handling\", \"pricing\", \"negotiation\"] },\n      { title_hint: \"Breaking through we are locked into a contract objections\", tags: [\"objection handling\", \"competition\", \"enterprise sales\"] },\n      { title_hint: \"Getting past procurement gatekeepers to reach decision makers\", tags: [\"objection handling\", \"enterprise sales\", \"prospecting\"] },\n      { title_hint: \"The 5 most common sales objections and how to overcome each one\", tags: [\"objection handling\", \"sales training\", \"frameworks\"] },\n      { title_hint: \"Objection handling framework \u2014 the LAER model for sales reps\", tags: [\"objection handling\", \"frameworks\", \"sales methodology\"] }\n    ]\n  },\n  \"cold-calling\": {\n    pillar: \"Cold Calling\",\n    relatedTag: \"cold+calling\",\n    timeSlot: \"am\",\n    topics: [\n      { title_hint: \"Cold call opening lines that book meetings \u2014 2026 scripts\", tags: [\"cold calling\", \"prospecting\", \"sales scripts\"] },\n      { title_hint: \"The 30-second cold call pitch framework for SDRs\", tags: [\"cold calling\", \"frameworks\", \"SDR\"] },\n      { title_hint: \"Best time to cold call by industry \u2014 data backed guide\", tags: [\"cold calling\", \"data\", \"productivity\"] },\n      { title_hint: \"Voicemail scripts that actually get callbacks from prospects\", tags: [\"cold calling\", \"voicemail\", \"prospecting\"] },\n      { title_hint: \"Warming up cold calls with social selling on LinkedIn\", tags: [\"cold calling\", \"social selling\", \"LinkedIn\"] },\n      { title_hint: \"How top performing reps handle cold call rejection\", tags: [\"cold calling\", \"mindset\", \"sales coaching\"] },\n      { title_hint: \"Cold call vs cold email \u2014 when to use which channel\", tags: [\"cold calling\", \"email outreach\", \"multi-channel\"] },\n      { title_hint: \"Cold calling in 2026 \u2014 is it still effective for B2B sales\", tags: [\"cold calling\", \"B2B sales\", \"trends\"] },\n      { title_hint: \"How to get past the gatekeeper on cold calls every time\", tags: [\"cold calling\", \"gatekeepers\", \"techniques\"] },\n      { title_hint: \"Building a cold call script that sounds natural not robotic\", tags: [\"cold calling\", \"scripts\", \"authenticity\"] }\n    ]\n  },\n  \"sales-psychology\": {\n    pillar: \"Sales Psychology\",\n    relatedTag: \"psychology\",\n    timeSlot: \"am\",\n    topics: [\n      { title_hint: \"The psychology of buying decisions \u2014 what makes prospects say yes\", tags: [\"psychology\", \"buyers\", \"decision making\"] },\n      { title_hint: \"Building rapport in the first 30 seconds of any sales call\", tags: [\"psychology\", \"rapport\", \"first impressions\"] },\n      { title_hint: \"Mirroring and matching \u2014 NLP techniques for sales professionals\", tags: [\"psychology\", \"NLP\", \"communication\"] },\n      { title_hint: \"Loss aversion in sales \u2014 how to frame value vs risk\", tags: [\"psychology\", \"framing\", \"value selling\"] },\n      { title_hint: \"How top performers handle rejection and stay motivated\", tags: [\"psychology\", \"mindset\", \"resilience\"] },\n      { title_hint: \"The reciprocity principle in B2B sales \u2014 give before you ask\", tags: [\"psychology\", \"B2B sales\", \"relationship selling\"] },\n      { title_hint: \"Emotional intelligence for sales professionals \u2014 the EQ advantage\", tags: [\"psychology\", \"EQ\", \"soft skills\"] },\n      { title_hint: \"Anchoring bias in sales negotiations \u2014 use it ethically\", tags: [\"psychology\", \"negotiation\", \"pricing\"] },\n      { title_hint: \"The power of silence in sales conversations\", tags: [\"psychology\", \"listening\", \"techniques\"] },\n      { title_hint: \"Social proof in sales \u2014 how to use testimonials that convert\", tags: [\"psychology\", \"social proof\", \"closing\"] }\n    ]\n  },\n  \"discovery-calls\": {\n    pillar: \"Discovery Calls\",\n    relatedTag: \"discovery\",\n    timeSlot: \"am\",\n    topics: [\n      { title_hint: \"SPIN selling questions for modern B2B discovery calls\", tags: [\"discovery\", \"SPIN\", \"B2B sales\"] },\n      { title_hint: \"MEDDIC qualification framework explained for sales teams\", tags: [\"discovery\", \"MEDDIC\", \"qualification\"] },\n      { title_hint: \"Discovery call scripts that uncover real buyer pain points\", tags: [\"discovery\", \"scripts\", \"pain points\"] },\n      { title_hint: \"The art of asking better sales questions on discovery calls\", tags: [\"discovery\", \"questions\", \"techniques\"] },\n      { title_hint: \"How to qualify out bad-fit prospects early and save time\", tags: [\"discovery\", \"qualification\", \"productivity\"] },\n      { title_hint: \"Finding your champion \u2014 the internal advocate test for deals\", tags: [\"discovery\", \"champions\", \"enterprise sales\"] },\n      { title_hint: \"Gap selling on discovery calls \u2014 current state vs future state\", tags: [\"discovery\", \"gap selling\", \"methodology\"] },\n      { title_hint: \"How to run a discovery call that leads to a closed deal\", tags: [\"discovery\", \"sales process\", \"closing\"] }\n    ]\n  },\n  \"sales-productivity\": {\n    pillar: \"Sales Productivity\",\n    relatedTag: \"productivity\",\n    timeSlot: \"am\",\n    topics: [\n      { title_hint: \"Time blocking for sales reps \u2014 the 80/20 schedule that works\", tags: [\"productivity\", \"time management\", \"habits\"] },\n      { title_hint: \"CRM hygiene habits that top performing sales reps follow\", tags: [\"productivity\", \"CRM\", \"organization\"] },\n      { title_hint: \"Sales metrics that actually matter for reps in 2026\", tags: [\"productivity\", \"metrics\", \"KPIs\"] },\n      { title_hint: \"Pipeline management \u2014 weekly forecast cleaning for sales teams\", tags: [\"productivity\", \"pipeline\", \"forecasting\"] },\n      { title_hint: \"How to follow up with prospects without being annoying\", tags: [\"productivity\", \"follow-up\", \"outreach\"] },\n      { title_hint: \"Morning routines of top performing sales professionals\", tags: [\"productivity\", \"habits\", \"mindset\"] },\n      { title_hint: \"Sales tech stack 2026 \u2014 essential tools for modern reps\", tags: [\"productivity\", \"tools\", \"technology\"] },\n      { title_hint: \"How to manage 100 plus accounts without dropping balls\", tags: [\"productivity\", \"account management\", \"organization\"] }\n    ]\n  },\n\n  // === EVENING PILLARS (Action-oriented, conversion intent) ===\n  \"ai-sales-tools\": {\n    pillar: \"AI Sales Tools\",\n    relatedTag: \"AI\",\n    timeSlot: \"pm\",\n    topics: [\n      { title_hint: \"How AI is transforming sales coaching and training in 2026\", tags: [\"AI\", \"sales coaching\", \"trends\"] },\n      { title_hint: \"Using AI to practice sales conversations and improve daily\", tags: [\"AI\", \"practice\", \"sales training\"] },\n      { title_hint: \"AI-powered objection handling training \u2014 practice anytime anywhere\", tags: [\"AI\", \"objection handling\", \"training\"] },\n      { title_hint: \"Why AI sales coaching beats traditional role-play every time\", tags: [\"AI\", \"coaching\", \"comparison\"] },\n      { title_hint: \"Building a daily sales practice routine with AI coaching tools\", tags: [\"AI\", \"habits\", \"daily practice\"] },\n      { title_hint: \"AI call analysis \u2014 what top performing reps do differently\", tags: [\"AI\", \"analytics\", \"performance\"] },\n      { title_hint: \"The future of sales training \u2014 AI coaches vs human managers\", tags: [\"AI\", \"trends\", \"leadership\"] },\n      { title_hint: \"Best AI sales tools for SDRs and BDRs in 2026\", tags: [\"AI\", \"tools\", \"SDR\"] },\n      { title_hint: \"AI voice practice for sales \u2014 how it builds real confidence\", tags: [\"AI\", \"voice practice\", \"confidence\"] },\n      { title_hint: \"Gong alternative \u2014 affordable AI sales coaching for small teams\", tags: [\"AI\", \"Gong alternative\", \"pricing\"] }\n    ]\n  },\n  \"closing-techniques\": {\n    pillar: \"Closing Techniques\",\n    relatedTag: \"closing\",\n    timeSlot: \"pm\",\n    topics: [\n      { title_hint: \"The assumptive close technique \u2014 how and when to use it effectively\", tags: [\"closing\", \"techniques\", \"sales methodology\"] },\n      { title_hint: \"Creating urgency in sales without being pushy or manipulative\", tags: [\"closing\", \"psychology\", \"urgency\"] },\n      { title_hint: \"The summary close technique explained with real examples\", tags: [\"closing\", \"techniques\", \"examples\"] },\n      { title_hint: \"How to ask for the sale without sounding desperate\", tags: [\"closing\", \"confidence\", \"techniques\"] },\n      { title_hint: \"Negotiation tactics that protect your price in B2B deals\", tags: [\"closing\", \"negotiation\", \"pricing\"] },\n      { title_hint: \"The silence close \u2014 why pausing wins more deals than talking\", tags: [\"closing\", \"psychology\", \"techniques\"] },\n      { title_hint: \"Multi-threading deals to prevent single-thread risk\", tags: [\"closing\", \"enterprise sales\", \"deal strategy\"] },\n      { title_hint: \"Trial close questions that test buyer readiness\", tags: [\"closing\", \"questions\", \"qualification\"] },\n      { title_hint: \"Closing the deal over video call \u2014 remote selling tips\", tags: [\"closing\", \"remote selling\", \"video\"] },\n      { title_hint: \"How to handle the final negotiation round before contract signing\", tags: [\"closing\", \"negotiation\", \"contracts\"] }\n    ]\n  },\n  \"prospecting\": {\n    pillar: \"Prospecting\",\n    relatedTag: \"prospecting\",\n    timeSlot: \"pm\",\n    topics: [\n      { title_hint: \"Building an ideal customer profile ICP that actually drives revenue\", tags: [\"prospecting\", \"ICP\", \"strategy\"] },\n      { title_hint: \"LinkedIn prospecting strategies for B2B sales professionals\", tags: [\"prospecting\", \"LinkedIn\", \"social selling\"] },\n      { title_hint: \"How to research prospects in 5 minutes before any sales call\", tags: [\"prospecting\", \"research\", \"preparation\"] },\n      { title_hint: \"Email sequences that consistently get 40 percent open rates\", tags: [\"prospecting\", \"email\", \"sequences\"] },\n      { title_hint: \"Video prospecting \u2014 how to stand out in crowded inboxes\", tags: [\"prospecting\", \"video\", \"outreach\"] },\n      { title_hint: \"Multi-channel prospecting workflows that fill your pipeline\", tags: [\"prospecting\", \"workflows\", \"multi-channel\"] },\n      { title_hint: \"How to write a cold email that gets replies from executives\", tags: [\"prospecting\", \"email\", \"executives\"] },\n      { title_hint: \"Account-based prospecting strategies for enterprise sales\", tags: [\"prospecting\", \"ABM\", \"enterprise sales\"] }\n    ]\n  },\n  \"demos-presentations\": {\n    pillar: \"Demos & Presentations\",\n    relatedTag: \"demos\",\n    timeSlot: \"pm\",\n    topics: [\n      { title_hint: \"Giving product demos that close deals \u2014 not just show features\", tags: [\"demos\", \"presentations\", \"closing\"] },\n      { title_hint: \"Storytelling frameworks for sales presentations that win\", tags: [\"presentations\", \"storytelling\", \"frameworks\"] },\n      { title_hint: \"Handling tough questions during product demos with confidence\", tags: [\"demos\", \"objection handling\", \"confidence\"] },\n      { title_hint: \"The 10-minute product demo framework that converts\", tags: [\"demos\", \"frameworks\", \"time management\"] },\n      { title_hint: \"How to present pricing without losing the deal\", tags: [\"presentations\", \"pricing\", \"negotiation\"] },\n      { title_hint: \"Virtual sales presentations \u2014 engaging remote buyers effectively\", tags: [\"presentations\", \"remote selling\", \"engagement\"] }\n    ]\n  },\n  \"sales-leadership\": {\n    pillar: \"Sales Leadership\",\n    relatedTag: \"leadership\",\n    timeSlot: \"pm\",\n    topics: [\n      { title_hint: \"Coaching underperforming sales reps without micromanaging\", tags: [\"leadership\", \"coaching\", \"management\"] },\n      { title_hint: \"Building a sales culture of accountability and winning\", tags: [\"leadership\", \"culture\", \"accountability\"] },\n      { title_hint: \"Sales team onboarding \u2014 getting new reps productive fast\", tags: [\"leadership\", \"onboarding\", \"training\"] },\n      { title_hint: \"Running effective sales team meetings that drive results\", tags: [\"leadership\", \"meetings\", \"productivity\"] }\n    ]\n  }\n};\n\n// Get current date info\nconst now = new Date();\nconst start = new Date(now.getFullYear(), 0, 0);\nconst diff = now - start;\nconst oneDay = 1000 * 60 * 60 * 24;\nconst dayOfYear = Math.floor(diff / oneDay);\nconst hour = now.getUTCHours(); // UTC hour\n\n// Determine AM or PM based on trigger time\n// 9AM IST = 3:30 UTC, 6PM IST = 12:30 UTC\nconst isEvening = hour >= 10; // After 10 UTC = PM slot\n\n// Split clusters by time slot\nconst amClusters = Object.entries(clusters).filter(([_, c]) => c.timeSlot === \"am\");\nconst pmClusters = Object.entries(clusters).filter(([_, c]) => c.timeSlot === \"pm\");\n\nconst activeClusters = isEvening ? pmClusters : amClusters;\n\n// Flatten all topics from active time slot with cluster info\nconst allTopics = [];\nfor (const [catKey, cluster] of activeClusters) {\n  for (const topic of cluster.topics) {\n    allTopics.push({\n      ...topic,\n      category: catKey,\n      pillar: cluster.pillar,\n      relatedTag: cluster.relatedTag\n    });\n  }\n}\n\n// Pick topic based on day of year (different for AM vs PM)\nconst seed = isEvening ? dayOfYear * 2 + 1 : dayOfYear * 2;\nconst topicIndex = seed % allTopics.length;\nconst topic = allTopics[topicIndex];\n\n// Get related topics from same cluster for internal linking suggestions\nconst clusterKey = topic.category;\nconst relatedFromCluster = clusters[clusterKey].topics\n  .filter(t => t.title_hint !== topic.title_hint)\n  .slice(0, 3)\n  .map(t => t.title_hint);\n\nreturn [{\n  json: {\n    topic_hint: topic.title_hint,\n    category: topic.category,\n    pillar: topic.pillar,\n    tags: topic.tags,\n    relatedTag: topic.relatedTag,\n    related_topics: relatedFromCluster,\n    day_of_year: dayOfYear,\n    topic_index: topicIndex,\n    time_slot: isEvening ? \"evening\" : \"morning\",\n    date: now.toISOString().split('T')[0]\n  }\n}];"
+      },
+      "id": "a1b2c3d4-0001-0001-0001-000000000002",
+      "name": "Pick Today's Topic",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -160,
+        300
+      ]
+    },
+    {
+      "parameters": {
+        "url": "https://openrouter.ai/api/v1/chat/completions",
+        "method": "POST",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "httpBearerAuth",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"model\": \"anthropic/claude-sonnet-4.6\",\n  \"messages\": [\n    {\n      \"role\": \"system\",\n      \"content\": \"You are a senior sales coach and content writer for QuotaHit (quotahit.com), an AI-powered sales coaching platform that helps sales reps practice pitches, handle objections, and analyze calls using real-time AI voice technology.\\n\\nWrite a blog post using this EXACT format with delimiters:\\n\\n===TITLE===\\nCompelling SEO-optimized title (50-70 chars, include primary keyword)\\n===META===\\nSEO meta description with keywords (140-160 chars, include call to action)\\n===BODY===\\nFull markdown body of the blog post (900-1300 words)\\n===END===\\n\\nBLOG STYLE GUIDELINES:\\n- Write for sales reps, SDRs, and BDRs WORLDWIDE (not US-only \u2014 use universal examples from SaaS, tech, services, manufacturing)\\n- Open with a relatable pain point or scenario any sales professional globally would recognize\\n- Include 2-3 actionable scripts, frameworks, or templates they can use TODAY\\n- Use ## for section headers with long-tail SEO keywords (e.g. \\\"## How to Handle Price Objections in B2B Sales\\\")\\n- Include **bold** for key takeaways and important phrases\\n- Include a real-world example or mini case study\\n- Tone: direct, energetic, no fluff \u2014 like a coach in their corner\\n- SEO: naturally include the main keyword 3-5 times, use semantic variations and related long-tail terms in headers\\n\\nINTERNAL LINKING (CRITICAL \u2014 include ALL of these naturally within the body):\\n- At least 1 link to features: [AI-powered voice practice](https://www.quotahit.com/features)\\n- At least 1 link to signup: [try QuotaHit free](https://www.quotahit.com/signup) or [start practicing now](https://www.quotahit.com/signup)\\n- Optionally link to pricing: [see pricing plans](https://www.quotahit.com/pricing)\\n- Link to related blog category: [more {category} tips](/blog?tag={relevant_tag})\\n\\nCALL-TO-ACTION (include both):\\n1. Mid-article CTA (after the first technique/script): \\\"**Pro tip:** Practice this exact script with [QuotaHit's AI sales coach](https://www.quotahit.com/signup) \u2014 it gives you real-time feedback on your tone, pacing, and word choice.\\\"\\n2. End CTA: \\\"---\\\\n\\\\n**Ready to turn these tips into real skills?** [Start a free AI coaching session at QuotaHit](https://www.quotahit.com/signup) \u2014 practice with voice AI, get instant feedback, and build the muscle memory that closes deals. No credit card required.\\\"\\n\\nIMPORTANT: Use the exact delimiter format above. Do NOT use JSON or code fences.\"\n    },\n    {\n      \"role\": \"user\",\n      \"content\": \"Write a blog post about: {{ $json.topic_hint }}\\n\\nCategory: {{ $json.category }}\\nPillar: {{ $json.pillar }}\\nTarget tags: {{ $json.tags.join(', ') }}\\nRelated tag URL: {{ $json.relatedTag }}\\nTime slot: {{ $json.time_slot }}\\nDate: {{ $json.date }}\\n\\nRelated topics from same pillar (mention 1-2 if natural):\\n{{ $json.related_topics.join('\\n') }}\"\n    }\n  ],\n  \"temperature\": 0.7,\n  \"max_tokens\": 4500\n}",
+        "options": {
+          "timeout": 90000
+        }
+      },
+      "id": "a1b2c3d4-0001-0001-0001-000000000003",
+      "name": "Generate Blog (Claude Sonnet 4.6)",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        120,
+        300
+      ],
+      "credentials": {
+        "httpBearerAuth": {
+          "id": "66uBLB9Fa1yGhxGr",
+          "name": "Open Router"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "mode": "runOnceForAllItems",
+        "jsCode": "const input = $input.first().json;\nconst prevData = $('Pick Today\\'s Topic').first().json;\n\nconst rawText = input.choices[0].message.content || '';\n\nlet title = prevData.topic_hint;\nlet meta = `Learn about ${prevData.topic_hint} \u2014 actionable sales tips from QuotaHit.`;\nlet body = rawText;\n\nconst titleMatch = rawText.match(/===TITLE===\\s*([\\s\\S]*?)\\s*===META===/);\nif (titleMatch) title = titleMatch[1].trim();\n\nconst metaMatch = rawText.match(/===META===\\s*([\\s\\S]*?)\\s*===BODY===/);\nif (metaMatch) meta = metaMatch[1].trim();\n\nconst bodyMatch = rawText.match(/===BODY===\\s*([\\s\\S]*?)(?:\\s*===END===|$)/);\nif (bodyMatch) body = bodyMatch[1].trim();\n\nconst slug = title\n  .toLowerCase()\n  .replace(/[^a-z0-9\\s-]/g, '')\n  .replace(/\\s+/g, '-')\n  .replace(/-+/g, '-')\n  .replace(/^-|-$/g, '')\n  .slice(0, 80);\n\nreturn [{\n  json: {\n    title: title,\n    slug: slug,\n    meta_description: meta,\n    body: body,\n    hero_image_url: null,\n    tags: prevData.tags,\n    status: \"published\",\n    published_at: new Date().toISOString(),\n    category: prevData.category\n  }\n}];"
+      },
+      "id": "a1b2c3d4-0001-0001-0001-000000000004",
+      "name": "Parse & Format",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        380,
+        300
+      ]
+    },
+    {
+      "parameters": {
+        "mode": "runOnceForAllItems",
+        "jsCode": "const blogData = $input.first().json;\n\nconst imagePrompt = `Generate a professional blog hero image for a sales coaching article.\n\nTopic: \"${blogData.title}\"\nCategory: ${blogData.category}\n\nRequirements:\n- Clean, modern illustration style with bold colors\n- Dark navy blue (#0a1628) and teal/cyan (#00c8e8) color palette\n- Professional business/sales context\n- NO text, words, letters, or numbers anywhere in the image\n- Landscape orientation, wide format\n- Suitable as a blog post header image\n- Convey energy, professionalism, and growth`;\n\nreturn [{\n  json: {\n    ...blogData,\n    image_prompt: imagePrompt\n  }\n}];"
+      },
+      "id": "img-0001-0001-0001-000000000001",
+      "name": "Image Prompt",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        600,
+        300
+      ]
+    },
+    {
+      "parameters": {
+        "url": "https://openrouter.ai/api/v1/chat/completions",
+        "method": "POST",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "httpBearerAuth",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"model\": \"google/gemini-2.5-flash-image\",\n  \"messages\": [\n    {\n      \"role\": \"user\",\n      \"content\": {{ JSON.stringify($json.image_prompt) }}\n    }\n  ]\n}",
+        "options": {
+          "timeout": 120000,
+          "response": {
+            "response": {
+              "neverError": true
+            }
+          }
+        }
+      },
+      "id": "img-0001-0001-0001-000000000002",
+      "name": "Generate Image (Nano Banana)",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        840,
+        300
+      ],
+      "credentials": {
+        "httpBearerAuth": {
+          "id": "66uBLB9Fa1yGhxGr",
+          "name": "Open Router"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "mode": "runOnceForAllItems",
+        "jsCode": "const input = $input.first().json;\nconst blogData = $('Image Prompt').first().json;\n\nlet base64Data = null;\nlet mimeType = 'image/png';\n\ntry {\n  const msg = input.choices?.[0]?.message;\n  const content = msg?.content;\n  \n  // CHECK 1: message.images array (OpenRouter Gemini format)\n  if (msg?.images && Array.isArray(msg.images)) {\n    for (const img of msg.images) {\n      if (img.type === 'image_url' && img.image_url?.url) {\n        const dataUri = img.image_url.url;\n        const match = dataUri.match(/^data:(image\\/[^;]+);base64,(.+)$/s);\n        if (match) {\n          mimeType = match[1];\n          base64Data = match[2];\n          break;\n        }\n      }\n    }\n  }\n  \n  // CHECK 2: content as array (multimodal format)\n  if (!base64Data && Array.isArray(content)) {\n    for (const part of content) {\n      if (part.type === 'image_url' && part.image_url?.url) {\n        const dataUri = part.image_url.url;\n        const match = dataUri.match(/^data:(image\\/[^;]+);base64,(.+)$/s);\n        if (match) {\n          mimeType = match[1];\n          base64Data = match[2];\n          break;\n        }\n      }\n      if (part.inlineData) {\n        base64Data = part.inlineData.data;\n        mimeType = part.inlineData.mimeType || 'image/png';\n        break;\n      }\n    }\n  }\n  \n  // CHECK 3: content as string with embedded data URI\n  if (!base64Data && typeof content === 'string') {\n    const match = content.match(/data:(image\\/[^;]+);base64,([A-Za-z0-9+\\/=\\s]+)/s);\n    if (match) {\n      mimeType = match[1];\n      base64Data = match[2].replace(/\\s/g, '');\n    }\n  }\n} catch (e) {\n  // Image extraction failed silently\n}\n\nif (base64Data) {\n  const ext = mimeType.includes('jpeg') || mimeType.includes('jpg') ? 'jpg' : 'png';\n  const filename = `${blogData.slug}.${ext}`;\n  const buffer = Buffer.from(base64Data, 'base64');\n  const binaryData = await this.helpers.prepareBinaryData(buffer, filename, mimeType);\n  \n  return [{\n    json: {\n      title: blogData.title,\n      slug: blogData.slug,\n      meta_description: blogData.meta_description,\n      body: blogData.body,\n      tags: blogData.tags,\n      status: blogData.status,\n      published_at: blogData.published_at,\n      category: blogData.category,\n      has_image: true,\n      image_filename: filename\n    },\n    binary: {\n      data: binaryData\n    }\n  }];\n} else {\n  return [{\n    json: {\n      title: blogData.title,\n      slug: blogData.slug,\n      meta_description: blogData.meta_description,\n      body: blogData.body,\n      hero_image_url: null,\n      tags: blogData.tags,\n      status: blogData.status,\n      published_at: blogData.published_at,\n      category: blogData.category,\n      has_image: false\n    }\n  }];\n}"
+      },
+      "id": "img-0001-0001-0001-000000000003",
+      "name": "Process Image",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1080,
+        300
+      ]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict"
+          },
+          "conditions": [
+            {
+              "id": "cond-has-image",
+              "leftValue": "={{ $json.has_image }}",
+              "rightValue": true,
+              "operator": {
+                "type": "boolean",
+                "operation": "true"
+              }
+            }
+          ],
+          "combinator": "and"
+        }
+      },
+      "id": "img-0001-0001-0001-000000000004",
+      "name": "IF Has Image",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2,
+      "position": [
+        1300,
+        300
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "upload",
+        "name": "={{ $json.image_filename }}",
+        "folderId": {
+          "__rl": true,
+          "value": "1xaBAMr6JvRUK-Tmc7yytoHMLNrCqvGqW",
+          "mode": "id"
+        },
+        "options": {}
+      },
+      "id": "img-0001-0001-0001-000000000005",
+      "name": "Upload to Drive",
+      "type": "n8n-nodes-base.googleDrive",
+      "typeVersion": 3,
+      "position": [
+        1520,
+        160
+      ],
+      "credentials": {
+        "googleDriveOAuth2Api": {
+          "id": "etId49ji6y1gWG3l",
+          "name": "Ai with Dhruv"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "url": "=https://www.googleapis.com/drive/v3/files/{{ $json.id }}/permissions?supportsAllDrives=true&sendNotificationEmail=false",
+        "method": "POST",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "googleDriveOAuth2Api",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "{\n  \"role\": \"reader\",\n  \"type\": \"anyone\"\n}",
+        "options": {
+          "timeout": 15000
+        }
+      },
+      "id": "img-0001-0001-0001-000000000006",
+      "name": "Share Public",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        1740,
+        160
+      ],
+      "credentials": {
+        "googleDriveOAuth2Api": {
+          "id": "etId49ji6y1gWG3l",
+          "name": "Ai with Dhruv"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "mode": "runOnceForAllItems",
+        "jsCode": "const blogData = $('Process Image').first().json;\n\n// Get file ID from Upload to Drive node\nconst fileId = $('Upload to Drive').first().json.id;\n\n// Use Google Drive thumbnail API - works for <img> embedding (no redirects)\nconst imageUrl = `https://lh3.googleusercontent.com/d/${fileId}=w1200`;\n\nreturn [{\n  json: {\n    title: blogData.title,\n    slug: blogData.slug,\n    meta_description: blogData.meta_description,\n    body: blogData.body,\n    hero_image_url: imageUrl,\n    tags: blogData.tags,\n    status: blogData.status,\n    published_at: blogData.published_at,\n    category: blogData.category\n  }\n}];"
+      },
+      "id": "img-0001-0001-0001-000000000007",
+      "name": "Build Image URL",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1960,
+        160
+      ]
+    },
+    {
+      "parameters": {
+        "url": "https://www.quotahit.com/api/blog",
+        "method": "POST",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "httpHeaderAuth",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"title\": {{ JSON.stringify($json.title) }},\n  \"slug\": {{ JSON.stringify($json.slug) }},\n  \"meta_description\": {{ JSON.stringify($json.meta_description) }},\n  \"body\": {{ JSON.stringify($json.body) }},\n  \"hero_image_url\": {{ $json.hero_image_url ? JSON.stringify($json.hero_image_url) : 'null' }},\n  \"tags\": {{ JSON.stringify($json.tags) }},\n  \"status\": \"published\",\n  \"published_at\": {{ JSON.stringify($json.published_at) }}\n}",
+        "options": {
+          "timeout": 15000
+        }
+      },
+      "id": "a1b2c3d4-0001-0001-0001-000000000005",
+      "name": "Publish to QuotaHit",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        2200,
+        300
+      ],
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "3DETTyzBhEzj25oJ",
+          "name": "QuotaHit Blog API"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "chatId": "637313836",
+        "text": "=\ud83d\udcdd *New Blog Post Published on QuotaHit*\n\n*Title:* {{ $('Parse & Format').first().json.title }}\n*Category:* {{ $('Parse & Format').first().json.category }}\n*Tags:* {{ $('Parse & Format').first().json.tags.join(', ') }}\n\ud83d\uddbc *Image:* {{ $json.post?.hero_image_url ? 'Yes' : 'No' }}\n\n\ud83d\udd17 https://www.quotahit.com/blog/{{ $('Parse & Format').first().json.slug }}",
+        "additionalFields": {
+          "parse_mode": "Markdown"
+        }
+      },
+      "id": "a1b2c3d4-0001-0001-0001-000000000006",
+      "name": "Notify Dhruv",
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        2440,
+        300
+      ],
+      "credentials": {
+        "telegramApi": {
+          "id": "W6XV6RQORTB3eBDg",
+          "name": "Agent Dhruv"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "field": "cronExpression",
+              "expression": "30 12 * * *"
+            }
+          ]
+        }
+      },
+      "id": "seo-0001-0001-0001-000000000001",
+      "name": "Evening 6PM IST",
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.2,
+      "position": [
+        -400,
+        540
+      ]
+    },
+    {
+      "parameters": {
+        "url": "https://www.google.com/ping?sitemap=https://www.quotahit.com/sitemap.xml",
+        "options": {
+          "timeout": 10000,
+          "response": {
+            "response": {
+              "neverError": true
+            }
+          }
+        }
+      },
+      "id": "seo-0001-0001-0001-000000000002",
+      "name": "Ping Google Sitemap",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        2440,
+        500
+      ]
+    },
+    {
+      "parameters": {
+        "mode": "runOnceForAllItems",
+        "jsCode": "const blogData = $('Parse & Format').first().json;\nconst blogUrl = `https://www.quotahit.com/blog/${blogData.slug}`;\n\n// LinkedIn post (professional, value-first)\nconst linkedInText = `New on the QuotaHit blog: ${blogData.title}\n\n${blogData.meta_description}\n\nRead the full article with actionable scripts and frameworks:\n${blogUrl}\n\n#SalesTips #SalesCoaching #AI #B2BSales #SDR #QuotaHit`;\n\n// Twitter post (concise, hook + link)\nconst metaShort = blogData.meta_description.length > 120\n  ? blogData.meta_description.slice(0, 117) + '...'\n  : blogData.meta_description;\n\nconst twitterText = `${blogData.title}\n\n${metaShort}\n\n${blogUrl}\n\n#SalesTips #AI #SalesCoaching`;\n\nreturn [{\n  json: {\n    linkedin_text: linkedInText,\n    twitter_text: twitterText,\n    blog_url: blogUrl,\n    title: blogData.title\n  }\n}];"
+      },
+      "id": "seo-0001-0001-0001-000000000003",
+      "name": "Prepare Social Post",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        2440,
+        100
+      ]
+    },
+    {
+      "parameters": {
+        "postAs": "person",
+        "text": "={{ $json.linkedin_text }}",
+        "shareMediaCategory": "NONE"
+      },
+      "id": "seo-0001-0001-0001-000000000004",
+      "name": "Share on LinkedIn",
+      "type": "n8n-nodes-base.linkedIn",
+      "typeVersion": 1,
+      "position": [
+        2680,
+        0
+      ],
+      "credentials": {
+        "linkedInOAuth2Api": {
+          "id": "f520by1wOAMg6btX",
+          "name": "Dhruv"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "text": "={{ $json.twitter_text }}"
+      },
+      "id": "seo-0001-0001-0001-000000000005",
+      "name": "Share on Twitter",
+      "type": "n8n-nodes-base.twitter",
+      "typeVersion": 2,
+      "position": [
+        2680,
+        200
+      ],
+      "credentials": {
+        "twitterOAuth2Api": {
+          "id": "o0feRFKgKQPKR3ZX",
+          "name": "agiwithdhruv"
+        }
+      }
+    }
+  ],
+  "connections": {
+    "Daily 9AM IST": {
+      "main": [
+        [
+          {
+            "node": "Pick Today's Topic",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Pick Today's Topic": {
+      "main": [
+        [
+          {
+            "node": "Generate Blog (Claude Sonnet 4.6)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Generate Blog (Claude Sonnet 4.6)": {
+      "main": [
+        [
+          {
+            "node": "Parse & Format",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Parse & Format": {
+      "main": [
+        [
+          {
+            "node": "Image Prompt",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Image Prompt": {
+      "main": [
+        [
+          {
+            "node": "Generate Image (Nano Banana)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Generate Image (Nano Banana)": {
+      "main": [
+        [
+          {
+            "node": "Process Image",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Process Image": {
+      "main": [
+        [
+          {
+            "node": "IF Has Image",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "IF Has Image": {
+      "main": [
+        [
+          {
+            "node": "Upload to Drive",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Publish to QuotaHit",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Upload to Drive": {
+      "main": [
+        [
+          {
+            "node": "Share Public",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Share Public": {
+      "main": [
+        [
+          {
+            "node": "Build Image URL",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Build Image URL": {
+      "main": [
+        [
+          {
+            "node": "Publish to QuotaHit",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Publish to QuotaHit": {
+      "main": [
+        [
+          {
+            "node": "Notify Dhruv",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Ping Google Sitemap",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Prepare Social Post",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Evening 6PM IST": {
+      "main": [
+        [
+          {
+            "node": "Pick Today's Topic",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Prepare Social Post": {
+      "main": [
+        [
+          {
+            "node": "Share on LinkedIn",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Share on Twitter",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1",
+    "saveDataErrorExecution": "all",
+    "saveDataSuccessExecution": "all",
+    "saveManualExecutions": true,
+    "saveExecutionProgress": true,
+    "callerPolicy": "workflowsFromSameOwner",
+    "availableInMCP": false
+  },
+  "staticData": {
+    "node:Daily 9AM IST": {
+      "recurrenceRules": []
+    },
+    "node:Evening 6PM IST": {
+      "recurrenceRules": []
+    }
+  },
+  "meta": null,
+  "pinData": null,
+  "versionId": "16c7a541-27f1-4475-96c5-634878c24be3",
+  "activeVersionId": "16c7a541-27f1-4475-96c5-634878c24be3",
+  "versionCounter": 41,
+  "triggerCount": 2,
+  "shared": [
+    {
+      "updatedAt": "2026-02-20T19:25:58.797Z",
+      "createdAt": "2026-02-20T19:25:58.797Z",
+      "role": "workflow:owner",
+      "workflowId": "UCSCmilt6au6vaRG",
+      "projectId": "DT8YjHwLZsQjJqVc",
+      "project": {
+        "updatedAt": "2025-09-30T14:49:00.207Z",
+        "createdAt": "2025-09-30T14:45:13.837Z",
+        "id": "DT8YjHwLZsQjJqVc",
+        "name": "Dhruv Tomar <dhruv70081@gmail.com>",
+        "type": "personal",
+        "icon": null,
+        "description": null,
+        "creatorId": "eeb2630f-4760-4254-9eb8-71cf49a24999",
+        "projectRelations": [
+          {
+            "updatedAt": "2025-09-30T14:45:13.837Z",
+            "createdAt": "2025-09-30T14:45:13.837Z",
+            "userId": "eeb2630f-4760-4254-9eb8-71cf49a24999",
+            "projectId": "DT8YjHwLZsQjJqVc",
+            "user": {
+              "updatedAt": "2026-02-20T21:05:29.000Z",
+              "createdAt": "2025-09-30T14:45:13.204Z",
+              "id": "eeb2630f-4760-4254-9eb8-71cf49a24999",
+              "email": "dhruv70081@gmail.com",
+              "firstName": "Dhruv",
+              "lastName": "Tomar",
+              "personalizationAnswers": {
+                "version": "v4",
+                "personalization_survey_submitted_at": "2025-09-30T14:49:20.090Z",
+                "personalization_survey_n8n_version": "1.113.3",
+                "companySize": "<20",
+                "companyType": "education",
+                "automationGoalSm": [
+                  "lead-generation"
+                ],
+                "role": "sales-and-marketing",
+                "reportedSource": "google"
+              },
+              "settings": {
+                "userActivated": true,
+                "easyAIWorkflowOnboarded": true,
+                "firstSuccessfulWorkflowId": "qbWjLjqmTXha48b0",
+                "userActivatedAt": 1759559314268,
+                "npsSurvey": {
+                  "responded": true,
+                  "lastShownAt": 1762350067664
+                },
+                "dismissedCallouts": {
+                  "aiAgentStarterCallout": true,
+                  "ragStarterCallout": true
+                }
+              },
+              "disabled": false,
+              "mfaEnabled": false,
+              "lastActiveAt": "2026-02-20",
+              "isPending": false
+            }
+          }
+        ]
+      }
+    }
+  ],
+  "tags": [],
+  "activeVersion": {
+    "updatedAt": "2026-02-21T07:33:55.181Z",
+    "createdAt": "2026-02-21T07:33:55.181Z",
+    "versionId": "16c7a541-27f1-4475-96c5-634878c24be3",
+    "workflowId": "UCSCmilt6au6vaRG",
+    "nodes": [
+      {
+        "parameters": {
+          "rule": {
+            "interval": [
+              {
+                "field": "cronExpression",
+                "expression": "30 3 * * *"
+              }
+            ]
+          }
+        },
+        "id": "a1b2c3d4-0001-0001-0001-000000000001",
+        "name": "Daily 9AM IST",
+        "type": "n8n-nodes-base.scheduleTrigger",
+        "typeVersion": 1.2,
+        "position": [
+          -400,
+          300
+        ]
+      },
+      {
+        "parameters": {
+          "mode": "runOnceForAllItems",
+          "jsCode": "// Topic Cluster System for QuotaHit Blog SEO\n// Organized into pillars for Google topical authority\n// AM = educational content, PM = action-oriented content\n\nconst clusters = {\n  // === MORNING PILLARS (Educational, informational intent) ===\n  \"objection-handling\": {\n    pillar: \"Objection Handling\",\n    relatedTag: \"objection+handling\",\n    timeSlot: \"am\",\n    topics: [\n      { title_hint: \"Price objection handling scripts that close deals in any industry\", tags: [\"objection handling\", \"pricing\", \"sales scripts\"] },\n      { title_hint: \"How to respond when prospects say I need to think about it\", tags: [\"objection handling\", \"closing\", \"sales techniques\"] },\n      { title_hint: \"Handling we already have a solution \u2014 competitive displacement scripts\", tags: [\"objection handling\", \"competition\", \"B2B sales\"] },\n      { title_hint: \"When prospects say send me an email \u2014 pivot scripts that book meetings\", tags: [\"objection handling\", \"cold calling\", \"email outreach\"] },\n      { title_hint: \"Reframing not interested into a real sales conversation\", tags: [\"objection handling\", \"cold calling\", \"mindset\"] },\n      { title_hint: \"Budget objection scripts that actually work for B2B sales reps\", tags: [\"objection handling\", \"pricing\", \"negotiation\"] },\n      { title_hint: \"Breaking through we are locked into a contract objections\", tags: [\"objection handling\", \"competition\", \"enterprise sales\"] },\n      { title_hint: \"Getting past procurement gatekeepers to reach decision makers\", tags: [\"objection handling\", \"enterprise sales\", \"prospecting\"] },\n      { title_hint: \"The 5 most common sales objections and how to overcome each one\", tags: [\"objection handling\", \"sales training\", \"frameworks\"] },\n      { title_hint: \"Objection handling framework \u2014 the LAER model for sales reps\", tags: [\"objection handling\", \"frameworks\", \"sales methodology\"] }\n    ]\n  },\n  \"cold-calling\": {\n    pillar: \"Cold Calling\",\n    relatedTag: \"cold+calling\",\n    timeSlot: \"am\",\n    topics: [\n      { title_hint: \"Cold call opening lines that book meetings \u2014 2026 scripts\", tags: [\"cold calling\", \"prospecting\", \"sales scripts\"] },\n      { title_hint: \"The 30-second cold call pitch framework for SDRs\", tags: [\"cold calling\", \"frameworks\", \"SDR\"] },\n      { title_hint: \"Best time to cold call by industry \u2014 data backed guide\", tags: [\"cold calling\", \"data\", \"productivity\"] },\n      { title_hint: \"Voicemail scripts that actually get callbacks from prospects\", tags: [\"cold calling\", \"voicemail\", \"prospecting\"] },\n      { title_hint: \"Warming up cold calls with social selling on LinkedIn\", tags: [\"cold calling\", \"social selling\", \"LinkedIn\"] },\n      { title_hint: \"How top performing reps handle cold call rejection\", tags: [\"cold calling\", \"mindset\", \"sales coaching\"] },\n      { title_hint: \"Cold call vs cold email \u2014 when to use which channel\", tags: [\"cold calling\", \"email outreach\", \"multi-channel\"] },\n      { title_hint: \"Cold calling in 2026 \u2014 is it still effective for B2B sales\", tags: [\"cold calling\", \"B2B sales\", \"trends\"] },\n      { title_hint: \"How to get past the gatekeeper on cold calls every time\", tags: [\"cold calling\", \"gatekeepers\", \"techniques\"] },\n      { title_hint: \"Building a cold call script that sounds natural not robotic\", tags: [\"cold calling\", \"scripts\", \"authenticity\"] }\n    ]\n  },\n  \"sales-psychology\": {\n    pillar: \"Sales Psychology\",\n    relatedTag: \"psychology\",\n    timeSlot: \"am\",\n    topics: [\n      { title_hint: \"The psychology of buying decisions \u2014 what makes prospects say yes\", tags: [\"psychology\", \"buyers\", \"decision making\"] },\n      { title_hint: \"Building rapport in the first 30 seconds of any sales call\", tags: [\"psychology\", \"rapport\", \"first impressions\"] },\n      { title_hint: \"Mirroring and matching \u2014 NLP techniques for sales professionals\", tags: [\"psychology\", \"NLP\", \"communication\"] },\n      { title_hint: \"Loss aversion in sales \u2014 how to frame value vs risk\", tags: [\"psychology\", \"framing\", \"value selling\"] },\n      { title_hint: \"How top performers handle rejection and stay motivated\", tags: [\"psychology\", \"mindset\", \"resilience\"] },\n      { title_hint: \"The reciprocity principle in B2B sales \u2014 give before you ask\", tags: [\"psychology\", \"B2B sales\", \"relationship selling\"] },\n      { title_hint: \"Emotional intelligence for sales professionals \u2014 the EQ advantage\", tags: [\"psychology\", \"EQ\", \"soft skills\"] },\n      { title_hint: \"Anchoring bias in sales negotiations \u2014 use it ethically\", tags: [\"psychology\", \"negotiation\", \"pricing\"] },\n      { title_hint: \"The power of silence in sales conversations\", tags: [\"psychology\", \"listening\", \"techniques\"] },\n      { title_hint: \"Social proof in sales \u2014 how to use testimonials that convert\", tags: [\"psychology\", \"social proof\", \"closing\"] }\n    ]\n  },\n  \"discovery-calls\": {\n    pillar: \"Discovery Calls\",\n    relatedTag: \"discovery\",\n    timeSlot: \"am\",\n    topics: [\n      { title_hint: \"SPIN selling questions for modern B2B discovery calls\", tags: [\"discovery\", \"SPIN\", \"B2B sales\"] },\n      { title_hint: \"MEDDIC qualification framework explained for sales teams\", tags: [\"discovery\", \"MEDDIC\", \"qualification\"] },\n      { title_hint: \"Discovery call scripts that uncover real buyer pain points\", tags: [\"discovery\", \"scripts\", \"pain points\"] },\n      { title_hint: \"The art of asking better sales questions on discovery calls\", tags: [\"discovery\", \"questions\", \"techniques\"] },\n      { title_hint: \"How to qualify out bad-fit prospects early and save time\", tags: [\"discovery\", \"qualification\", \"productivity\"] },\n      { title_hint: \"Finding your champion \u2014 the internal advocate test for deals\", tags: [\"discovery\", \"champions\", \"enterprise sales\"] },\n      { title_hint: \"Gap selling on discovery calls \u2014 current state vs future state\", tags: [\"discovery\", \"gap selling\", \"methodology\"] },\n      { title_hint: \"How to run a discovery call that leads to a closed deal\", tags: [\"discovery\", \"sales process\", \"closing\"] }\n    ]\n  },\n  \"sales-productivity\": {\n    pillar: \"Sales Productivity\",\n    relatedTag: \"productivity\",\n    timeSlot: \"am\",\n    topics: [\n      { title_hint: \"Time blocking for sales reps \u2014 the 80/20 schedule that works\", tags: [\"productivity\", \"time management\", \"habits\"] },\n      { title_hint: \"CRM hygiene habits that top performing sales reps follow\", tags: [\"productivity\", \"CRM\", \"organization\"] },\n      { title_hint: \"Sales metrics that actually matter for reps in 2026\", tags: [\"productivity\", \"metrics\", \"KPIs\"] },\n      { title_hint: \"Pipeline management \u2014 weekly forecast cleaning for sales teams\", tags: [\"productivity\", \"pipeline\", \"forecasting\"] },\n      { title_hint: \"How to follow up with prospects without being annoying\", tags: [\"productivity\", \"follow-up\", \"outreach\"] },\n      { title_hint: \"Morning routines of top performing sales professionals\", tags: [\"productivity\", \"habits\", \"mindset\"] },\n      { title_hint: \"Sales tech stack 2026 \u2014 essential tools for modern reps\", tags: [\"productivity\", \"tools\", \"technology\"] },\n      { title_hint: \"How to manage 100 plus accounts without dropping balls\", tags: [\"productivity\", \"account management\", \"organization\"] }\n    ]\n  },\n\n  // === EVENING PILLARS (Action-oriented, conversion intent) ===\n  \"ai-sales-tools\": {\n    pillar: \"AI Sales Tools\",\n    relatedTag: \"AI\",\n    timeSlot: \"pm\",\n    topics: [\n      { title_hint: \"How AI is transforming sales coaching and training in 2026\", tags: [\"AI\", \"sales coaching\", \"trends\"] },\n      { title_hint: \"Using AI to practice sales conversations and improve daily\", tags: [\"AI\", \"practice\", \"sales training\"] },\n      { title_hint: \"AI-powered objection handling training \u2014 practice anytime anywhere\", tags: [\"AI\", \"objection handling\", \"training\"] },\n      { title_hint: \"Why AI sales coaching beats traditional role-play every time\", tags: [\"AI\", \"coaching\", \"comparison\"] },\n      { title_hint: \"Building a daily sales practice routine with AI coaching tools\", tags: [\"AI\", \"habits\", \"daily practice\"] },\n      { title_hint: \"AI call analysis \u2014 what top performing reps do differently\", tags: [\"AI\", \"analytics\", \"performance\"] },\n      { title_hint: \"The future of sales training \u2014 AI coaches vs human managers\", tags: [\"AI\", \"trends\", \"leadership\"] },\n      { title_hint: \"Best AI sales tools for SDRs and BDRs in 2026\", tags: [\"AI\", \"tools\", \"SDR\"] },\n      { title_hint: \"AI voice practice for sales \u2014 how it builds real confidence\", tags: [\"AI\", \"voice practice\", \"confidence\"] },\n      { title_hint: \"Gong alternative \u2014 affordable AI sales coaching for small teams\", tags: [\"AI\", \"Gong alternative\", \"pricing\"] }\n    ]\n  },\n  \"closing-techniques\": {\n    pillar: \"Closing Techniques\",\n    relatedTag: \"closing\",\n    timeSlot: \"pm\",\n    topics: [\n      { title_hint: \"The assumptive close technique \u2014 how and when to use it effectively\", tags: [\"closing\", \"techniques\", \"sales methodology\"] },\n      { title_hint: \"Creating urgency in sales without being pushy or manipulative\", tags: [\"closing\", \"psychology\", \"urgency\"] },\n      { title_hint: \"The summary close technique explained with real examples\", tags: [\"closing\", \"techniques\", \"examples\"] },\n      { title_hint: \"How to ask for the sale without sounding desperate\", tags: [\"closing\", \"confidence\", \"techniques\"] },\n      { title_hint: \"Negotiation tactics that protect your price in B2B deals\", tags: [\"closing\", \"negotiation\", \"pricing\"] },\n      { title_hint: \"The silence close \u2014 why pausing wins more deals than talking\", tags: [\"closing\", \"psychology\", \"techniques\"] },\n      { title_hint: \"Multi-threading deals to prevent single-thread risk\", tags: [\"closing\", \"enterprise sales\", \"deal strategy\"] },\n      { title_hint: \"Trial close questions that test buyer readiness\", tags: [\"closing\", \"questions\", \"qualification\"] },\n      { title_hint: \"Closing the deal over video call \u2014 remote selling tips\", tags: [\"closing\", \"remote selling\", \"video\"] },\n      { title_hint: \"How to handle the final negotiation round before contract signing\", tags: [\"closing\", \"negotiation\", \"contracts\"] }\n    ]\n  },\n  \"prospecting\": {\n    pillar: \"Prospecting\",\n    relatedTag: \"prospecting\",\n    timeSlot: \"pm\",\n    topics: [\n      { title_hint: \"Building an ideal customer profile ICP that actually drives revenue\", tags: [\"prospecting\", \"ICP\", \"strategy\"] },\n      { title_hint: \"LinkedIn prospecting strategies for B2B sales professionals\", tags: [\"prospecting\", \"LinkedIn\", \"social selling\"] },\n      { title_hint: \"How to research prospects in 5 minutes before any sales call\", tags: [\"prospecting\", \"research\", \"preparation\"] },\n      { title_hint: \"Email sequences that consistently get 40 percent open rates\", tags: [\"prospecting\", \"email\", \"sequences\"] },\n      { title_hint: \"Video prospecting \u2014 how to stand out in crowded inboxes\", tags: [\"prospecting\", \"video\", \"outreach\"] },\n      { title_hint: \"Multi-channel prospecting workflows that fill your pipeline\", tags: [\"prospecting\", \"workflows\", \"multi-channel\"] },\n      { title_hint: \"How to write a cold email that gets replies from executives\", tags: [\"prospecting\", \"email\", \"executives\"] },\n      { title_hint: \"Account-based prospecting strategies for enterprise sales\", tags: [\"prospecting\", \"ABM\", \"enterprise sales\"] }\n    ]\n  },\n  \"demos-presentations\": {\n    pillar: \"Demos & Presentations\",\n    relatedTag: \"demos\",\n    timeSlot: \"pm\",\n    topics: [\n      { title_hint: \"Giving product demos that close deals \u2014 not just show features\", tags: [\"demos\", \"presentations\", \"closing\"] },\n      { title_hint: \"Storytelling frameworks for sales presentations that win\", tags: [\"presentations\", \"storytelling\", \"frameworks\"] },\n      { title_hint: \"Handling tough questions during product demos with confidence\", tags: [\"demos\", \"objection handling\", \"confidence\"] },\n      { title_hint: \"The 10-minute product demo framework that converts\", tags: [\"demos\", \"frameworks\", \"time management\"] },\n      { title_hint: \"How to present pricing without losing the deal\", tags: [\"presentations\", \"pricing\", \"negotiation\"] },\n      { title_hint: \"Virtual sales presentations \u2014 engaging remote buyers effectively\", tags: [\"presentations\", \"remote selling\", \"engagement\"] }\n    ]\n  },\n  \"sales-leadership\": {\n    pillar: \"Sales Leadership\",\n    relatedTag: \"leadership\",\n    timeSlot: \"pm\",\n    topics: [\n      { title_hint: \"Coaching underperforming sales reps without micromanaging\", tags: [\"leadership\", \"coaching\", \"management\"] },\n      { title_hint: \"Building a sales culture of accountability and winning\", tags: [\"leadership\", \"culture\", \"accountability\"] },\n      { title_hint: \"Sales team onboarding \u2014 getting new reps productive fast\", tags: [\"leadership\", \"onboarding\", \"training\"] },\n      { title_hint: \"Running effective sales team meetings that drive results\", tags: [\"leadership\", \"meetings\", \"productivity\"] }\n    ]\n  }\n};\n\n// Get current date info\nconst now = new Date();\nconst start = new Date(now.getFullYear(), 0, 0);\nconst diff = now - start;\nconst oneDay = 1000 * 60 * 60 * 24;\nconst dayOfYear = Math.floor(diff / oneDay);\nconst hour = now.getUTCHours(); // UTC hour\n\n// Determine AM or PM based on trigger time\n// 9AM IST = 3:30 UTC, 6PM IST = 12:30 UTC\nconst isEvening = hour >= 10; // After 10 UTC = PM slot\n\n// Split clusters by time slot\nconst amClusters = Object.entries(clusters).filter(([_, c]) => c.timeSlot === \"am\");\nconst pmClusters = Object.entries(clusters).filter(([_, c]) => c.timeSlot === \"pm\");\n\nconst activeClusters = isEvening ? pmClusters : amClusters;\n\n// Flatten all topics from active time slot with cluster info\nconst allTopics = [];\nfor (const [catKey, cluster] of activeClusters) {\n  for (const topic of cluster.topics) {\n    allTopics.push({\n      ...topic,\n      category: catKey,\n      pillar: cluster.pillar,\n      relatedTag: cluster.relatedTag\n    });\n  }\n}\n\n// Pick topic based on day of year (different for AM vs PM)\nconst seed = isEvening ? dayOfYear * 2 + 1 : dayOfYear * 2;\nconst topicIndex = seed % allTopics.length;\nconst topic = allTopics[topicIndex];\n\n// Get related topics from same cluster for internal linking suggestions\nconst clusterKey = topic.category;\nconst relatedFromCluster = clusters[clusterKey].topics\n  .filter(t => t.title_hint !== topic.title_hint)\n  .slice(0, 3)\n  .map(t => t.title_hint);\n\nreturn [{\n  json: {\n    topic_hint: topic.title_hint,\n    category: topic.category,\n    pillar: topic.pillar,\n    tags: topic.tags,\n    relatedTag: topic.relatedTag,\n    related_topics: relatedFromCluster,\n    day_of_year: dayOfYear,\n    topic_index: topicIndex,\n    time_slot: isEvening ? \"evening\" : \"morning\",\n    date: now.toISOString().split('T')[0]\n  }\n}];"
+        },
+        "id": "a1b2c3d4-0001-0001-0001-000000000002",
+        "name": "Pick Today's Topic",
+        "type": "n8n-nodes-base.code",
+        "typeVersion": 2,
+        "position": [
+          -160,
+          300
+        ]
+      },
+      {
+        "parameters": {
+          "url": "https://openrouter.ai/api/v1/chat/completions",
+          "method": "POST",
+          "authentication": "predefinedCredentialType",
+          "nodeCredentialType": "httpBearerAuth",
+          "sendBody": true,
+          "specifyBody": "json",
+          "jsonBody": "={\n  \"model\": \"anthropic/claude-sonnet-4.6\",\n  \"messages\": [\n    {\n      \"role\": \"system\",\n      \"content\": \"You are a senior sales coach and content writer for QuotaHit (quotahit.com), an AI-powered sales coaching platform that helps sales reps practice pitches, handle objections, and analyze calls using real-time AI voice technology.\\n\\nWrite a blog post using this EXACT format with delimiters:\\n\\n===TITLE===\\nCompelling SEO-optimized title (50-70 chars, include primary keyword)\\n===META===\\nSEO meta description with keywords (140-160 chars, include call to action)\\n===BODY===\\nFull markdown body of the blog post (900-1300 words)\\n===END===\\n\\nBLOG STYLE GUIDELINES:\\n- Write for sales reps, SDRs, and BDRs WORLDWIDE (not US-only \u2014 use universal examples from SaaS, tech, services, manufacturing)\\n- Open with a relatable pain point or scenario any sales professional globally would recognize\\n- Include 2-3 actionable scripts, frameworks, or templates they can use TODAY\\n- Use ## for section headers with long-tail SEO keywords (e.g. \\\"## How to Handle Price Objections in B2B Sales\\\")\\n- Include **bold** for key takeaways and important phrases\\n- Include a real-world example or mini case study\\n- Tone: direct, energetic, no fluff \u2014 like a coach in their corner\\n- SEO: naturally include the main keyword 3-5 times, use semantic variations and related long-tail terms in headers\\n\\nINTERNAL LINKING (CRITICAL \u2014 include ALL of these naturally within the body):\\n- At least 1 link to features: [AI-powered voice practice](https://www.quotahit.com/features)\\n- At least 1 link to signup: [try QuotaHit free](https://www.quotahit.com/signup) or [start practicing now](https://www.quotahit.com/signup)\\n- Optionally link to pricing: [see pricing plans](https://www.quotahit.com/pricing)\\n- Link to related blog category: [more {category} tips](/blog?tag={relevant_tag})\\n\\nCALL-TO-ACTION (include both):\\n1. Mid-article CTA (after the first technique/script): \\\"**Pro tip:** Practice this exact script with [QuotaHit's AI sales coach](https://www.quotahit.com/signup) \u2014 it gives you real-time feedback on your tone, pacing, and word choice.\\\"\\n2. End CTA: \\\"---\\\\n\\\\n**Ready to turn these tips into real skills?** [Start a free AI coaching session at QuotaHit](https://www.quotahit.com/signup) \u2014 practice with voice AI, get instant feedback, and build the muscle memory that closes deals. No credit card required.\\\"\\n\\nIMPORTANT: Use the exact delimiter format above. Do NOT use JSON or code fences.\"\n    },\n    {\n      \"role\": \"user\",\n      \"content\": \"Write a blog post about: {{ $json.topic_hint }}\\n\\nCategory: {{ $json.category }}\\nPillar: {{ $json.pillar }}\\nTarget tags: {{ $json.tags.join(', ') }}\\nRelated tag URL: {{ $json.relatedTag }}\\nTime slot: {{ $json.time_slot }}\\nDate: {{ $json.date }}\\n\\nRelated topics from same pillar (mention 1-2 if natural):\\n{{ $json.related_topics.join('\\n') }}\"\n    }\n  ],\n  \"temperature\": 0.7,\n  \"max_tokens\": 4500\n}",
+          "options": {
+            "timeout": 90000
+          }
+        },
+        "id": "a1b2c3d4-0001-0001-0001-000000000003",
+        "name": "Generate Blog (Claude Sonnet 4.6)",
+        "type": "n8n-nodes-base.httpRequest",
+        "typeVersion": 4.2,
+        "position": [
+          120,
+          300
+        ],
+        "credentials": {
+          "httpBearerAuth": {
+            "id": "66uBLB9Fa1yGhxGr",
+            "name": "Open Router"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "mode": "runOnceForAllItems",
+          "jsCode": "const input = $input.first().json;\nconst prevData = $('Pick Today\\'s Topic').first().json;\n\nconst rawText = input.choices[0].message.content || '';\n\nlet title = prevData.topic_hint;\nlet meta = `Learn about ${prevData.topic_hint} \u2014 actionable sales tips from QuotaHit.`;\nlet body = rawText;\n\nconst titleMatch = rawText.match(/===TITLE===\\s*([\\s\\S]*?)\\s*===META===/);\nif (titleMatch) title = titleMatch[1].trim();\n\nconst metaMatch = rawText.match(/===META===\\s*([\\s\\S]*?)\\s*===BODY===/);\nif (metaMatch) meta = metaMatch[1].trim();\n\nconst bodyMatch = rawText.match(/===BODY===\\s*([\\s\\S]*?)(?:\\s*===END===|$)/);\nif (bodyMatch) body = bodyMatch[1].trim();\n\nconst slug = title\n  .toLowerCase()\n  .replace(/[^a-z0-9\\s-]/g, '')\n  .replace(/\\s+/g, '-')\n  .replace(/-+/g, '-')\n  .replace(/^-|-$/g, '')\n  .slice(0, 80);\n\nreturn [{\n  json: {\n    title: title,\n    slug: slug,\n    meta_description: meta,\n    body: body,\n    hero_image_url: null,\n    tags: prevData.tags,\n    status: \"published\",\n    published_at: new Date().toISOString(),\n    category: prevData.category\n  }\n}];"
+        },
+        "id": "a1b2c3d4-0001-0001-0001-000000000004",
+        "name": "Parse & Format",
+        "type": "n8n-nodes-base.code",
+        "typeVersion": 2,
+        "position": [
+          380,
+          300
+        ]
+      },
+      {
+        "parameters": {
+          "mode": "runOnceForAllItems",
+          "jsCode": "const blogData = $input.first().json;\n\nconst imagePrompt = `Generate a professional blog hero image for a sales coaching article.\n\nTopic: \"${blogData.title}\"\nCategory: ${blogData.category}\n\nRequirements:\n- Clean, modern illustration style with bold colors\n- Dark navy blue (#0a1628) and teal/cyan (#00c8e8) color palette\n- Professional business/sales context\n- NO text, words, letters, or numbers anywhere in the image\n- Landscape orientation, wide format\n- Suitable as a blog post header image\n- Convey energy, professionalism, and growth`;\n\nreturn [{\n  json: {\n    ...blogData,\n    image_prompt: imagePrompt\n  }\n}];"
+        },
+        "id": "img-0001-0001-0001-000000000001",
+        "name": "Image Prompt",
+        "type": "n8n-nodes-base.code",
+        "typeVersion": 2,
+        "position": [
+          600,
+          300
+        ]
+      },
+      {
+        "parameters": {
+          "url": "https://openrouter.ai/api/v1/chat/completions",
+          "method": "POST",
+          "authentication": "predefinedCredentialType",
+          "nodeCredentialType": "httpBearerAuth",
+          "sendBody": true,
+          "specifyBody": "json",
+          "jsonBody": "={\n  \"model\": \"google/gemini-2.5-flash-image\",\n  \"messages\": [\n    {\n      \"role\": \"user\",\n      \"content\": {{ JSON.stringify($json.image_prompt) }}\n    }\n  ]\n}",
+          "options": {
+            "timeout": 120000,
+            "response": {
+              "response": {
+                "neverError": true
+              }
+            }
+          }
+        },
+        "id": "img-0001-0001-0001-000000000002",
+        "name": "Generate Image (Nano Banana)",
+        "type": "n8n-nodes-base.httpRequest",
+        "typeVersion": 4.2,
+        "position": [
+          840,
+          300
+        ],
+        "credentials": {
+          "httpBearerAuth": {
+            "id": "66uBLB9Fa1yGhxGr",
+            "name": "Open Router"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "mode": "runOnceForAllItems",
+          "jsCode": "const input = $input.first().json;\nconst blogData = $('Image Prompt').first().json;\n\nlet base64Data = null;\nlet mimeType = 'image/png';\n\ntry {\n  const msg = input.choices?.[0]?.message;\n  const content = msg?.content;\n  \n  // CHECK 1: message.images array (OpenRouter Gemini format)\n  if (msg?.images && Array.isArray(msg.images)) {\n    for (const img of msg.images) {\n      if (img.type === 'image_url' && img.image_url?.url) {\n        const dataUri = img.image_url.url;\n        const match = dataUri.match(/^data:(image\\/[^;]+);base64,(.+)$/s);\n        if (match) {\n          mimeType = match[1];\n          base64Data = match[2];\n          break;\n        }\n      }\n    }\n  }\n  \n  // CHECK 2: content as array (multimodal format)\n  if (!base64Data && Array.isArray(content)) {\n    for (const part of content) {\n      if (part.type === 'image_url' && part.image_url?.url) {\n        const dataUri = part.image_url.url;\n        const match = dataUri.match(/^data:(image\\/[^;]+);base64,(.+)$/s);\n        if (match) {\n          mimeType = match[1];\n          base64Data = match[2];\n          break;\n        }\n      }\n      if (part.inlineData) {\n        base64Data = part.inlineData.data;\n        mimeType = part.inlineData.mimeType || 'image/png';\n        break;\n      }\n    }\n  }\n  \n  // CHECK 3: content as string with embedded data URI\n  if (!base64Data && typeof content === 'string') {\n    const match = content.match(/data:(image\\/[^;]+);base64,([A-Za-z0-9+\\/=\\s]+)/s);\n    if (match) {\n      mimeType = match[1];\n      base64Data = match[2].replace(/\\s/g, '');\n    }\n  }\n} catch (e) {\n  // Image extraction failed silently\n}\n\nif (base64Data) {\n  const ext = mimeType.includes('jpeg') || mimeType.includes('jpg') ? 'jpg' : 'png';\n  const filename = `${blogData.slug}.${ext}`;\n  const buffer = Buffer.from(base64Data, 'base64');\n  const binaryData = await this.helpers.prepareBinaryData(buffer, filename, mimeType);\n  \n  return [{\n    json: {\n      title: blogData.title,\n      slug: blogData.slug,\n      meta_description: blogData.meta_description,\n      body: blogData.body,\n      tags: blogData.tags,\n      status: blogData.status,\n      published_at: blogData.published_at,\n      category: blogData.category,\n      has_image: true,\n      image_filename: filename\n    },\n    binary: {\n      data: binaryData\n    }\n  }];\n} else {\n  return [{\n    json: {\n      title: blogData.title,\n      slug: blogData.slug,\n      meta_description: blogData.meta_description,\n      body: blogData.body,\n      hero_image_url: null,\n      tags: blogData.tags,\n      status: blogData.status,\n      published_at: blogData.published_at,\n      category: blogData.category,\n      has_image: false\n    }\n  }];\n}"
+        },
+        "id": "img-0001-0001-0001-000000000003",
+        "name": "Process Image",
+        "type": "n8n-nodes-base.code",
+        "typeVersion": 2,
+        "position": [
+          1080,
+          300
+        ]
+      },
+      {
+        "parameters": {
+          "conditions": {
+            "options": {
+              "caseSensitive": true,
+              "leftValue": "",
+              "typeValidation": "strict"
+            },
+            "conditions": [
+              {
+                "id": "cond-has-image",
+                "leftValue": "={{ $json.has_image }}",
+                "rightValue": true,
+                "operator": {
+                  "type": "boolean",
+                  "operation": "true"
+                }
+              }
+            ],
+            "combinator": "and"
+          }
+        },
+        "id": "img-0001-0001-0001-000000000004",
+        "name": "IF Has Image",
+        "type": "n8n-nodes-base.if",
+        "typeVersion": 2,
+        "position": [
+          1300,
+          300
+        ]
+      },
+      {
+        "parameters": {
+          "operation": "upload",
+          "name": "={{ $json.image_filename }}",
+          "folderId": {
+            "__rl": true,
+            "value": "1xaBAMr6JvRUK-Tmc7yytoHMLNrCqvGqW",
+            "mode": "id"
+          },
+          "options": {}
+        },
+        "id": "img-0001-0001-0001-000000000005",
+        "name": "Upload to Drive",
+        "type": "n8n-nodes-base.googleDrive",
+        "typeVersion": 3,
+        "position": [
+          1520,
+          160
+        ],
+        "credentials": {
+          "googleDriveOAuth2Api": {
+            "id": "etId49ji6y1gWG3l",
+            "name": "Ai with Dhruv"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "url": "=https://www.googleapis.com/drive/v3/files/{{ $json.id }}/permissions?supportsAllDrives=true&sendNotificationEmail=false",
+          "method": "POST",
+          "authentication": "predefinedCredentialType",
+          "nodeCredentialType": "googleDriveOAuth2Api",
+          "sendBody": true,
+          "specifyBody": "json",
+          "jsonBody": "{\n  \"role\": \"reader\",\n  \"type\": \"anyone\"\n}",
+          "options": {
+            "timeout": 15000
+          }
+        },
+        "id": "img-0001-0001-0001-000000000006",
+        "name": "Share Public",
+        "type": "n8n-nodes-base.httpRequest",
+        "typeVersion": 4.2,
+        "position": [
+          1740,
+          160
+        ],
+        "credentials": {
+          "googleDriveOAuth2Api": {
+            "id": "etId49ji6y1gWG3l",
+            "name": "Ai with Dhruv"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "mode": "runOnceForAllItems",
+          "jsCode": "const blogData = $('Process Image').first().json;\n\n// Get file ID from Upload to Drive node\nconst fileId = $('Upload to Drive').first().json.id;\n\n// Use Google Drive thumbnail API - works for <img> embedding (no redirects)\nconst imageUrl = `https://lh3.googleusercontent.com/d/${fileId}=w1200`;\n\nreturn [{\n  json: {\n    title: blogData.title,\n    slug: blogData.slug,\n    meta_description: blogData.meta_description,\n    body: blogData.body,\n    hero_image_url: imageUrl,\n    tags: blogData.tags,\n    status: blogData.status,\n    published_at: blogData.published_at,\n    category: blogData.category\n  }\n}];"
+        },
+        "id": "img-0001-0001-0001-000000000007",
+        "name": "Build Image URL",
+        "type": "n8n-nodes-base.code",
+        "typeVersion": 2,
+        "position": [
+          1960,
+          160
+        ]
+      },
+      {
+        "parameters": {
+          "url": "https://www.quotahit.com/api/blog",
+          "method": "POST",
+          "authentication": "predefinedCredentialType",
+          "nodeCredentialType": "httpHeaderAuth",
+          "sendBody": true,
+          "specifyBody": "json",
+          "jsonBody": "={\n  \"title\": {{ JSON.stringify($json.title) }},\n  \"slug\": {{ JSON.stringify($json.slug) }},\n  \"meta_description\": {{ JSON.stringify($json.meta_description) }},\n  \"body\": {{ JSON.stringify($json.body) }},\n  \"hero_image_url\": {{ $json.hero_image_url ? JSON.stringify($json.hero_image_url) : 'null' }},\n  \"tags\": {{ JSON.stringify($json.tags) }},\n  \"status\": \"published\",\n  \"published_at\": {{ JSON.stringify($json.published_at) }}\n}",
+          "options": {
+            "timeout": 15000
+          }
+        },
+        "id": "a1b2c3d4-0001-0001-0001-000000000005",
+        "name": "Publish to QuotaHit",
+        "type": "n8n-nodes-base.httpRequest",
+        "typeVersion": 4.2,
+        "position": [
+          2200,
+          300
+        ],
+        "credentials": {
+          "httpHeaderAuth": {
+            "id": "3DETTyzBhEzj25oJ",
+            "name": "QuotaHit Blog API"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "chatId": "637313836",
+          "text": "=\ud83d\udcdd *New Blog Post Published on QuotaHit*\n\n*Title:* {{ $('Parse & Format').first().json.title }}\n*Category:* {{ $('Parse & Format').first().json.category }}\n*Tags:* {{ $('Parse & Format').first().json.tags.join(', ') }}\n\ud83d\uddbc *Image:* {{ $json.post?.hero_image_url ? 'Yes' : 'No' }}\n\n\ud83d\udd17 https://www.quotahit.com/blog/{{ $('Parse & Format').first().json.slug }}",
+          "additionalFields": {
+            "parse_mode": "Markdown"
+          }
+        },
+        "id": "a1b2c3d4-0001-0001-0001-000000000006",
+        "name": "Notify Dhruv",
+        "type": "n8n-nodes-base.telegram",
+        "typeVersion": 1.2,
+        "position": [
+          2440,
+          300
+        ],
+        "credentials": {
+          "telegramApi": {
+            "id": "W6XV6RQORTB3eBDg",
+            "name": "Agent Dhruv"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "rule": {
+            "interval": [
+              {
+                "field": "cronExpression",
+                "expression": "30 12 * * *"
+              }
+            ]
+          }
+        },
+        "id": "seo-0001-0001-0001-000000000001",
+        "name": "Evening 6PM IST",
+        "type": "n8n-nodes-base.scheduleTrigger",
+        "typeVersion": 1.2,
+        "position": [
+          -400,
+          540
+        ]
+      },
+      {
+        "parameters": {
+          "url": "https://www.google.com/ping?sitemap=https://www.quotahit.com/sitemap.xml",
+          "options": {
+            "timeout": 10000,
+            "response": {
+              "response": {
+                "neverError": true
+              }
+            }
+          }
+        },
+        "id": "seo-0001-0001-0001-000000000002",
+        "name": "Ping Google Sitemap",
+        "type": "n8n-nodes-base.httpRequest",
+        "typeVersion": 4.2,
+        "position": [
+          2440,
+          500
+        ]
+      },
+      {
+        "parameters": {
+          "mode": "runOnceForAllItems",
+          "jsCode": "const blogData = $('Parse & Format').first().json;\nconst blogUrl = `https://www.quotahit.com/blog/${blogData.slug}`;\n\n// LinkedIn post (professional, value-first)\nconst linkedInText = `New on the QuotaHit blog: ${blogData.title}\n\n${blogData.meta_description}\n\nRead the full article with actionable scripts and frameworks:\n${blogUrl}\n\n#SalesTips #SalesCoaching #AI #B2BSales #SDR #QuotaHit`;\n\n// Twitter post (concise, hook + link)\nconst metaShort = blogData.meta_description.length > 120\n  ? blogData.meta_description.slice(0, 117) + '...'\n  : blogData.meta_description;\n\nconst twitterText = `${blogData.title}\n\n${metaShort}\n\n${blogUrl}\n\n#SalesTips #AI #SalesCoaching`;\n\nreturn [{\n  json: {\n    linkedin_text: linkedInText,\n    twitter_text: twitterText,\n    blog_url: blogUrl,\n    title: blogData.title\n  }\n}];"
+        },
+        "id": "seo-0001-0001-0001-000000000003",
+        "name": "Prepare Social Post",
+        "type": "n8n-nodes-base.code",
+        "typeVersion": 2,
+        "position": [
+          2440,
+          100
+        ]
+      },
+      {
+        "parameters": {
+          "postAs": "person",
+          "text": "={{ $json.linkedin_text }}",
+          "shareMediaCategory": "NONE"
+        },
+        "id": "seo-0001-0001-0001-000000000004",
+        "name": "Share on LinkedIn",
+        "type": "n8n-nodes-base.linkedIn",
+        "typeVersion": 1,
+        "position": [
+          2680,
+          0
+        ],
+        "credentials": {
+          "linkedInOAuth2Api": {
+            "id": "f520by1wOAMg6btX",
+            "name": "Dhruv"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "text": "={{ $json.twitter_text }}"
+        },
+        "id": "seo-0001-0001-0001-000000000005",
+        "name": "Share on Twitter",
+        "type": "n8n-nodes-base.twitter",
+        "typeVersion": 2,
+        "position": [
+          2680,
+          200
+        ],
+        "credentials": {
+          "twitterOAuth2Api": {
+            "id": "o0feRFKgKQPKR3ZX",
+            "name": "agiwithdhruv"
+          }
+        }
+      }
+    ],
+    "connections": {
+      "Daily 9AM IST": {
+        "main": [
+          [
+            {
+              "node": "Pick Today's Topic",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Pick Today's Topic": {
+        "main": [
+          [
+            {
+              "node": "Generate Blog (Claude Sonnet 4.6)",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Generate Blog (Claude Sonnet 4.6)": {
+        "main": [
+          [
+            {
+              "node": "Parse & Format",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Parse & Format": {
+        "main": [
+          [
+            {
+              "node": "Image Prompt",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Image Prompt": {
+        "main": [
+          [
+            {
+              "node": "Generate Image (Nano Banana)",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Generate Image (Nano Banana)": {
+        "main": [
+          [
+            {
+              "node": "Process Image",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Process Image": {
+        "main": [
+          [
+            {
+              "node": "IF Has Image",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "IF Has Image": {
+        "main": [
+          [
+            {
+              "node": "Upload to Drive",
+              "type": "main",
+              "index": 0
+            }
+          ],
+          [
+            {
+              "node": "Publish to QuotaHit",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Upload to Drive": {
+        "main": [
+          [
+            {
+              "node": "Share Public",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Share Public": {
+        "main": [
+          [
+            {
+              "node": "Build Image URL",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Build Image URL": {
+        "main": [
+          [
+            {
+              "node": "Publish to QuotaHit",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Publish to QuotaHit": {
+        "main": [
+          [
+            {
+              "node": "Notify Dhruv",
+              "type": "main",
+              "index": 0
+            },
+            {
+              "node": "Ping Google Sitemap",
+              "type": "main",
+              "index": 0
+            },
+            {
+              "node": "Prepare Social Post",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Evening 6PM IST": {
+        "main": [
+          [
+            {
+              "node": "Pick Today's Topic",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Prepare Social Post": {
+        "main": [
+          [
+            {
+              "node": "Share on LinkedIn",
+              "type": "main",
+              "index": 0
+            },
+            {
+              "node": "Share on Twitter",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      }
+    },
+    "authors": "Dhruv Tomar",
+    "name": null,
+    "description": null,
+    "autosaved": false,
+    "workflowPublishHistory": [
+      {
+        "createdAt": "2026-02-21T07:33:55.230Z",
+        "id": 406,
+        "workflowId": "UCSCmilt6au6vaRG",
+        "versionId": "16c7a541-27f1-4475-96c5-634878c24be3",
+        "event": "activated",
+        "userId": "eeb2630f-4760-4254-9eb8-71cf49a24999"
+      }
+    ]
+  }
+}

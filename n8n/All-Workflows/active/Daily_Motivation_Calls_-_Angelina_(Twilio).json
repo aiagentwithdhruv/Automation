@@ -1,31 +1,12 @@
 {
-  "updatedAt": "2026-02-10T19:26:42.931Z",
+  "updatedAt": "2026-02-15T12:33:24.665Z",
   "createdAt": "2026-02-07T12:32:44.243Z",
   "id": "rqtJW3GFbdDOn0Gb",
   "name": "Daily Motivation Calls - Angelina (Twilio)",
+  "description": null,
   "active": true,
   "isArchived": false,
   "nodes": [
-    {
-      "parameters": {
-        "rule": {
-          "interval": [
-            {
-              "field": "cronExpression",
-              "expression": "30 4,8,13 * * *"
-            }
-          ]
-        }
-      },
-      "type": "n8n-nodes-base.scheduleTrigger",
-      "typeVersion": 1.2,
-      "position": [
-        -144,
-        304
-      ],
-      "id": "a1b2c3d4-1111-4aaa-bbbb-000000000001",
-      "name": "3x Daily (10AM, 2PM, 7PM IST)"
-    },
     {
       "parameters": {
         "jsCode": "// Determine time of day (IST = UTC + 5:30)\nconst now = new Date();\nconst utcH = now.getUTCHours();\nconst utcM = now.getUTCMinutes();\nconst totalMin = utcH * 60 + utcM + 330;\nconst istHour = Math.floor((totalMin % 1440) / 60);\n\nlet message = '';\nlet timeSlot = '';\n\nif (istHour >= 9 && istHour <= 11) {\n  timeSlot = 'morning';\n  message = \"Good morning Dhruv! Quick check-in from Angelina. Here's your morning push. Focus on your top 3 priorities today. Close those deals, create content, and keep building the pipeline. You've got the skills, now execute. Let's make today count! Have a great one.\";\n} else if (istHour >= 13 && istHour <= 15) {\n  timeSlot = 'afternoon';\n  message = \"Hey Dhruv, afternoon check-in! How's the progress? Remember, outreach first, then build. Don't get stuck in perfection. Ship it, test it, improve it. Check your pipeline, follow up on pending leads, and keep the momentum going. Back to work, you got this!\";\n} else {\n  timeSlot = 'evening';\n  message = \"Evening Dhruv! Hope you crushed it today. Before you wrap up, review what you accomplished, celebrate the wins, and set your top 3 priorities for tomorrow. Rest well tonight, recharge, and come back stronger. Angelina out, see you tomorrow morning!\";\n}\n\n// Build TwiML for Twilio direct call\nconst twiml = `<Response><Say voice=\"Polly.Joanna\" language=\"en-US\">${message}</Say><Pause length=\"1\"/><Say voice=\"Polly.Joanna\">Talk soon Dhruv!</Say></Response>`;\n\nreturn [{ json: { message, timeSlot, twiml, timestamp: now.toISOString() } }];"
@@ -42,7 +23,7 @@
     {
       "parameters": {
         "method": "POST",
-        "url": "=https://api.twilio.com/2010-04-01/Accounts/TWILIO_ACCOUNT_SID_REDACTED/Calls.json",
+        "url": "=https://api.twilio.com/2010-04-01/Accounts/REDACTED_TWILIO_SID/Calls.json",
         "authentication": "genericCredentialType",
         "genericAuthType": "httpHeaderAuth",
         "sendBody": true,
@@ -122,33 +103,33 @@
     },
     {
       "parameters": {
-        "content": "## CREDENTIALS SETUP\n\n**Twilio:**\nSID: TWILIO_ACCOUNT_SID_REDACTED\nToken: 3dd41e691291cc867b69d6826ebd052f\nNumber: +19036257896\n\n**In n8n, create HTTP Header Auth:**\nName: Twilio Basic Auth\nHeader Name: Authorization\nHeader Value:\nBasic QUM5ZGMwMmNjMDNiYWIwZDFhYmM1Y2U4ZmI2YjU3NjQ0MDozZGQ0MWU2OTEyOTFjYzg2N2I2OWQ2ODI2ZWJkMDUyZg==\n\n(That's base64 of SID:Token)\n\n**Telegram:** Chat ID 637313836",
-        "height": 340,
-        "width": 400,
-        "color": 7
+        "rule": {
+          "interval": [
+            {
+              "field": "weeks",
+              "triggerAtHour": 17
+            },
+            {
+              "field": "weeks",
+              "triggerAtDay": [
+                3
+              ],
+              "triggerAtHour": 10
+            }
+          ]
+        }
       },
-      "type": "n8n-nodes-base.stickyNote",
-      "typeVersion": 1,
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.2,
       "position": [
-        -608,
-        1840
+        -144,
+        304
       ],
-      "id": "a1b2c3d4-6666-4aaa-bbbb-000000000006",
-      "name": "Sticky Note1"
+      "id": "a1b2c3d4-1111-4aaa-bbbb-000000000001",
+      "name": "Wed & Sunday 5pm"
     }
   ],
   "connections": {
-    "3x Daily (10AM, 2PM, 7PM IST)": {
-      "main": [
-        [
-          {
-            "node": "Set Reminder Message",
-            "type": "main",
-            "index": 0
-          }
-        ]
-      ]
-    },
     "Set Reminder Message": {
       "main": [
         [
@@ -170,6 +151,17 @@
           }
         ]
       ]
+    },
+    "Wed & Sunday 5pm": {
+      "main": [
+        [
+          {
+            "node": "Set Reminder Message",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
     }
   },
   "settings": {
@@ -183,12 +175,19 @@
   "staticData": {
     "node:3x Daily (10AM, 2PM, 7PM IST)": {
       "recurrenceRules": []
+    },
+    "node:Sunday 5pm": {
+      "recurrenceRules": []
+    },
+    "node:Wed & Sunday 5pm": {
+      "recurrenceRules": []
     }
   },
   "meta": null,
   "pinData": {},
-  "versionId": "2a9c940b-c924-4555-930a-3435a942205f",
-  "activeVersionId": "2a9c940b-c924-4555-930a-3435a942205f",
+  "versionId": "dd85929b-ae97-4686-87ea-4ab104f20d17",
+  "activeVersionId": "dd85929b-ae97-4686-87ea-4ab104f20d17",
+  "versionCounter": 34,
   "triggerCount": 1,
   "shared": [
     {
@@ -196,35 +195,72 @@
       "createdAt": "2026-02-07T12:32:44.245Z",
       "role": "workflow:owner",
       "workflowId": "rqtJW3GFbdDOn0Gb",
-      "projectId": "DT8YjHwLZsQjJqVc"
+      "projectId": "DT8YjHwLZsQjJqVc",
+      "project": {
+        "updatedAt": "2025-09-30T14:49:00.207Z",
+        "createdAt": "2025-09-30T14:45:13.837Z",
+        "id": "DT8YjHwLZsQjJqVc",
+        "name": "Dhruv Tomar <dhruv70081@gmail.com>",
+        "type": "personal",
+        "icon": null,
+        "description": null,
+        "creatorId": "eeb2630f-4760-4254-9eb8-71cf49a24999",
+        "projectRelations": [
+          {
+            "updatedAt": "2025-09-30T14:45:13.837Z",
+            "createdAt": "2025-09-30T14:45:13.837Z",
+            "userId": "eeb2630f-4760-4254-9eb8-71cf49a24999",
+            "projectId": "DT8YjHwLZsQjJqVc",
+            "user": {
+              "updatedAt": "2026-02-20T21:05:29.000Z",
+              "createdAt": "2025-09-30T14:45:13.204Z",
+              "id": "eeb2630f-4760-4254-9eb8-71cf49a24999",
+              "email": "dhruv70081@gmail.com",
+              "firstName": "Dhruv",
+              "lastName": "Tomar",
+              "personalizationAnswers": {
+                "version": "v4",
+                "personalization_survey_submitted_at": "2025-09-30T14:49:20.090Z",
+                "personalization_survey_n8n_version": "1.113.3",
+                "companySize": "<20",
+                "companyType": "education",
+                "automationGoalSm": [
+                  "lead-generation"
+                ],
+                "role": "sales-and-marketing",
+                "reportedSource": "google"
+              },
+              "settings": {
+                "userActivated": true,
+                "easyAIWorkflowOnboarded": true,
+                "firstSuccessfulWorkflowId": "qbWjLjqmTXha48b0",
+                "userActivatedAt": 1759559314268,
+                "npsSurvey": {
+                  "responded": true,
+                  "lastShownAt": 1762350067664
+                },
+                "dismissedCallouts": {
+                  "aiAgentStarterCallout": true,
+                  "ragStarterCallout": true
+                }
+              },
+              "disabled": false,
+              "mfaEnabled": false,
+              "lastActiveAt": "2026-02-20",
+              "isPending": false
+            }
+          }
+        ]
+      }
     }
   ],
+  "tags": [],
   "activeVersion": {
-    "updatedAt": "2026-02-07T12:35:47.000Z",
-    "createdAt": "2026-02-07T12:35:46.047Z",
-    "versionId": "2a9c940b-c924-4555-930a-3435a942205f",
+    "updatedAt": "2026-02-15T12:33:25.000Z",
+    "createdAt": "2026-02-15T12:33:24.666Z",
+    "versionId": "dd85929b-ae97-4686-87ea-4ab104f20d17",
     "workflowId": "rqtJW3GFbdDOn0Gb",
     "nodes": [
-      {
-        "parameters": {
-          "rule": {
-            "interval": [
-              {
-                "field": "cronExpression",
-                "expression": "30 4,8,13 * * *"
-              }
-            ]
-          }
-        },
-        "type": "n8n-nodes-base.scheduleTrigger",
-        "typeVersion": 1.2,
-        "position": [
-          -144,
-          304
-        ],
-        "id": "a1b2c3d4-1111-4aaa-bbbb-000000000001",
-        "name": "3x Daily (10AM, 2PM, 7PM IST)"
-      },
       {
         "parameters": {
           "jsCode": "// Determine time of day (IST = UTC + 5:30)\nconst now = new Date();\nconst utcH = now.getUTCHours();\nconst utcM = now.getUTCMinutes();\nconst totalMin = utcH * 60 + utcM + 330;\nconst istHour = Math.floor((totalMin % 1440) / 60);\n\nlet message = '';\nlet timeSlot = '';\n\nif (istHour >= 9 && istHour <= 11) {\n  timeSlot = 'morning';\n  message = \"Good morning Dhruv! Quick check-in from Angelina. Here's your morning push. Focus on your top 3 priorities today. Close those deals, create content, and keep building the pipeline. You've got the skills, now execute. Let's make today count! Have a great one.\";\n} else if (istHour >= 13 && istHour <= 15) {\n  timeSlot = 'afternoon';\n  message = \"Hey Dhruv, afternoon check-in! How's the progress? Remember, outreach first, then build. Don't get stuck in perfection. Ship it, test it, improve it. Check your pipeline, follow up on pending leads, and keep the momentum going. Back to work, you got this!\";\n} else {\n  timeSlot = 'evening';\n  message = \"Evening Dhruv! Hope you crushed it today. Before you wrap up, review what you accomplished, celebrate the wins, and set your top 3 priorities for tomorrow. Rest well tonight, recharge, and come back stronger. Angelina out, see you tomorrow morning!\";\n}\n\n// Build TwiML for Twilio direct call\nconst twiml = `<Response><Say voice=\"Polly.Joanna\" language=\"en-US\">${message}</Say><Pause length=\"1\"/><Say voice=\"Polly.Joanna\">Talk soon Dhruv!</Say></Response>`;\n\nreturn [{ json: { message, timeSlot, twiml, timestamp: now.toISOString() } }];"
@@ -241,7 +277,7 @@
       {
         "parameters": {
           "method": "POST",
-          "url": "=https://api.twilio.com/2010-04-01/Accounts/TWILIO_ACCOUNT_SID_REDACTED/Calls.json",
+          "url": "=https://api.twilio.com/2010-04-01/Accounts/REDACTED_TWILIO_SID/Calls.json",
           "authentication": "genericCredentialType",
           "genericAuthType": "httpHeaderAuth",
           "sendBody": true,
@@ -321,33 +357,33 @@
       },
       {
         "parameters": {
-          "content": "## CREDENTIALS SETUP\n\n**Twilio:**\nSID: TWILIO_ACCOUNT_SID_REDACTED\nToken: 3dd41e691291cc867b69d6826ebd052f\nNumber: +19036257896\n\n**In n8n, create HTTP Header Auth:**\nName: Twilio Basic Auth\nHeader Name: Authorization\nHeader Value:\nBasic QUM5ZGMwMmNjMDNiYWIwZDFhYmM1Y2U4ZmI2YjU3NjQ0MDozZGQ0MWU2OTEyOTFjYzg2N2I2OWQ2ODI2ZWJkMDUyZg==\n\n(That's base64 of SID:Token)\n\n**Telegram:** Chat ID 637313836",
-          "height": 340,
-          "width": 400,
-          "color": 7
+          "rule": {
+            "interval": [
+              {
+                "field": "weeks",
+                "triggerAtHour": 17
+              },
+              {
+                "field": "weeks",
+                "triggerAtDay": [
+                  3
+                ],
+                "triggerAtHour": 10
+              }
+            ]
+          }
         },
-        "type": "n8n-nodes-base.stickyNote",
-        "typeVersion": 1,
+        "type": "n8n-nodes-base.scheduleTrigger",
+        "typeVersion": 1.2,
         "position": [
-          -608,
-          1840
+          -144,
+          304
         ],
-        "id": "a1b2c3d4-6666-4aaa-bbbb-000000000006",
-        "name": "Sticky Note1"
+        "id": "a1b2c3d4-1111-4aaa-bbbb-000000000001",
+        "name": "Wed & Sunday 5pm"
       }
     ],
     "connections": {
-      "3x Daily (10AM, 2PM, 7PM IST)": {
-        "main": [
-          [
-            {
-              "node": "Set Reminder Message",
-              "type": "main",
-              "index": 0
-            }
-          ]
-        ]
-      },
       "Set Reminder Message": {
         "main": [
           [
@@ -369,12 +405,32 @@
             }
           ]
         ]
+      },
+      "Wed & Sunday 5pm": {
+        "main": [
+          [
+            {
+              "node": "Set Reminder Message",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
       }
     },
     "authors": "Dhruv Tomar",
-    "name": "Version 2a9c940b",
+    "name": "Version dd85929b",
     "description": "",
-    "autosaved": true
-  },
-  "tags": []
+    "autosaved": false,
+    "workflowPublishHistory": [
+      {
+        "createdAt": "2026-02-15T12:33:25.975Z",
+        "id": 321,
+        "workflowId": "rqtJW3GFbdDOn0Gb",
+        "versionId": "dd85929b-ae97-4686-87ea-4ab104f20d17",
+        "event": "activated",
+        "userId": "eeb2630f-4760-4254-9eb8-71cf49a24999"
+      }
+    ]
+  }
 }

@@ -1,0 +1,395 @@
+{
+  "updatedAt": "2026-02-21T19:45:47.600Z",
+  "createdAt": "2026-02-21T19:45:47.600Z",
+  "id": "EwldtVuZqsLomLfS",
+  "name": "QuotaHit Sales Agent Lead Notifications",
+  "description": null,
+  "active": true,
+  "isArchived": false,
+  "nodes": [
+    {
+      "id": "webhook-1",
+      "name": "Webhook",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [
+        250,
+        300
+      ],
+      "parameters": {
+        "path": "sales-agent-leads",
+        "httpMethod": "POST",
+        "responseMode": "onReceived",
+        "options": {}
+      },
+      "webhookId": "sales-agent-leads"
+    },
+    {
+      "id": "code-format-1",
+      "name": "Format Message",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        500,
+        300
+      ],
+      "parameters": {
+        "jsCode": "const data = $input.first().json.body;\nconst emoji = {\n  hot_lead: '\ud83d\udd25',\n  demo_request: '\ud83c\udfaf',\n  enterprise_inquiry: '\ud83c\udfe2',\n  feedback: '\ud83d\udcac'\n};\nconst icon = emoji[data.type] || '\ud83d\udccc';\nconst msg = `${icon} *Sales Agent Lead*\\n\\n` +\n  `*Type:* ${(data.type || 'unknown').replace(/_/g, ' ')}\\n` +\n  `*Name:* ${data.name || 'Anonymous'}\\n` +\n  `*Email:* ${data.email || 'Not provided'}\\n` +\n  `*Company:* ${data.company || 'Not provided'}\\n` +\n  `*Team Size:* ${data.team_size || 'Unknown'}\\n` +\n  `*Modules:* ${(data.modules_interested || []).join(', ') || 'None specified'}\\n\\n` +\n  `*Summary:* ${data.summary || 'No summary'}\\n\\n` +\n  `_Source: quotahit.com Sales Agent_`;\nreturn [{ json: { message: msg, ...data } }];"
+      }
+    },
+    {
+      "id": "telegram-1",
+      "name": "Notify Dhruv",
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        780,
+        200
+      ],
+      "parameters": {
+        "chatId": "637313836",
+        "text": "={{ $json.message }}",
+        "additionalFields": {
+          "parse_mode": "Markdown"
+        }
+      },
+      "credentials": {
+        "telegramApi": {
+          "id": "W6XV6RQORTB3eBDg",
+          "name": "Agent Dhruv"
+        }
+      }
+    },
+    {
+      "id": "code-sheet-1",
+      "name": "Prepare Sheet Row",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        780,
+        420
+      ],
+      "parameters": {
+        "jsCode": "const data = $input.first().json;\nreturn [{\n  json: {\n    Date: new Date().toISOString().split('T')[0] + ' ' + new Date().toLocaleTimeString('en-IN', { timeZone: 'Asia/Kolkata' }),\n    Type: (data.type || 'unknown').replace(/_/g, ' '),\n    Name: data.name || 'Anonymous',\n    Email: data.email || 'Not provided',\n    Company: data.company || 'Not provided',\n    'Team Size': data.team_size || 'Unknown',\n    Modules: (data.modules_interested || []).join(', ') || 'None',\n    Summary: data.summary || 'No summary'\n  }\n}];"
+      }
+    },
+    {
+      "id": "sheets-1",
+      "name": "Log to Sheet",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.5,
+      "position": [
+        1060,
+        420
+      ],
+      "parameters": {
+        "operation": "appendOrUpdate",
+        "documentId": {
+          "__rl": true,
+          "value": "1QXT0-GD0HZ36rTwPQQFDii1qWJYBjcFm_kUC0FyX-P4",
+          "mode": "id"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "Sales Agent Leads",
+          "mode": "name"
+        },
+        "columns": {
+          "mappingMode": "autoMapInputData",
+          "value": {}
+        },
+        "options": {}
+      },
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "WbzVyGwbDVzvcV25",
+          "name": "Ai with Dhruv"
+        }
+      }
+    }
+  ],
+  "connections": {
+    "Webhook": {
+      "main": [
+        [
+          {
+            "node": "Format Message",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Format Message": {
+      "main": [
+        [
+          {
+            "node": "Notify Dhruv",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Prepare Sheet Row",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Prepare Sheet Row": {
+      "main": [
+        [
+          {
+            "node": "Log to Sheet",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1",
+    "saveDataErrorExecution": "all",
+    "saveDataSuccessExecution": "all",
+    "saveManualExecutions": true,
+    "saveExecutionProgress": false,
+    "callerPolicy": "workflowsFromSameOwner",
+    "availableInMCP": false
+  },
+  "staticData": null,
+  "meta": null,
+  "pinData": null,
+  "versionId": "d618c25d-3338-4408-9958-5b3f5ed8d72f",
+  "activeVersionId": "d618c25d-3338-4408-9958-5b3f5ed8d72f",
+  "versionCounter": 3,
+  "triggerCount": 1,
+  "shared": [
+    {
+      "updatedAt": "2026-02-21T19:45:47.605Z",
+      "createdAt": "2026-02-21T19:45:47.605Z",
+      "role": "workflow:owner",
+      "workflowId": "EwldtVuZqsLomLfS",
+      "projectId": "DT8YjHwLZsQjJqVc",
+      "project": {
+        "updatedAt": "2025-09-30T14:49:00.207Z",
+        "createdAt": "2025-09-30T14:45:13.837Z",
+        "id": "DT8YjHwLZsQjJqVc",
+        "name": "Dhruv Tomar <dhruv70081@gmail.com>",
+        "type": "personal",
+        "icon": null,
+        "description": null,
+        "creatorId": "eeb2630f-4760-4254-9eb8-71cf49a24999",
+        "projectRelations": [
+          {
+            "updatedAt": "2025-09-30T14:45:13.837Z",
+            "createdAt": "2025-09-30T14:45:13.837Z",
+            "userId": "eeb2630f-4760-4254-9eb8-71cf49a24999",
+            "projectId": "DT8YjHwLZsQjJqVc",
+            "user": {
+              "updatedAt": "2026-02-20T21:05:29.000Z",
+              "createdAt": "2025-09-30T14:45:13.204Z",
+              "id": "eeb2630f-4760-4254-9eb8-71cf49a24999",
+              "email": "dhruv70081@gmail.com",
+              "firstName": "Dhruv",
+              "lastName": "Tomar",
+              "personalizationAnswers": {
+                "version": "v4",
+                "personalization_survey_submitted_at": "2025-09-30T14:49:20.090Z",
+                "personalization_survey_n8n_version": "1.113.3",
+                "companySize": "<20",
+                "companyType": "education",
+                "automationGoalSm": [
+                  "lead-generation"
+                ],
+                "role": "sales-and-marketing",
+                "reportedSource": "google"
+              },
+              "settings": {
+                "userActivated": true,
+                "easyAIWorkflowOnboarded": true,
+                "firstSuccessfulWorkflowId": "qbWjLjqmTXha48b0",
+                "userActivatedAt": 1759559314268,
+                "npsSurvey": {
+                  "responded": true,
+                  "lastShownAt": 1762350067664
+                },
+                "dismissedCallouts": {
+                  "aiAgentStarterCallout": true,
+                  "ragStarterCallout": true
+                }
+              },
+              "disabled": false,
+              "mfaEnabled": false,
+              "lastActiveAt": "2026-02-20",
+              "isPending": false
+            }
+          }
+        ]
+      }
+    }
+  ],
+  "tags": [],
+  "activeVersion": {
+    "updatedAt": "2026-02-21T19:45:47.608Z",
+    "createdAt": "2026-02-21T19:45:47.608Z",
+    "versionId": "d618c25d-3338-4408-9958-5b3f5ed8d72f",
+    "workflowId": "EwldtVuZqsLomLfS",
+    "nodes": [
+      {
+        "id": "webhook-1",
+        "name": "Webhook",
+        "type": "n8n-nodes-base.webhook",
+        "typeVersion": 2,
+        "position": [
+          250,
+          300
+        ],
+        "parameters": {
+          "path": "sales-agent-leads",
+          "httpMethod": "POST",
+          "responseMode": "onReceived",
+          "options": {}
+        },
+        "webhookId": "sales-agent-leads"
+      },
+      {
+        "id": "code-format-1",
+        "name": "Format Message",
+        "type": "n8n-nodes-base.code",
+        "typeVersion": 2,
+        "position": [
+          500,
+          300
+        ],
+        "parameters": {
+          "jsCode": "const data = $input.first().json.body;\nconst emoji = {\n  hot_lead: '\ud83d\udd25',\n  demo_request: '\ud83c\udfaf',\n  enterprise_inquiry: '\ud83c\udfe2',\n  feedback: '\ud83d\udcac'\n};\nconst icon = emoji[data.type] || '\ud83d\udccc';\nconst msg = `${icon} *Sales Agent Lead*\\n\\n` +\n  `*Type:* ${(data.type || 'unknown').replace(/_/g, ' ')}\\n` +\n  `*Name:* ${data.name || 'Anonymous'}\\n` +\n  `*Email:* ${data.email || 'Not provided'}\\n` +\n  `*Company:* ${data.company || 'Not provided'}\\n` +\n  `*Team Size:* ${data.team_size || 'Unknown'}\\n` +\n  `*Modules:* ${(data.modules_interested || []).join(', ') || 'None specified'}\\n\\n` +\n  `*Summary:* ${data.summary || 'No summary'}\\n\\n` +\n  `_Source: quotahit.com Sales Agent_`;\nreturn [{ json: { message: msg, ...data } }];"
+        }
+      },
+      {
+        "id": "telegram-1",
+        "name": "Notify Dhruv",
+        "type": "n8n-nodes-base.telegram",
+        "typeVersion": 1.2,
+        "position": [
+          780,
+          200
+        ],
+        "parameters": {
+          "chatId": "637313836",
+          "text": "={{ $json.message }}",
+          "additionalFields": {
+            "parse_mode": "Markdown"
+          }
+        },
+        "credentials": {
+          "telegramApi": {
+            "id": "W6XV6RQORTB3eBDg",
+            "name": "Agent Dhruv"
+          }
+        }
+      },
+      {
+        "id": "code-sheet-1",
+        "name": "Prepare Sheet Row",
+        "type": "n8n-nodes-base.code",
+        "typeVersion": 2,
+        "position": [
+          780,
+          420
+        ],
+        "parameters": {
+          "jsCode": "const data = $input.first().json;\nreturn [{\n  json: {\n    Date: new Date().toISOString().split('T')[0] + ' ' + new Date().toLocaleTimeString('en-IN', { timeZone: 'Asia/Kolkata' }),\n    Type: (data.type || 'unknown').replace(/_/g, ' '),\n    Name: data.name || 'Anonymous',\n    Email: data.email || 'Not provided',\n    Company: data.company || 'Not provided',\n    'Team Size': data.team_size || 'Unknown',\n    Modules: (data.modules_interested || []).join(', ') || 'None',\n    Summary: data.summary || 'No summary'\n  }\n}];"
+        }
+      },
+      {
+        "id": "sheets-1",
+        "name": "Log to Sheet",
+        "type": "n8n-nodes-base.googleSheets",
+        "typeVersion": 4.5,
+        "position": [
+          1060,
+          420
+        ],
+        "parameters": {
+          "operation": "appendOrUpdate",
+          "documentId": {
+            "__rl": true,
+            "value": "1QXT0-GD0HZ36rTwPQQFDii1qWJYBjcFm_kUC0FyX-P4",
+            "mode": "id"
+          },
+          "sheetName": {
+            "__rl": true,
+            "value": "Sales Agent Leads",
+            "mode": "name"
+          },
+          "columns": {
+            "mappingMode": "autoMapInputData",
+            "value": {}
+          },
+          "options": {}
+        },
+        "credentials": {
+          "googleSheetsOAuth2Api": {
+            "id": "WbzVyGwbDVzvcV25",
+            "name": "Ai with Dhruv"
+          }
+        }
+      }
+    ],
+    "connections": {
+      "Webhook": {
+        "main": [
+          [
+            {
+              "node": "Format Message",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Format Message": {
+        "main": [
+          [
+            {
+              "node": "Notify Dhruv",
+              "type": "main",
+              "index": 0
+            },
+            {
+              "node": "Prepare Sheet Row",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Prepare Sheet Row": {
+        "main": [
+          [
+            {
+              "node": "Log to Sheet",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      }
+    },
+    "authors": "Dhruv Tomar",
+    "name": null,
+    "description": null,
+    "autosaved": false,
+    "workflowPublishHistory": [
+      {
+        "createdAt": "2026-02-21T19:45:54.120Z",
+        "id": 407,
+        "workflowId": "EwldtVuZqsLomLfS",
+        "versionId": "d618c25d-3338-4408-9958-5b3f5ed8d72f",
+        "event": "activated",
+        "userId": "eeb2630f-4760-4254-9eb8-71cf49a24999"
+      }
+    ]
+  }
+}

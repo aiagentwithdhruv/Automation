@@ -1,0 +1,475 @@
+{
+  "updatedAt": "2026-02-17T16:58:57.380Z",
+  "createdAt": "2026-02-17T16:58:57.380Z",
+  "id": "6O8vLAYOqqvRPymd",
+  "name": "SecurityAI - Vapi Sales Follow-up",
+  "description": null,
+  "active": false,
+  "isArchived": false,
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "vapi-sales-followup",
+        "options": {
+          "responseMode": "responseNode"
+        }
+      },
+      "name": "Vapi Webhook",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [
+        240,
+        300
+      ],
+      "id": "1238e2f7-6d1b-4ba3-8b7d-fae017b32211",
+      "webhookId": "fa8ed449-691e-44c7-8a0a-059ba5c712cb"
+    },
+    {
+      "parameters": {
+        "jsCode": "// Extract data from Vapi tool call\nconst body = $input.first().json.body || $input.first().json;\n\nlet args = {};\n\n// Handle different Vapi payload formats\nif (body.message && body.message.toolCallList) {\n  args = body.message.toolCallList[0].function.arguments;\n} else if (body.message && body.message.toolCalls) {\n  const toolCall = body.message.toolCalls[0];\n  args = typeof toolCall.function.arguments === 'string' \n    ? JSON.parse(toolCall.function.arguments) \n    : toolCall.function.arguments;\n} else if (body.toolCallList) {\n  args = body.toolCallList[0].function.arguments;\n} else if (body.recipient_email) {\n  args = body;\n} else {\n  args = body;\n}\n\nconst now = new Date();\nconst dateStr = now.toLocaleDateString('en-US', {\n  weekday: 'long',\n  year: 'numeric',\n  month: 'long',\n  day: 'numeric'\n});\n\nreturn [{\n  json: {\n    email: args.recipient_email || '',\n    name: args.recipient_name || 'there',\n    company: args.company_name || 'your company',\n    action: args.action_type || 'send_info',\n    meeting_date: args.meeting_date || '',\n    meeting_time: args.meeting_time || '',\n    pain_points: args.pain_points || '',\n    summary: args.call_summary || '',\n    timestamp: dateStr\n  }\n}];"
+      },
+      "name": "Extract Call Data",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        480,
+        300
+      ],
+      "id": "a25da6b6-167b-4d3e-807f-a82d0c810cf6"
+    },
+    {
+      "parameters": {
+        "rules": {
+          "rules": [
+            {
+              "value": "meeting_booked",
+              "output": 0
+            },
+            {
+              "value": "send_info",
+              "output": 1
+            },
+            {
+              "value": "callback_scheduled",
+              "output": 2
+            }
+          ]
+        },
+        "dataType": "string",
+        "value1": "={{ $json.action }}"
+      },
+      "name": "Route by Action",
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3.2,
+      "position": [
+        720,
+        300
+      ],
+      "id": "0767f737-2056-426e-97a2-8cf293bbaee1"
+    },
+    {
+      "parameters": {
+        "sendTo": "={{ $json.email }}",
+        "subject": "=Demo Confirmed \u2014 AI Operations Platform for {{ $json.company }}",
+        "message": "=<div style=\"font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px;\">\n\n<h2 style=\"color: #1a1a2e;\">Hi {{ $json.name }},</h2>\n\n<p>Great speaking with you! As discussed, here are the details for our upcoming demo:</p>\n\n<div style=\"background: #f0f4ff; border-left: 4px solid #2563eb; padding: 15px; margin: 20px 0; border-radius: 4px;\">\n<strong>\ud83d\udcc5 Date:</strong> {{ $json.meeting_date }}<br>\n<strong>\ud83d\udd50 Time:</strong> {{ $json.meeting_time }}<br>\n<strong>\ud83d\udccd Format:</strong> Video call<br>\n<strong>\u23f1 Duration:</strong> 20 minutes\n</div>\n\n<p><strong>What we'll cover:</strong></p>\n<ul>\n<li>Live demo of the AI shift-filling agent making a real call</li>\n<li>How it integrates with your existing scheduling system</li>\n<li>ROI breakdown specific to {{ $json.company }}'s operations</li>\n<li>Q&A</li>\n</ul>\n\n<p style=\"color: #666; font-size: 14px; margin-top: 30px;\">\nLooking forward to showing you what this can do for {{ $json.company }}.<br>\nIf you need to reschedule, just reply to this email.\n</p>\n\n<p>\nBest,<br>\n<strong>Sophia \u2014 AI Operations Specialist</strong><br>\n<span style=\"color: #999; font-size: 13px;\">SecurityAI Platform</span>\n</p>\n\n</div>",
+        "options": {}
+      },
+      "name": "Send Meeting Email",
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.2,
+      "position": [
+        1000,
+        160
+      ],
+      "id": "50b42f1c-96a7-48c1-9c6c-21f5701dac1d",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "gPGYzjuIbblOf3E1",
+          "name": "Ai with Dhruv"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "sendTo": "={{ $json.email }}",
+        "subject": "=AI Operations Platform \u2014 Built for {{ $json.company }}",
+        "message": "=<div style=\"font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px;\">\n\n<h2 style=\"color: #1a1a2e;\">Hi {{ $json.name }},</h2>\n\n<p>Thanks for taking the call! As promised, here's a quick overview of what we do.</p>\n\n<h3>The Problem We Solve</h3>\n<p>Security companies lose <strong>$150K\u2013$300K/year</strong> on manual dispatch operations \u2014 slow shift filling, missed calls, overtime bleed, and compliance gaps.</p>\n\n<h3>What Our AI Platform Does</h3>\n<table style=\"width: 100%; border-collapse: collapse; margin: 15px 0;\">\n<tr style=\"background: #f8f9fa;\"><td style=\"padding: 10px; border: 1px solid #dee2e6;\"><strong>Shift Fulfillment AI</strong></td><td style=\"padding: 10px; border: 1px solid #dee2e6;\">Fills open shifts in &lt;5 min via automated waterfall calling</td></tr>\n<tr><td style=\"padding: 10px; border: 1px solid #dee2e6;\"><strong>24/7 AI Receptionist</strong></td><td style=\"padding: 10px; border: 1px solid #dee2e6;\">Answers every inbound call, qualifies leads, books meetings</td></tr>\n<tr style=\"background: #f8f9fa;\"><td style=\"padding: 10px; border: 1px solid #dee2e6;\"><strong>Guard Safety Checks</strong></td><td style=\"padding: 10px; border: 1px solid #dee2e6;\">Automated hourly check-ins for lone workers (OHS compliant)</td></tr>\n<tr><td style=\"padding: 10px; border: 1px solid #dee2e6;\"><strong>Smart Scheduling</strong></td><td style=\"padding: 10px; border: 1px solid #dee2e6;\">AI confirms availability, handles call-in sick, updates systems</td></tr>\n</table>\n\n<h3>Results</h3>\n<ul>\n<li>\u26a1 Shift fill time: 45 min \u2192 under 5 min</li>\n<li>\ud83d\udcde Inbound answer rate: 100% (24/7)</li>\n<li>\ud83d\udcb0 $150K\u2013$300K saved annually</li>\n<li>\ud83d\udcca 90%+ fill rate without human intervention</li>\n</ul>\n\n<p><strong>Want to see it in action?</strong> Reply to this email and we'll set up a quick 20-minute live demo.</p>\n\n<p>\nBest,<br>\n<strong>Sophia \u2014 AI Operations Specialist</strong><br>\n<span style=\"color: #999; font-size: 13px;\">SecurityAI Platform</span>\n</p>\n\n</div>",
+        "options": {}
+      },
+      "name": "Send Info Email",
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.2,
+      "position": [
+        1000,
+        320
+      ],
+      "id": "9a4624a5-c36b-416e-8462-aa93c07b43ef",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "gPGYzjuIbblOf3E1",
+          "name": "Ai with Dhruv"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "sendTo": "={{ $json.email }}",
+        "subject": "=Following up \u2014 AI for {{ $json.company }} Operations",
+        "message": "=<div style=\"font-family: Arial, sans-serif; max-width: 600px; padding: 20px;\">\n<h2>Hi {{ $json.name }},</h2>\n<p>Thanks for your time on the call. As mentioned, I'll follow up at a better time.</p>\n<p>In the meantime, here's a quick summary:</p>\n<p style=\"background: #f0f4ff; padding: 15px; border-radius: 4px;\">\nWe help security companies automate shift filling (45 min \u2192 5 min), handle inbound calls 24/7 with AI, and save $150K-$300K/year in operational costs.\n</p>\n<p>When you're ready for a quick 20-minute demo, just reply to this email.</p>\n<p>Best,<br><strong>Sophia \u2014 AI Operations Specialist</strong></p>\n</div>",
+        "options": {}
+      },
+      "name": "Send Callback Email",
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.2,
+      "position": [
+        1000,
+        480
+      ],
+      "id": "6d06ccd8-303b-4f78-aa74-9b61e6a25ab9",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "gPGYzjuIbblOf3E1",
+          "name": "Ai with Dhruv"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "append",
+        "documentId": {
+          "__rl": true,
+          "value": "1QXT0-GD0HZ36rTwPQQFDii1qWJYBjcFm_kUC0FyX-P4",
+          "mode": "list",
+          "cachedResultName": "Aiwithdhruv_n8n",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1QXT0-GD0HZ36rTwPQQFDii1qWJYBjcFm_kUC0FyX-P4/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Sales Calls",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1QXT0-GD0HZ36rTwPQQFDii1qWJYBjcFm_kUC0FyX-P4/edit#gid=0"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Date": "={{ $json.timestamp }}",
+            "Name": "={{ $json.name }}",
+            "Company": "={{ $json.company }}",
+            "Email": "={{ $json.email }}",
+            "Action": "={{ $json.action }}",
+            "Meeting Date": "={{ $json.meeting_date }}",
+            "Meeting Time": "={{ $json.meeting_time }}",
+            "Pain Points": "={{ $json.pain_points }}",
+            "Summary": "={{ $json.summary }}"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "Date",
+              "displayName": "Date",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Name",
+              "displayName": "Name",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Company",
+              "displayName": "Company",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Email",
+              "displayName": "Email",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Action",
+              "displayName": "Action",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Meeting Date",
+              "displayName": "Meeting Date",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Meeting Time",
+              "displayName": "Meeting Time",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Pain Points",
+              "displayName": "Pain Points",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Summary",
+              "displayName": "Summary",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            }
+          ]
+        },
+        "options": {}
+      },
+      "name": "Log to Google Sheet",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.5,
+      "position": [
+        1280,
+        300
+      ],
+      "id": "20dd9b93-cd79-4b7b-ab4d-0bf7d7f4ecc0",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "WbzVyGwbDVzvcV25",
+          "name": "Ai with Dhruv"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={ \"results\": [{ \"result\": \"Email sent successfully to {{ $json.email }}. The prospect will receive the email shortly.\" }] }",
+        "options": {
+          "responseCode": 200
+        }
+      },
+      "name": "Respond to Vapi",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.1,
+      "position": [
+        1520,
+        300
+      ],
+      "id": "a257b99c-d4ad-4da6-99ab-6fdc35e1c8f2"
+    },
+    {
+      "parameters": {
+        "content": "## SecurityAI \u2014 Vapi Sales Follow-up Workflow\n\n**What this does:**\n1. Receives tool call from Vapi AI agent (Sophia) during live call\n2. Routes based on action type (meeting/info/callback)\n3. Sends professional HTML email instantly\n4. Logs everything to Google Sheet\n5. Responds to Vapi so Sophia can confirm \"sent to your inbox!\"\n\n**Webhook URL:** Copy from the Webhook node and paste into Vapi tool config",
+        "height": 280,
+        "width": 420,
+        "color": 5
+      },
+      "name": "Sticky Note",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        180,
+        -80
+      ],
+      "id": "d9026f6f-ff38-4206-a84c-2a0843547e9e"
+    }
+  ],
+  "connections": {
+    "Vapi Webhook": {
+      "main": [
+        [
+          {
+            "node": "Extract Call Data",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Extract Call Data": {
+      "main": [
+        [
+          {
+            "node": "Route by Action",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Route by Action": {
+      "main": [
+        [
+          {
+            "node": "Send Meeting Email",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Send Info Email",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Send Callback Email",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Send Meeting Email": {
+      "main": [
+        [
+          {
+            "node": "Log to Google Sheet",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Send Info Email": {
+      "main": [
+        [
+          {
+            "node": "Log to Google Sheet",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Send Callback Email": {
+      "main": [
+        [
+          {
+            "node": "Log to Google Sheet",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Log to Google Sheet": {
+      "main": [
+        [
+          {
+            "node": "Respond to Vapi",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1",
+    "callerPolicy": "workflowsFromSameOwner",
+    "availableInMCP": false
+  },
+  "staticData": null,
+  "meta": null,
+  "pinData": null,
+  "versionId": "efda0fcb-e6f4-4ff2-aec1-0ff6fca232bb",
+  "activeVersionId": null,
+  "versionCounter": 1,
+  "triggerCount": 0,
+  "shared": [
+    {
+      "updatedAt": "2026-02-17T16:58:57.385Z",
+      "createdAt": "2026-02-17T16:58:57.385Z",
+      "role": "workflow:owner",
+      "workflowId": "6O8vLAYOqqvRPymd",
+      "projectId": "DT8YjHwLZsQjJqVc",
+      "project": {
+        "updatedAt": "2025-09-30T14:49:00.207Z",
+        "createdAt": "2025-09-30T14:45:13.837Z",
+        "id": "DT8YjHwLZsQjJqVc",
+        "name": "Dhruv Tomar <dhruv70081@gmail.com>",
+        "type": "personal",
+        "icon": null,
+        "description": null,
+        "creatorId": "eeb2630f-4760-4254-9eb8-71cf49a24999",
+        "projectRelations": [
+          {
+            "updatedAt": "2025-09-30T14:45:13.837Z",
+            "createdAt": "2025-09-30T14:45:13.837Z",
+            "userId": "eeb2630f-4760-4254-9eb8-71cf49a24999",
+            "projectId": "DT8YjHwLZsQjJqVc",
+            "user": {
+              "updatedAt": "2026-02-20T21:05:29.000Z",
+              "createdAt": "2025-09-30T14:45:13.204Z",
+              "id": "eeb2630f-4760-4254-9eb8-71cf49a24999",
+              "email": "dhruv70081@gmail.com",
+              "firstName": "Dhruv",
+              "lastName": "Tomar",
+              "personalizationAnswers": {
+                "version": "v4",
+                "personalization_survey_submitted_at": "2025-09-30T14:49:20.090Z",
+                "personalization_survey_n8n_version": "1.113.3",
+                "companySize": "<20",
+                "companyType": "education",
+                "automationGoalSm": [
+                  "lead-generation"
+                ],
+                "role": "sales-and-marketing",
+                "reportedSource": "google"
+              },
+              "settings": {
+                "userActivated": true,
+                "easyAIWorkflowOnboarded": true,
+                "firstSuccessfulWorkflowId": "qbWjLjqmTXha48b0",
+                "userActivatedAt": 1759559314268,
+                "npsSurvey": {
+                  "responded": true,
+                  "lastShownAt": 1762350067664
+                },
+                "dismissedCallouts": {
+                  "aiAgentStarterCallout": true,
+                  "ragStarterCallout": true
+                }
+              },
+              "disabled": false,
+              "mfaEnabled": false,
+              "lastActiveAt": "2026-02-20",
+              "isPending": false
+            }
+          }
+        ]
+      }
+    }
+  ],
+  "tags": [],
+  "activeVersion": null
+}
