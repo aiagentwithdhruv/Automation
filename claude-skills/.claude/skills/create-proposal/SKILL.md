@@ -116,3 +116,37 @@ Requires in `.env`:
 ```
 PANDADOC_API_KEY=your_key
 ```
+
+---
+
+## Schema
+
+### Inputs
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `client_first_name` | string | Yes | Client first name |
+| `client_last_name` | string | Yes | Client last name |
+| `client_email` | string | Yes | Client email address |
+| `client_company` | string | Yes | Client company name |
+| `project_title` | string | Yes | Project title |
+| `problems` | array | Yes | 4 key problems (brief) |
+| `benefits` | array | Yes | 4 key benefits (brief) |
+| `investment_breakdown` | object | Yes | Month 1, Month 2, Month 3+ pricing |
+| `call_transcript` | string | No | Alternative: sales call transcript to extract details from |
+
+### Outputs
+| Name | Type | Description |
+|------|------|-------------|
+| `pandadoc_url` | string | PandaDoc internal link for review |
+| `email_sent` | boolean | Whether follow-up email was sent |
+
+### Credentials
+| Name | Source |
+|------|--------|
+| `PANDADOC_API_KEY` | .env |
+
+### Composable With
+Skills that chain well with this one: `onboarding-kickoff`, `welcome-email`
+
+### Cost
+PandaDoc API call (free tier available)

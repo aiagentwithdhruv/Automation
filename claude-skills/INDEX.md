@@ -1,8 +1,9 @@
 # Claude Skills Library - Master Index
 
-**Last updated:** 2026-02-15
+**Last updated:** 2026-02-23
 **Location:** `.context/claude-skills/`
 **Purpose:** Reusable automation skills and agent patterns for Claude Code
+**Schemas:** All 28 skills + 4 agents have typed schemas (inputs/outputs/credentials/composability)
 
 ---
 
@@ -16,7 +17,9 @@
 | **Content & Video** | 6 | Video editing, thumbnails, YouTube research |
 | **Community & Research** | 3 | Skool monitoring, academic research, RAG |
 | **Infrastructure** | 4 | Webhooks, deployment, local server |
-| **TOTAL SKILLS** | **26** | |
+| **Notifications** | 1 | Send messages to Telegram |
+| **Euron Bootcamp** | 1 | Euri API doubts, MCP setup, model selection |
+| **TOTAL SKILLS** | **28** | |
 
 ---
 
@@ -111,6 +114,22 @@ Each skill has:
 | **design-website** | Website design and development workflows |
 
 **Relevant for:** Deploying QuotaHit features, Angelina infrastructure, Onsite system deployment
+
+### Euron Bootcamp (1 skill)
+
+| Skill | Use When |
+|-------|----------|
+| **euron-qa** | Answer Euron Gen AI Bootcamp doubts — Euri API setup, models, MCP servers, errors, all frameworks |
+
+**Relevant for:** Euron Gen AI Certification Bootcamp 2.0, helping students, community support
+
+### Notifications (1 skill)
+
+| Skill | Use When |
+|-------|----------|
+| **send-telegram** | Send any message/note/reminder to Dhruv's Telegram via n8n |
+
+**Relevant for:** Quick notifications, sending summaries, reminders, interview prep notes to phone
 
 ---
 

@@ -40,3 +40,30 @@ Modal secrets are configured in the Modal dashboard, not local `.env`.
 def my_scheduled_function():
     pass
 ```
+
+---
+
+## Schema
+
+### Inputs
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `file` | file_path | No | File to deploy (default: execution/modal_webhook.py) |
+
+### Outputs
+| Name | Type | Description |
+|------|------|-------------|
+| `deployed` | boolean | Whether deployment succeeded |
+| `endpoints` | array | List of deployed endpoint URLs |
+
+### Credentials
+| Name | Source |
+|------|--------|
+| `MODAL_TOKEN_ID` | Modal dashboard |
+| `MODAL_TOKEN_SECRET` | Modal dashboard |
+
+### Composable With
+Skills that chain well with this one: `add-webhook`
+
+### Cost
+Modal compute (pay-per-use)

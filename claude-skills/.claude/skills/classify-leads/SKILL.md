@@ -39,3 +39,30 @@ python3 ./scripts/classify_leads_llm.py .tmp/leads.json \
 
 ## Output
 JSON file with classification added to each lead record.
+
+---
+
+## Schema
+
+### Inputs
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `leads_file` | file_path | Yes | JSON file with lead data |
+| `classification_type` | string | Yes | Classification type (e.g., 'product_saas') |
+| `output` | file_path | No | Output JSON file path |
+
+### Outputs
+| Name | Type | Description |
+|------|------|-------------|
+| `classified_file` | file_path | JSON file with classification added to each lead |
+
+### Credentials
+| Name | Source |
+|------|--------|
+| `ANTHROPIC_API_KEY` | .env |
+
+### Composable With
+Skills that chain well with this one: `scrape-leads`, `gmaps-leads`, `instantly-campaigns`
+
+### Cost
+$0.30 per 1,000 leads

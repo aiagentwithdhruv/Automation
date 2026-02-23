@@ -84,3 +84,33 @@ For 100 leads: ~$1.50-2.50 total
 APIFY_API_TOKEN=your_token
 ANTHROPIC_API_KEY=your_key
 ```
+
+---
+
+## Schema
+
+### Inputs
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `search` | string | Yes | Search query (e.g., 'plumbers in Austin TX') |
+| `limit` | integer | No | Max results (default: 10) |
+| `sheet_url` | string | No | Existing sheet to append to |
+| `workers` | integer | No | Parallel workers (default: 3) |
+
+### Outputs
+| Name | Type | Description |
+|------|------|-------------|
+| `sheet_url` | string | Google Sheet URL with 36-field lead data |
+| `lead_count` | integer | Number of leads scraped |
+
+### Credentials
+| Name | Source |
+|------|--------|
+| `APIFY_API_TOKEN` | .env |
+| `ANTHROPIC_API_KEY` | .env |
+
+### Composable With
+Skills that chain well with this one: `classify-leads`, `casualize-names`, `instantly-campaigns`, `onboarding-kickoff`
+
+### Cost
+$0.012-0.022 per lead

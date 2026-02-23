@@ -100,3 +100,41 @@ Send completion email to client with:
 - 0 leads found: Error (bad search query)
 - Instantly API error: Capture, note for manual fix
 - Sheet/email failures: Log but complete workflow
+
+---
+
+## Schema
+
+### Inputs
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `client_name` | string | Yes | Company name |
+| `client_email` | string | Yes | Primary contact email |
+| `service_type` | string | Yes | What service they provide |
+| `target_location` | string | Yes | Geographic area |
+| `offers` | string | Yes | Three offers (pipe-separated) |
+| `target_audience` | string | Yes | Who they're targeting |
+| `social_proof` | string | Yes | Credentials/results |
+| `lead_limit` | integer | No | Number of leads (default: 500) |
+
+### Outputs
+| Name | Type | Description |
+|------|------|-------------|
+| `status` | string | success/failure |
+| `sheet_url` | string | Lead spreadsheet URL |
+| `lead_count` | integer | Number of leads generated |
+| `campaigns` | array | Campaign IDs created |
+| `summary_email_sent` | boolean | Whether summary was emailed |
+
+### Credentials
+| Name | Source |
+|------|--------|
+| `APIFY_API_TOKEN` | .env |
+| `ANTHROPIC_API_KEY` | .env |
+| `INSTANTLY_API_KEY` | .env |
+
+### Composable With
+Skills that chain well with this one: `gmaps-leads`, `casualize-names`, `instantly-campaigns`, `welcome-email`
+
+### Cost
+~$5-10 for 500 leads + campaigns

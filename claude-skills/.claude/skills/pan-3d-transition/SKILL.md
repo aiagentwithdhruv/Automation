@@ -43,3 +43,27 @@ cd video_effects && npm install
 
 ## Output
 Video with swivel teaser inserted at specified position.
+
+---
+
+## Schema
+
+### Inputs
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `input_video` | file_path | Yes | Input video file |
+| `insert_at` | integer | No | Where to insert teaser (seconds, default: 3) |
+| `duration` | integer | No | Transition duration (seconds, default: 5) |
+| `teaser_start` | integer | No | Where to sample content from (seconds, default: 60) |
+| `bg_image` | file_path | No | Background image path |
+
+### Outputs
+| Name | Type | Description |
+|------|------|-------------|
+| `output_video` | file_path | Video with 3D transition inserted |
+
+### Composable With
+Skills that chain well with this one: `video-edit`
+
+### Cost
+Free locally (Remotion + FFmpeg)

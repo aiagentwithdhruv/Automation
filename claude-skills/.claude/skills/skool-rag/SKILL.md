@@ -46,3 +46,32 @@ OPENAI_API_KEY=your_key
 COHERE_API_KEY=your_key
 ANTHROPIC_API_KEY=your_key
 ```
+
+---
+
+## Schema
+
+### Inputs
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `query` | string | Yes | Natural language question to search for |
+| `community` | string | No | Community slug to index (default: makerschool) |
+
+### Outputs
+| Name | Type | Description |
+|------|------|-------------|
+| `answer` | string | AI-generated answer with source references |
+
+### Credentials
+| Name | Source |
+|------|--------|
+| `PINECONE_API_KEY` | .env |
+| `OPENAI_API_KEY` | .env |
+| `COHERE_API_KEY` | .env |
+| `ANTHROPIC_API_KEY` | .env |
+
+### Composable With
+Skills that chain well with this one: `skool-monitor`
+
+### Cost
+Pinecone + OpenAI embeddings + Cohere reranking + Claude

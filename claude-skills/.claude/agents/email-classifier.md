@@ -47,3 +47,25 @@ You classify Gmail emails into exactly three categories. You receive a chunk fil
 
 ## Output Format
 Write valid JSON only — no markdown, no explanation, no extra text. Just the JSON object.
+
+---
+
+## Schema
+
+### Inputs
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `chunk_file` | file_path | Yes | JSON file with email objects (id, subject, from, date, snippet) |
+| `output_file` | file_path | Yes | Where to write classification JSON |
+
+### Outputs
+| Name | Type | Description |
+|------|------|-------------|
+| `classified_file` | file_path | JSON with Action Required, Waiting On, Reference arrays |
+
+### Composable With
+Skills that chain well with this one: `gmail-label`
+
+### Runtime
+- **Model:** sonnet
+- **Tools:** Read, Write

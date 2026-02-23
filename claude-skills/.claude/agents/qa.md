@@ -52,3 +52,25 @@ Traceback: ...
 ## Notes
 Any observations about code quality, missing edge cases, or untestable areas.
 ```
+
+---
+
+## Schema
+
+### Inputs
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `code_path` | file_path | Yes | Path to code file to test |
+| `output_file` | file_path | Yes | Where to write test report |
+
+### Outputs
+| Name | Type | Description |
+|------|------|-------------|
+| `report_file` | file_path | Test report with PASS/FAIL status, test cases, failures |
+
+### Composable With
+Skills that chain well with this one: `code-reviewer`
+
+### Runtime
+- **Model:** sonnet
+- **Tools:** Read, Write, Bash

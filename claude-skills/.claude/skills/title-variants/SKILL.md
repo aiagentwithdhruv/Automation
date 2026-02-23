@@ -43,3 +43,30 @@ Three title variants per input, stored in sheet columns:
 - Title Variant 1
 - Title Variant 2
 - Title Variant 3
+
+---
+
+## Schema
+
+### Inputs
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `sheet_url` | string | No | Google Sheet with outlier titles to generate variants for |
+| `input_file` | file_path | No | JSON file with outlier data |
+| `mode` | string | Yes | 'update' (existing sheet) or 'create' (new sheet) |
+
+### Outputs
+| Name | Type | Description |
+|------|------|-------------|
+| `sheet_url` | string | Sheet with Title Variant 1/2/3 columns added |
+
+### Credentials
+| Name | Source |
+|------|--------|
+| `ANTHROPIC_API_KEY` | .env |
+
+### Composable With
+Skills that chain well with this one: `cross-niche-outliers`, `youtube-outliers`
+
+### Cost
+Claude API (minimal)

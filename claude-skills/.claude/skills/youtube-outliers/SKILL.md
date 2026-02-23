@@ -51,3 +51,32 @@ Google Sheet with:
 APIFY_API_TOKEN=your_token
 ANTHROPIC_API_KEY=your_key
 ```
+
+---
+
+## Schema
+
+### Inputs
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `keywords` | string | No | Comma-separated keywords (default: niche keywords) |
+| `days` | integer | No | Lookback period in days (default: 30) |
+| `min_score` | float | No | Minimum outlier score (default: 1.5) |
+| `limit` | integer | No | Max results (default: 50) |
+
+### Outputs
+| Name | Type | Description |
+|------|------|-------------|
+| `sheet_url` | string | Google Sheet with outlier videos |
+
+### Credentials
+| Name | Source |
+|------|--------|
+| `APIFY_API_TOKEN` | .env |
+| `ANTHROPIC_API_KEY` | .env |
+
+### Composable With
+Skills that chain well with this one: `title-variants`, `recreate-thumbnails`, `cross-niche-outliers`
+
+### Cost
+Apify credits + Claude API

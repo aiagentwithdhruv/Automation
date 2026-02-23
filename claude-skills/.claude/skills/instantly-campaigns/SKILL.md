@@ -92,3 +92,34 @@ ANTHROPIC_API_KEY=your_key
 - Timezone: Use `America/Chicago` (not all IANA values work)
 - HTML: Instantly strips plain text outside HTML tags - wrap in `<p>` tags
 - Model: Uses `claude-opus-4-5-20251101` for generation
+
+---
+
+## Schema
+
+### Inputs
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `client_name` | string | Yes | Client company name |
+| `client_description` | string | Yes | Company description and value proposition |
+| `offers` | string | No | Pipe-separated offers (auto-generated if missing) |
+| `target_audience` | string | Yes | Who we're emailing |
+| `social_proof` | string | Yes | Credentials/results to mention |
+
+### Outputs
+| Name | Type | Description |
+|------|------|-------------|
+| `campaign_ids` | array | 3 Instantly campaign IDs |
+| `campaign_names` | array | Campaign names |
+
+### Credentials
+| Name | Source |
+|------|--------|
+| `INSTANTLY_API_KEY` | .env |
+| `ANTHROPIC_API_KEY` | .env |
+
+### Composable With
+Skills that chain well with this one: `scrape-leads`, `gmaps-leads`, `casualize-names`, `onboarding-kickoff`
+
+### Cost
+Claude API + Instantly plan

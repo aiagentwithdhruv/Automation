@@ -66,3 +66,29 @@ Creates three new columns:
 ```
 ANTHROPIC_API_KEY=your_key
 ```
+
+---
+
+## Schema
+
+### Inputs
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `sheet_url` | string | Yes | Google Sheet URL with lead data |
+| `overwrite` | boolean | No | Re-process existing casualized names |
+
+### Outputs
+| Name | Type | Description |
+|------|------|-------------|
+| `sheet_url` | string | Same sheet with casual_first_name, casual_company_name, casual_city_name columns added |
+
+### Credentials
+| Name | Source |
+|------|--------|
+| `ANTHROPIC_API_KEY` | .env |
+
+### Composable With
+Skills that chain well with this one: `scrape-leads`, `gmaps-leads`, `instantly-campaigns`
+
+### Cost
+~35 records/sec, minimal API cost

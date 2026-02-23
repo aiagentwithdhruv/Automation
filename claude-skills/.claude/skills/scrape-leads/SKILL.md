@@ -97,3 +97,35 @@ GOOGLE_APPLICATION_CREDENTIALS=path/to/credentials.json
 ANTHROPIC_API_KEY=your_key
 ANYMAILFINDER_API_KEY=your_key
 ```
+
+---
+
+## Schema
+
+### Inputs
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `industry` | string | Yes | Target industry (e.g., 'Plumbers', 'Software Agencies') |
+| `location` | string | Yes | Target location (e.g., 'Texas', 'United States') |
+| `total_count` | integer | Yes | Total number of leads desired |
+| `classification_type` | string | No | LLM classification type (e.g., 'product_saas') |
+
+### Outputs
+| Name | Type | Description |
+|------|------|-------------|
+| `sheet_url` | string | Google Sheet URL with scraped leads |
+| `lead_count` | integer | Number of leads found |
+
+### Credentials
+| Name | Source |
+|------|--------|
+| `APIFY_API_TOKEN` | .env |
+| `GOOGLE_APPLICATION_CREDENTIALS` | .env |
+| `ANTHROPIC_API_KEY` | .env |
+| `ANYMAILFINDER_API_KEY` | .env |
+
+### Composable With
+Skills that chain well with this one: `classify-leads`, `casualize-names`, `instantly-campaigns`, `onboarding-kickoff`
+
+### Cost
+$0.01-0.02 per lead + $0.30/1K for classification

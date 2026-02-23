@@ -49,3 +49,27 @@ Google Sheet with:
 APIFY_API_TOKEN=your_token
 ANTHROPIC_API_KEY=your_key
 ```
+
+---
+
+## Schema
+
+### Inputs
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `query` | string | Yes | Search query (e.g., 'AI automation') |
+| `limit` | integer | No | Max job listings (default: 50) |
+
+### Outputs
+| Name | Type | Description |
+|------|------|-------------|
+| `sheet_url` | string | Google Sheet with job details + generated proposals |
+
+### Credentials
+| Name | Source |
+|------|--------|
+| `APIFY_API_TOKEN` | .env |
+| `ANTHROPIC_API_KEY` | .env |
+
+### Cost
+Apify credits + Claude API

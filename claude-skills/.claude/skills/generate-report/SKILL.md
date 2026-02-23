@@ -81,3 +81,21 @@ The report includes:
 **No API key required!** Open-Meteo is free and open-source.
 
 Data source: https://open-meteo.com/
+
+---
+
+## Schema
+
+### Inputs
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `week_start_date` | string | No | Start date for report period (defaults to current week) |
+| `cities` | string | No | Comma-separated list of Canadian cities |
+
+### Outputs
+| Name | Type | Description |
+|------|------|-------------|
+| `pdf_path` | file_path | PDF report at .tmp/canada_weekly_weather_report.pdf |
+
+### Cost
+Free (Open-Meteo API)

@@ -45,3 +45,26 @@ Deeper explanation if needed. Keep it under 500 words.
 ```
 
 If you cannot find a definitive answer, say so and explain what you did find.
+
+---
+
+## Schema
+
+### Inputs
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `question` | string | Yes | Research question or investigation task |
+| `starting_points` | array | No | File paths or URLs as starting points |
+| `output_file` | file_path | Yes | Where to write research findings |
+
+### Outputs
+| Name | Type | Description |
+|------|------|-------------|
+| `findings_file` | file_path | Structured findings: Answer, Key Findings, Details |
+
+### Composable With
+Skills that chain well with this one: `literature-research`
+
+### Runtime
+- **Model:** sonnet
+- **Tools:** Read, Glob, Grep, WebSearch, WebFetch

@@ -41,3 +41,25 @@ NEEDS CHANGES — blocking issues that should be fixed
 ```
 
 If no issues are found, say so. Do not invent problems. An empty issues list with a PASS verdict is a valid review.
+
+---
+
+## Schema
+
+### Inputs
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `file_path` | file_path | Yes | Path to code file to review |
+| `description` | string | No | What the code is supposed to do |
+
+### Outputs
+| Name | Type | Description |
+|------|------|-------------|
+| `review_file` | file_path | Review with Summary, Issues (severity), Verdict (PASS/FAIL) |
+
+### Composable With
+Skills that chain well with this one: `qa`
+
+### Runtime
+- **Model:** sonnet
+- **Tools:** Read, Write

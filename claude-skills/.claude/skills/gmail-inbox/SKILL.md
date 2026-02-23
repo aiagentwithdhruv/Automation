@@ -73,3 +73,31 @@ All credential files should be in the workspace root:
 - `credentials.json` / `credentials_yourcompany.json` - OAuth client configs
 - `token_*.json` - Auth tokens (auto-generated)
 - `gmail_accounts.json` - Account registry
+
+---
+
+## Schema
+
+### Inputs
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `query` | string | No | Gmail search query (e.g., 'is:unread') |
+| `account` | string | No | Specific account name from registry |
+| `limit` | integer | No | Max emails to fetch (default: 50) |
+
+### Outputs
+| Name | Type | Description |
+|------|------|-------------|
+| `emails` | array | List of email objects with subject, from, date, snippet |
+
+### Credentials
+| Name | Source |
+|------|--------|
+| `credentials.json` | file |
+| `token_*.json` | file (auto-generated) |
+
+### Composable With
+Skills that chain well with this one: `gmail-label`, `instantly-autoreply`
+
+### Cost
+Free (Gmail API)

@@ -119,3 +119,32 @@ python3 .claude/skills/gmail-inbox/scripts/gmail_multi_auth.py --account ACCOUNT
 - Classification is the bottleneck; 10 parallel subagents cut it from 34s to 19s (~1.8x speedup)
 - Agent startup overhead (~4s stagger) limits theoretical gains
 - Apply step may vary due to Gmail API throttling
+
+---
+
+## Schema
+
+### Inputs
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `account` | string | Yes | Gmail account name from registry |
+| `query` | string | No | Gmail search query (default: 'in:inbox') |
+| `limit` | integer | No | Max emails to classify (default: 100) |
+| `chunks` | integer | No | Parallel classification chunks (default: 10) |
+
+### Outputs
+| Name | Type | Description |
+|------|------|-------------|
+| `labels_applied` | object | Count per category: Action Required, Waiting On, Reference |
+
+### Credentials
+| Name | Source |
+|------|--------|
+| `credentials.json` | file |
+| `token_*.json` | file (auto-generated) |
+
+### Composable With
+Skills that chain well with this one: `gmail-inbox`
+
+### Cost
+Claude Sonnet API for classification

@@ -35,3 +35,24 @@ Same as Modal deployment:
 
 ## Environment
 Uses local `.env` file directly (unlike Modal which uses secrets).
+
+---
+
+## Schema
+
+### Inputs
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `port` | integer | No | Server port (default: 8000) |
+
+### Outputs
+| Name | Type | Description |
+|------|------|-------------|
+| `server_url` | string | Local server URL (http://localhost:8000) |
+| `tunnel_url` | string | Cloudflare tunnel URL (if enabled) |
+
+### Composable With
+Skills that chain well with this one: `add-webhook`
+
+### Cost
+Free (local execution)

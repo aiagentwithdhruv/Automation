@@ -109,3 +109,32 @@ python3 ./scripts/recreate_thumbnails.py --edit ".tmp/thumbnails/edited_1.png" \
 ```
 NANO_BANANA_API_KEY=your_key
 ```
+
+---
+
+## Schema
+
+### Inputs
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `youtube_url` | string | No | YouTube video URL (auto-downloads thumbnail) |
+| `source` | file_path | No | Source thumbnail image path |
+| `variations` | integer | No | Number of variations (default: 3) |
+| `edit_image` | file_path | No | Image to edit (enables edit mode) |
+| `prompt` | string | No | Edit instructions for edit mode |
+
+### Outputs
+| Name | Type | Description |
+|------|------|-------------|
+| `thumbnails` | array | Generated thumbnail file paths in .tmp/thumbnails/ |
+
+### Credentials
+| Name | Source |
+|------|--------|
+| `NANO_BANANA_API_KEY` | .env |
+
+### Composable With
+Skills that chain well with this one: `cross-niche-outliers`, `youtube-outliers`
+
+### Cost
+$0.14-0.24 per generation

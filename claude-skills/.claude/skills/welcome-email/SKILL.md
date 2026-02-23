@@ -29,3 +29,30 @@ python3 ./scripts/welcome_client_emails.py \
 
 ## Email Structure
 Each email is personalized with client details and sent from different team members to establish relationships.
+
+---
+
+## Schema
+
+### Inputs
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `client_name` | string | Yes | Client full name |
+| `client_email` | string | Yes | Client email address |
+| `company` | string | Yes | Client company name |
+
+### Outputs
+| Name | Type | Description |
+|------|------|-------------|
+| `emails_sent` | integer | Number of welcome emails sent (3) |
+
+### Credentials
+| Name | Source |
+|------|--------|
+| `credentials.json` | file |
+
+### Composable With
+Skills that chain well with this one: `onboarding-kickoff`, `create-proposal`
+
+### Cost
+Free (Gmail API)

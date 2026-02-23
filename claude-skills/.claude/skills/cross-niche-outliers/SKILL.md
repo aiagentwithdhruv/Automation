@@ -110,3 +110,34 @@ APIFY_API_TOKEN=your_token (optional fallback)
 3. Pick outlier with good thumbnail/title
 4. Use title variants as starting points
 5. Recreate thumbnail with your face (see recreate-thumbnails skill)
+
+---
+
+## Schema
+
+### Inputs
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `terms` | array | No | Custom search terms (default: 'entrepreneur') |
+| `queries` | integer | No | Number of TubeLab searches (5 credits each, default: 1) |
+| `min_views` | integer | No | Minimum views (default: 10,000) |
+| `max_days` | integer | No | Max video age in days (default: 30) |
+| `skip_transcripts` | boolean | No | Skip transcript fetching (faster) |
+
+### Outputs
+| Name | Type | Description |
+|------|------|-------------|
+| `sheet_url` | string | Google Sheet with ~100 outliers (19 columns) |
+
+### Credentials
+| Name | Source |
+|------|--------|
+| `TUBELAB_API_KEY` | .env |
+| `ANTHROPIC_API_KEY` | .env |
+| `APIFY_API_TOKEN` | .env (optional fallback) |
+
+### Composable With
+Skills that chain well with this one: `title-variants`, `recreate-thumbnails`
+
+### Cost
+5 TubeLab credits per query + Claude API

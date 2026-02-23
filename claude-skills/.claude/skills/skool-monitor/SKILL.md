@@ -98,3 +98,32 @@ python3 ./scripts/skool_browser_client.py unlike --post-id <id>
 SKOOL_AUTH_TOKEN=your_token
 SKOOL_CLIENT_ID=your_client_id
 ```
+
+---
+
+## Schema
+
+### Inputs
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `since` | integer | No | Hours to look back (default: 48) |
+| `community` | string | No | Community slug (default: makerschool) |
+| `action` | string | No | Action: read, create, reply, like, search |
+
+### Outputs
+| Name | Type | Description |
+|------|------|-------------|
+| `posts` | array | Unread posts with metadata |
+| `summary` | string | AI summary of unreads (if --summary flag) |
+
+### Credentials
+| Name | Source |
+|------|--------|
+| `SKOOL_AUTH_TOKEN` | .env |
+| `SKOOL_CLIENT_ID` | .env |
+
+### Composable With
+Skills that chain well with this one: `skool-rag`
+
+### Cost
+Free (reverse-engineered API)

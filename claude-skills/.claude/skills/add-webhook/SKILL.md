@@ -49,3 +49,32 @@ Create new Modal webhooks for event-driven Claude orchestration.
 ## Endpoints
 - List: `https://your-modal-username--claude-orchestrator-list-webhooks.modal.run`
 - Execute: `https://your-modal-username--claude-orchestrator-directive.modal.run?slug={slug}`
+
+---
+
+## Schema
+
+### Inputs
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `slug` | string | Yes | Webhook slug identifier |
+| `directive` | string | Yes | Directive file name (without .md) |
+| `description` | string | Yes | What this webhook does |
+| `tools` | array | Yes | List of tools the webhook can use |
+
+### Outputs
+| Name | Type | Description |
+|------|------|-------------|
+| `webhook_url` | string | Modal webhook URL for execution |
+
+### Credentials
+| Name | Source |
+|------|--------|
+| `MODAL_TOKEN_ID` | Modal dashboard |
+| `MODAL_TOKEN_SECRET` | Modal dashboard |
+
+### Composable With
+Skills that chain well with this one: `modal-deploy`
+
+### Cost
+Modal compute (pay-per-use)

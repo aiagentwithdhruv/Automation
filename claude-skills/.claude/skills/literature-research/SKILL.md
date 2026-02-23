@@ -33,3 +33,27 @@ python3 ./scripts/literature_deep_review.py \
 ## Output
 - JSON file with paper metadata
 - Markdown review with key findings, themes, gaps
+
+---
+
+## Schema
+
+### Inputs
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `query` | string | Yes | Research query (e.g., 'machine learning cancer diagnosis') |
+| `limit` | integer | No | Max papers to fetch (default: 50) |
+
+### Outputs
+| Name | Type | Description |
+|------|------|-------------|
+| `papers_file` | file_path | JSON file with paper metadata |
+| `review_file` | file_path | Markdown review with key findings, themes, gaps |
+
+### Credentials
+| Name | Source |
+|------|--------|
+| `ANTHROPIC_API_KEY` | .env |
+
+### Cost
+Free (PubMed API) + Claude for review

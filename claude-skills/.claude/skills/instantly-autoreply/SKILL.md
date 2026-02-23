@@ -40,3 +40,29 @@ python3 ./scripts/instantly_autoreply.py --thread_id <id>
 INSTANTLY_API_KEY=your_key
 ANTHROPIC_API_KEY=your_key
 ```
+
+---
+
+## Schema
+
+### Inputs
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `thread_id` | string | Yes | Instantly thread ID to reply to |
+
+### Outputs
+| Name | Type | Description |
+|------|------|-------------|
+| `reply_sent` | boolean | Whether reply was sent successfully |
+
+### Credentials
+| Name | Source |
+|------|--------|
+| `INSTANTLY_API_KEY` | .env |
+| `ANTHROPIC_API_KEY` | .env |
+
+### Composable With
+Skills that chain well with this one: `instantly-campaigns`
+
+### Cost
+Claude API per reply

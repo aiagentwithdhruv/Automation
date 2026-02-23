@@ -82,3 +82,30 @@ open .tmp/website_*.html
 - No Unsplash key: Falls back to picsum.photos placeholder images
 - Long company names: CSS handles wrapping with responsive font sizing
 - Special characters: HTML-escaped in output
+
+---
+
+## Schema
+
+### Inputs
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `sheet_url` | string | Yes | Google Sheet URL with prospect data |
+| `row` | integer | Yes | Row number (1-indexed, excluding header) |
+| `worksheet` | string | No | Worksheet name (default: first sheet) |
+
+### Outputs
+| Name | Type | Description |
+|------|------|-------------|
+| `html_file` | file_path | Self-contained HTML file at .tmp/website_{slug}.html |
+
+### Credentials
+| Name | Source |
+|------|--------|
+| `UNSPLASH_ACCESS_KEY` | .env (optional, falls back to picsum) |
+
+### Composable With
+Skills that chain well with this one: `scrape-leads`, `gmaps-leads`
+
+### Cost
+Free (Unsplash free tier)
