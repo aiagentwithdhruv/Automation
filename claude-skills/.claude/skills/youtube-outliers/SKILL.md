@@ -1,6 +1,9 @@
 ---
 name: youtube-outliers
 description: Find viral YouTube videos in your niche for competitive intelligence. Use when user asks to find YouTube outliers, monitor competitors, or track viral videos.
+argument-hint: "[niche-keyword]"
+context: fork
+agent: Explore
 allowed-tools: Bash, Read, Write, Edit, Glob, Grep
 ---
 

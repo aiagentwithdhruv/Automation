@@ -1,6 +1,9 @@
 ---
 name: title-variants
 description: Generate title variants for YouTube videos from outlier analysis. Use when user asks to create title variations, generate YouTube titles, or adapt video titles.
+argument-hint: "[video-topic]"
+context: fork
+agent: general-purpose
 allowed-tools: Bash, Read, Write, Edit, Glob, Grep
 ---
 

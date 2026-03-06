@@ -1,6 +1,7 @@
 ---
 name: casualize-names
 description: Convert formal names to casual versions for cold email personalization - first names, company names, and city names. Use when user asks to casualize names, make names friendly, or prepare lead data for emails.
+argument-hint: "[file-path]"
 allowed-tools: Bash, Read, Write, Edit, Glob, Grep
 ---
 

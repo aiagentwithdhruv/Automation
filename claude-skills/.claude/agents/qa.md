@@ -3,6 +3,14 @@ name: qa
 description: QA agent that generates tests for a code snippet, runs them, and reports pass/fail results back. Use to validate code correctness before shipping.
 model: sonnet
 tools: Read, Write, Bash
+hooks:
+  Stop:
+    - matcher: ""
+      command: |
+        if ! echo "$CLAUDE_RESPONSE" | grep -qE 'Status: (PASS|FAIL|PARTIAL)'; then
+          echo "BLOCKED: Response must contain Status: PASS / FAIL / PARTIAL"
+          exit 1
+        fi
 ---
 
 # QA Subagent

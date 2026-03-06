@@ -1,44 +1,68 @@
 # Claude Skills Library - Master Index
 
-**Last updated:** 2026-02-23
+**Last updated:** 2026-03-06
 **Location:** `.context/claude-skills/`
 **Purpose:** Reusable automation skills and agent patterns for Claude Code
-**Schemas:** All 28 skills + 4 agents have typed schemas (inputs/outputs/credentials/composability)
+**Public repo:** https://github.com/aiagentwithdhruv/skills (38 published to skills.sh)
+**Install:** `npx skills add aiagentwithdhruv/skills`
+**Skills 2.0:** Upgraded to Claude Code 2.1 spec — frontmatter, forked contexts, agent hooks, slash invocation
 
 ---
 
-## 🎯 Quick Reference
+## Skills 2.0 Upgrade (March 6, 2026)
+
+All 40 skills + 4 agents upgraded to Claude Code 2.1 Skills 2.0 spec:
+
+| Feature | Count | What It Does |
+|---------|-------|--------------|
+| `disable-model-invocation: true` | 13 skills | Side-effect skills (deploy, email, proposals) — manual `/invoke` only |
+| `context: fork` + `agent:` | 7 skills | Research/isolated skills run in forked subagent context |
+| `argument-hint` | 31 skills | Shows expected args in `/` autocomplete menu |
+| Agent `hooks: Stop:` | 4 agents | Enforce output format (PASS/FAIL, JSON schema, etc.) |
+| Proper frontmatter | 40/40 | All skills have valid YAML frontmatter |
+
+**Manual-only skills (side effects):** instantly-campaigns, instantly-autoreply, welcome-email, send-telegram, create-proposal, onboarding-kickoff, modal-deploy, aws-production-deploy, upwork-apply, design-website, skool-monitor, gamma-presentation, skill-builder
+
+**Forked context skills (isolated):** literature-research, cross-niche-outliers, youtube-outliers, skool-rag, classify-leads, generate-report, title-variants
+
+---
+
+## Quick Reference
 
 | Category | Count | When to Use |
 |----------|-------|-------------|
 | **Agents** | 4 | Code review, research, testing, email classification |
 | **Lead Generation** | 8 | Scraping leads, enrichment, proposals, client onboarding |
-| **Email & Campaigns** | 4 | Gmail automation, cold email, auto-reply |
-| **Content & Video** | 6 | Video editing, thumbnails, YouTube research |
+| **Email & Campaigns** | 5 | Gmail automation, cold email, auto-reply, welcome sequences |
+| **Content & Video** | 9 | Video editing, thumbnails, YouTube research, image-to-video, AI image gen |
 | **Community & Research** | 3 | Skool monitoring, academic research, RAG |
-| **Infrastructure** | 4 | Webhooks, deployment, local server |
+| **Infrastructure** | 6 | Webhooks, deployment, AWS, local server, voice-to-text |
+| **Browser Automation** | 1 | LinkedIn auto-post, web scraping, human-like automation, demos |
 | **Notifications** | 1 | Send messages to Telegram |
 | **Euron Bootcamp** | 1 | Euri API doubts, MCP setup, model selection |
-| **TOTAL SKILLS** | **28** | |
+| **Visual & Image Gen** | 5 | Thumbnail prompts, Excalidraw diagrams, PNG visuals, hyper-realistic images |
+| **Presentations & Docs** | 1 | AI-generated presentations, documents, webpages, social posts via Gamma MCP |
+| **Utilities** | 2 | macOS control, skill scaffolding |
+| **TOTAL SKILLS** | **40** | |
 
 ---
 
-## 🤖 Agents (4)
+## Agents (4)
 
-Located in `.claude/agents/`
+Located in `.claude/agents/` — all upgraded with **Stop hooks** to enforce output format.
 
-| Agent | File | Use When |
-|-------|------|----------|
-| **Code Reviewer** | `code-reviewer.md` | Unbiased code review with zero context. Returns issues by severity with PASS/FAIL verdict. |
-| **Email Classifier** | `email-classifier.md` | Classifies Gmail emails into Action Required, Waiting On, Reference. |
-| **QA** | `qa.md` | Generates tests for code, runs them, reports pass/fail results. |
-| **Research** | `research.md` | Deep research via web search, file reads, codebase exploration. Returns concise sourced findings. |
+| Agent | File | Stop Hook Enforces | Use When |
+|-------|------|-------------------|----------|
+| **Code Reviewer** | `code-reviewer.md` | Must contain PASS / PASS WITH NOTES / NEEDS CHANGES | Unbiased code review with zero context |
+| **Email Classifier** | `email-classifier.md` | Must output JSON with Action Required key | Classifies Gmail emails into 3 categories |
+| **QA** | `qa.md` | Must contain Status: PASS / FAIL / PARTIAL | Generates tests, runs them, reports results |
+| **Research** | `research.md` | Must contain ## Answer and Key Findings | Deep research via web, files, codebase |
 
-**Pattern:** Agents are read-only reporters. All code changes happen in parent agent.
+**Pattern:** Agents are read-only reporters with enforced output contracts. All code changes happen in parent agent.
 
 ---
 
-## ⚡ Skills (26)
+## ⚡ Skills (39)
 
 Located in `.claude/skills/`
 
@@ -63,7 +87,7 @@ Each skill has:
 
 ---
 
-### Email & Campaigns (4 skills)
+### Email & Campaigns (5 skills)
 
 | Skill | Use When |
 |-------|----------|
@@ -77,7 +101,7 @@ Each skill has:
 
 ---
 
-### Content & Video (6 skills)
+### Content & Video (9 skills — includes thumbnail-generator, nano-banana-images, image-to-video)
 
 | Skill | Use When |
 |-------|----------|
@@ -87,8 +111,9 @@ Each skill has:
 | **cross-niche-outliers** | Find viral videos from adjacent niches |
 | **youtube-outliers** | Monitor your niche for viral content |
 | **title-variants** | Generate YouTube title variations |
+| **image-to-video** | Convert thumbnails/images to 8s AI video. 11 tools profiled (Runway, Kling, Pika, Luma, Sora, Vidu, Hailuo, Veo, Firefly, Seedance, WAN). Prompt templates for tech workspace scenes, camera movements, holographic UI animation. |
 
-**Relevant for:** AiwithDhruv YouTube content, LinkedIn video posts, demo video editing
+**Relevant for:** AiwithDhruv YouTube content, LinkedIn video posts, demo video editing, thumbnail animations
 
 ---
 
@@ -104,16 +129,18 @@ Each skill has:
 
 ---
 
-### Infrastructure (4 skills)
+### Infrastructure (6 skills)
 
 | Skill | Use When |
 |-------|----------|
 | **add-webhook** | Add new Modal webhooks for event-driven execution |
 | **modal-deploy** | Deploy to Modal cloud infrastructure |
+| **aws-production-deploy** | Full AWS production stack: Docker → ECR → ECS Fargate → ALB → ElastiCache → CloudWatch → Grafana. CI/CD via GitHub Actions. Use for ANY production deployment. |
 | **local-server** | Run orchestrator locally for testing |
 | **design-website** | Website design and development workflows |
+| **whisper-voice** | Live speech-to-text Mac app — WhisperKit, offline, auto-type at cursor |
 
-**Relevant for:** Deploying QuotaHit features, Angelina infrastructure, Onsite system deployment
+**Relevant for:** Deploying QuotaHit features, Angelina infrastructure, Onsite system deployment, voice productivity, Euron Full-Stack AI Chat, any production app
 
 ### Euron Bootcamp (1 skill)
 
@@ -123,6 +150,15 @@ Each skill has:
 
 **Relevant for:** Euron Gen AI Certification Bootcamp 2.0, helping students, community support
 
+### Browser Automation (1 skill)
+
+| Skill | Use When |
+|-------|----------|
+| **ghost-browser** | LinkedIn auto-post with images, engagement (like/comment/reply), job applications, scrape any website, stats tracking, visual demos. Human-like behavior (typing with typos, smooth scrolling, random delays). GitHub: `aiagentwithdhruv/ghost-browser` |
+
+**Relevant for:** LinkedIn automation, lead scraping, job hunting, client demos, social media management
+**Key scripts:** `linkedin_engage.py` (CLI), `universal_scraper.py` (any site), `demo_wow.py` (viral demo), `monkeytype_flex.py` (412 WPM)
+
 ### Notifications (1 skill)
 
 | Skill | Use When |
@@ -130,6 +166,44 @@ Each skill has:
 | **send-telegram** | Send any message/note/reminder to Dhruv's Telegram via n8n |
 
 **Relevant for:** Quick notifications, sending summaries, reminders, interview prep notes to phone
+
+---
+
+### Visual & Image Generation (5 skills)
+
+| Skill | Use When |
+|-------|----------|
+| **handdrawn-diagram** | Generate hand-drawn whiteboard infographic prompts for Gemini. Notebook-style diagrams with flash cards, logos, architecture, branding. Perfect for GitHub READMEs, LinkedIn, Instagram. **Use this for any diagram/infographic/visual explainer request.** |
+| **thumbnail-generator** | Generate cinematic AI image prompts for YouTube thumbnails, LinkedIn posts, social media visuals. Dhruv's signature style — dark bg, purple neon, black t-shirt, floating holographic elements. 5 proven visual hooks. **Use this FIRST for any image/thumbnail request.** |
+| **excalidraw-diagram** | Generate editable Excalidraw JSON diagrams — architecture, flows, system design. Output is `.excalidraw` file you can open and edit. |
+| **excalidraw-visuals** | Generate hand-drawn Excalidraw-style PNG images via fal.ai (free tier). Needs `FAL_KEY`. |
+| **nano-banana-images** | Generate hyper-realistic images via fal.ai Nano Banana Pro. JSON-prompted, no AI smoothing. Needs `FAL_KEY`. |
+
+**Relevant for:** Presentations, class materials, README visuals, thumbnails, social media images, architecture diagrams
+**Image providers:** fal.ai (primary, free), Euri API (secondary, free for Euron students)
+**Source:** AI Automation Society (Skool community)
+
+---
+
+### Presentations & Docs (1 skill — via MCP)
+
+| Skill | Use When |
+|-------|----------|
+| **gamma-presentation** | Create AI-generated presentations (slides), documents, webpages, and social posts via Gamma MCP. Supports themes, custom layouts, export to PPTX/PDF, and folder organization. **Already live — no setup needed, use directly via MCP tools.** |
+
+**How to use:** Just say "Create a Gamma presentation about X" — MCP tools available: `generate`, `get_themes`, `get_folders`, `get_generation_status`
+**Relevant for:** Euron class decks, client proposals, product pitches, YouTube slides, course materials
+
+---
+
+### Utilities (2 skills)
+
+| Skill | Use When |
+|-------|----------|
+| **mac-control** | Control macOS apps, display, audio, files, screenshots, clipboard via MCP |
+| **skill-builder** | Create new Claude Code skills, optimize existing ones, audit skill quality. Follows official best practices. Has full technical reference. |
+
+**Relevant for:** macOS automation, building new skills, extending the library
 
 ---
 
@@ -277,6 +351,7 @@ All skills backed up with:
 
 ---
 
-**Last scanned:** 2026-02-15
-**Total files:** 26 skills + 4 agents + infrastructure
-**Status:** ✅ Ready to use
+**Last scanned:** 2026-03-06
+**Total:** 40 skills + 4 agents (38 published to skills.sh)
+**Skills 2.0:** Upgraded — frontmatter, forked contexts, agent hooks, slash commands
+**Status:** Ready to use

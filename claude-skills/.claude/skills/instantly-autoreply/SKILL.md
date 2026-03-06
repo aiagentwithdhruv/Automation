@@ -1,6 +1,7 @@
 ---
 name: instantly-autoreply
 description: Auto-generate intelligent replies to incoming Instantly email threads using knowledge bases. Use when user asks about email auto-replies, Instantly responses, or automated email handling.
+disable-model-invocation: true
 allowed-tools: Bash, Read, Write, Edit, Glob, Grep
 ---
 

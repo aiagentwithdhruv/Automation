@@ -1,6 +1,8 @@
 ---
 name: modal-deploy
 description: Deploy execution scripts to Modal cloud. Use when user asks to deploy to Modal, push code to cloud, or update Modal functions.
+argument-hint: "[script-path]"
+disable-model-invocation: true
 allowed-tools: Bash, Read, Write, Edit, Glob, Grep
 ---
 

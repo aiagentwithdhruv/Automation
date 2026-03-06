@@ -1,6 +1,7 @@
 ---
 name: skool-monitor
 description: Monitor and interact with Skool communities - read posts, create posts, reply to comments, like content, and search. Use when user asks to check Skool, read community posts, interact with Skool, or manage Skool community.
+disable-model-invocation: true
 allowed-tools: Bash, Read, Write, Edit, Glob, Grep
 ---
 

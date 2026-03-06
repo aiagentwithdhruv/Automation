@@ -1,6 +1,9 @@
 ---
 name: skool-rag
 description: Query Skool community content using RAG pipeline with vector search. Use when user asks to search Skool knowledge, find community answers, or query Skool content.
+argument-hint: "[query]"
+context: fork
+agent: Explore
 allowed-tools: Bash, Read, Write, Edit, Glob, Grep
 ---
 

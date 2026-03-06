@@ -3,6 +3,14 @@ name: research
 description: Deep research agent with full web and file access. Use for investigations that require many searches, reading docs, or exploring large codebases without polluting parent context.
 model: sonnet
 tools: Read, Glob, Grep, WebSearch, WebFetch
+hooks:
+  Stop:
+    - matcher: ""
+      command: |
+        if ! echo "$CLAUDE_RESPONSE" | grep -qE '(Key Findings|## Answer)'; then
+          echo "BLOCKED: Response must contain ## Answer and Key Findings sections"
+          exit 1
+        fi
 ---
 
 # Research Subagent

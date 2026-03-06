@@ -1,6 +1,7 @@
 ---
 name: gmaps-leads
 description: Scrape Google Maps for B2B leads with deep website enrichment and contact extraction. Use when user asks to find local businesses, scrape Google Maps, generate contractor lists, or build local service business databases.
+argument-hint: "[query] [location]"
 allowed-tools: Bash, Read, Write, Edit, Glob, Grep
 ---
 

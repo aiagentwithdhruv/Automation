@@ -1,6 +1,8 @@
 ---
 name: instantly-campaigns
 description: Create cold email campaigns in Instantly with A/B testing. Use when user asks to create email campaigns, set up cold outreach, build email sequences, or configure Instantly campaigns.
+argument-hint: "[campaign-name]"
+disable-model-invocation: true
 allowed-tools: Bash, Read, Write, Edit, Glob, Grep
 ---
 

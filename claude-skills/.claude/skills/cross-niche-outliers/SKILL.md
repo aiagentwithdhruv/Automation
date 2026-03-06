@@ -1,6 +1,9 @@
 ---
 name: cross-niche-outliers
 description: Find viral YouTube videos from adjacent business niches to extract content patterns and hooks. Use when user asks to find content inspiration, YouTube outliers, viral video patterns, or cross-niche content ideas.
+argument-hint: "[niche-keyword]"
+context: fork
+agent: Explore
 allowed-tools: Bash, Read, Write, Edit, Glob, Grep
 ---
 

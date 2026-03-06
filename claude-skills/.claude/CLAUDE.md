@@ -80,7 +80,23 @@ You operate using Claude Code Skills - bundled capabilities that combine instruc
 
 **Why this works:** if you do everything yourself, errors compound. 90% accuracy per step = 59% success over 5 steps. The solution is push complexity into deterministic code. That way you just focus on decision-making.
 
-## Available Skills (24 total)
+## Skills 2.0 (Claude Code 2.1 Upgrade)
+
+All skills now use the full Skills 2.0 frontmatter spec:
+
+- **`/slash-command` invocation** — All skills show in the `/` autocomplete menu with argument hints
+- **`disable-model-invocation: true`** — 13 side-effect skills (deploy, email, proposals) require manual `/invoke` only
+- **`context: fork`** — 7 research/isolated skills run in forked subagent contexts (no conversation pollution)
+- **`argument-hint`** — 31 skills show expected arguments in autocomplete
+- **Agent Stop hooks** — All 4 agents enforce output format (PASS/FAIL, JSON schema, structured findings)
+- **Hot reload** — Edit any SKILL.md and changes are live instantly (no restart)
+
+**Important behavior changes:**
+- Skills with `disable-model-invocation: true` will NOT auto-trigger. Use `/skill-name` to invoke them.
+- Skills with `context: fork` run isolated — they don't see your conversation history.
+- Agent hooks block responses that don't match the expected format.
+
+## Available Skills (40 total)
 
 ### Lead Generation & Enrichment
 - `scrape-leads` - Scrape leads via Apify with verification

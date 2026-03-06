@@ -3,6 +3,14 @@ name: code-reviewer
 description: Unbiased code review of a snippet with zero prior context. Returns actionable recommendations on correctness, readability, performance, and security.
 model: sonnet
 tools: Read, Write
+hooks:
+  Stop:
+    - matcher: ""
+      command: |
+        if ! echo "$CLAUDE_RESPONSE" | grep -qE '(PASS|NEEDS CHANGES|PASS WITH NOTES)'; then
+          echo "BLOCKED: Response must contain a verdict (PASS / PASS WITH NOTES / NEEDS CHANGES)"
+          exit 1
+        fi
 ---
 
 # Code Reviewer Subagent

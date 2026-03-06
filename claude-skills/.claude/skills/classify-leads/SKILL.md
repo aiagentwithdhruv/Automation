@@ -1,6 +1,9 @@
 ---
 name: classify-leads
 description: Classify leads using LLM for complex distinctions like product SaaS vs agencies. Use when user asks to classify leads, filter leads by type, or categorize businesses.
+argument-hint: "[sheet-url or file-path]"
+context: fork
+agent: general-purpose
 allowed-tools: Bash, Read, Write, Edit, Glob, Grep
 ---
 

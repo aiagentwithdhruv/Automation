@@ -1,6 +1,9 @@
 ---
 name: literature-research
 description: Search academic literature and perform deep research reviews. Use when user asks to search PubMed, find academic papers, or do literature reviews.
+argument-hint: "[query]"
+context: fork
+agent: Explore
 allowed-tools: Bash, Read, Write, Edit, Glob, Grep
 ---
 

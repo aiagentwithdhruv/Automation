@@ -1,6 +1,8 @@
 ---
 name: design-website
 description: Generate a premium mockup website for a prospect using the buildinamsterdam.com template style. Use when user asks to design a website, create a mockup, or build a prospect website.
+argument-hint: "[business-name]"
+disable-model-invocation: true
 allowed-tools: Bash, Read, Write, Edit, Glob, Grep
 ---
 

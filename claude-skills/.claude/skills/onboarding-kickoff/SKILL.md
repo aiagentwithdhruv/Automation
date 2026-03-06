@@ -1,6 +1,8 @@
 ---
 name: onboarding-kickoff
 description: Automated client onboarding after kickoff call - generates leads, creates email campaigns, sets up auto-reply. Use when user asks to onboard a new client, set up campaigns for client, or run post-kickoff automation.
+argument-hint: "[client-name]"
+disable-model-invocation: true
 allowed-tools: Bash, Read, Write, Edit, Glob, Grep
 ---
 

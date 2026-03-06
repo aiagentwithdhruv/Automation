@@ -3,6 +3,14 @@ name: email-classifier
 description: Classify a chunk of Gmail emails into Action Required, Waiting On, or Reference categories. Used by gmail-label skill for parallel classification.
 model: sonnet
 tools: Read, Write
+hooks:
+  Stop:
+    - matcher: ""
+      command: |
+        if ! echo "$CLAUDE_RESPONSE" | grep -qE '"Action Required"'; then
+          echo "BLOCKED: Response must be JSON with Action Required, Waiting On, Reference keys"
+          exit 1
+        fi
 ---
 
 # Email Classifier Subagent

@@ -1,6 +1,7 @@
 ---
 name: euron-qa
 description: Answer Euron Gen AI Bootcamp doubts instantly. Covers Euri API setup across all frameworks (Python, LangChain, OpenAI SDK, TypeScript, n8n, curl), MCP server setup, common errors, model recommendations, and token limits. Use when someone in the bootcamp asks a question.
+argument-hint: "[question]"
 allowed-tools: Read, Grep, Glob
 ---
 

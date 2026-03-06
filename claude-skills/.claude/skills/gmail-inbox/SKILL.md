@@ -1,6 +1,7 @@
 ---
 name: gmail-inbox
 description: Manage emails across multiple Gmail accounts with unified tooling. Use when user asks to check email, read inbox, label emails, archive messages, or manage Gmail across accounts.
+argument-hint: "[account-email]"
 allowed-tools: Bash, Read, Write, Edit, Glob, Grep
 ---
 

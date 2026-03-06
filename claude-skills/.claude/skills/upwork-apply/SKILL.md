@@ -1,6 +1,8 @@
 ---
 name: upwork-apply
 description: Scrape Upwork jobs and generate personalized proposals with cover letters. Use when user asks to find Upwork jobs, create Upwork proposals, or apply to Upwork listings.
+argument-hint: "[search-query]"
+disable-model-invocation: true
 allowed-tools: Bash, Read, Write, Edit, Glob, Grep
 ---
 

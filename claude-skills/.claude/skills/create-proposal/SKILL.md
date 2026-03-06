@@ -1,6 +1,8 @@
 ---
 name: create-proposal
 description: Generate PandaDoc proposals from client information or sales call transcripts. Use when user asks to create a proposal, generate a quote, draft a contract, or prepare a client document.
+argument-hint: "[client-name]"
+disable-model-invocation: true
 allowed-tools: Bash, Read, Write, Edit, Glob, Grep
 ---
 

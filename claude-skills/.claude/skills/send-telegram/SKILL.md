@@ -1,6 +1,8 @@
 ---
 name: send-telegram
 description: Send a message to Dhruv's Telegram. Use when user says "send to telegram", "telegram me", "notify me", or wants to receive any text/note/reminder on Telegram.
+argument-hint: "[message]"
+disable-model-invocation: true
 allowed-tools: Bash
 ---
 

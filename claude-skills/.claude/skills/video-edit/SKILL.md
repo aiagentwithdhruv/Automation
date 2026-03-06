@@ -1,6 +1,7 @@
 ---
 name: video-edit
 description: Complete video editing toolkit - silence removal, auto-captions, vertical crop, YouTube clipping, 3D transitions, and social media compression. Use when user asks to edit video, remove silences, add captions/subtitles, crop to vertical/shorts, download YouTube clips, compress video, or create video teasers.
+argument-hint: "[video-path] [action]"
 ---
 
 # Video Editing Toolkit

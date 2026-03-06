@@ -1,6 +1,7 @@
 ---
 name: scrape-leads
 description: Scrape and verify business leads using Apify, classify with LLM, enrich emails, and save to Google Sheets. Use when user asks to find leads, scrape businesses, generate prospect lists, or build lead databases for any industry or location.
+argument-hint: "[industry] [location] [count]"
 allowed-tools: Bash, Read, Write, Edit, Glob, Grep
 ---
 
