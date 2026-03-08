@@ -62,7 +62,7 @@ Located in `.claude/agents/` — all upgraded with **Stop hooks** to enforce out
 
 ---
 
-## ⚡ Skills (39)
+## ⚡ Skills (40)
 
 Located in `.claude/skills/`
 
@@ -303,6 +303,25 @@ Each skill has:
 
 ---
 
+## 🏗️ Engineering Rules (Companion System)
+
+Skills define **what** to automate. Engineering rules define **how** to write code.
+
+**Repo:** `aiagentwithdhruv/ai-coding-rules` (PUBLIC)
+**Local:** `cursor-rules/` — 15 rules + 9 doc templates
+**Install:** `curl -fsSL https://raw.githubusercontent.com/aiagentwithdhruv/ai-coding-rules/main/install.sh | bash`
+
+| Resource | What it provides |
+|----------|-----------------|
+| `rules/*.mdc` | 15 Cursor rules (YAML frontmatter, auto-apply) |
+| `claude/CLAUDE.md` | All 15 rules combined for Claude Code |
+| `claude/compose.sh` | Build custom CLAUDE.md from selected rules |
+| `docs/` | 9 templates: PRD, Architecture, API Spec, DB Schema, Deployment, Skills, Agents, Loadout, MCP |
+
+**Key distinction:** `skills` repo = reusable automation capabilities. `ai-coding-rules` repo = engineering standards for any project.
+
+---
+
 ## 🔗 Integration with Your Stack
 
 ### n8n Workflows
@@ -327,10 +346,24 @@ Each skill has:
 
 ---
 
+## 🔗 Composition Chains
+
+Pre-defined skill pipelines for common workflows:
+
+| Chain | Skills | Use Case |
+|-------|--------|----------|
+| **full-client-onboarding** | gmaps-leads → classify-leads → casualize-names → instantly-campaigns → welcome-email | End-to-end client acquisition to onboarding |
+| **content-pipeline** | cross-niche-outliers → title-variants → recreate-thumbnails → video-edit | YouTube content research to publication |
+| **lead-enrichment** | scrape-leads → classify-leads → casualize-names | Raw leads to email-ready contacts |
+| **inbox-management** | gmail-inbox → gmail-label | Full inbox triage and organization |
+
+---
+
 ## 📦 GitHub Backup
 
-**Repo:** https://github.com/aiagentwithdhruv/Automation
-**Location:** Will be pushed to `claude-skills/` folder
+**Skills repo:** https://github.com/aiagentwithdhruv/Automation (private — `claude-skills/` folder)
+**Public skills:** https://github.com/aiagentwithdhruv/skills (38 published to skills.sh)
+**Engineering rules:** https://github.com/aiagentwithdhruv/ai-coding-rules (public — 15 rules + 9 docs)
 **Branch:** main
 
 All skills backed up with:
