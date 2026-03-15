@@ -1,0 +1,91 @@
+{
+  "name": "LegalRAG — Render Keep-Alive",
+  "nodes": [
+    {
+      "parameters": {
+        "rule": {
+          "interval": [{ "field": "minutes", "minutesInterval": 14 }]
+        }
+      },
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.2,
+      "position": [-240, 0],
+      "id": "a1b2c3d4-0001-0001-0001-000000000001",
+      "name": "Every 14 Minutes"
+    },
+    {
+      "parameters": {
+        "url": "https://legalrag-0jm4.onrender.com/health",
+        "options": { "timeout": 30000 }
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [0, 0],
+      "id": "a1b2c3d4-0002-0002-0002-000000000002",
+      "name": "Ping Render Health"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": { "caseSensitive": true },
+          "conditions": [
+            {
+              "leftValue": "={{ $json.status }}",
+              "rightValue": "ok",
+              "operator": { "type": "string", "operation": "equals" }
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2,
+      "position": [240, 0],
+      "id": "a1b2c3d4-0003-0003-0003-000000000003",
+      "name": "Is Alive?"
+    },
+    {
+      "parameters": {
+        "content": "## ✅ LegalRAG Keep-Alive\n\nPings `https://legalrag-0jm4.onrender.com/health` every **14 minutes**\n\nRender free tier spins down after 15 min inactivity — this prevents cold starts.\n\n**Flow:**\n→ Ping /health every 14 min\n→ If status=ok → silent success\n→ If down → log (extend with Telegram alert if needed)",
+        "color": 5
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [-480, -200],
+      "id": "a1b2c3d4-0004-0004-0004-000000000004",
+      "name": "Note"
+    },
+    {
+      "parameters": {
+        "content": "✅ alive",
+        "color": 3
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [480, -120],
+      "id": "a1b2c3d4-0005-0005-0005-000000000005",
+      "name": "OK"
+    },
+    {
+      "parameters": {
+        "content": "⚠️ down — add Telegram alert here",
+        "color": 2
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [480, 100],
+      "id": "a1b2c3d4-0006-0006-0006-000000000006",
+      "name": "Down"
+    }
+  ],
+  "connections": {
+    "Every 14 Minutes": {
+      "main": [[{ "node": "Ping Render Health", "type": "main", "index": 0 }]]
+    },
+    "Ping Render Health": {
+      "main": [[{ "node": "Is Alive?", "type": "main", "index": 0 }]]
+    }
+  },
+  "settings": { "executionOrder": "v1" },
+  "active": false,
+  "meta": { "templateCredsSetupCompleted": true }
+}
